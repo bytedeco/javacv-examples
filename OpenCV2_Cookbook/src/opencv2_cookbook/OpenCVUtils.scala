@@ -254,7 +254,7 @@ object OpenCVUtils {
     def scaleTo01(image: IplImage): IplImage = {
         val min = Array(Double.MaxValue)
         val max = Array(Double.MinValue)
-        cvMinMaxLoc(image, min, max, null, null, null)
+        cvMinMaxLoc(image, min, max)
         val scale = 1 / (max(0) - min(0))
         val imageScaled = cvCreateImage(cvGetSize(image), IPL_DEPTH_32F, image.nChannels)
         cvConvertScale(image, imageScaled, scale, 0)
@@ -301,7 +301,7 @@ object OpenCVUtils {
     def toIplImage8U(src: IplImage, doScaling: Boolean = true): IplImage = {
         val min = Array(Double.MaxValue)
         val max = Array(Double.MinValue)
-        cvMinMaxLoc(src, min, max, null, null, null)
+        cvMinMaxLoc(src, min, max)
         val (scale, offset) =
             if (doScaling) {
                 (255 / (max(0) - min(0)), -min(0))
