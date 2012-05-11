@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="Maven: com.sun:tools:1.4.2">
+    <CLASSES>
+      <root url="jar://c:/apps/jdk1.7.0_04-x64/jre/../lib/tools.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

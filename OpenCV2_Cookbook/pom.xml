@@ -1,0 +1,214 @@
+<!--
+  ~ Copyright (c) 2011-2012 Jarek Sacha. All Rights Reserved.
+  ~
+  ~ Author's e-mail: jarek.listy at gmail.com
+  -->
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>javacv.examples</groupId>
+    <artifactId>opencv2-cookbook</artifactId>
+    <packaging>pom</packaging>
+    <version>1.1.0-SNAPSHOT</version>
+    <name>OpenCV2 Cookbook Examples for JavaCV</name>
+    <url>https://code.google.com/p/javacv</url>
+    <inceptionYear>2011</inceptionYear>
+
+    <!--    
+    <licenses>
+        <license>
+            <name>My License</name>
+            <url>http://....</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+    -->
+
+    <developers>
+        <developer>
+            <name>Jarek Sacha</name>
+            <email>jsacha [at] users [dot] sf [another dot] net</email>
+        </developer>
+    </developers>
+
+    <properties>
+        <maven.compiler.source>1.5</maven.compiler.source>
+        <maven.compiler.target>1.5</maven.compiler.target>
+        <encoding>UTF-8</encoding>
+        <scala.version>2.9.2</scala.version>
+        <javacpp.version>0.1-SNAPSHOT</javacpp.version>
+        <javacv.version>0.1-SNAPSHOT</javacv.version>
+    </properties>
+    <repositories>
+        <repository>
+            <id>imagej.releases</id>
+            <url>http://maven.imagej.net/content/repositories/releases</url>
+        </repository>
+    </repositories>
+
+    <!--
+      <pluginRepositories>
+        <pluginRepository>
+          <id>scala-tools.org</id>
+          <name>Scala-Tools Maven2 Repository</name>
+          <url>http://scala-tools.org/repo-releases</url>
+        </pluginRepository>
+      </pluginRepositories>
+    -->
+    <dependencies>
+
+        <dependency>
+            <groupId>org.scala-lang</groupId>
+            <artifactId>scala-library</artifactId>
+            <version>${scala.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.scala-lang</groupId>
+            <artifactId>scala-swing</artifactId>
+            <version>${scala.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.googlecode.javacpp</groupId>
+            <artifactId>javacpp</artifactId>
+            <version>${javacpp.version}</version>
+            <scope>system</scope>
+            <systemPath>${basedir}/lib/javacpp.jar</systemPath>
+        </dependency>
+
+        <dependency>
+            <groupId>com.googlecode.javacv</groupId>
+            <artifactId>javacv</artifactId>
+            <version>${javacv.version}</version>
+            <scope>system</scope>
+            <systemPath>${basedir}/lib/javacv.jar</systemPath>
+        </dependency>
+
+        <dependency>
+            <groupId>com.googlecode.javacv</groupId>
+            <artifactId>javacv-linux-x86</artifactId>
+            <version>${javacv.version}</version>
+            <scope>system</scope>
+            <systemPath>${basedir}/lib/javacv-linux-x86.jar</systemPath>
+        </dependency>
+
+        <dependency>
+            <groupId>com.googlecode.javacv</groupId>
+            <artifactId>javacv-linux-x86_64</artifactId>
+            <version>${javacv.version}</version>
+            <scope>system</scope>
+            <systemPath>${basedir}/lib/javacv-linux-x86_64.jar</systemPath>
+        </dependency>
+
+        <dependency>
+            <groupId>com.googlecode.javacv</groupId>
+            <artifactId>javacv-macosx-x86_64</artifactId>
+            <version>${javacv.version}</version>
+            <scope>system</scope>
+            <systemPath>${basedir}/lib/javacv-macosx-x86_64.jar</systemPath>
+        </dependency>
+
+        <dependency>
+            <groupId>com.googlecode.javacv</groupId>
+            <artifactId>javacv-windows-x86</artifactId>
+            <version>${javacv.version}</version>
+            <scope>system</scope>
+            <systemPath>${basedir}/lib/javacv-windows-x86.jar</systemPath>
+        </dependency>
+
+        <dependency>
+            <groupId>com.googlecode.javacv</groupId>
+            <artifactId>javacv-windows-x86_64</artifactId>
+            <version>${javacv.version}</version>
+            <scope>system</scope>
+            <systemPath>${basedir}/lib/javacv-windows-x86_64.jar</systemPath>
+        </dependency>
+
+        <dependency>
+            <groupId>net.imagej</groupId>
+            <artifactId>ij</artifactId>
+            <version>1.45s</version>
+        </dependency>
+
+        <!-- Test -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.8.1</version>
+            <scope>test</scope>
+        </dependency>
+        <!--
+                <dependency>
+                    <groupId>org.scala-tools.testing</groupId>
+                    <artifactId>specs_${scala.version}</artifactId>
+                    <version>1.6.5</version>
+                    <scope>test</scope>
+                </dependency>
+                <dependency>
+                    <groupId>org.scalatest</groupId>
+                    <artifactId>scalatest</artifactId>
+                    <version>1.2</version>
+                    <scope>test</scope>
+                </dependency>
+        -->
+    </dependencies>
+    <build>
+        <sourceDirectory>src</sourceDirectory>
+        <testSourceDirectory>test/src</testSourceDirectory>
+        <plugins>
+            <plugin>
+                <groupId>org.scala-tools</groupId>
+                <artifactId>maven-scala-plugin</artifactId>
+                <version>2.15.0</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>compile</goal>
+                            <goal>testCompile</goal>
+                        </goals>
+                        <configuration>
+                            <args>
+                                <arg>-make:transitive</arg>
+                                <arg>-dependencyfile</arg>
+                                <arg>${project.build.directory}/.scala_dependencies</arg>
+                            </args>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.6</version>
+                <configuration>
+                    <useFile>false</useFile>
+                    <disableXmlReport>true</disableXmlReport>
+                    <!-- If you have classpath issue like NoDefClassError,... -->
+                    <!-- useManifestOnlyJar>false</useManifestOnlyJar -->
+                    <includes>
+                        <include>**/*Test.*</include>
+                        <include>**/*Suite.*</include>
+                    </includes>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <issueManagement>
+        <url>https://code.google.com/p/javacv/issues/list</url>
+    </issueManagement>
+    <mailingLists>
+        <mailingList>
+            <name>Discussion group for the JavaCV project</name>
+            <post>javacv@googlegroups.com</post>
+            <archive>https://groups.google.com/forum/?fromgroups#!forum/javacv</archive>
+        </mailingList>
+    </mailingLists>
+    <scm>
+        <connection>scm:git:https://code.google.com/p/javacv/</connection>
+        <url>https://code.google.com/p/javacv/</url>
+    </scm>
+</project>
+

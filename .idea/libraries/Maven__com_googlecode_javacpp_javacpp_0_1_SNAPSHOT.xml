@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="Maven: com.googlecode.javacpp:javacpp:0.1-SNAPSHOT">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/OpenCV2_Cookbook/lib/javacpp.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
