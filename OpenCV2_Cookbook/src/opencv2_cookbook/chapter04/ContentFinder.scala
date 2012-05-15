@@ -20,7 +20,7 @@ import com.googlecode.javacv.cpp.opencv_imgproc._
  */
 class ContentFinder {
     private var _threshold = -1f
-    private var _histogram: CvHistogram = null;
+    private var _histogram: CvHistogram = null
 
     def threshold: Float = _threshold
 
@@ -28,7 +28,7 @@ class ContentFinder {
      * Set threshold for converting the back-projected image to a binary.
      * If value is negative no thresholding will be done.
      */
-    def threshold_=(t: Float) {_threshold = t}
+    def threshold_=(t: Float) { _threshold = t }
 
     def histogram: CvHistogram = _histogram
 

@@ -36,8 +36,8 @@ object Ex1ErodingAndDilating extends App {
 
     // Erode with 7x7 structural element
     // First define rectangular kernel of size 7x7 with anchor point located in the middle, offset=3.
-    val kernelSize = 7;
-    val KernelAnchorOffset = 3;
+    val kernelSize = 7
+    val KernelAnchorOffset = 3
     val kernel = cvCreateStructuringElementEx(
         kernelSize, kernelSize,
         KernelAnchorOffset, KernelAnchorOffset,

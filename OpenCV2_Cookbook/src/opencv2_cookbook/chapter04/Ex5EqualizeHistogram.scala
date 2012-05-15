@@ -19,7 +19,7 @@ object Ex5EqualizeHistogram extends App {
     // Load image as a grayscale
     val src = loadAndShowOrExit(new File("data/group.jpg"), CV_LOAD_IMAGE_GRAYSCALE)
     // Show histogram of the source image
-    show(new Histogram1D().getHistogramImage(src), "Input histogram");
+    show(new Histogram1D().getHistogramImage(src), "Input histogram")
 
     // Apply look-up
     val dest = Histogram1D.equalize(src)
@@ -27,5 +27,5 @@ object Ex5EqualizeHistogram extends App {
     // Show inverted image
     show(dest, "Equalized Histogram")
     // Show histogram of the modified image
-    show(new Histogram1D().getHistogramImage(dest), "Equalized histogram");
+    show(new Histogram1D().getHistogramImage(dest), "Equalized histogram")
 }

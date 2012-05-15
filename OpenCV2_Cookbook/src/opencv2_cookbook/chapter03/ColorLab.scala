@@ -12,7 +12,7 @@ package opencv2_cookbook.chapter03
  * a* -100 to 100,
  * b* -100 to 100.
  *
- * The color compoenent values can be also read as UInt8 numbers the way OpenCV encodes UInt8 L*a*b* values:
+ * The color component values can be also read as UInt8 numbers the way OpenCV encodes UInt8 L*a*b* values:
  * L <- L*255/100,
  * a <- a + 128,
  * b <- b + 128.

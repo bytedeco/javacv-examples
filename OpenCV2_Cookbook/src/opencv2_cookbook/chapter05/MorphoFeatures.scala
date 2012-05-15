@@ -116,7 +116,7 @@ class MorphoFeatures {
 
         for (y <- 0 until height) {
             for (x <- 0 until width) {
-                val v = binaryRaster.getSample(x, y, 0);
+                val v = binaryRaster.getSample(x, y, 0)
                 if (v == 0) {
                     g2d.draw(new Ellipse2D.Double(x - radius, y - radius, diameter, diameter))
                 }

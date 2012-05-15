@@ -28,7 +28,7 @@ object Ex3EdgesAndCorners extends App {
 
     val corners = morpho.getCorners(image)
     val cornersOnImage = morpho.drawOnImage(corners, image)
-    show(cornersOnImage, "Corners on image");
+    show(cornersOnImage, "Corners on image")
 }
 
 

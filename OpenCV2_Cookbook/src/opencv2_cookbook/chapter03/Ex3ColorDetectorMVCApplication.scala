@@ -127,7 +127,7 @@ object Ex3ColorDetectorMVCApplication extends SimpleSwingApplication {
                     // Load the image
                     val path = fileChooser.selectedFile.getAbsoluteFile
                     if (path == null) {
-                        return;
+                        return
                     }
 
                     // Load image and update display.
