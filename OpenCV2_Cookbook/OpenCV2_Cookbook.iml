@@ -5,21 +5,24 @@
       <configuration>
         <option name="compilerLibraryLevel" value="Project" />
         <option name="compilerLibraryName" value="Maven: org.scala-lang:scala-compiler-bundle:2.9.2" />
+        <option name="deprecationWarnings" value="true" />
+        <option name="explainTypeErrors" value="true" />
         <option name="fsc" value="true" />
+        <option name="uncheckedWarnings" value="true" />
         <option name="vmOptions" value="" />
       </configuration>
     </facet>
   </component>
-  <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_1_5" inherit-compiler-output="false">
+  <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_1_6" inherit-compiler-output="false">
     <output url="file://$MODULE_DIR$/target/classes" />
     <output-test url="file://$MODULE_DIR$/target/test-classes" />
     <content url="file://$MODULE_DIR$">
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/test/src" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/target/generated-sources/annotations" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/.settings" />
       <excludeFolder url="file://$MODULE_DIR$/bin" />
       <excludeFolder url="file://$MODULE_DIR$/build" />
-      <excludeFolder url="file://$MODULE_DIR$/target" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
@@ -52,7 +55,8 @@
     <orderEntry type="library" name="Maven: com.googlecode.javacv:javacv-windows-x86_64:0.1-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: net.imagej:ij:1.45s" level="project" />
     <orderEntry type="library" name="Maven: com.sun:tools:1.4.2" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: junit:junit:4.8.1" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: junit:junit:4.10" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.hamcrest:hamcrest-core:1.1" level="project" />
   </component>
 </module>
 

@@ -1,7 +1,7 @@
 <component name="libraryTable">
   <library name="Maven: com.sun:tools:1.4.2">
     <CLASSES>
-      <root url="jar://$APPLICATION_HOME_DIR$/jre/jre/../lib/tools.jar!/" />
+      <root url="jar://$APPLICATION_HOME_DIR$/jre/lib/tools.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />

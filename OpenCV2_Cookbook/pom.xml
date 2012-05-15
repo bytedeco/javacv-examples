@@ -9,21 +9,11 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>javacv.examples</groupId>
     <artifactId>opencv2-cookbook</artifactId>
-    <packaging>pom</packaging>
+    <packaging>jar</packaging>
     <version>1.1.0-SNAPSHOT</version>
     <name>OpenCV2 Cookbook Examples for JavaCV</name>
     <url>https://code.google.com/p/javacv</url>
     <inceptionYear>2011</inceptionYear>
-
-    <!--    
-    <licenses>
-        <license>
-            <name>My License</name>
-            <url>http://....</url>
-            <distribution>repo</distribution>
-        </license>
-    </licenses>
-    -->
 
     <developers>
         <developer>
@@ -33,13 +23,14 @@
     </developers>
 
     <properties>
-        <maven.compiler.source>1.5</maven.compiler.source>
-        <maven.compiler.target>1.5</maven.compiler.target>
+        <maven.compiler.source>1.6</maven.compiler.source>
+        <maven.compiler.target>1.6</maven.compiler.target>
         <encoding>UTF-8</encoding>
         <scala.version>2.9.2</scala.version>
         <javacpp.version>0.1-SNAPSHOT</javacpp.version>
         <javacv.version>0.1-SNAPSHOT</javacv.version>
     </properties>
+
     <repositories>
         <repository>
             <id>imagej.releases</id>
@@ -47,29 +38,17 @@
         </repository>
     </repositories>
 
-    <!--
-      <pluginRepositories>
-        <pluginRepository>
-          <id>scala-tools.org</id>
-          <name>Scala-Tools Maven2 Repository</name>
-          <url>http://scala-tools.org/repo-releases</url>
-        </pluginRepository>
-      </pluginRepositories>
-    -->
     <dependencies>
-
         <dependency>
             <groupId>org.scala-lang</groupId>
             <artifactId>scala-library</artifactId>
             <version>${scala.version}</version>
         </dependency>
-
         <dependency>
             <groupId>org.scala-lang</groupId>
             <artifactId>scala-swing</artifactId>
             <version>${scala.version}</version>
         </dependency>
-
         <dependency>
             <groupId>com.googlecode.javacpp</groupId>
             <artifactId>javacpp</artifactId>
@@ -77,7 +56,6 @@
             <scope>system</scope>
             <systemPath>${basedir}/lib/javacpp.jar</systemPath>
         </dependency>
-
         <dependency>
             <groupId>com.googlecode.javacv</groupId>
             <artifactId>javacv</artifactId>
@@ -85,7 +63,6 @@
             <scope>system</scope>
             <systemPath>${basedir}/lib/javacv.jar</systemPath>
         </dependency>
-
         <dependency>
             <groupId>com.googlecode.javacv</groupId>
             <artifactId>javacv-linux-x86</artifactId>
@@ -93,7 +70,6 @@
             <scope>system</scope>
             <systemPath>${basedir}/lib/javacv-linux-x86.jar</systemPath>
         </dependency>
-
         <dependency>
             <groupId>com.googlecode.javacv</groupId>
             <artifactId>javacv-linux-x86_64</artifactId>
@@ -101,7 +77,6 @@
             <scope>system</scope>
             <systemPath>${basedir}/lib/javacv-linux-x86_64.jar</systemPath>
         </dependency>
-
         <dependency>
             <groupId>com.googlecode.javacv</groupId>
             <artifactId>javacv-macosx-x86_64</artifactId>
@@ -117,7 +92,6 @@
             <scope>system</scope>
             <systemPath>${basedir}/lib/javacv-windows-x86.jar</systemPath>
         </dependency>
-
         <dependency>
             <groupId>com.googlecode.javacv</groupId>
             <artifactId>javacv-windows-x86_64</artifactId>
@@ -125,43 +99,28 @@
             <scope>system</scope>
             <systemPath>${basedir}/lib/javacv-windows-x86_64.jar</systemPath>
         </dependency>
-
         <dependency>
             <groupId>net.imagej</groupId>
             <artifactId>ij</artifactId>
             <version>1.45s</version>
         </dependency>
-
         <!-- Test -->
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.8.1</version>
+            <version>4.10</version>
             <scope>test</scope>
         </dependency>
-        <!--
-                <dependency>
-                    <groupId>org.scala-tools.testing</groupId>
-                    <artifactId>specs_${scala.version}</artifactId>
-                    <version>1.6.5</version>
-                    <scope>test</scope>
-                </dependency>
-                <dependency>
-                    <groupId>org.scalatest</groupId>
-                    <artifactId>scalatest</artifactId>
-                    <version>1.2</version>
-                    <scope>test</scope>
-                </dependency>
-        -->
     </dependencies>
     <build>
         <sourceDirectory>src</sourceDirectory>
         <testSourceDirectory>test/src</testSourceDirectory>
+        <!-- Scala build -->
         <plugins>
             <plugin>
                 <groupId>org.scala-tools</groupId>
                 <artifactId>maven-scala-plugin</artifactId>
-                <version>2.15.0</version>
+                <version>2.15.2</version>
                 <executions>
                     <execution>
                         <goals>
@@ -178,10 +137,21 @@
                     </execution>
                 </executions>
             </plugin>
+            <!-- Java build -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>2.3.2</version>
+                <configuration>
+                    <source>${maven.compiler.source}</source>
+                    <target>${maven.compiler.target}</target>
+                </configuration>
+            </plugin>
+            <!-- Test reports -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.6</version>
+                <version>2.12</version>
                 <configuration>
                     <useFile>false</useFile>
                     <disableXmlReport>true</disableXmlReport>
@@ -195,7 +165,6 @@
             </plugin>
         </plugins>
     </build>
-
     <issueManagement>
         <url>https://code.google.com/p/javacv/issues/list</url>
     </issueManagement>
