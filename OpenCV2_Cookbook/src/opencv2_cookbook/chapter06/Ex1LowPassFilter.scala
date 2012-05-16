@@ -6,9 +6,9 @@
 
 package opencv2_cookbook.chapter06
 
+import com.googlecode.javacv.cpp.opencv_core._
 import com.googlecode.javacv.cpp.opencv_highgui._
 import com.googlecode.javacv.cpp.opencv_imgproc._
-import com.googlecode.javacv.cpp.opencv_core._
 import java.io.File
 import opencv2_cookbook.OpenCVUtils._
 
