@@ -6,11 +6,11 @@
 
 package opencv2_cookbook.chapter06
 
-import opencv2_cookbook.OpenCVUtils._
-import java.io.File
 import com.googlecode.javacv.cpp.opencv_highgui._
 import com.googlecode.javacv.cpp.opencv_imgproc._
 import com.googlecode.javacv.cpp.opencv_core._
+import java.io.File
+import opencv2_cookbook.OpenCVUtils._
 
 /**
  * The example for section "Filtering images using low-pass filters" in Chapter 6, page 142.
