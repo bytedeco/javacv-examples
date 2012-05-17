@@ -18,7 +18,7 @@ import java.io.File
 
 /**
  * Uses histogram of region in an color image to create 'template',
- * uses mean shift algorithm to find best matching location of the 'template' in another image.
+ * uses the mean shift algorithm to find best matching location of the 'template' in another image.
  * Example for section "Backprojecting a histogram to detect specific image content" in Chapter 4.
  */
 object Ex8MeanShiftDetector extends App {
