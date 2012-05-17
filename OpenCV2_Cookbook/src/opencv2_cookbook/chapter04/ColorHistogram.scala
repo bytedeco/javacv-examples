@@ -57,7 +57,7 @@ object ColorHistogram {
 }
 
 /**
- * Helper class that simplifies usage of OpenCV `cv::calcHist` function for single channel images.
+ * Helper class that simplifies usage of OpenCV `cv::calcHist` function for color images.
  *
  * See OpenCV [[http://opencv.itseez.com/modules/imgproc/doc/histograms.html?highlight=histogram]]
  * documentation to learn backend details.

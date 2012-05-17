@@ -11,7 +11,7 @@ import com.googlecode.javacv.cpp.opencv_imgproc._
 
 
 /**
- * @author Jarek Sacha
+ * Computes image similarity using `cvCompareHist`.
  */
 class ImageComparator(val referenceImage: IplImage) {
 
