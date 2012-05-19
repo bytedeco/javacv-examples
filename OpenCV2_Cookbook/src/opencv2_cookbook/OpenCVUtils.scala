@@ -6,6 +6,7 @@
 
 package opencv2_cookbook
 
+
 import com.googlecode.javacv.CanvasFrame
 import com.googlecode.javacv.cpp.opencv_core._
 import com.googlecode.javacv.cpp.opencv_features2d.KeyPoint
@@ -172,10 +173,10 @@ object OpenCVUtils {
         //        })
 
         // OpenCV drawing seems to crash a lot, so use Java2D
-        val radius = 3;
+        val radius = 3
         val bi = image.getBufferedImage
         val g2d = bi.getGraphics.asInstanceOf[Graphics2D]
-        val w = radius * 2;
+        val w = radius * 2
         g2d.setColor(Color.WHITE)
 
         val n = points.capacity()
