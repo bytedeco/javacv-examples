@@ -6,9 +6,10 @@
 
 package opencv2_cookbook.chapter08
 
-import java.io.File
-import com.googlecode.javacv.cpp.opencv_features2d._
 import opencv2_cookbook.OpenCVUtils._
+import com.googlecode.javacv.cpp.opencv_features2d._
+import com.googlecode.javacv.cpp.opencv_nonfree._
+import java.io.File
 
 
 /**
@@ -20,8 +21,13 @@ object SURF extends App {
     val image = loadAndShowOrExit(new File("data/church01.jpg"))
 
     val keyPoints = new KeyPoint()
-    val surf = new SurfFeatureDetector(2500d, 3, 4, true)
-    surf.detect(image, keyPoints, null)
+    val hessianThreshold = 2500d
+    val nOctaves = 4
+    val nOctaveLayers = 2
+    val extended = false
+    val upright = false
+    val surf = new SURF(hessianThreshold, nOctaves, nOctaveLayers, extended, upright)
+    surf.detect(image, null, keyPoints)
 
     System.out.println("keyPoints: " + keyPoints.capacity)
 

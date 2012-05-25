@@ -7,9 +7,10 @@
 package opencv2_cookbook.chapter08
 
 import opencv2_cookbook.OpenCVUtils._
-import java.io.File
-import com.googlecode.javacv.cpp.opencv_features2d._
 import com.googlecode.javacv.cpp.opencv_core._
+import com.googlecode.javacv.cpp.opencv_features2d._
+import com.googlecode.javacv.cpp.opencv_legacy._
+import java.io.File
 
 
 /**
@@ -22,6 +23,7 @@ object SURF_c extends App {
     val image = loadAndShowOrExit(new File("data/church01.jpg"))
 
     // Setup SURF
+    val mask = null
     val keyPoints = new CvSeq()
     val descriptors = new CvSeq()
     var storage = cvCreateMemStorage(0)
@@ -29,8 +31,8 @@ object SURF_c extends App {
 
     // Run SURF on the input image
     cvExtractSURF(
-        image /* image */ ,
-        null /* mask */ ,
+        image,
+        mask,
         keyPoints,
         descriptors,
         storage,

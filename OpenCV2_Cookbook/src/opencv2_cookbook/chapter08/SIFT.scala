@@ -6,10 +6,10 @@
 
 package opencv2_cookbook.chapter08
 
-import java.io.File
-import com.googlecode.javacv.cpp.opencv_features2d._
-import com.googlecode.javacv.cpp.opencv_features2d.SIFT.CommonParams._
 import opencv2_cookbook.OpenCVUtils._
+import com.googlecode.javacv.cpp.opencv_features2d._
+import com.googlecode.javacv.cpp.opencv_nonfree._
+import java.io.File
 
 
 /**
@@ -21,15 +21,13 @@ object SIFT extends App {
     val image = loadAndShowOrExit(new File("data/church01.jpg"))
 
     val keyPoints = new KeyPoint()
-    val sift = new SiftFeatureDetector(
-        0.03 /* */ ,
-        10.0 /* */ ,
-        DEFAULT_NOCTAVES,
-        DEFAULT_NOCTAVE_LAYERS,
-        DEFAULT_FIRST_OCTAVE,
-        FIRST_ANGLE
-    )
-    sift.detect(image, keyPoints, null)
+    val nFeatures = 0
+    val nOctaveLayers = 3
+    val contrastThreshold = 0.04
+    val edgeThreshold = 10
+    val sigma = 1.6
+    val sift = new SIFT(nFeatures, nOctaveLayers, contrastThreshold, edgeThreshold, sigma)
+    sift.detect(image, null, keyPoints)
 
     System.out.println("keyPoints: " + keyPoints.capacity)
 

@@ -1,9 +1,13 @@
 <component name="libraryTable">
-  <library name="Maven: com.googlecode.javacv:javacv-windows-x86_64:0.1-SNAPSHOT">
+  <library name="Maven: com.googlecode.javacv:javacv:windows-x86_64:0.1-SNAPSHOT">
     <CLASSES>
-      <root url="jar://$PROJECT_DIR$/OpenCV2_Cookbook/lib/javacv-windows-x86_64.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/com/googlecode/javacv/javacv/0.1-SNAPSHOT/javacv-0.1-SNAPSHOT-windows-x86_64.jar!/" />
     </CLASSES>
-    <JAVADOC />
-    <SOURCES />
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/com/googlecode/javacv/javacv/0.1-SNAPSHOT/javacv-0.1-SNAPSHOT-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/googlecode/javacv/javacv/0.1-SNAPSHOT/javacv-0.1-SNAPSHOT-sources.jar!/" />
+    </SOURCES>
   </library>
 </component>
