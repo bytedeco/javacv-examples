@@ -6,7 +6,6 @@
 
 package opencv2_cookbook.chapter04
 
-import opencv2_cookbook.OpenCVUtils._
 
 import com.googlecode.javacv.cpp.opencv_core._
 import com.googlecode.javacv.cpp.opencv_imgproc._
@@ -23,7 +22,7 @@ object ColorHistogram {
      */
     def colorReduce(image: IplImage, div: Int = 64) {
 
-        val mat = toCvMat(image)
+        val mat = image.asCvMat()
 
         // Total number of elements, combining components from each channel
         val nbElements = mat.rows * mat.cols * mat.channels

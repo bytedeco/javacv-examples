@@ -145,7 +145,7 @@ object OpenCVUtils {
     def show(mat: CvMat, title: String) {
         val canvas = new CanvasFrame(title)
         canvas.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE)
-        canvas.showImage(toIplImage(mat))
+        canvas.showImage(mat.asIplImage())
     }
 
 
@@ -260,24 +260,6 @@ object OpenCVUtils {
         val imageScaled = cvCreateImage(cvGetSize(image), IPL_DEPTH_32F, image.nChannels)
         cvConvertScale(image, imageScaled, scale, 0)
         imageScaled
-    }
-
-
-    /**
-     * Convert in `CvMat` object to `IplImage`.
-     */
-    def toIplImage(mat: CvMat): IplImage = {
-        val image = cvCreateImage(mat.cvSize(), mat.elemSize(), 1)
-        cvGetImage(mat, image)
-        image
-    }
-
-    /**
-     * Convert in `IplImage` object to `CvMat`.
-     *
-     */
-    def toCvMat(image: IplImage): CvMat = {
-        cvGetMat(image, new CvMat(), null, 0)
     }
 
 

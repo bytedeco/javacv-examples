@@ -35,7 +35,7 @@ object Ex3HoughLineSegments extends App {
     // Set probabilistic Hough transform
     val finder = new LineFinder(minLength = 100, minGap = 20, minVotes = 80)
 
-    finder.findLines(toCvMat(contours))
+    finder.findLines(contours.asCvMat())
 
     // Draw lines on the canny contour image
     val colorDst = cvCreateImage(cvGetSize(src), src.depth(), 3)

@@ -7,8 +7,6 @@
 package opencv2_cookbook.chapter06
 
 
-import opencv2_cookbook.OpenCVUtils._
-
 import com.googlecode.javacv.cpp.opencv_core._
 import com.googlecode.javacv.cpp.opencv_imgproc._
 
@@ -35,7 +33,7 @@ class LaplacianZC {
         val dest = cvCreateImage(cvGetSize(src), IPL_DEPTH_32F, src.nChannels())
         cvLaplace(src, dest, aperture)
 
-        laplace = toCvMat(dest)
+        laplace = dest.asCvMat()
 
         dest
     }
@@ -69,7 +67,7 @@ class LaplacianZC {
             }
         }
 
-        toIplImage(dest)
+        dest.asIplImage()
     }
 
 }
