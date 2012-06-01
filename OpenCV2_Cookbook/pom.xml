@@ -27,8 +27,8 @@
         <maven.compiler.target>1.6</maven.compiler.target>
         <encoding>UTF-8</encoding>
         <scala.version>2.9.2</scala.version>
-        <javacpp.version>0.1-SNAPSHOT</javacpp.version>
-        <javacv.version>0.1-SNAPSHOT</javacv.version>
+        <javacpp.version>0.1</javacpp.version>
+        <javacv.version>0.1</javacv.version>
         <platform.name>${os.name}-${os.arch}</platform.name>
     </properties>
 
