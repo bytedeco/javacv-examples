@@ -18,15 +18,18 @@ import javax.swing.JFrame._
  */
 object Ex1MyFirstOpenCVApp extends App {
 
-    // read an image
+    // Read an image
     val image = cvLoadImage("data/boldt.jpg")
 
-    // create image window named "My Image"
-    val canvas = new CanvasFrame("My Image")
+    // Create image window named "My Image".
+    //
+    // Note that you need to indicate to CanvasFrame not to apply gamma correction,
+    // by setting gamma to 1, otherwise the image will not look correct.
+    val canvas = new CanvasFrame("My Image", 1)
 
-    // request closing of the application when the image window is closed
+    // Request closing of the application when the image window is closed
     canvas.setDefaultCloseOperation(EXIT_ON_CLOSE)
 
-    // show image on window
+    // Show image on window
     canvas.showImage(image)
 }
