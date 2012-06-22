@@ -6,10 +6,10 @@
 
 package opencv2_cookbook.chapter08
 
-import opencv2_cookbook.OpenCVUtils._
 import com.googlecode.javacv.cpp.opencv_features2d._
 import com.googlecode.javacv.cpp.opencv_nonfree._
 import java.io.File
+import opencv2_cookbook.OpenCVUtils._
 
 
 /**
@@ -29,16 +29,6 @@ object SIFT extends App {
     val sift = new SIFT(nFeatures, nOctaveLayers, contrastThreshold, edgeThreshold, sigma)
     sift.detect(image, null, keyPoints)
 
-    System.out.println("keyPoints: " + keyPoints.capacity)
-
-    // Convert keyPoints to an array
-    val n = keyPoints.capacity
-    val points = new Array[KeyPoint](n)
-    for (i <- 0 until n) {
-        val p = new KeyPoint(keyPoints.position(i))
-        points(i) = p
-    }
-
     // Draw keyPoints
-    show(drawOnImage(image, points), "Key Points")
+    show(drawOnImage(image, keyPoints), "Key Points")
 }

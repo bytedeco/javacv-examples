@@ -3,6 +3,7 @@
  *
  * Author's e-mail: jarek.listy at gmail.com
  */
+
 package opencv2_cookbook.chapter08
 
 import com.googlecode.javacv.cpp.opencv_features2d.{KeyPoint, GFTTDetector}
@@ -32,14 +33,6 @@ object Ex3GoodFeaturesToTrack extends App {
     val keyPoints = new KeyPoint()
     gftt.detect(image, keyPoints, null)
 
-    // Convert keyPoints to an array
-    val n = keyPoints.capacity
-    val points = new Array[KeyPoint](n)
-    for (i <- 0 until n) {
-        val p = new KeyPoint(keyPoints.position(i))
-        points(i) = p
-    }
-
     // Draw keyPoints
-    show(drawOnImage(image, points), "Good Features to Track Detector")
+    show(drawOnImage(image, keyPoints), "Good Features to Track Detector")
 }

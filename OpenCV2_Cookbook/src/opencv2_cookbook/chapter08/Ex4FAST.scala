@@ -27,17 +27,5 @@ object Ex4FAST extends App {
     ffd.detect(image, keyPoints, null)
 
     // Draw keyPoints
-    show(drawOnImage(image, asArray(keyPoints)), "Good Features to Track Detector")
-
-    def asArray(keyPoints: KeyPoint): Array[KeyPoint] = {
-        // Convert keyPoints to an array
-        val n = keyPoints.capacity
-        val points = new Array[KeyPoint](n)
-        for (i <- 0 until n) {
-            val p = new KeyPoint(keyPoints.position(i))
-            points(i) = p
-        }
-
-        points
-    }
+    show(drawOnImage(image, keyPoints), "Good Features to Track Detector")
 }

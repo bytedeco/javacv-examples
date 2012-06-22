@@ -11,10 +11,9 @@ import com.googlecode.javacv.CanvasFrame
 import com.googlecode.javacv.cpp.opencv_core._
 import com.googlecode.javacv.cpp.opencv_features2d.KeyPoint
 import com.googlecode.javacv.cpp.opencv_highgui._
-
 import java.awt._
-import java.awt.image.BufferedImage
 import java.awt.geom.Ellipse2D
+import java.awt.image.BufferedImage
 import java.io.{FileNotFoundException, IOException, File}
 import javax.swing.JFrame
 
@@ -212,6 +211,13 @@ object OpenCVUtils {
         bi
     }
 
+    /**
+     * Draw circles at key point locations on an image.
+     * Circle radius is proportional to key point size.
+     */
+    def drawOnImage(image: IplImage, points: KeyPoint): Image = {
+        drawOnImage(image, toArray(points))
+    }
 
     /**
      * Draw a shape on an image.
@@ -260,6 +266,19 @@ object OpenCVUtils {
         val imageScaled = cvCreateImage(cvGetSize(image), IPL_DEPTH_32F, image.nChannels)
         cvConvertScale(image, imageScaled, scale, 0)
         imageScaled
+    }
+
+
+    def toArray(keyPoints: KeyPoint): Array[KeyPoint] = {
+        // Convert keyPoints to an array
+        val n = keyPoints.capacity
+        val points = new Array[KeyPoint](n)
+        for (i <- 0 until n) {
+            val p = new KeyPoint(keyPoints.position(i))
+            points(i) = p
+        }
+
+        points
     }
 
 
@@ -324,6 +343,7 @@ object OpenCVUtils {
         roi.height(r.height)
         roi
     }
+
 
     /**
      * Convert `CvRect` to AWT `Rectangle`.
