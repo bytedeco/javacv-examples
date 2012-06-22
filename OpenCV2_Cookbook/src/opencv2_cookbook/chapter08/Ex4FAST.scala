@@ -11,15 +11,14 @@ import java.io.File
 import opencv2_cookbook.OpenCVUtils._
 
 /**
- * @author Jarek Sacha
- * @since 6/21/12 9:31 AM
+ * The example for section "Detecting FAST features" in Chapter 8, page 203.
  */
 object Ex4FAST extends App {
 
     // Read input image
     val image = loadAndShowOrExit(new File("data/church01.jpg"))
 
-    // Detect fast features
+    // Detect FAST features
     val ffd = new FastFeatureDetector(
         40 /* threshold for detection */ ,
         true /* non-max suppression */)
@@ -27,5 +26,5 @@ object Ex4FAST extends App {
     ffd.detect(image, keyPoints, null)
 
     // Draw keyPoints
-    show(drawOnImage(image, keyPoints), "Good Features to Track Detector")
+    show(drawOnImage(image, keyPoints), "FAST Features")
 }
