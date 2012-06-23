@@ -178,12 +178,16 @@ object OpenCVUtils {
         val w = radius * 2
         g2d.setColor(Color.WHITE)
 
+        val oldPosition = points.position()
         val n = points.capacity()
         println("n: " + n)
         for (i <- 0 until n) {
             val p = points.position(i)
             g2d.draw(new Ellipse2D.Double(p.x - radius, p.y - radius, w, w))
         }
+
+        // Reset position explicitly to avoid issues from other uses of this position-based container.
+        points.position(oldPosition)
 
         bi
     }
@@ -271,12 +275,16 @@ object OpenCVUtils {
 
     def toArray(keyPoints: KeyPoint): Array[KeyPoint] = {
         // Convert keyPoints to an array
+        val oldPosition = keyPoints.position()
         val n = keyPoints.capacity
         val points = new Array[KeyPoint](n)
         for (i <- 0 until n) {
             val p = new KeyPoint(keyPoints.position(i))
             points(i) = p
         }
+
+        // Reset position explicitly to avoid issues from other uses of this position-based container.
+        keyPoints.position(oldPosition)
 
         points
     }

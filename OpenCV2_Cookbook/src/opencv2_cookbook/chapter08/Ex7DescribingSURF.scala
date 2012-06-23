@@ -55,10 +55,6 @@ object Ex7DescribingSURF extends App {
     // Select only 25 best matches
     val bestMatches = selectBest(matches, 25)
 
-    // Reset position to 0 or there will be trouble while calling  `drawMatches`.
-    // If you did something to other lists, like keyPoints, you will have to reset their `position` them too.
-    bestMatches.position(0)
-
     // Draw best matches
     val imageMatches = cvCreateImage(new CvSize(images(0).width + images(1).width, images(0).height), images(0).depth, 3)
     drawMatches(images(0), keyPoints(0), images(1), keyPoints(1),
@@ -73,6 +69,7 @@ object Ex7DescribingSURF extends App {
      */
     private def selectBest(matches: DMatch, numberToSelect: Int): DMatch = {
         // Convert to Scala collection for the sake of sorting
+        val oldPosition = matches.position()
         val a = new Array[DMatch](matches.capacity())
         for (i <- 0 until a.size) {
             val src = matches.position(i)
@@ -80,6 +77,8 @@ object Ex7DescribingSURF extends App {
             copy(src, dest)
             a(i) = dest
         }
+        // Reset position explicitly to avoid issues from other uses of this position-based container.
+        matches.position(oldPosition)
 
         // Sort
         val aSorted = a.sortWith(_.compare(_))
@@ -91,6 +90,9 @@ object Ex7DescribingSURF extends App {
             // We have to reassign all values individually, and hope that API will not any new ones.
             copy(aSorted(i), best.position(i))
         }
+
+        // Set position to 0 explicitly to avoid issues from other uses of this position-based container.
+        best.position(0)
 
         best
     }
