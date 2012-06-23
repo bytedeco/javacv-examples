@@ -40,8 +40,8 @@ object Ex7DescribingSURF extends App {
     // Detect SURF features and compute descriptors for both images
     for (i <- 0 to 1) {
         surf.detect(images(i), null, keyPoints(i))
-        // Create non-empty CvMat, using simply `new CvMat()` leads to an exception.
-        descriptors(i) = CvMat.create(1, 1)
+        // Create CvMat initialized with empty pointer, using simply `new CvMat()` leads to an exception.
+        descriptors(i) = new CvMat(null)
         surfDesc.compute(images(i), keyPoints(i), descriptors(i))
     }
 
