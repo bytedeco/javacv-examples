@@ -63,7 +63,7 @@ object Ex7DescribingSURF extends App {
     val imageMatches = cvCreateImage(new CvSize(images(0).width + images(1).width, images(0).height), images(0).depth, 3)
     drawMatches(images(0), keyPoints(0), images(1), keyPoints(1),
         bestMatches, imageMatches, CvScalar.BLUE, CvScalar.RED, null, DrawMatchesFlags.DEFAULT)
-    show(imageMatches, "Top Matches")
+    show(imageMatches, "Best SURF Feature Matches")
 
 
     //----------------------------------------------------------------------------------------------------------------
