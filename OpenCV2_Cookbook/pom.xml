@@ -27,8 +27,8 @@
         <maven.compiler.target>1.6</maven.compiler.target>
         <encoding>UTF-8</encoding>
         <scala.version>2.9.2</scala.version>
-        <javacpp.version>0.1</javacpp.version>
-        <javacv.version>0.1</javacv.version>
+        <javacpp.version>0.2</javacpp.version>
+        <javacv.version>0.2</javacv.version>
         <platform.name>${os.name}-${os.arch}</platform.name>
     </properties>
 
@@ -97,7 +97,7 @@
             <plugin>
                 <groupId>net.alchim31.maven</groupId>
                 <artifactId>scala-maven-plugin</artifactId>
-                <version>3.0.2</version>
+                <version>3.1.0</version>
                 <executions>
                     <execution>
                         <id>scala-compile-first</id>
