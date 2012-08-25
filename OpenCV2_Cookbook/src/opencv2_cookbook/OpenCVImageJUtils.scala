@@ -6,35 +6,38 @@
 
 package opencv2_cookbook
 
-import java.awt.image._
-import ij.process._
 import com.googlecode.javacv.cpp.opencv_core.IplImage
+import ij.process._
+import java.awt.image._
+import java.awt.image.{BufferedImage => BI}
 
 
+/** Helper methods for integration with ImageJ. */
 object OpenCVImageJUtils {
 
-    /**
-     * Convert OpenCV `IplImage` to ImageJ's ImageProcessor. Depending on the type input image different instance
-     * of `ImageProcessor` will be created, for color images it will be `ColorProcessor`, for 8-bit gray level `ByteProcessor`.
-     * Other pixel types are currently not supported.
-     *
-     * @param image input image.
-     */
+    /** Convert OpenCV `IplImage` to ImageJ's ImageProcessor.
+      *
+      * Depending on the type input image different instance
+      * of `ImageProcessor` will be created, for color images it will be `ColorProcessor`, for 8-bit gray level `ByteProcessor`.
+      * Other pixel types are currently not supported.
+      *
+      * @param image input image.
+      */
     def toImageProcessor(image: IplImage): ImageProcessor = {
         val bi = image.getBufferedImage
         bi.getType match {
-            case BufferedImage.TYPE_BYTE_GRAY => new ByteProcessor(bi)
-            case BufferedImage.TYPE_3BYTE_BGR => new ColorProcessor(bi)
+            case BI.TYPE_BYTE_GRAY => new ByteProcessor(bi)
+            case BI.TYPE_3BYTE_BGR => new ColorProcessor(bi)
             case t => throw new IllegalArgumentException("Unsuported BufferedImage type " + t)
         }
     }
 
-    /**
-     * Convert OpenCV `IplImage` to ImageJ's `ColorProcessor`.
-     *
-     * @param image input image.
-     * @throws IllegalArgumentException if `IplImage` is not a color image.
-     */
+
+    /** Convert OpenCV `IplImage` to ImageJ's `ColorProcessor`.
+      *
+      * @param image input image.
+      * @throws IllegalArgumentException if `IplImage` is not a color image.
+      */
     def toColorProcessor(image: IplImage): ColorProcessor = {
         val ip = toImageProcessor(image)
         if (ip.isInstanceOf[ColorProcessor]) {
@@ -45,6 +48,7 @@ object OpenCVImageJUtils {
     }
 
 
+    /** Convert ImageJ's `ImageProcessor` to `BufferedImage`. */
     def toBufferedImage(ip: ImageProcessor): BufferedImage = {
 
         val BP = classOf[ByteProcessor]
@@ -53,7 +57,7 @@ object OpenCVImageJUtils {
             case BP => ip.getBufferedImage
             case CP => {
                 // Create BufferedImage of RGB type that JavaCV likes
-                val dest = new BufferedImage(ip.getWidth, ip.getHeight, BufferedImage.TYPE_3BYTE_BGR)
+                val dest = new BufferedImage(ip.getWidth, ip.getHeight, BI.TYPE_3BYTE_BGR)
                 // Easiest way to transfer the data is to draw the input image on the output image,
                 // This handles all needed color representation conversions, since both are variants of
                 val g = dest.getGraphics
@@ -65,15 +69,15 @@ object OpenCVImageJUtils {
 
     }
 
-    /**
-     * Create instance of ImageProcessor from a BufferedImage
-     * <p/>
-     * Based on net.sf.ij.jaiio.ImagePlusCreator#createProcessor
-     *
-     * @param image     input image
-     * @return ImageProcessor created from input BufferedImage.
-     * @throws UnsupportedImageModelException when enable to create ImagePlus.
-     */
+
+    /** Convert BufferedImage to ImageJ's ImageProcessor.
+      *
+      * Based on net.sf.ij.jaiio.ImagePlusCreator#createProcessor
+      *
+      * @param image     input image
+      * @return ImageProcessor created from input BufferedImage.
+      * @throws UnsupportedImageModelException when enable to create ImagePlus.
+      */
     def toImageProcessor(image: BufferedImage): ImageProcessor = {
         val raster = image.getRaster
         val colorModel = image.getColorModel
@@ -92,8 +96,8 @@ object OpenCVImageJUtils {
             val w = image.getWidth
             val h = image.getHeight
             bi.getType match {
-                case BufferedImage.TYPE_BYTE_GRAY => new ByteProcessor(bi)
-                case BufferedImage.TYPE_BYTE_BINARY =>
+                case BI.TYPE_BYTE_GRAY => new ByteProcessor(bi)
+                case BI.TYPE_BYTE_BINARY =>
                     val bp = new ByteProcessor(w, h)
                     val data = bi.getData
                     val p = Array(0)
@@ -111,22 +115,23 @@ object OpenCVImageJUtils {
             }
             val w = image.getWidth
             val h = image.getHeight
+            import java.awt.image.{DataBuffer => DB}
             dataBuffer.getDataType match {
-                case DataBuffer.TYPE_BYTE =>
+                case DB.TYPE_BYTE =>
                     new ByteProcessor(w, h, (dataBuffer.asInstanceOf[DataBufferByte]).getData, colorModel)
-                case DataBuffer.TYPE_USHORT =>
+                case DB.TYPE_USHORT =>
                     new ShortProcessor(w, h, (dataBuffer.asInstanceOf[DataBufferUShort]).getData, colorModel)
-                case DataBuffer.TYPE_SHORT =>
+                case DB.TYPE_SHORT =>
                     val pixels = (dataBuffer.asInstanceOf[DataBufferShort]).getData
                     pixels.foreach(_ + 32768)
                     new ShortProcessor(w, h, pixels, colorModel)
-                case DataBuffer.TYPE_INT =>
+                case DB.TYPE_INT =>
                     new FloatProcessor(w, h, (dataBuffer.asInstanceOf[DataBufferInt]).getData)
-                case DataBuffer.TYPE_FLOAT =>
+                case DB.TYPE_FLOAT =>
                     new FloatProcessor(w, h, dataBuffer.asInstanceOf[DataBufferFloat].getData, colorModel)
-                case DataBuffer.TYPE_DOUBLE =>
+                case DB.TYPE_DOUBLE =>
                     new FloatProcessor(w, h, (dataBuffer.asInstanceOf[DataBufferDouble]).getData)
-                case DataBuffer.TYPE_UNDEFINED =>
+                case DB.TYPE_UNDEFINED =>
                     throw new IllegalArgumentException("Pixel type is undefined.")
                 case _ =>
                     throw new IllegalArgumentException("Unrecognized DataBuffer data type")
