@@ -13,11 +13,10 @@ import java.io.File
 import opencv2_cookbook.OpenCVUtils._
 
 
-/**
- * Example for section "Describing SURF features" in chapter 8, page 212.
- *
- * There are a couple of tricky steps, in particular then sorting descriptors.
- */
+/** Example for section "Describing SURF features" in chapter 8, page 212.
+  *
+  * There are a couple of tricky steps, in particular then sorting descriptors.
+  */
 object Ex7DescribingSURF extends App {
 
     // Read input image
@@ -49,6 +48,8 @@ object Ex7DescribingSURF extends App {
     val matcher = new BFMatcher(NORM_L2)
 
     val matches = new DMatch()
+    // "match" is a keyword in Scala, to avoid conflict between a keyword and a method match of the BFMatcher,
+    // we need to enclose method name in ticks: `match`.
     matcher.`match`(descriptors(0), descriptors(1), matches, null)
     println("Matched: " + matches.capacity)
 
@@ -64,9 +65,8 @@ object Ex7DescribingSURF extends App {
 
     //----------------------------------------------------------------------------------------------------------------
 
-    /**
-     * Select only the best matches from the list. Return new list.
-     */
+
+    /** Select only the best matches from the list. Return new list. */
     private def selectBest(matches: DMatch, numberToSelect: Int): DMatch = {
         // Convert to Scala collection for the sake of sorting
         val oldPosition = matches.position()
@@ -97,7 +97,10 @@ object Ex7DescribingSURF extends App {
         best
     }
 
+
     private def copy(src: DMatch, dest: DMatch) {
+        // TODO: use Pointer.copy() after JavaCV/JavaCPP 0.3 is released (http://code.google.com/p/javacpp/source/detail?r=51f4daa13d618c6bd6a5556ff2096d0e834638cc)
+        // dest.put(src)
         dest.distance(src.distance)
         dest.imgIdx(src.imgIdx)
         dest.queryIdx(src.queryIdx)
