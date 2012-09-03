@@ -15,7 +15,7 @@ import opencv2_cookbook.OpenCVUtils._
 /**
  * The first example for section "Calibrating a camera" in Chapter 9, page 219.
  *
- * Illustrates one of calibration steps, detection of a chessboard pattern in a calibration image.
+ * Illustrates one of calibration steps, detection of a chessboard pattern in a calibration board.
  */
 object Ex1FindChessboardCorners extends App {
 

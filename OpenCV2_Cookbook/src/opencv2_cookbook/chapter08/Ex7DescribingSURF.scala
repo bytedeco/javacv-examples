@@ -15,7 +15,8 @@ import opencv2_cookbook.OpenCVUtils._
 
 /** Example for section "Describing SURF features" in chapter 8, page 212.
   *
-  * There are a couple of tricky steps, in particular then sorting descriptors.
+  * Computes SURF features,  extracts their descriptors, and finds best matching descriptors between two images of the same object.
+  * There are a couple of tricky steps, in particular sorting the descriptors.
   */
 object Ex7DescribingSURF extends App {
 
