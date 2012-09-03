@@ -6,15 +6,15 @@
 
 package opencv2_cookbook.chapter03
 
-
 import com.googlecode.javacv.CanvasFrame
 import com.googlecode.javacv.cpp.opencv_core.IplImage
 import java.awt.Cursor._
 import java.io.File
 import javax.swing.WindowConstants
-import swing._
-import FileChooser.Result.Approve
-import Dialog.Message.Error
+import scala.swing.Dialog.Message.Error
+import scala.swing.FileChooser.Result.Approve
+import scala.swing._
+
 
 /**
  * Example for sections "Using a controller to communicate with processing modules"
@@ -83,7 +83,9 @@ object Ex2ColorDetectorSimpleApplication extends SimpleSwingApplication {
      * Display image in a window with given caption.
      */
     private def showImage(caption: String, image: IplImage) {
-        val canvas = new CanvasFrame(caption)
+        // Note that you need to indicate to CanvasFrame not to apply gamma correction,
+        // by setting gamma to 1, otherwise the image will not look correct.
+        val canvas = new CanvasFrame(caption, 1)
         canvas.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE)
         canvas.showImage(image)
     }
