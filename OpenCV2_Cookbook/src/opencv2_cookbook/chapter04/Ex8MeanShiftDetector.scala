@@ -6,21 +6,26 @@
 
 package opencv2_cookbook.chapter04
 
-import opencv2_cookbook.OpenCVUtils._
-
 import com.googlecode.javacv.cpp.opencv_core._
 import com.googlecode.javacv.cpp.opencv_highgui._
 import com.googlecode.javacv.cpp.opencv_imgproc._
 import com.googlecode.javacv.cpp.opencv_video._
-
 import java.awt.Rectangle
 import java.io.File
+import opencv2_cookbook.OpenCVUtils._
 
-/**
- * Uses histogram of region in an color image to create 'template',
- * uses the mean shift algorithm to find best matching location of the 'template' in another image.
- * Example for section "Backprojecting a histogram to detect specific image content" in Chapter 4.
- */
+
+/** Uses the mean shift algorithm to find best matching location of the 'template' in another image.
+  *
+  * Matching is done using the hue channel of the input image converted to HSV color space.
+  * Histogram of a region in the hue channel is used to create a 'template'.
+  *
+  * The target image, where we want to find a matching region, is also converted to HSV.
+  * Histogram of the template is back projected in the hue channel.
+  * The mean shift algorithm searches in the back projected image to find best match to the template.
+  *
+  * Example for section "Using the mean shift algorithm to find an object" in Chapter 4.
+  */
 object Ex8MeanShiftDetector extends App {
 
     //
