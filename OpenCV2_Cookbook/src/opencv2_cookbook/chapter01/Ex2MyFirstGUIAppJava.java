@@ -32,7 +32,9 @@ import static javax.swing.JOptionPane.showMessageDialog;
  */
 public final class Ex2MyFirstGUIAppJava extends JFrame {
 
-    private final JFileChooser fileChooser = new JFileChooser();
+	private static final long serialVersionUID = 1L;
+
+	private final JFileChooser fileChooser = new JFileChooser();
 
     /**
      * Component for displaying the image
@@ -55,7 +57,9 @@ public final class Ex2MyFirstGUIAppJava extends JFrame {
 
         // Action performed when "Process" button is pressed
         final Action processAction = new AbstractAction("Process") {
-            @Override
+        	private static final long serialVersionUID = 1L;
+
+        	@Override
             public void actionPerformed(final ActionEvent e) {
                 setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
                 try {
@@ -75,6 +79,7 @@ public final class Ex2MyFirstGUIAppJava extends JFrame {
 
         // Action performed when "Open Image" button is pressed
         final Action openImageAction = new AbstractAction("Open Image") {
+        	private static final long serialVersionUID = 1L;
 
             @Override
             public void actionPerformed(final ActionEvent e) {
