@@ -9,7 +9,7 @@ package opencv2_cookbook
 
 import com.googlecode.javacv.CanvasFrame
 import com.googlecode.javacv.cpp.opencv_core._
-import com.googlecode.javacv.cpp.opencv_features2d.KeyPoint
+import com.googlecode.javacv.cpp.opencv_features2d.{DMatch, KeyPoint}
 import com.googlecode.javacv.cpp.opencv_highgui._
 import java.awt._
 import java.awt.geom.Ellipse2D
@@ -18,7 +18,7 @@ import java.io.{FileNotFoundException, IOException, File}
 import javax.swing.JFrame
 import scala.swing.Swing
 
-
+/** Helper methods that simplify use of OpenCV API. */
 object OpenCVUtils {
 
     /** Load an image and show in a CanvasFrame.
@@ -103,20 +103,19 @@ object OpenCVUtils {
     }
 
 
-    /**
-     * Load an image. If image cannot be loaded the application will exit with code 1.
-     *
-     * @param flags Flags specifying the color type of a loaded image:
-     *              <ul>
-     *              <li> `>0` Return a 3-channel color image</li>
-     *              <li> `=0` Return a grayscale image</li>
-     *              <li> `<0` Return the loaded image as is. Note that in the current implementation
-     *              the alpha channel, if any, is stripped from the output image. For example, a 4-channel
-     *              RGBA image is loaded as RGB if the `flags` is greater than 0.</li>
-     *              </ul>
-     *              Default is grayscale.
-     * @return loaded image
-     */
+    /** Load an image. If image cannot be loaded the application will exit with code 1.
+      *
+      * @param flags Flags specifying the color type of a loaded image:
+      *              <ul>
+      *              <li> `>0` Return a 3-channel color image</li>
+      *              <li> `=0` Return a grayscale image</li>
+      *              <li> `<0` Return the loaded image as is. Note that in the current implementation
+      *              the alpha channel, if any, is stripped from the output image. For example, a 4-channel
+      *              RGBA image is loaded as RGB if the `flags` is greater than 0.</li>
+      *              </ul>
+      *              Default is grayscale.
+      * @return loaded image
+      */
     def loadMatOrExit(file: File, flags: Int = CV_LOAD_IMAGE_GRAYSCALE): CvMat = {
         // Read input image
         val image = cvLoadImageM(file.getAbsolutePath, flags)
@@ -271,6 +270,27 @@ object OpenCVUtils {
 
     /** Convert native vector to JVM array.
       *
+      * @param matches pointer to a native vector containing DMatches.
+      * @return
+      */
+    def toArray(matches: DMatch): Array[DMatch] = {
+        val oldPosition = matches.position()
+        val result = new Array[DMatch](matches.capacity())
+        for (i <- 0 until result.size) {
+            val src = matches.position(i)
+            val dest = new DMatch()
+            copy(src, dest)
+            result(i) = dest
+        }
+        // Reset position explicitly to avoid issues from other uses of this position-based container.
+        matches.position(oldPosition)
+
+        result
+    }
+
+
+    /** Convert native vector to JVM array.
+      *
       * @param keyPoints pointer to a native vector containing KeyPoints.
       */
     def toArray(keyPoints: KeyPoint): Array[KeyPoint] = {
@@ -287,6 +307,26 @@ object OpenCVUtils {
         keyPoints.position(oldPosition)
 
         points
+    }
+
+
+    /** Convert between two OpenCV representations of points.
+      *
+      * This representation is needed, for instance, by `cvFindFundamentalMat` function.
+      *
+      * @param points input points
+      * @return matrix containing points. First index is the point index.
+      *         Second index is always 0. Third index corresponds to `x` and `y` coordinates.
+      */
+    def toCvMat(points: CvPoint2D32f): CvMat = {
+        val oldPosition = points.position()
+        val m = CvMat.create(points.capacity(), 1, CV_32FC(2))
+        for (i <- 0 until points.capacity) {
+            m.put(i, 0, 0, points.position(i).x)
+            m.put(i, 0, 1, points.position(i).y)
+        }
+        points.position(oldPosition)
+        m
     }
 
 
@@ -355,8 +395,60 @@ object OpenCVUtils {
     }
 
 
+    /** Convert a Scala collection to a JavaCV "vector".
+      *
+      * @param src Scala collection
+      * @return JavaCV/native collection
+      */
+    def toNativeVector(src: Array[DMatch]): DMatch = {
+        val dest = new DMatch(src.length)
+        for (i <- 0 until src.length) {
+            // Since there is no way to `put` objects into a vector DMatch,
+            // We have to reassign all values individually, and hope that API will not any new ones.
+            copy(src(i), dest.position(i))
+        }
+        // Set position to 0 explicitly to avoid issues from other uses of this position-based container.
+        dest.position(0)
+
+        dest
+    }
+
+
     /** Convert `CvRect` to AWT `Rectangle`. */
     def toRectangle(rect: CvRect): Rectangle = {
         new Rectangle(rect.x, rect.y, rect.width, rect height)
     }
+
+
+    /** Copy content of a single DMatch object.
+      *
+      * If `src` is a vector, only the first element is copied.
+      *
+      * @param src source.
+      * @param dest destination.
+      */
+    def copy(src: DMatch, dest: DMatch) {
+        // TODO: use Pointer.copy() after JavaCV/JavaCPP 0.3 is released (http://code.google.com/p/javacpp/source/detail?r=51f4daa13d618c6bd6a5556ff2096d0e834638cc)
+        // dest.put(src)
+        dest.distance(src.distance)
+        dest.imgIdx(src.imgIdx)
+        dest.queryIdx(src.queryIdx)
+        dest.trainIdx(src.trainIdx)
+    }
+
+
+    /** Copy content of a single CvPoint2D32f object.
+      *
+      * If `src` is a vector, only the first element is copied.
+      *
+      * @param src source.
+      * @param dest destination.
+      */
+    def copy(src: CvPoint2D32f, dest: CvPoint2D32f) {
+        // TODO: use Pointer.copy() after JavaCV/JavaCPP 0.3 is released (http://code.google.com/p/javacpp/source/detail?r=51f4daa13d618c6bd6a5556ff2096d0e834638cc)
+        // dest.put(src)
+        dest.x(src.x)
+        dest.y(src.y)
+    }
+
 }
