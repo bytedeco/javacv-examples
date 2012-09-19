@@ -16,7 +16,6 @@ import java.awt.geom.Ellipse2D
 import java.awt.image.BufferedImage
 import java.io.{FileNotFoundException, IOException, File}
 import javax.swing.JFrame
-import scala.swing.Swing
 
 /** Helper methods that simplify use of OpenCV API. */
 object OpenCVUtils {
@@ -129,31 +128,25 @@ object OpenCVUtils {
 
     /** Show image in a window. Closing the window will exit the application. */
     def show(image: IplImage, title: String) {
-        Swing.onEDT({
-            val canvas = new CanvasFrame(title, 1)
-            canvas.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE)
-            canvas.showImage(image)
-        })
+        val canvas = new CanvasFrame(title, 1)
+        canvas.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE)
+        canvas.showImage(image)
     }
 
 
     /** Show image in a window. Closing the window will exit the application. */
     def show(mat: CvMat, title: String) {
-        Swing.onEDT({
-            val canvas = new CanvasFrame(title, 1)
-            canvas.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE)
-            canvas.showImage(mat.asIplImage())
-        })
+        val canvas = new CanvasFrame(title, 1)
+        canvas.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE)
+        canvas.showImage(mat.asIplImage())
     }
 
 
     /** Show image in a window. Closing the window will exit the application. */
     def show(image: Image, title: String) {
-        Swing.onEDT({
-            val canvas = new CanvasFrame(title, 1)
-            canvas.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE)
-            canvas.showImage(image)
-        })
+        val canvas = new CanvasFrame(title, 1)
+        canvas.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE)
+        canvas.showImage(image)
     }
 
 
