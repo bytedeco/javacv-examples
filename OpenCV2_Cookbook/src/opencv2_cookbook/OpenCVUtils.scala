@@ -152,33 +152,16 @@ object OpenCVUtils {
 
     /** Draw circles at feature point locations on an image. */
     def drawOnImage(image: IplImage, points: CvPoint2D32f): Image = {
-        //        val color = CvScalar.WHITE
-        //        val radius: Int = 3
-        //        val thickness: Int = 2
-        //        points.foreach(p => {
-        //            println("(" + p.x + ", " + p.y + ")")
-        //            val center = new CvPoint(new CvPoint2D32f(p.x, p.y))
-        //            cvCircle(image, center, radius, color, thickness, 8, 0)
-        //        })
-
         // OpenCV drawing seems to crash a lot, so use Java2D
         val radius = 3
         val bi = image.getBufferedImage
         val canvas = new BufferedImage(bi.getWidth, bi.getHeight, BufferedImage.TYPE_INT_RGB)
         val g2d = canvas.getGraphics.asInstanceOf[Graphics2D]
         g2d.drawImage(bi, 0, 0, null)
-        val w = radius * 2
         g2d.setColor(Color.RED)
-
-        val oldPosition = points.position()
-        val n = points.capacity()
-        for (i <- 0 until n) {
-            val p = points.position(i)
-            g2d.draw(new Ellipse2D.Double(p.x - radius, p.y - radius, w, w))
-        }
-
-        // Reset position explicitly to avoid issues from other uses of this position-based container.
-        points.position(oldPosition)
+        val w = radius * 2
+        // Plot points
+        toArray(points).foreach {p => g2d.draw(new Ellipse2D.Double(p.x - radius, p.y - radius, w, w))}
 
         canvas
     }
@@ -287,19 +270,27 @@ object OpenCVUtils {
       * @param keyPoints pointer to a native vector containing KeyPoints.
       */
     def toArray(keyPoints: KeyPoint): Array[KeyPoint] = {
-        // Convert keyPoints to an array
         val oldPosition = keyPoints.position()
-        val n = keyPoints.capacity
-        val points = new Array[KeyPoint](n)
-        for (i <- 0 until n) {
-            val p = new KeyPoint(keyPoints.position(i))
-            points(i) = p
-        }
-
+        // Convert keyPoints to Scala sequence
+        val points = for (i <- 0 until keyPoints.capacity) yield new KeyPoint(keyPoints.position(i))
         // Reset position explicitly to avoid issues from other uses of this position-based container.
         keyPoints.position(oldPosition)
 
-        points
+        points.toArray
+    }
+
+    /** Convert native vector to JVM array.
+      *
+      * @param points pointer to a native vector containing KeyPoints.
+      */
+    def toArray(points: CvPoint2D32f): Array[CvPoint2D32f] = {
+        val oldPosition = points.position()
+        // Convert points to scala sequence
+        val dest = for (i <- 0 until points.capacity) yield new CvPoint2D32f(points.position(i))
+        // Reset position explicitly to avoid issues from other uses of this position-based container.
+        points.position(oldPosition)
+
+        dest.toArray
     }
 
 
@@ -406,6 +397,24 @@ object OpenCVUtils {
         dest
     }
 
+    /** Convert a Scala collection to a JavaCV "vector".
+      *
+      * @param src Scala collection
+      * @return JavaCV/native collection
+      */
+    def toNativeVector(src: Array[CvPoint2D32f]): CvPoint2D32f = {
+        val dest = new CvPoint2D32f(src.length)
+        for (i <- 0 until src.length) {
+            // Since there is no way to `put` objects into a vector CvPoint2D32f,
+            // We have to reassign all values individually, and hope that API will not any new ones.
+            copy(src(i), dest.position(i))
+        }
+        // Set position to 0 explicitly to avoid issues from other uses of this position-based container.
+        dest.position(0)
+
+        dest
+    }
+
 
     /** Convert `CvRect` to AWT `Rectangle`. */
     def toRectangle(rect: CvRect): Rectangle = {
@@ -443,5 +452,4 @@ object OpenCVUtils {
         dest.x(src.x)
         dest.y(src.y)
     }
-
 }
