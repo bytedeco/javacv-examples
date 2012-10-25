@@ -24,7 +24,7 @@ object Ex1ReadVideoSequenceC extends App {
     val capture = cvCreateFileCapture("data/bike.avi")
 
     // Prepare window to display frames
-    val canvasFrame = new CanvasFrame("Extracted Frame")
+    val canvasFrame = new CanvasFrame("Extracted Frame", 1)
     val width = cvGetCaptureProperty(capture, CV_CAP_PROP_FRAME_WIDTH).toInt
     val height = cvGetCaptureProperty(capture, CV_CAP_PROP_FRAME_HEIGHT).toInt
     canvasFrame.setCanvasSize(width, height)

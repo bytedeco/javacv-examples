@@ -24,7 +24,7 @@ object Ex1ReadVideoSequenceJavaCV extends App {
     capture.start()
 
     // Prepare window to display frames
-    val canvasFrame = new CanvasFrame("Extracted Frame")
+    val canvasFrame = new CanvasFrame("Extracted Frame", 1)
     canvasFrame.setCanvasSize(capture.getImageWidth, capture.getImageHeight)
     // Exit the example when the canvas frame is closed
     canvasFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE)
