@@ -6,60 +6,45 @@
 
 package opencv2_cookbook.chapter08
 
-import collection.mutable.ListBuffer
 import com.googlecode.javacv.cpp.opencv_core._
 import com.googlecode.javacv.cpp.opencv_imgproc._
 import java.awt.geom._
 import java.awt.{Color, Graphics2D, Image, Point}
 
 
-/**
- * Uses Harris Corner strength image to detect well localized corners,
- * replacing several closely located detections (blurred) by a single one.
- * Based on C++ class from chapter 8. Used by `Ex2HarrisCornerDetector`.
- */
+/** Uses Harris Corner strength image to detect well localized corners,
+  * replacing several closely located detections (blurred) by a single one.
+  *
+  * Based on C++ class from chapter 8. Used by `Ex2HarrisCornerDetector`.
+  */
 class HarrisDetector {
 
-    /**
-     * Neighborhood size for Harris edge detector.
-     */
+    /** Neighborhood size for Harris edge detector. */
     var neighborhood = 3
-    /**
-     * Aperture size for Harris edge detector.
-     */
+    /** Aperture size for Harris edge detector. */
     var aperture = 3
-    /**
-     * Harris parameter.
-     */
+    /** Harris parameter. */
     var k = 0.01
 
-    /**
-     * Maximum strength for threshold computations.
-     */
+    /** Maximum strength for threshold computations. */
     var maxStrength = 0.0
-    /**
-     * Size of kernel for non-max suppression.
-     */
+    /** Size of kernel for non-max suppression. */
     var nonMaxSize = 3
 
-    /**
-     * Image of corner strength, computed by Harris edge detector.
-     */
-    private var cornerStrength = new IplImage()
-    /**
-     * Image of local corner maxima.
-     */
-    private var localMax = new IplImage()
+    /** Image of corner strength, computed by Harris edge detector. It is created by method `detect()`. */
+    private var cornerStrength: Option[IplImage] = None
+    /** Image of local corner maxima. It is created by method `detect()`. */
+    private var localMax: Option[IplImage] = None
 
 
-    /**
-     * Compute Harris corners.
-     * Results of computation can be retrieved using `getCornerMap` and `getCorners`.
-     */
+    /** Compute Harris corners.
+      *
+      * Results of computation can be retrieved using `getCornerMap` and `getCorners`.
+      */
     def detect(image: IplImage) {
         // Harris computations
-        cornerStrength = cvCreateImage(cvGetSize(image), IPL_DEPTH_32F, 1)
-        cvCornerHarris(image, cornerStrength, neighborhood, aperture, k)
+        cornerStrength = Some(cvCreateImage(cvGetSize(image), IPL_DEPTH_32F, 1))
+        cvCornerHarris(image, cornerStrength.get, neighborhood, aperture, k)
 
         // Internal threshold computation.
         //
@@ -67,9 +52,11 @@ class HarrisDetector {
         // Call to cvMinMaxLoc finds min and max values in the image and assigns them to output parameters.
         // Passing back values through function parameter pointers works in C bout not on JVM.
         // We need to pass them as 1 element array, as a work around for pointers in C API.
-        val minStrengthA = Array(0.0) // not used here, but required by API
         val maxStrengthA = Array(maxStrength)
-        cvMinMaxLoc(cornerStrength, minStrengthA, maxStrengthA)
+        cvMinMaxLoc(
+            cornerStrength.get,
+            Array(0.0) /* not used here, but required by API */ ,
+            maxStrengthA)
         // Read back the computed maxStrength
         maxStrength = maxStrengthA(0)
 
@@ -77,37 +64,38 @@ class HarrisDetector {
         //
         // Dilation will replace values in the image by its largest neighbour value.
         // This process will modify all the pixels but the local maxima (and plateaus)
-        val dilated = cvCreateImage(cvGetSize(cornerStrength), cornerStrength.depth, 1)
-        cvDilate(cornerStrength, dilated, null, 1)
-        localMax = cvCreateImage(cvGetSize(image), IPL_DEPTH_8U, 1)
+        val dilated = cvCreateImage(cvGetSize(cornerStrength.get), cornerStrength.get.depth, 1)
+        cvDilate(cornerStrength.get, dilated, null, 1)
+        localMax = Some(cvCreateImage(cvGetSize(image), IPL_DEPTH_8U, 1))
         // Find maxima by detecting which pixels were not modified by dilation
-        cvCmp(cornerStrength, dilated, localMax, CV_CMP_EQ)
+        cvCmp(cornerStrength.get, dilated, localMax.get, CV_CMP_EQ)
     }
 
 
-    /**
-     * Get the corner map from the computed Harris values. Require call to `detect`.
-     */
+    /** Get the corner map from the computed Harris values. Require call to `detect`.
+      * @throws IllegalStateException if `cornerStrength` and `localMax` are not yet computed.
+      */
     def getCornerMap(qualityLevel: Double): IplImage = {
+        if (cornerStrength.isEmpty || localMax.isEmpty) {
+            throw new IllegalStateException("Need to call `detect()` before it is possible to compute corner map.")
+        }
 
         // Threshold the corner strength
         val threshold = qualityLevel * maxStrength
-        val cornerTh = cvCreateImage(cvGetSize(cornerStrength), cornerStrength.depth, 1)
-        cvThreshold(cornerStrength, cornerTh, threshold, 255, CV_THRESH_BINARY)
+        val cornerTh = cvCreateImage(cvGetSize(cornerStrength.get), cornerStrength.get.depth, 1)
+        cvThreshold(cornerStrength.get, cornerTh, threshold, 255, CV_THRESH_BINARY)
 
         val cornerMap = cvCreateImage(cvGetSize(cornerTh), IPL_DEPTH_8U, 1)
         cvConvertScale(cornerTh, cornerMap, 1, 0)
 
         // non-maxima suppression
-        cvAnd(cornerMap, localMax, cornerMap, null)
+        cvAnd(cornerMap, localMax.get, cornerMap, null)
 
         cornerMap
     }
 
 
-    /**
-     * Get the feature points from the computed Harris values. Require call to `detect`.
-     */
+    /** Get the feature points from the computed Harris values. Require call to `detect`. */
     def getCorners(qualityLevel: Double): List[Point] = {
         // Get the corner map
         val cornerMap = getCornerMap(qualityLevel)
@@ -116,9 +104,7 @@ class HarrisDetector {
     }
 
 
-    /**
-     * Get the feature points vector from the computed corner map
-     */
+    /** Get the feature points vector from the computed corner map.  */
     private def getCorners(cornerMap: IplImage): List[Point] = {
 
         // Get access to image data on the JVM side
@@ -127,16 +113,7 @@ class HarrisDetector {
         // Iterate over the pixels to obtain all feature points
         val width = r.getWidth
         val height = r.getHeight
-        val points = new ListBuffer[Point]
-        for (y <- 0 until height) {
-            for (x <- 0 until width) {
-
-                val v = r.getSample(x, y, 0)
-                if (v != 0) {
-                    points += new Point(x, y)
-                }
-            }
-        }
+        val points = for (y <- 0 until height; x <- 0 until width if r.getSample(x, y, 0) != 0) yield new Point(x, y)
 
         points.toList
     }
@@ -164,5 +141,4 @@ class HarrisDetector {
 
         bi
     }
-
 }

@@ -11,11 +11,10 @@ import com.googlecode.javacv.cpp.opencv_highgui._
 import javax.swing.JFrame._
 
 
-/**
- * Example of loading and displaying and image  using JavaCV API,
- * corresponds to C++ example in Chapter 1 page 18.
- * Please note how in the Scala example code CanvasFrame from JavaCV API is used to display the image.
- */
+/** Example of loading and displaying and image  using JavaCV API,
+  * corresponds to C++ example in Chapter 1 page 18.
+  * Please note how in the Scala example code CanvasFrame from JavaCV API is used to display the image.
+  */
 object Ex1MyFirstOpenCVApp extends App {
 
     // Read an image

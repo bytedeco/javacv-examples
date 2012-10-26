@@ -14,12 +14,9 @@ import com.googlecode.javacv.cpp.opencv_imgproc._
 import java.io.{IOException, File}
 import javax.swing.WindowConstants
 import scala.collection.mutable.ArrayBuffer
-import scala.swing.Swing
 
 
-/**
- * Camera calibration helper, used in example `Ex2CalibrateCamera`.
- */
+/** Camera calibration helper, used in example `Ex2CalibrateCamera`. */
 class CameraCalibrator {
 
     private case class Point3D(x: Float, y: Float, z: Float)
@@ -36,26 +33,22 @@ class CameraCalibrator {
     // flag to specify how calibration is done
     private var flag: Int = 0
 
-    // Used in image manipulation
-    private var xMap = new CvMat(1)
-    private var yMap = new CvMat(1)
-
     private var mustInitUndistort = true
 
-    /**
-     * Return a copy of the camera matrix
-     */
+
+    /** Return a copy of the camera matrix. */
     def cameraMatrix = _cameraMatrix.clone()
 
-    /**
-     * Return a copy of the distortion coefficients
-     */
+
+    /** Return a copy of the distortion coefficients. */
     def distortionCoeffs = _distortionCoeffs.clone()
 
-    /**Set the calibration options.
-     * @param radial8CoeffEnabled should be true if 8 radial coefficients are required (5 is default).
-     * @param tangentialParamEnabled should be true if tangeantial distortion is present.
-     */
+
+    /** Set the calibration options.
+      *
+      * @param radial8CoeffEnabled should be true if 8 radial coefficients are required (5 is default).
+      * @param tangentialParamEnabled should be true if tangential distortion is present.
+      */
     def setCalibrationFlag(radial8CoeffEnabled: Boolean, tangentialParamEnabled: Boolean) {
         // Set the flag used in cv::calibrateCamera()
         flag = 0
@@ -63,9 +56,7 @@ class CameraCalibrator {
         if (radial8CoeffEnabled) flag += CV_CALIB_RATIONAL_MODEL
     }
 
-    /**
-     * Open chessboard images and extract corner points
-     */
+    /** Open chessboard images and extract corner points. */
     def addChessboardPoints(fileList: Seq[File], boardSize: CvSize): Int = {
         objectPoints.clear()
         imagePoints.clear()
@@ -112,21 +103,19 @@ class CameraCalibrator {
 
             // Draw the corners
             cvDrawChessboardCorners(image, boardSize, imageCorners, cornerCount(0), found)
-            Swing.onEDT({
-                val canvas = new CanvasFrame("Corners on Chessboard: " + file.getName, 1)
-                canvas.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE)
-                canvas.showImage(image)
-            })
+            val canvas = new CanvasFrame("Corners on Chessboard: " + file.getName, 1)
+            canvas.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE)
+            canvas.showImage(image)
         }
 
         successes
     }
 
 
-    /**
-     * Calibrate the camera.
-     * @return final re-projection error.
-     */
+    /** Calibrate the camera.
+      *
+      * @return final re-projection error.
+      */
     def calibrate(imageSize: CvSize): Double = {
         // undistorter must be reinitialized
         mustInitUndistort = true
@@ -150,15 +139,13 @@ class CameraCalibrator {
     }
 
 
-    /**
-     * Remove distortion in an image (after calibration)
-     */
+    /** Remove distortion in an image (after calibration). */
     def remap(image: IplImage): IplImage = {
 
+        val xMap = cvCreateMat(image.height, image.width, CV_32F)
+        val yMap = cvCreateMat(image.height, image.width, CV_32F)
         if (mustInitUndistort) {
             // Called once per calibration
-            xMap = cvCreateMat(image.height, image.width, CV_32F)
-            yMap = cvCreateMat(image.height, image.width, CV_32F)
             cvInitUndistortRectifyMap(
                 _cameraMatrix,
                 _distortionCoeffs,
@@ -176,9 +163,7 @@ class CameraCalibrator {
         remapped
     }
 
-    /**
-     * Prepare object points, image points, and point counts in format required by `cvCalibrateCamera2`.
-     */
+    /** Prepare object points, image points, and point counts in format required by `cvCalibrateCamera2`. */
     private def convertPoints(): (CvMat, CvMat, CvMat) = {
 
         require(objectPoints.size == imagePoints.size, "Number of object and image points must match.")
@@ -214,6 +199,4 @@ class CameraCalibrator {
 
         (objectPointsCvMat, imagePointsCvMat, pointCounts)
     }
-
-
 }

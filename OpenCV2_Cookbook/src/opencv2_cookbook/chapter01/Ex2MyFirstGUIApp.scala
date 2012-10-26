@@ -9,30 +9,30 @@ package opencv2_cookbook.chapter01
 import com.googlecode.javacv.cpp.opencv_core._
 import com.googlecode.javacv.cpp.opencv_highgui._
 import com.googlecode.javacv.cpp.opencv_imgproc._
-import swing._
-import swing.Dialog.Message.Error
-import swing.FileChooser.Result.Approve
 import java.awt.Cursor._
 import javax.swing.ImageIcon
+import scala.swing.Dialog.Message.Error
+import scala.swing.FileChooser.Result.Approve
+import scala.swing._
 
 
-/**
- * The last section in the chapter 1 of the Cookbook demonstrates how to create a simple GUI application.
- * The Cookbook is using Qt GUI Toolkit. This example is using Scala Swing to create an similar application.
- *
- * The application has two buttons on the left "Open Image" and "Process".
- * The opened image is displayed in the middle.
- * When "Process" button is pressed the image is flipped upside down and its red and blue channels are swapped.
- *
- * Unlike most of other examples in this module, this example is done the Scala way,
- * without regard to for direct porting to Java. A Java equivalent is in [[opencv2_cookbook.chapter01.Ex2MyFirstGUIAppJava]].
- */
+/** The last section in the chapter 1 of the Cookbook demonstrates how to create a simple GUI application.
+  *
+  * The Cookbook is using Qt GUI Toolkit. This example is using Scala Swing to create an similar application.
+  *
+  * The application has two buttons on the left "Open Image" and "Process".
+  * The opened image is displayed in the middle.
+  * When "Process" button is pressed the image is flipped upside down and its red and blue channels are swapped.
+  *
+  * Unlike most of other examples in this module, this example is done the Scala way,
+  * without regard to for direct porting to Java. A Java equivalent is in [[opencv2_cookbook.chapter01.Ex2MyFirstGUIAppJava]].
+  */
 object Ex2MyFirstGUIApp extends SimpleSwingApplication {
 
     private lazy val fileChooser = new FileChooser
 
 
-    def top = new MainFrame {
+    def top: Frame = new MainFrame {
         title = "My First GUI Scala App"
 
         // Variable for holding loaded image
@@ -108,9 +108,7 @@ object Ex2MyFirstGUIApp extends SimpleSwingApplication {
     }
 
 
-    /**
-     * Ask user for location and open new image.
-     */
+    /** Ask user for location and open new image. */
     private def openImage(): Option[IplImage] = {
         // Ask user for the location of the image file
         if (fileChooser.showOpenDialog(null) != Approve) {
@@ -129,9 +127,7 @@ object Ex2MyFirstGUIApp extends SimpleSwingApplication {
     }
 
 
-    /**
-     * Process image in place
-     */
+    /** Process image in place.  */
     private def processImage(src: IplImage) {
         // Flip upside down
         cvFlip(src, src, 0)

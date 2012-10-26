@@ -9,16 +9,16 @@ package opencv2_cookbook
 
 import com.googlecode.javacv.CanvasFrame
 import com.googlecode.javacv.cpp.opencv_core._
-import com.googlecode.javacv.cpp.opencv_features2d.KeyPoint
+import com.googlecode.javacv.cpp.opencv_features2d.{DMatch, KeyPoint}
 import com.googlecode.javacv.cpp.opencv_highgui._
 import java.awt._
 import java.awt.geom.Ellipse2D
 import java.awt.image.BufferedImage
 import java.io.{FileNotFoundException, IOException, File}
 import javax.swing.JFrame
-import scala.swing.Swing
 
 
+/** Helper methods that simplify use of OpenCV API. */
 object OpenCVUtils {
 
     /** Load an image and show in a CanvasFrame.
@@ -103,20 +103,19 @@ object OpenCVUtils {
     }
 
 
-    /**
-     * Load an image. If image cannot be loaded the application will exit with code 1.
-     *
-     * @param flags Flags specifying the color type of a loaded image:
-     *              <ul>
-     *              <li> `>0` Return a 3-channel color image</li>
-     *              <li> `=0` Return a grayscale image</li>
-     *              <li> `<0` Return the loaded image as is. Note that in the current implementation
-     *              the alpha channel, if any, is stripped from the output image. For example, a 4-channel
-     *              RGBA image is loaded as RGB if the `flags` is greater than 0.</li>
-     *              </ul>
-     *              Default is grayscale.
-     * @return loaded image
-     */
+    /** Load an image. If image cannot be loaded the application will exit with code 1.
+      *
+      * @param flags Flags specifying the color type of a loaded image:
+      *              <ul>
+      *              <li> `>0` Return a 3-channel color image</li>
+      *              <li> `=0` Return a grayscale image</li>
+      *              <li> `<0` Return the loaded image as is. Note that in the current implementation
+      *              the alpha channel, if any, is stripped from the output image. For example, a 4-channel
+      *              RGBA image is loaded as RGB if the `flags` is greater than 0.</li>
+      *              </ul>
+      *              Default is grayscale.
+      * @return loaded image
+      */
     def loadMatOrExit(file: File, flags: Int = CV_LOAD_IMAGE_GRAYSCALE): CvMat = {
         // Read input image
         val image = cvLoadImageM(file.getAbsolutePath, flags)
@@ -130,63 +129,40 @@ object OpenCVUtils {
 
     /** Show image in a window. Closing the window will exit the application. */
     def show(image: IplImage, title: String) {
-        Swing.onEDT({
-            val canvas = new CanvasFrame(title, 1)
-            canvas.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE)
-            canvas.showImage(image)
-        })
+        val canvas = new CanvasFrame(title, 1)
+        canvas.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE)
+        canvas.showImage(image)
     }
 
 
     /** Show image in a window. Closing the window will exit the application. */
     def show(mat: CvMat, title: String) {
-        Swing.onEDT({
-            val canvas = new CanvasFrame(title, 1)
-            canvas.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE)
-            canvas.showImage(mat.asIplImage())
-        })
+        val canvas = new CanvasFrame(title, 1)
+        canvas.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE)
+        canvas.showImage(mat.asIplImage())
     }
 
 
     /** Show image in a window. Closing the window will exit the application. */
     def show(image: Image, title: String) {
-        Swing.onEDT({
-            val canvas = new CanvasFrame(title, 1)
-            canvas.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE)
-            canvas.showImage(image)
-        })
+        val canvas = new CanvasFrame(title, 1)
+        canvas.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE)
+        canvas.showImage(image)
     }
 
 
     /** Draw circles at feature point locations on an image. */
     def drawOnImage(image: IplImage, points: CvPoint2D32f): Image = {
-        //        val color = CvScalar.WHITE
-        //        val radius: Int = 3
-        //        val thickness: Int = 2
-        //        points.foreach(p => {
-        //            println("(" + p.x + ", " + p.y + ")")
-        //            val center = new CvPoint(new CvPoint2D32f(p.x, p.y))
-        //            cvCircle(image, center, radius, color, thickness, 8, 0)
-        //        })
-
         // OpenCV drawing seems to crash a lot, so use Java2D
         val radius = 3
         val bi = image.getBufferedImage
         val canvas = new BufferedImage(bi.getWidth, bi.getHeight, BufferedImage.TYPE_INT_RGB)
         val g2d = canvas.getGraphics.asInstanceOf[Graphics2D]
         g2d.drawImage(bi, 0, 0, null)
-        val w = radius * 2
         g2d.setColor(Color.RED)
-
-        val oldPosition = points.position()
-        val n = points.capacity()
-        for (i <- 0 until n) {
-            val p = points.position(i)
-            g2d.draw(new Ellipse2D.Double(p.x - radius, p.y - radius, w, w))
-        }
-
-        // Reset position explicitly to avoid issues from other uses of this position-based container.
-        points.position(oldPosition)
+        val w = radius * 2
+        // Plot points
+        toArray(points).foreach {p => g2d.draw(new Ellipse2D.Double(p.x - radius, p.y - radius, w, w))}
 
         canvas
     }
@@ -271,22 +247,71 @@ object OpenCVUtils {
 
     /** Convert native vector to JVM array.
       *
+      * @param matches pointer to a native vector containing DMatches.
+      * @return
+      */
+    def toArray(matches: DMatch): Array[DMatch] = {
+        val oldPosition = matches.position()
+        val result = new Array[DMatch](matches.capacity())
+        for (i <- 0 until result.size) {
+            val src = matches.position(i)
+            val dest = new DMatch()
+            copy(src, dest)
+            result(i) = dest
+        }
+        // Reset position explicitly to avoid issues from other uses of this position-based container.
+        matches.position(oldPosition)
+
+        result
+    }
+
+
+    /** Convert native vector to JVM array.
+      *
       * @param keyPoints pointer to a native vector containing KeyPoints.
       */
     def toArray(keyPoints: KeyPoint): Array[KeyPoint] = {
-        // Convert keyPoints to an array
         val oldPosition = keyPoints.position()
-        val n = keyPoints.capacity
-        val points = new Array[KeyPoint](n)
-        for (i <- 0 until n) {
-            val p = new KeyPoint(keyPoints.position(i))
-            points(i) = p
-        }
-
+        // Convert keyPoints to Scala sequence
+        val points = for (i <- Array.range(0, keyPoints.capacity)) yield new KeyPoint(keyPoints.position(i))
         // Reset position explicitly to avoid issues from other uses of this position-based container.
         keyPoints.position(oldPosition)
 
         points
+    }
+
+    /** Convert native vector to JVM array.
+      *
+      * @param points pointer to a native vector containing KeyPoints.
+      */
+    def toArray(points: CvPoint2D32f): Array[CvPoint2D32f] = {
+        val oldPosition = points.position()
+        // Convert points to scala sequence
+        val dest = for (i <- Array.range(0, points.capacity)) yield new CvPoint2D32f(points.position(i))
+        // Reset position explicitly to avoid issues from other uses of this position-based container.
+        points.position(oldPosition)
+
+        dest
+    }
+
+
+    /** Convert between two OpenCV representations of points.
+      *
+      * This representation is needed, for instance, by `cvFindFundamentalMat` function.
+      *
+      * @param points input points
+      * @return matrix containing points. First index is the point index.
+      *         Second index is always 0. Third index corresponds to `x` and `y` coordinates.
+      */
+    def toCvMat(points: CvPoint2D32f): CvMat = {
+        val oldPosition = points.position()
+        val m = CvMat.create(points.capacity(), 1, CV_32FC(2))
+        for (i <- 0 until points.capacity) {
+            m.put(i, 0, 0, points.position(i).x)
+            m.put(i, 0, 1, points.position(i).y)
+        }
+        points.position(oldPosition)
+        m
     }
 
 
@@ -355,8 +380,77 @@ object OpenCVUtils {
     }
 
 
+    /** Convert a Scala collection to a JavaCV "vector".
+      *
+      * @param src Scala collection
+      * @return JavaCV/native collection
+      */
+    def toNativeVector(src: Array[DMatch]): DMatch = {
+        val dest = new DMatch(src.length)
+        for (i <- 0 until src.length) {
+            // Since there is no way to `put` objects into a vector DMatch,
+            // We have to reassign all values individually, and hope that API will not any new ones.
+            copy(src(i), dest.position(i))
+        }
+        // Set position to 0 explicitly to avoid issues from other uses of this position-based container.
+        dest.position(0)
+
+        dest
+    }
+
+    /** Convert a Scala collection to a JavaCV "vector".
+      *
+      * @param src Scala collection
+      * @return JavaCV/native collection
+      */
+    def toNativeVector(src: Array[CvPoint2D32f]): CvPoint2D32f = {
+        val dest = new CvPoint2D32f(src.length)
+        for (i <- 0 until src.length) {
+            // Since there is no way to `put` objects into a vector CvPoint2D32f,
+            // We have to reassign all values individually, and hope that API will not any new ones.
+            copy(src(i), dest.position(i))
+        }
+        // Set position to 0 explicitly to avoid issues from other uses of this position-based container.
+        dest.position(0)
+
+        dest
+    }
+
+
     /** Convert `CvRect` to AWT `Rectangle`. */
     def toRectangle(rect: CvRect): Rectangle = {
         new Rectangle(rect.x, rect.y, rect.width, rect height)
+    }
+
+
+    /** Copy content of a single DMatch object.
+      *
+      * If `src` is a vector, only the first element is copied.
+      *
+      * @param src source.
+      * @param dest destination.
+      */
+    def copy(src: DMatch, dest: DMatch) {
+        // TODO: use Pointer.copy() after JavaCV/JavaCPP 0.3 is released (http://code.google.com/p/javacpp/source/detail?r=51f4daa13d618c6bd6a5556ff2096d0e834638cc)
+        // dest.put(src)
+        dest.distance(src.distance)
+        dest.imgIdx(src.imgIdx)
+        dest.queryIdx(src.queryIdx)
+        dest.trainIdx(src.trainIdx)
+    }
+
+
+    /** Copy content of a single CvPoint2D32f object.
+      *
+      * If `src` is a vector, only the first element is copied.
+      *
+      * @param src source.
+      * @param dest destination.
+      */
+    def copy(src: CvPoint2D32f, dest: CvPoint2D32f) {
+        // TODO: use Pointer.copy() after JavaCV/JavaCPP 0.3 is released (http://code.google.com/p/javacpp/source/detail?r=51f4daa13d618c6bd6a5556ff2096d0e834638cc)
+        // dest.put(src)
+        dest.x(src.x)
+        dest.y(src.y)
     }
 }
