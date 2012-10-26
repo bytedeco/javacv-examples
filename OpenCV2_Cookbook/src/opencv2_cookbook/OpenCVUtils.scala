@@ -17,6 +17,7 @@ import java.awt.image.BufferedImage
 import java.io.{FileNotFoundException, IOException, File}
 import javax.swing.JFrame
 
+
 /** Helper methods that simplify use of OpenCV API. */
 object OpenCVUtils {
 
@@ -272,11 +273,11 @@ object OpenCVUtils {
     def toArray(keyPoints: KeyPoint): Array[KeyPoint] = {
         val oldPosition = keyPoints.position()
         // Convert keyPoints to Scala sequence
-        val points = for (i <- 0 until keyPoints.capacity) yield new KeyPoint(keyPoints.position(i))
+        val points = for (i <- Array.range(0, keyPoints.capacity)) yield new KeyPoint(keyPoints.position(i))
         // Reset position explicitly to avoid issues from other uses of this position-based container.
         keyPoints.position(oldPosition)
 
-        points.toArray
+        points
     }
 
     /** Convert native vector to JVM array.
@@ -286,11 +287,11 @@ object OpenCVUtils {
     def toArray(points: CvPoint2D32f): Array[CvPoint2D32f] = {
         val oldPosition = points.position()
         // Convert points to scala sequence
-        val dest = for (i <- 0 until points.capacity) yield new CvPoint2D32f(points.position(i))
+        val dest = for (i <- Array.range(0, points.capacity)) yield new CvPoint2D32f(points.position(i))
         // Reset position explicitly to avoid issues from other uses of this position-based container.
         points.position(oldPosition)
 
-        dest.toArray
+        dest
     }
 
 
