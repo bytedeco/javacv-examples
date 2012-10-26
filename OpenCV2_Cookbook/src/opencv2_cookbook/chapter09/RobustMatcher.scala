@@ -15,7 +15,7 @@ import opencv2_cookbook.chapter09.MatcherUtils._
 import scala.collection.mutable.{ListBuffer, ArrayBuffer}
 
 
-/** Robust matcher used by example Ex3ComputeFundamentalMatrix.
+/** Robust matcher used by examples Ex3ComputeFundamentalMatrix and Ex5Homography.
   *
   * See Chapter 9 page 233.
   *
