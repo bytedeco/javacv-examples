@@ -10,7 +10,7 @@
     <groupId>javacv.examples</groupId>
     <artifactId>opencv2-cookbook</artifactId>
     <packaging>jar</packaging>
-    <version>1.3.0-SNAPSHOT</version>
+    <version>1.4.0</version>
     <name>OpenCV2 Cookbook Examples for JavaCV</name>
     <url>https://code.google.com/p/javacv</url>
     <inceptionYear>2011</inceptionYear>
