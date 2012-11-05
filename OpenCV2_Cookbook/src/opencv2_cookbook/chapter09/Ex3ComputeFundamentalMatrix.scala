@@ -47,7 +47,7 @@ object Ex3ComputeFundamentalMatrix extends App {
     drawKeyPoints(imageLeft, keypointsLeft, "Left SURF Features")
 
     // Construction of the SURF descriptor extractor
-    val surfDesc = DescriptorExtractor.create("SURF").get
+    val surfDesc = DescriptorExtractor.create("SURF")
 
     // Extraction of the SURF descriptors
     val descriptorsRight = new CvMat(null)

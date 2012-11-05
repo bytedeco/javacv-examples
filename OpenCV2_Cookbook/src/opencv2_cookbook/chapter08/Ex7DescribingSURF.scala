@@ -33,7 +33,7 @@ object Ex7DescribingSURF extends App {
     val extended = true
     val upright = false
     val surf = new SURF(hessianThreshold, nOctaves, nOctaveLayers, extended, upright)
-    val surfDesc = DescriptorExtractor.create("SURF").get
+    val surfDesc = DescriptorExtractor.create("SURF")
     val keyPoints = Array(new KeyPoint(), new KeyPoint())
     val descriptors = new Array[CvMat](2)
 
