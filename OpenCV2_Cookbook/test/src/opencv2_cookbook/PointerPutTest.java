@@ -7,7 +7,6 @@
 package opencv2_cookbook;
 
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import static com.googlecode.javacv.cpp.opencv_features2d.DMatch;
@@ -34,11 +33,9 @@ public final class PointerPutTest {
         final MyDMatch expected = new MyDMatch(11.1f, 12, 13, 14);
 
         final DMatch src = new DMatch(expected.queryIdx, expected.trainIdx, expected.imgIdx, expected.distance);
-        System.out.println("src: " + toString(src));
         assertEquals("src", expected, src, 0.1);
 
         final DMatch dest = new DMatch(src);
-        System.out.println("dest: " + toString(dest));
         assertEquals("dest", expected, dest, 0.1);
     }
 
@@ -47,22 +44,19 @@ public final class PointerPutTest {
      * Check Pointer.put on a single object.
      */
     @Test
-    @Ignore("Fails with JavaCV 0.2")
     public void copySingleDMatch() throws Exception {
 
         final MyDMatch expected = new MyDMatch(11.1f, 12, 13, 14);
 
-        // Allocate native array of DMatch with 3 elements
         final DMatch src = new DMatch();
         src.distance(expected.distance);
         src.imgIdx(expected.imgIdx);
         src.queryIdx(expected.queryIdx);
         src.trainIdx(expected.trainIdx);
-        System.out.println("src: " + toString(src));
         assertEquals("src", expected, src, 0.1);
 
         final DMatch dest = new DMatch();
-        System.out.println("dest: " + toString(dest));
+        dest.put(src);
         assertEquals("dest", expected, dest, 0.1);
     }
 
@@ -71,7 +65,6 @@ public final class PointerPutTest {
      * Check Pointer.put on a elements of a native array - copy all.
      */
     @Test
-    @Ignore("Fails with JavaCV 0.2")
     public void copyContainerAllDMatch() throws Exception {
 
         final MyDMatch[] expected = new MyDMatch[]{
@@ -95,7 +88,6 @@ public final class PointerPutTest {
         // Verify initialization
         for (int i = 0; i < expected.length; i++) {
             assertEquals("src.position(" + i + ")", expected[i], src.position(i), 0.1);
-            System.out.println("src.position(" + i + "): " + toString(src.position(i)));
         }
 
         // Copy to a new native array
@@ -104,8 +96,9 @@ public final class PointerPutTest {
         // Copy from source to destination
         for (int i = 0; i < expected.length; i++) {
             dest.position(i).put(src.position(i));
-            System.out.println("dest.position(" + i + "): " + toString(dest.position(i)));
         }
+
+        Assert.assertEquals("Capacity", src.capacity(), dest.capacity(), 0.1);
 
         // Verify copy
         for (int i = 0; i < expected.length; i++) {
@@ -118,8 +111,7 @@ public final class PointerPutTest {
      * Check Pointer.put on a elements of a native array - copy some.
      */
     @Test
-    @Ignore("Fails with JavaCV 0.2")
-    public void copyContainerSomeAllDMatch() throws Exception {
+    public void copyContainerSomeDMatch() throws Exception {
 
         final MyDMatch[] expected = new MyDMatch[]{
                 new MyDMatch(11.1f, 12, 13, 14),
@@ -128,7 +120,7 @@ public final class PointerPutTest {
                 new MyDMatch(41.1f, 42, 43, 44),
         };
 
-        // Allocate native array of DMatch with 3 elements
+        // Allocate native array of DMatch with 4 elements
         final DMatch src = new DMatch(expected.length);
 
         // Assign values to source array elements
@@ -142,7 +134,6 @@ public final class PointerPutTest {
         // Verify initialization
         for (int i = 0; i < expected.length; i++) {
             assertEquals("src.position(" + i + ")", expected[i], src.position(i), 0.1);
-            System.out.println("src.position(" + i + "): " + toString(src.position(i)));
         }
 
         // Copy to a new native array
@@ -150,11 +141,9 @@ public final class PointerPutTest {
 
         // Copy from source to destination
         dest.position(0).put(src.position(0));
-        System.out.println("dest.position(" + 0 + "): " + toString(dest.position(0)));
         assertEquals("dest.position(" + 0 + ")", expected[0], dest.position(0), 0.1);
 
         dest.position(1).put(src.position(3));
-        System.out.println("dest.position(" + 1 + "): " + toString(dest.position(1)));
         assertEquals("dest.position(" + 1 + ")", expected[3], dest.position(1), 0.1);
     }
 
