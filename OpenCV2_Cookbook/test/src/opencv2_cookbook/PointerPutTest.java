@@ -139,11 +139,14 @@ public final class PointerPutTest {
         // Copy to a new native array
         final DMatch dest = new DMatch(2);
 
-        // Copy from source to destination
-        dest.position(0).put(src.position(0));
+        // Copy from source (0) to destination (0)
+//        OpenCVUtils.copy(src.position(0), dest.position(0));
+        dest.position(0).put(src.position(0).limit(1));
         assertEquals("dest.position(" + 0 + ")", expected[0], dest.position(0), 0.1);
 
-        dest.position(1).put(src.position(3));
+        // Copy from source (3) to destination (1)
+//        OpenCVUtils.copy(src.position(3), dest.position(1));
+        dest.position(1).put(src.position(3).limit(1));
         assertEquals("dest.position(" + 1 + ")", expected[3], dest.position(1), 0.1);
     }
 
