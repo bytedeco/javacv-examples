@@ -23,7 +23,7 @@ public final class VideoFileCaptureTest {
     public void captureFromFile() throws Exception {
 
         final File file = new File("data/bike.avi");
-        assertTrue(file.exists());
+        assertTrue("Input video file exists: "+file.getAbsolutePath(), file.exists());
 
         final CvCapture capture = cvCreateFileCapture(file.getPath());
         assertNotNull(capture);

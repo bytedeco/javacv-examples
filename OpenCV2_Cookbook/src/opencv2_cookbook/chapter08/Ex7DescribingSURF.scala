@@ -33,7 +33,7 @@ object Ex7DescribingSURF extends App {
     val extended = true
     val upright = false
     val surf = new SURF(hessianThreshold, nOctaves, nOctaveLayers, extended, upright)
-    val surfDesc = DescriptorExtractor.create("SURF").get
+    val surfDesc = DescriptorExtractor.create("SURF")
     val keyPoints = Array(new KeyPoint(), new KeyPoint())
     val descriptors = new Array[CvMat](2)
 
@@ -70,7 +70,7 @@ object Ex7DescribingSURF extends App {
     /** Select only the best matches from the list. Return new list. */
     private def selectBest(matches: DMatch, numberToSelect: Int): DMatch = {
         // Convert to Scala collection, and sort
-        val sorted = toArray(matches).sortWith(_.compare(_))
+        val sorted = toArray(matches).sortWith(_ compare _)
 
         // Select the best, and return in native vector
         toNativeVector(sorted.take(numberToSelect))

@@ -27,7 +27,7 @@ import scala.collection.mutable.{ListBuffer, ArrayBuffer}
   * @param confidenceLevel Confidence level (probability)
   */
 class RobustMatcher(detector: SURF = new SURF(100),
-                    extractor: DescriptorExtractor = DescriptorExtractor.create("SURF").get,
+                    extractor: DescriptorExtractor = DescriptorExtractor.create("SURF"),
                     ratio: Float = 0.65f,
                     refineF: Boolean = true,
                     minDistanceToEpipolar: Double = 3.0,
