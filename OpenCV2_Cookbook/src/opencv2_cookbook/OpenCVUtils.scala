@@ -426,7 +426,7 @@ object OpenCVUtils {
 
     /** Copy content of a single object referred to by a pointer.
       *
-      * If `src` is a "array", only the first element is copied.
+      * If `src` is an "array", only the first element is copied.
       *
       * @param src source.
       * @param dest destination.
