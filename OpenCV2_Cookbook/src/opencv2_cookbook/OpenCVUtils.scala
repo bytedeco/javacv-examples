@@ -7,6 +7,7 @@
 package opencv2_cookbook
 
 
+import com.googlecode.javacpp.Pointer
 import com.googlecode.javacv.CanvasFrame
 import com.googlecode.javacv.cpp.opencv_core._
 import com.googlecode.javacv.cpp.opencv_features2d.{DMatch, KeyPoint}
@@ -423,34 +424,14 @@ object OpenCVUtils {
     }
 
 
-    /** Copy content of a single DMatch object.
+    /** Copy content of a single object referred to by a pointer.
       *
-      * If `src` is a vector, only the first element is copied.
-      *
-      * @param src source.
-      * @param dest destination.
-      */
-    def copy(src: DMatch, dest: DMatch) {
-        // TODO: use Pointer.copy() after JavaCV/JavaCPP 0.3 is released (http://code.google.com/p/javacpp/source/detail?r=51f4daa13d618c6bd6a5556ff2096d0e834638cc)
-        // dest.put(src)
-        dest.distance(src.distance)
-        dest.imgIdx(src.imgIdx)
-        dest.queryIdx(src.queryIdx)
-        dest.trainIdx(src.trainIdx)
-    }
-
-
-    /** Copy content of a single CvPoint2D32f object.
-      *
-      * If `src` is a vector, only the first element is copied.
+      * If `src` is a "array", only the first element is copied.
       *
       * @param src source.
       * @param dest destination.
       */
-    def copy(src: CvPoint2D32f, dest: CvPoint2D32f) {
-        // TODO: use Pointer.copy() after JavaCV/JavaCPP 0.3 is released (http://code.google.com/p/javacpp/source/detail?r=51f4daa13d618c6bd6a5556ff2096d0e834638cc)
-        // dest.put(src)
-        dest.x(src.x)
-        dest.y(src.y)
+    def copy[T <: Pointer](src: T, dest: T) {
+        dest.put(src.limit(src.position() + 1))
     }
 }

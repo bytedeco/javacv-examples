@@ -140,21 +140,14 @@ public final class PointerPutTest {
         final DMatch dest = new DMatch(2);
 
         // Copy from source (0) to destination (0)
-//        OpenCVUtils.copy(src.position(0), dest.position(0));
-        dest.position(0).put(src.position(0).limit(1));
+        //   dest.position(0).put(src.position(0).limit(1));
+        OpenCVUtils.copy(src.position(0), dest.position(0));
         assertEquals("dest.position(" + 0 + ")", expected[0], dest.position(0), 0.1);
 
         // Copy from source (3) to destination (1)
-//        OpenCVUtils.copy(src.position(3), dest.position(1));
-        dest.position(1).put(src.position(3).limit(1));
+        //   dest.position(1).put(src.position(3).limit(4));
+        OpenCVUtils.copy(src.position(3), dest.position(1));
         assertEquals("dest.position(" + 1 + ")", expected[3], dest.position(1), 0.1);
-    }
-
-
-    private static String toString(final DMatch dm) {
-        return "distance: " + dm.distance() + ", imgIdx: " + dm.imgIdx() +
-                ", queryIdx: " + dm.queryIdx() + " trainIdx: " + dm.trainIdx();
-
     }
 
 
