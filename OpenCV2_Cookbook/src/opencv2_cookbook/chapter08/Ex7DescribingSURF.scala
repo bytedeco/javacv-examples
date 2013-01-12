@@ -1,7 +1,7 @@
 /*
- * Copyright (c) 2011-2012 Jarek Sacha. All Rights Reserved.
+ * Copyright (c) 2011-2013 Jarek Sacha. All Rights Reserved.
  *
- * Author's e-mail: jarek.listy at gmail.com
+ * Author's e-mail: jpsacha at gmail.com
  */
 
 package opencv2_cookbook.chapter08
@@ -58,7 +58,7 @@ object Ex7DescribingSURF extends App {
     val bestMatches = selectBest(matches, 25)
 
     // Draw best matches
-    val imageMatches = cvCreateImage(new CvSize(images(0).width + images(1).width, images(0).height), images(0).depth, 3)
+    val imageMatches = IplImage.create(new CvSize(images(0).width + images(1).width, images(0).height), images(0).depth, 3)
     drawMatches(images(0), keyPoints(0), images(1), keyPoints(1),
         bestMatches, imageMatches, CvScalar.BLUE, CvScalar.RED, null, DrawMatchesFlags.DEFAULT)
     show(imageMatches, "Best SURF Feature Matches")

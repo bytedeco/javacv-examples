@@ -1,7 +1,7 @@
 /*
- * Copyright (c) 2011-2012 Jarek Sacha. All Rights Reserved.
+ * Copyright (c) 2011-2013 Jarek Sacha. All Rights Reserved.
  *
- * Author's e-mail: jarek.listy at gmail.com
+ * Author's e-mail: jpsacha at gmail.com
  */
 
 package opencv2_cookbook.chapter08
@@ -32,7 +32,7 @@ object Ex6SIFT extends App {
     sift.detect(image, null, keyPoints)
 
     // Draw keyPoints
-    val featureImage = cvCreateImage(cvGetSize(image), image.depth(), 3)
+    val featureImage = IplImage.create(cvGetSize(image), image.depth(), 3)
     drawKeypoints(image, keyPoints, featureImage, CvScalar.WHITE, DrawMatchesFlags.DRAW_RICH_KEYPOINTS)
     show(featureImage, "SIFT Features")
 }

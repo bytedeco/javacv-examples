@@ -1,7 +1,7 @@
 /*
- * Copyright (c) 2011-2012 Jarek Sacha. All Rights Reserved.
+ * Copyright (c) 2011-2013 Jarek Sacha. All Rights Reserved.
  *
- * Author's e-mail: jarek.listy at gmail.com
+ * Author's e-mail: jpsacha at gmail.com
  */
 
 package opencv2_cookbook.chapter06
@@ -30,7 +30,7 @@ class LaplacianZC {
      */
     def computeLaplacian(src: IplImage): IplImage = {
 
-        val dest = cvCreateImage(cvGetSize(src), IPL_DEPTH_32F, src.nChannels())
+        val dest = IplImage.create(cvGetSize(src), IPL_DEPTH_32F, src.nChannels())
         cvLaplace(src, dest, aperture)
 
         laplace = dest.asCvMat()

@@ -1,17 +1,17 @@
 /*
- * Copyright (c) 2011-2012 Jarek Sacha. All Rights Reserved.
+ * Copyright (c) 2011-2013 Jarek Sacha. All Rights Reserved.
  *
- * Author's e-mail: jarek.listy at gmail.com
+ * Author's e-mail: jpsacha at gmail.com
  */
 
 package opencv2_cookbook.chapter03
 
-import opencv2_cookbook.OpenCVImageJUtils._
 import com.googlecode.javacv.cpp.opencv_core._
 import com.googlecode.javacv.cpp.opencv_imgproc._
 import ij.process.ByteProcessor
 import java.awt.Color
 import math._
+import opencv2_cookbook.OpenCVImageJUtils._
 
 
 /**
@@ -39,11 +39,11 @@ class ColorDetectorLab(private var _minDist: Int = 30,
 
     def colorDistanceThreshold = _minDist
 
-    def colorDistanceThreshold_=(dist: Int) {_minDist = max(0, dist)}
+    def colorDistanceThreshold_=(dist: Int) { _minDist = max(0, dist) }
 
     def targetColor = _targetLab
 
-    def targetColor_=(color: ColorLab) {_targetLab = color}
+    def targetColor_=(color: ColorLab) { _targetLab = color }
 
     def process(rgbImage: IplImage): IplImage = {
 
@@ -53,7 +53,7 @@ class ColorDetectorLab(private var _minDist: Int = 30,
         //       L <- L*255/100
         //       a <- a + 128
         //       b <- b + 128
-        val labImage = cvCreateImage(cvGetSize(rgbImage), rgbImage.depth, 3)
+        val labImage = IplImage.create(cvGetSize(rgbImage), rgbImage.depth, 3)
         cvCvtColor(rgbImage, labImage, CV_BGR2Lab)
 
         // Convert to ColorProcessor for easier pixel access

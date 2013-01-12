@@ -1,7 +1,7 @@
 /*
- * Copyright (c) 2011-2012 Jarek Sacha. All Rights Reserved.
+ * Copyright (c) 2011-2013 Jarek Sacha. All Rights Reserved.
  *
- * Author's e-mail: jarek.listy at gmail.com
+ * Author's e-mail: jpsacha at gmail.com
  */
 
 package opencv2_cookbook.chapter08
@@ -43,7 +43,7 @@ class HarrisDetector {
       */
     def detect(image: IplImage) {
         // Harris computations
-        cornerStrength = Some(cvCreateImage(cvGetSize(image), IPL_DEPTH_32F, 1))
+        cornerStrength = Some(IplImage.create(cvGetSize(image), IPL_DEPTH_32F, 1))
         cvCornerHarris(image, cornerStrength.get, neighborhood, aperture, k)
 
         // Internal threshold computation.
@@ -64,9 +64,9 @@ class HarrisDetector {
         //
         // Dilation will replace values in the image by its largest neighbour value.
         // This process will modify all the pixels but the local maxima (and plateaus)
-        val dilated = cvCreateImage(cvGetSize(cornerStrength.get), cornerStrength.get.depth, 1)
+        val dilated = IplImage.create(cvGetSize(cornerStrength.get), cornerStrength.get.depth, 1)
         cvDilate(cornerStrength.get, dilated, null, 1)
-        localMax = Some(cvCreateImage(cvGetSize(image), IPL_DEPTH_8U, 1))
+        localMax = Some(IplImage.create(cvGetSize(image), IPL_DEPTH_8U, 1))
         // Find maxima by detecting which pixels were not modified by dilation
         cvCmp(cornerStrength.get, dilated, localMax.get, CV_CMP_EQ)
     }
@@ -82,10 +82,10 @@ class HarrisDetector {
 
         // Threshold the corner strength
         val threshold = qualityLevel * maxStrength
-        val cornerTh = cvCreateImage(cvGetSize(cornerStrength.get), cornerStrength.get.depth, 1)
+        val cornerTh = IplImage.create(cvGetSize(cornerStrength.get), cornerStrength.get.depth, 1)
         cvThreshold(cornerStrength.get, cornerTh, threshold, 255, CV_THRESH_BINARY)
 
-        val cornerMap = cvCreateImage(cvGetSize(cornerTh), IPL_DEPTH_8U, 1)
+        val cornerMap = IplImage.create(cvGetSize(cornerTh), IPL_DEPTH_8U, 1)
         cvConvertScale(cornerTh, cornerMap, 1, 0)
 
         // non-maxima suppression

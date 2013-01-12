@@ -1,7 +1,7 @@
 /*
- * Copyright (c) 2011-2012 Jarek Sacha. All Rights Reserved.
+ * Copyright (c) 2011-2013 Jarek Sacha. All Rights Reserved.
  *
- * Author's e-mail: jarek.listy at gmail.com
+ * Author's e-mail: jpsacha at gmail.com
  */
 
 package opencv2_cookbook.chapter04
@@ -54,7 +54,7 @@ object Ex8MeanShiftDetector extends App {
     val targetImage = loadAndShowOrExit(new File("data/baboon3.jpg"), CV_LOAD_IMAGE_COLOR)
 
     // Convert to HSV color space
-    val hsvTargetImage = cvCreateImage(cvGetSize(targetImage), targetImage.depth, 3)
+    val hsvTargetImage = IplImage.create(cvGetSize(targetImage), targetImage.depth, 3)
     cvCvtColor(targetImage, hsvTargetImage, CV_BGR2HSV)
 
     // Identify pixels with low saturation

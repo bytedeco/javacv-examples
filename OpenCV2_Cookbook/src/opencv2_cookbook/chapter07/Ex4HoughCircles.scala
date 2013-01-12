@@ -1,16 +1,16 @@
 /*
- * Copyright (c) 2011-2012 Jarek Sacha. All Rights Reserved.
+ * Copyright (c) 2011-2013 Jarek Sacha. All Rights Reserved.
  *
- * Author's e-mail: jarek.listy at gmail.com
+ * Author's e-mail: jpsacha at gmail.com
  */
 
 package opencv2_cookbook.chapter07
 
-import opencv2_cookbook.OpenCVUtils._
 import com.googlecode.javacv.cpp.opencv_core._
 import com.googlecode.javacv.cpp.opencv_highgui._
 import com.googlecode.javacv.cpp.opencv_imgproc._
 import java.io.File
+import opencv2_cookbook.OpenCVUtils._
 
 
 /**
@@ -24,7 +24,7 @@ object Ex4HoughCircles extends App {
 
 
     // Blur with a Gaussian filter
-    val smooth = cvCreateImage(cvGetSize(src), src.depth, 1)
+    val smooth = IplImage.create(cvGetSize(src), src.depth, 1)
     val kernelSize = new CvSize(5, 5)
     val sigma = 1.5
     val borderType = BORDER_DEFAULT
@@ -49,7 +49,7 @@ object Ex4HoughCircles extends App {
 
 
     // Draw lines on the canny contour image
-    val colorDst = cvCreateImage(cvGetSize(src), src.depth(), 3)
+    val colorDst = IplImage.create(cvGetSize(src), src.depth(), 3)
     cvCvtColor(src, colorDst, CV_GRAY2BGR)
     for (i <- 0 until circles.total) {
         val point = new CvPoint3D32f(cvGetSeqElem(circles, i))

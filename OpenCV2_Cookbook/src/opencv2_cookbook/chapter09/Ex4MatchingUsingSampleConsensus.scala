@@ -1,7 +1,7 @@
 /*
- * Copyright (c) 2011-2012 Jarek Sacha. All Rights Reserved.
+ * Copyright (c) 2011-2013 Jarek Sacha. All Rights Reserved.
  *
- * Author's e-mail: jarek.listy at gmail.com
+ * Author's e-mail: jpsacha at gmail.com
  */
 
 package opencv2_cookbook.chapter09
@@ -42,7 +42,7 @@ object Ex4MatchingUsingSampleConsensus extends App {
     val matches = rMatcher.matchImages(image1, image2)
 
     // draw the matches
-    val matchesCanvas = cvCreateImage(new CvSize(image1.width + image2.width, image1.height), image1.depth, 3)
+    val matchesCanvas = IplImage.create(new CvSize(image1.width + image2.width, image1.height), image1.depth, 3)
     drawMatches(image1, matches.keyPoints1, image2, matches.keyPoints2,
         toNativeVector(matches.matches), matchesCanvas, CvScalar.WHITE, cvScalarAll(-1), null, DrawMatchesFlags.DEFAULT)
     show(matchesCanvas, "Matches")
@@ -65,7 +65,7 @@ object Ex4MatchingUsingSampleConsensus extends App {
       * @return new image  with epilines and points.
       */
     private def drawEpiLines(image: IplImage, epilines: CvMat, points: CvPoint2D32f): IplImage = {
-        val canvas = cvCreateImage(cvGetSize(image), image.depth(), 3)
+        val canvas = IplImage.create(cvGetSize(image), image.depth(), 3)
         cvCvtColor(image, canvas, CV_GRAY2BGR)
         for (i <- 0 until epilines.rows()) {
             // draw the epipolar line between first and last column

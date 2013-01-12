@@ -1,7 +1,7 @@
 /*
- * Copyright (c) 2011-2012 Jarek Sacha. All Rights Reserved.
+ * Copyright (c) 2011-2013 Jarek Sacha. All Rights Reserved.
  *
- * Author's e-mail: jarek.listy at gmail.com
+ * Author's e-mail: jpsacha at gmail.com
  */
 
 package opencv2_cookbook.chapter10
@@ -22,7 +22,7 @@ object Ex3WriteVideoSequence extends App {
 
     // Define a method for processing video frames
     def canny(src: IplImage): IplImage = {
-        val dest = cvCreateImage(cvGetSize(src), src.depth(), 1)
+        val dest = IplImage.create(cvGetSize(src), src.depth(), 1)
         // Convert to gray
         cvCvtColor(src, dest, CV_BGR2GRAY)
         // Compute Canny edges

@@ -1,15 +1,15 @@
 /*
- * Copyright (c) 2011-2012 Jarek Sacha. All Rights Reserved.
+ * Copyright (c) 2011-2013 Jarek Sacha. All Rights Reserved.
  *
- * Author's e-mail: jarek.listy at gmail.com
+ * Author's e-mail: jpsacha at gmail.com
  */
 
 package opencv2_cookbook.chapter04
 
-import opencv2_cookbook.OpenCVUtils._
-
 import com.googlecode.javacv.cpp.opencv_core._
 import com.googlecode.javacv.cpp.opencv_imgproc._
+import opencv2_cookbook.OpenCVUtils._
+
 
 /**
  * Used by examples from section "Backprojecting a histogram to detect specific image content" in chapter 4.
@@ -53,7 +53,7 @@ class ContentFinder {
         val channels = ColorHistogram.splitChannels(image) map toIplImage32F
 
         // Back project
-        val dest = cvCreateImage(cvGetSize(image), IPL_DEPTH_32F, 1)
+        val dest = IplImage.create(cvGetSize(image), IPL_DEPTH_32F, 1)
         cvCalcBackProject(channels, dest, histogram)
 
         if (threshold > 0) {
