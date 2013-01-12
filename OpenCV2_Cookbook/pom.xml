@@ -26,7 +26,7 @@
         <maven.compiler.source>1.6</maven.compiler.source>
         <maven.compiler.target>1.6</maven.compiler.target>
         <encoding>UTF-8</encoding>
-        <scala.version>2.9.2</scala.version>
+        <scala.version>2.10.0</scala.version>
         <javacpp.version>0.3</javacpp.version>
         <javacv.version>0.3</javacv.version>
         <platform.name>${os.name}-${os.arch}</platform.name>
@@ -79,13 +79,13 @@
         <dependency>
             <groupId>net.imagej</groupId>
             <artifactId>ij</artifactId>
-            <version>1.46r</version>
+            <version>1.47h</version>
         </dependency>
         <!-- Test -->
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.10</version>
+            <version>4.11</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
