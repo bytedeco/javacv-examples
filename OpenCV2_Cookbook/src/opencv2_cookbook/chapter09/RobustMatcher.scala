@@ -1,7 +1,7 @@
 /*
- * Copyright (c) 2011-2012 Jarek Sacha. All Rights Reserved.
+ * Copyright (c) 2011-2013 Jarek Sacha. All Rights Reserved.
  *
- * Author's e-mail: jarek.listy at gmail.com
+ * Author's e-mail: jpsacha at gmail.com
  */
 
 package opencv2_cookbook.chapter09
@@ -65,7 +65,7 @@ class RobustMatcher(detector: SURF = new SURF(100),
         // 2. Match the two image descriptors
 
         // Construction of the matcher
-        val matcher = new BFMatcher(NORM_L2)
+        val matcher = new BFMatcher(NORM_L2, false)
 
         // from image 1 to image 2
         // based on k nearest neighbours (with k=2)

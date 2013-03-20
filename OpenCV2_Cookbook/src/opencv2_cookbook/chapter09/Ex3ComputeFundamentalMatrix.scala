@@ -1,7 +1,7 @@
 /*
- * Copyright (c) 2011-2012 Jarek Sacha. All Rights Reserved.
+ * Copyright (c) 2011-2013 Jarek Sacha. All Rights Reserved.
  *
- * Author's e-mail: jarek.listy at gmail.com
+ * Author's e-mail: jpsacha at gmail.com
  */
 
 package opencv2_cookbook.chapter09
@@ -59,7 +59,7 @@ object Ex3ComputeFundamentalMatrix extends App {
     println("descriptor matrix size (Left) : " + descriptorsLeft.rows + " by " + descriptorsLeft.cols)
 
     // Construction of the BruteForce L2 matcher
-    val matcher = new BFMatcher(NORM_L2)
+    val matcher = new BFMatcher(NORM_L2, false)
 
     // Match the two image descriptors
     val matches = new DMatch()

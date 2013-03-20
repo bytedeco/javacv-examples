@@ -1,7 +1,7 @@
 /*
- * Copyright (c) 2011-2012 Jarek Sacha. All Rights Reserved.
+ * Copyright (c) 2011-2013 Jarek Sacha. All Rights Reserved.
  *
- * Author's e-mail: jarek.listy at gmail.com
+ * Author's e-mail: jpsacha at gmail.com
  */
 
 package opencv2_cookbook.chapter08
@@ -46,7 +46,7 @@ object Ex7DescribingSURF extends App {
     }
 
     // Create feature matcher
-    val matcher = new BFMatcher(NORM_L2)
+    val matcher = new BFMatcher(NORM_L2, false)
 
     val matches = new DMatch()
     // "match" is a keyword in Scala, to avoid conflict between a keyword and a method match of the BFMatcher,
