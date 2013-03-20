@@ -1,7 +1,7 @@
 /*
- * Copyright (c) 2011-2012 Jarek Sacha. All Rights Reserved.
+ * Copyright (c) 2011-2013 Jarek Sacha. All Rights Reserved.
  *
- * Author's e-mail: jarek.listy at gmail.com
+ * Author's e-mail: jpsacha at gmail.com
  */
 
 package opencv2_cookbook.chapter09
@@ -157,7 +157,7 @@ class CameraCalibrator {
         }
 
         // Apply mapping functions
-        val remapped = cvCreateImage(cvGetSize(image), image.depth, 1)
+        val remapped = IplImage.create(cvGetSize(image), image.depth, 1)
         cvRemap(image, remapped, xMap, yMap, CV_INTER_LINEAR, CvScalar.ZERO)
 
         remapped

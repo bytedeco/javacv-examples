@@ -1,7 +1,7 @@
 /*
- * Copyright (c) 2011-2012 Jarek Sacha. All Rights Reserved.
+ * Copyright (c) 2011-2013 Jarek Sacha. All Rights Reserved.
  *
- * Author's e-mail: jarek.listy at gmail.com
+ * Author's e-mail: jpsacha at gmail.com
  */
 
 package opencv2_cookbook.chapter04
@@ -46,9 +46,9 @@ object ColorHistogram {
         require(src.nChannels == 3, "Expecting 3 channel (color) image")
 
         val size = cvGetSize(src)
-        val channel0 = cvCreateImage(size, src.depth, 1)
-        val channel1 = cvCreateImage(size, src.depth, 1)
-        val channel2 = cvCreateImage(size, src.depth, 1)
+        val channel0 = IplImage.create(size, src.depth, 1)
+        val channel1 = IplImage.create(size, src.depth, 1)
+        val channel2 = IplImage.create(size, src.depth, 1)
         cvSplit(src, channel0, channel1, channel2, null)
 
         Array(channel0, channel1, channel2)
@@ -90,9 +90,9 @@ class ColorHistogram {
         val hist = cvCreateHist(dims, sizes, histType, ranges, uniform)
 
         // Split bands, as required by `cvCalcHist`
-        val channel0 = cvCreateImage(cvGetSize(image), image.depth, 1)
-        val channel1 = cvCreateImage(cvGetSize(image), image.depth, 1)
-        val channel2 = cvCreateImage(cvGetSize(image), image.depth, 1)
+        val channel0 = IplImage.create(cvGetSize(image), image.depth, 1)
+        val channel1 = IplImage.create(cvGetSize(image), image.depth, 1)
+        val channel2 = IplImage.create(cvGetSize(image), image.depth, 1)
         cvSplit(image, channel0, channel1, channel2, null)
 
         // Compute histogram
@@ -114,14 +114,14 @@ class ColorHistogram {
         require(image.nChannels == 3, "Expecting 3 channel (color) image")
 
         // Convert RGB to HSV color space
-        val hsvImage = cvCreateImage(cvGetSize(image), image.depth, 3)
+        val hsvImage = IplImage.create(cvGetSize(image), image.depth, 3)
         cvCvtColor(image, hsvImage, CV_BGR2HSV)
 
         // Split the 3 channels into 3 images
         val hsvChannels = splitChannels(hsvImage)
 
         val saturationMask = if (minSaturation > 0) {
-            val saturationMask = cvCreateImage(cvGetSize(hsvImage), IPL_DEPTH_8U, 1)
+            val saturationMask = IplImage.create(cvGetSize(hsvImage), IPL_DEPTH_8U, 1)
             cvThreshold(hsvChannels(1), saturationMask, minSaturation, 255, CV_THRESH_BINARY)
             saturationMask
         } else {

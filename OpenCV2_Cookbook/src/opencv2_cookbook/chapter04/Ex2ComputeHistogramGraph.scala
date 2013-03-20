@@ -1,14 +1,14 @@
 /*
- * Copyright (c) 2011-2012 Jarek Sacha. All Rights Reserved.
+ * Copyright (c) 2011-2013 Jarek Sacha. All Rights Reserved.
  *
- * Author's e-mail: jarek.listy at gmail.com
+ * Author's e-mail: jpsacha at gmail.com
  */
 
 package opencv2_cookbook.chapter04
 
-import opencv2_cookbook.OpenCVUtils._
 import com.googlecode.javacv.cpp.opencv_highgui._
 import java.io.File
+import opencv2_cookbook.OpenCVUtils._
 
 /**
  * The second example for section "Computing the image histogram" in Chapter 4, page 92.

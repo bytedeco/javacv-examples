@@ -1,7 +1,7 @@
 /*
- * Copyright (c) 2011-2012 Jarek Sacha. All Rights Reserved.
+ * Copyright (c) 2011-2013 Jarek Sacha. All Rights Reserved.
  *
- * Author's e-mail: jarek.listy at gmail.com
+ * Author's e-mail: jpsacha at gmail.com
  */
 
 package opencv2_cookbook.chapter08
@@ -24,7 +24,7 @@ object Ex1HarrisCornerMap extends App {
     val image = loadAndShowOrExit(new File("data/church01.jpg"))
 
     // Image to store the Harris detector responses.
-    val cornerStrength = cvCreateImage(cvGetSize(image), IPL_DEPTH_32F, 1)
+    val cornerStrength = IplImage.create(cvGetSize(image), IPL_DEPTH_32F, 1)
     // Detect Harris Corners
     cvCornerHarris(image, cornerStrength,
         3 /* neighborhood size */ ,
@@ -32,7 +32,7 @@ object Ex1HarrisCornerMap extends App {
         0.01 /* Harris parameter */)
 
     // Threshold to retain only locations of strongest corners
-    val harrisCorners = cvCreateImage(cvGetSize(image), IPL_DEPTH_8U, 1)
+    val harrisCorners = IplImage.create(cvGetSize(image), IPL_DEPTH_8U, 1)
     val threshold = 0.0001
     cvThreshold(cornerStrength, harrisCorners, threshold, 255, CV_THRESH_BINARY_INV)
     show(harrisCorners, "Harris Corner Map")

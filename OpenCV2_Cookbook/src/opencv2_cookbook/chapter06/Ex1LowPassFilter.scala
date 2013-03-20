@@ -1,7 +1,7 @@
 /*
- * Copyright (c) 2011-2012 Jarek Sacha. All Rights Reserved.
+ * Copyright (c) 2011-2013 Jarek Sacha. All Rights Reserved.
  *
- * Author's e-mail: jarek.listy at gmail.com
+ * Author's e-mail: jpsacha at gmail.com
  */
 
 package opencv2_cookbook.chapter06
@@ -22,7 +22,7 @@ object Ex1LowPassFilter extends App {
     val src = loadAndShowOrExit(new File("data/boldt.jpg"), CV_LOAD_IMAGE_GRAYSCALE)
 
     // Blur with a Gaussian filter
-    val dest = cvCreateImage(cvGetSize(src), src.depth, 1)
+    val dest = IplImage.create(cvGetSize(src), src.depth, 1)
     val kernelSize = new CvSize(5, 5)
     val sigma = 1.5
     val borderType = BORDER_DEFAULT

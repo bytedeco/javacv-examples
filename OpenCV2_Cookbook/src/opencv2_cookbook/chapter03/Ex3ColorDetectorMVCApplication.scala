@@ -1,7 +1,7 @@
 /*
- * Copyright (c) 2011-2012 Jarek Sacha. All Rights Reserved.
+ * Copyright (c) 2011-2013 Jarek Sacha. All Rights Reserved.
  *
- * Author's e-mail: jarek.listy at gmail.com
+ * Author's e-mail: jpsacha at gmail.com
  */
 
 package opencv2_cookbook.chapter03
@@ -10,11 +10,13 @@ import com.googlecode.javacv.cpp.opencv_core.IplImage
 import java.awt.Cursor._
 import java.io.File
 import javax.swing.{JColorChooser, ImageIcon}
-import swing._
-import Dialog.Message.Error
-import FileChooser.Result.Approve
-import GridBagPanel.Fill
-import event.{ButtonClicked, ValueChanged}
+import scala.Some
+import scala.swing.Dialog.Message.Error
+import scala.swing.FileChooser.Result.Approve
+import scala.swing.GridBagPanel.Fill
+import scala.swing._
+import scala.swing.event.ButtonClicked
+import scala.swing.event.ValueChanged
 
 
 /**

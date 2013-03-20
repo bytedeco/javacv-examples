@@ -1,7 +1,7 @@
 /*
- * Copyright (c) 2011-2012 Jarek Sacha. All Rights Reserved.
+ * Copyright (c) 2011-2013 Jarek Sacha. All Rights Reserved.
  *
- * Author's e-mail: jarek.listy at gmail.com
+ * Author's e-mail: jpsacha at gmail.com
  */
 
 package opencv2_cookbook.chapter04
@@ -9,9 +9,9 @@ package opencv2_cookbook.chapter04
 import com.googlecode.javacv.cpp.opencv_core._
 import com.googlecode.javacv.cpp.opencv_imgproc._
 import com.googlecode.javacv.cpp.opencv_legacy._
-
-import java.awt.image.BufferedImage
 import java.awt.Color
+import java.awt.image.BufferedImage
+
 
 /**
  * Helper methods for performing histogram and look-up table operations, correspond to part of C++ class
@@ -27,7 +27,7 @@ object Histogram1D {
      */
     def applyLookUp(src: IplImage, lut: CvMat): IplImage = {
         // Create out put image of the same size and type as input
-        val dest = cvCreateImage(cvGetSize(src), src.depth, src.nChannels)
+        val dest = IplImage.create(cvGetSize(src), src.depth, src.nChannels)
 
         // Apply look-up
         cvLUT(src, dest, lut)
@@ -43,7 +43,7 @@ object Histogram1D {
      */
     def equalize(src: IplImage): IplImage = {
         // Create out put image of the same size and type as input
-        val dest = cvCreateImage(cvGetSize(src), src.depth, src.nChannels)
+        val dest = IplImage.create(cvGetSize(src), src.depth, src.nChannels)
 
         // Equalize histogram
         cvEqualizeHist(src, dest)

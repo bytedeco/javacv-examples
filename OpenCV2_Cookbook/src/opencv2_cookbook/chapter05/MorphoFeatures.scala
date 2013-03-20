@@ -1,15 +1,15 @@
 /*
- * Copyright (c) 2011-2012 Jarek Sacha. All Rights Reserved.
+ * Copyright (c) 2011-2013 Jarek Sacha. All Rights Reserved.
  *
- * Author's e-mail: jarek.listy at gmail.com
+ * Author's e-mail: jpsacha at gmail.com
  */
 
 package opencv2_cookbook.chapter05
 
-import com.googlecode.javacv.cpp.opencv_imgproc._
 import com.googlecode.javacv.cpp.opencv_core._
-import java.awt.{Color, Graphics2D, Image}
+import com.googlecode.javacv.cpp.opencv_imgproc._
 import java.awt.geom.Ellipse2D
+import java.awt.{Color, Graphics2D, Image}
 
 
 /**
@@ -54,7 +54,7 @@ class MorphoFeatures {
 
     def getEdges(image: IplImage): IplImage = {
         // Get gradient image
-        val result = cvCreateImage(cvGetSize(image), image.depth, 1)
+        val result = IplImage.create(cvGetSize(image), image.depth, 1)
         val element3 = cvCreateStructuringElementEx(3, 3, 1, 1, CV_SHAPE_RECT, null)
         cvMorphologyEx(image, result, null, element3, MORPH_GRADIENT, 1)
 
@@ -66,7 +66,7 @@ class MorphoFeatures {
 
 
     def getCorners(image: IplImage): IplImage = {
-        val result = cvCreateImage(cvGetSize(image), image.depth, 1)
+        val result = IplImage.create(cvGetSize(image), image.depth, 1)
 
         // Dilate with a cross
         cvDilate(image, result, cross, 1)
@@ -74,7 +74,7 @@ class MorphoFeatures {
         // Erode with a diamond
         cvErode(result, result, diamond, 1)
 
-        val result2 = cvCreateImage(cvGetSize(image), image.depth, 1)
+        val result2 = IplImage.create(cvGetSize(image), image.depth, 1)
         // Dilate with X
         cvDilate(image, result2, x, 1)
 

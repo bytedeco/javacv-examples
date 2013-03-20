@@ -95,7 +95,7 @@ object Ex3ComputeFundamentalMatrix extends App {
         selected7Matches.position(0)
 
         // Draw selected matches
-        val imageMatches = cvCreateImage(
+        val imageMatches = IplImage.create(
             new CvSize(imageRight.width + imageLeft.width, imageRight.height), imageRight.depth, 3)
         drawMatches(
             imageRight, keypointsRight, imageLeft, keypointsLeft, selected7Matches, imageMatches,
@@ -200,14 +200,14 @@ object Ex3ComputeFundamentalMatrix extends App {
 
 
     private def drawKeyPoints(image: IplImage, keypoints: KeyPoint, title: String) {
-        val canvas = cvCreateImage(cvGetSize(image), image.depth(), 3)
+        val canvas = IplImage.create(cvGetSize(image), image.depth(), 3)
         drawKeypoints(image, keypoints, canvas, CvScalar.WHITE, DrawMatchesFlags.DRAW_RICH_KEYPOINTS)
         show(canvas, title)
     }
 
 
     private def drawEpiLines(image: IplImage, lines: CvMat, points: CvPoint2D32f, inliers: CvMat): IplImage = {
-        val canvas = cvCreateImage(cvGetSize(image), image.depth(), 3)
+        val canvas = IplImage.create(cvGetSize(image), image.depth(), 3)
         cvCvtColor(image, canvas, CV_GRAY2BGR)
         for (i <- 0 until lines.rows()) {
             val inlier = inliers != null && math.round(inliers.get(i)) != 0

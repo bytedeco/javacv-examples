@@ -1,7 +1,7 @@
 /*
- * Copyright (c) 2011-2012 Jarek Sacha. All Rights Reserved.
+ * Copyright (c) 2011-2013 Jarek Sacha. All Rights Reserved.
  *
- * Author's e-mail: jarek.listy at gmail.com
+ * Author's e-mail: jpsacha at gmail.com
  */
 
 package opencv2_cookbook.chapter10
@@ -47,7 +47,7 @@ object Ex6MOGMotionDetector extends App {
     while (cvGrabFrame(capture) != 0 && {frame = cvRetrieveFrame(capture); frame} != null) {
 
         // Update the mixture of Gaussians model with current frame and return estimated foreground
-        val foreground = cvCreateImage(cvGetSize(frame), IPL_DEPTH_8U, 1)
+        val foreground = IplImage.create(cvGetSize(frame), IPL_DEPTH_8U, 1)
         mog(frame, foreground, 0.01)
 
         // Complement the image, so foreground is black

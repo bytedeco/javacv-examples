@@ -1,7 +1,7 @@
 /*
- * Copyright (c) 2011-2012 Jarek Sacha. All Rights Reserved.
+ * Copyright (c) 2011-2013 Jarek Sacha. All Rights Reserved.
  *
- * Author's e-mail: jarek.listy at gmail.com
+ * Author's e-mail: jpsacha at gmail.com
  */
 
 package opencv2_cookbook.chapter06
@@ -21,14 +21,14 @@ object Ex2MedianFilter extends App {
     val src = loadAndShowOrExit(new File("data/boldt_salt.jpg"), CV_LOAD_IMAGE_GRAYSCALE)
 
     // Remove noise with a median filter
-    val dest = cvCreateImage(cvGetSize(src), src.depth, 1)
+    val dest = IplImage.create(cvGetSize(src), src.depth, 1)
     val kernelSize = 3
     medianBlur(src, dest, kernelSize)
     show(dest, "Median filtered")
 
     // Since median filter really cleans up outlier with values above (salt) and below (pepper),
     // in this case, we can reconstruct dark pixels that are most likely not effected by the noise.
-    val dest2 = cvCreateImage(cvGetSize(src), src.depth, 1)
+    val dest2 = IplImage.create(cvGetSize(src), src.depth, 1)
     cvMin(src, dest, dest2)
     show(dest2, "Median filtered + dark pixel recovery")
 }

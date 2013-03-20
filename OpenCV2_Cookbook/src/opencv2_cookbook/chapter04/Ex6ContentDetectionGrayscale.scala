@@ -1,19 +1,18 @@
 /*
- * Copyright (c) 2011-2012 Jarek Sacha. All Rights Reserved.
+ * Copyright (c) 2011-2013 Jarek Sacha. All Rights Reserved.
  *
- * Author's e-mail: jarek.listy at gmail.com
+ * Author's e-mail: jpsacha at gmail.com
  */
 
 package opencv2_cookbook.chapter04
 
-import opencv2_cookbook.OpenCVUtils._
-
 import com.googlecode.javacv.cpp.opencv_core._
 import com.googlecode.javacv.cpp.opencv_highgui._
 import com.googlecode.javacv.cpp.opencv_imgproc._
-
 import java.awt.Rectangle
 import java.io.File
+import opencv2_cookbook.OpenCVUtils._
+
 
 /**
  * Uses histogram of a region in an grayscale image to create 'template',
@@ -43,7 +42,7 @@ object Ex6ContentDetectionGrayscale extends App {
 
     // Back projection is done using 32 floating point copy of the input image.
     // The output is also 32 bit floating point
-    val dest = cvCreateImage(cvGetSize(src), IPL_DEPTH_32F, src.nChannels)
+    val dest = IplImage.create(cvGetSize(src), IPL_DEPTH_32F, src.nChannels)
     cvCalcBackProject(Array(toIplImage32F(src)), dest, h)
     cvReleaseHist(h)
 

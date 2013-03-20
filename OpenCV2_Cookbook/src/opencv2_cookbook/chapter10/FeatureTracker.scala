@@ -1,7 +1,7 @@
 /*
- * Copyright (c) 2011-2012 Jarek Sacha. All Rights Reserved.
+ * Copyright (c) 2011-2013 Jarek Sacha. All Rights Reserved.
  *
- * Author's e-mail: jarek.listy at gmail.com
+ * Author's e-mail: jpsacha at gmail.com
  */
 
 package opencv2_cookbook.chapter10
@@ -41,7 +41,7 @@ class FeatureTracker(maxCount: Int = 500,
     def process(frame: IplImage): IplImage = {
 
         // convert to gray-level image
-        val grayCurrent = cvCreateImage(cvGetSize(frame), frame.depth, 1)
+        val grayCurrent = IplImage.create(cvGetSize(frame), frame.depth, 1)
         cvCvtColor(frame, grayCurrent, CV_BGR2GRAY)
 
         // 1. Check if additional new feature points should be added
@@ -55,7 +55,7 @@ class FeatureTracker(maxCount: Int = 500,
 
         // for first image of the sequence
         if (grayPrevious == null) {
-            grayPrevious = cvCreateImage(cvGetSize(grayCurrent), grayCurrent.depth, grayCurrent.nChannels)
+            grayPrevious = IplImage.create(cvGetSize(grayCurrent), grayCurrent.depth, grayCurrent.nChannels)
             cvCopy(grayCurrent, grayPrevious, null)
         }
 
@@ -86,7 +86,7 @@ class FeatureTracker(maxCount: Int = 500,
         }
 
         // Prepare output
-        val output = cvCreateImage(cvGetSize(frame), frame.depth, frame.nChannels)
+        val output = IplImage.create(cvGetSize(frame), frame.depth, frame.nChannels)
         cvCopy(frame, output, null)
 
         // 3. handle the accepted tracked points

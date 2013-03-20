@@ -1,7 +1,7 @@
 /*
- * Copyright (c) 2011-2012 Jarek Sacha. All Rights Reserved.
+ * Copyright (c) 2011-2013 Jarek Sacha. All Rights Reserved.
  *
- * Author's e-mail: jarek.listy at gmail.com
+ * Author's e-mail: jpsacha at gmail.com
  */
 
 package opencv2_cookbook
@@ -240,7 +240,7 @@ object OpenCVUtils {
         val max = Array(Double.MinValue)
         cvMinMaxLoc(image, min, max)
         val scale = 1 / (max(0) - min(0))
-        val imageScaled = cvCreateImage(cvGetSize(image), IPL_DEPTH_32F, image.nChannels)
+        val imageScaled = IplImage.create(cvGetSize(image), IPL_DEPTH_32F, image.nChannels)
         cvConvertScale(image, imageScaled, scale, 0)
         imageScaled
     }
@@ -323,7 +323,7 @@ object OpenCVUtils {
       * @return copy of the input with pixels values represented as 32 floating point numbers
       */
     def toIplImage32F(src: IplImage): IplImage = {
-        val dest = cvCreateImage(cvGetSize(src), IPL_DEPTH_32F, src.nChannels)
+        val dest = IplImage.create(cvGetSize(src), IPL_DEPTH_32F, src.nChannels)
         cvConvertScale(src, dest, 1, 0)
         dest
     }
@@ -347,7 +347,7 @@ object OpenCVUtils {
             }
 
 
-        val dest = cvCreateImage(cvGetSize(src), IPL_DEPTH_8U, src.nChannels)
+        val dest = IplImage.create(cvGetSize(src), IPL_DEPTH_8U, src.nChannels)
         cvConvertScale(src, dest, scale, offset)
         dest
     }
