@@ -15,9 +15,9 @@ public class SURFDetectorTest {
         final IplImage image = cvLoadImage("data/church01.jpg");
         final KeyPoint keyPoints = new KeyPoint();
         final SURF surf = new SURF(2500, 4, 2, true, false);
-        // JVM crashes in on certain machines executing following code (JVM 1.7.0_17-x64, JavaCV 0.4)
+        // JVM crashes when JavaCV native binaries and OpenCV binaries are build with different versions of VisualStudio
+        // For instance, JavaCV is build with VC10 and OpenCV with VC11.
         surf.detect(image, null, keyPoints);
-        // Not sure what should be the number of key points since crashes in line above, guessing 11.
-        assertEquals(11, keyPoints.capacity());
+        assertEquals(320, keyPoints.capacity());
     }
 }
