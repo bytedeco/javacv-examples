@@ -23,12 +23,12 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="Maven: com.googlecode.javacv:javacv:linux-x86:0.3" level="project" />
+    <orderEntry type="library" name="Maven: com.googlecode.javacv:javacv:linux-x86:0.5" level="project" />
     <orderEntry type="library" name="Maven: org.scala-lang:scala-library:2.10.1" level="project" />
     <orderEntry type="library" name="Maven: org.scala-lang:scala-swing:2.10.1" level="project" />
-    <orderEntry type="library" name="Maven: com.googlecode.javacpp:javacpp:0.4" level="project" />
-    <orderEntry type="library" name="Maven: com.googlecode.javacv:javacv:0.4" level="project" />
-    <orderEntry type="library" name="Maven: com.googlecode.javacv:javacv:windows-x86_64:0.4" level="project" />
+    <orderEntry type="library" name="Maven: com.googlecode.javacpp:javacpp:0.5" level="project" />
+    <orderEntry type="library" name="Maven: com.googlecode.javacv:javacv:0.5" level="project" />
+    <orderEntry type="library" name="Maven: com.googlecode.javacv:javacv:windows-x86_64:0.5" level="project" />
     <orderEntry type="library" name="Maven: net.imagej:ij:1.47h" level="project" />
     <orderEntry type="library" name="Maven: com.sun:tools:1.4.2" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: junit:junit:4.11" level="project" />
