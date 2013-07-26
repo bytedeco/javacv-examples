@@ -26,7 +26,7 @@
         <maven.compiler.source>1.6</maven.compiler.source>
         <maven.compiler.target>1.6</maven.compiler.target>
         <encoding>UTF-8</encoding>
-        <scala.version>2.10.1</scala.version>
+        <scala.version>2.10.2</scala.version>
         <javacpp.version>0.5</javacpp.version>
         <javacv.version>0.5</javacv.version>
         <platform.name>${os.name}-${os.arch}</platform.name>
