@@ -17,7 +17,7 @@ import opencv2_cookbook.OpenCVUtils._
  */
 object Ex4InvertLut extends App {
 
-    // Load image as a grayscale
+    // Load image as a gray scale
     val src = loadAndShowOrExit(new File("data/group.jpg"), CV_LOAD_IMAGE_GRAYSCALE)
 
     // Create inverted lookup table

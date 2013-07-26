@@ -129,7 +129,7 @@ class FeatureTracker(maxCount: Int = 500,
     def acceptTrackedPoint(status: Int, point0: CvPoint2D32f, point1: CvPoint2D32f): Boolean = {
         status != 0 &&
                 // if point has moved
-                (math.abs(point0.x - point1.x) + (math.abs(point0.y - point1.y)) > 2)
+                (math.abs(point0.x - point1.x) + math.abs(point0.y - point1.y) > 2)
     }
 
 

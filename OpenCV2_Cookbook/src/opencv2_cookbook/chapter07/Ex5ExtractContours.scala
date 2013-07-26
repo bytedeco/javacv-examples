@@ -40,7 +40,7 @@ object Ex5ExtractContours extends App {
     // Eliminate too short or too long contours
     val lengthMin = 100
     val lengthMax = 1000
-    val filteredContours = contours.filter(contour => (lengthMin < contour.total() && contour.total() < lengthMax))
+    val filteredContours = contours.filter(contour => lengthMin < contour.total() && contour.total() < lengthMax)
     val colorDest2 = loadOrExit(new File("data/group.jpg"), CV_LOAD_IMAGE_COLOR)
     draw(colorDest2, filteredContours)
     show(colorDest2, "Contours Filtered")

@@ -27,5 +27,5 @@ object Ex1LowPassFilter extends App {
     val sigma = 1.5
     val borderType = BORDER_DEFAULT
     GaussianBlur(src, dest, kernelSize, sigma, sigma, borderType)
-    show(dest, "Blured")
+    show(dest, "Blurred")
 }

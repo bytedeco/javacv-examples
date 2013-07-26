@@ -51,5 +51,5 @@ object Ex1ErodingAndDilating extends App {
     // Note: iterating 2 times will give 5x5 kernel equivalent, iterating 4 times will get 9x9, ...
     val eroded3x3i3 = IplImage.create(cvGetSize(image), image.depth, 1)
     cvErode(image, eroded3x3i3, null, 3)
-    show(eroded3x3i3, "Eroded 3x3, 3 times (effectivly 7x7)")
+    show(eroded3x3i3, "Eroded 3x3, 3 times (effectively 7x7)")
 }

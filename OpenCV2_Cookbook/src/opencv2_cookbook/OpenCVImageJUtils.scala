@@ -28,7 +28,7 @@ object OpenCVImageJUtils {
         bi.getType match {
             case BI.TYPE_BYTE_GRAY => new ByteProcessor(bi)
             case BI.TYPE_3BYTE_BGR => new ColorProcessor(bi)
-            case t => throw new IllegalArgumentException("Unsuported BufferedImage type " + t)
+            case t => throw new IllegalArgumentException("Unsupported BufferedImage type " + t)
         }
     }
 
@@ -40,10 +40,9 @@ object OpenCVImageJUtils {
       */
     def toColorProcessor(image: IplImage): ColorProcessor = {
         val ip = toImageProcessor(image)
-        if (ip.isInstanceOf[ColorProcessor]) {
-            ip.asInstanceOf[ColorProcessor]
-        } else {
-            throw new IllegalArgumentException("Input image is not a color image.")
+        ip match {
+            case colorProcessor: ColorProcessor => colorProcessor
+            case _ => throw new IllegalArgumentException("Input image is not a color image.")
         }
     }
 
@@ -118,19 +117,19 @@ object OpenCVImageJUtils {
             import java.awt.image.{DataBuffer => DB}
             dataBuffer.getDataType match {
                 case DB.TYPE_BYTE =>
-                    new ByteProcessor(w, h, (dataBuffer.asInstanceOf[DataBufferByte]).getData, colorModel)
+                    new ByteProcessor(w, h, dataBuffer.asInstanceOf[DataBufferByte].getData, colorModel)
                 case DB.TYPE_USHORT =>
-                    new ShortProcessor(w, h, (dataBuffer.asInstanceOf[DataBufferUShort]).getData, colorModel)
+                    new ShortProcessor(w, h, dataBuffer.asInstanceOf[DataBufferUShort].getData, colorModel)
                 case DB.TYPE_SHORT =>
-                    val pixels = (dataBuffer.asInstanceOf[DataBufferShort]).getData
+                    val pixels = dataBuffer.asInstanceOf[DataBufferShort].getData
                     pixels.foreach(_ + 32768)
                     new ShortProcessor(w, h, pixels, colorModel)
                 case DB.TYPE_INT =>
-                    new FloatProcessor(w, h, (dataBuffer.asInstanceOf[DataBufferInt]).getData)
+                    new FloatProcessor(w, h, dataBuffer.asInstanceOf[DataBufferInt].getData)
                 case DB.TYPE_FLOAT =>
                     new FloatProcessor(w, h, dataBuffer.asInstanceOf[DataBufferFloat].getData, colorModel)
                 case DB.TYPE_DOUBLE =>
-                    new FloatProcessor(w, h, (dataBuffer.asInstanceOf[DataBufferDouble]).getData)
+                    new FloatProcessor(w, h, dataBuffer.asInstanceOf[DataBufferDouble].getData)
                 case DB.TYPE_UNDEFINED =>
                     throw new IllegalArgumentException("Pixel type is undefined.")
                 case _ =>

@@ -60,8 +60,8 @@ object Ex2HoughLines extends App {
         val b = sin(theta)
         val x0 = a * rho
         val y0 = b * rho
-        val pt1 = new CvPoint(round(x0 + 1000 * (-b)).toInt, round(y0 + 1000 * (a)).toInt)
-        val pt2 = new CvPoint(round(x0 - 1000 * (-b)).toInt, round(y0 - 1000 * (a)).toInt)
+        val pt1 = new CvPoint(round(x0 + 1000 * (-b)).toInt, round(y0 + 1000 * a).toInt)
+        val pt2 = new CvPoint(round(x0 - 1000 * (-b)).toInt, round(y0 - 1000 * a).toInt)
 
         cvLine(colorDst, pt1, pt2, CV_RGB(255, 0, 0), 1, CV_AA, 0)
     }

@@ -29,7 +29,7 @@ object Ex4HoughCircles extends App {
     val sigma = 1.5
     val borderType = BORDER_DEFAULT
     GaussianBlur(src, smooth, kernelSize, sigma, sigma, borderType)
-    show(smooth, "Blured")
+    show(smooth, "Blurred")
 
 
     // Compute Hough Circle transform

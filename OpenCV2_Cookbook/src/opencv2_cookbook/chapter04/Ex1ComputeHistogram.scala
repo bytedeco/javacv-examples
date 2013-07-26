@@ -17,7 +17,7 @@ import opencv2_cookbook.OpenCVUtils._
  */
 object Ex1ComputeHistogram extends App {
 
-    // Load image as a grayscale since we will be calculating histogram of an image with a single channel
+    // Load image as a gray scale since we will be calculating histogram of an image with a single channel
     val src = loadAndShowOrExit(new File("data/group.jpg"), CV_LOAD_IMAGE_GRAYSCALE)
 
     // Calculate histogram

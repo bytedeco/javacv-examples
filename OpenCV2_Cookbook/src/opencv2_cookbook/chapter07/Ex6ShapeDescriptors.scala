@@ -44,7 +44,7 @@ object Ex6ShapeDescriptors extends App {
     // Eliminate too short or too long contours
     val lengthMin = 100
     val lengthMax = 1000
-    val filteredContours = contours.filter(contour => (lengthMin < contour.total() && contour.total() < lengthMax))
+    val filteredContours = contours.filter(contour => lengthMin < contour.total() && contour.total() < lengthMax)
     val colorDest2 = loadOrExit(new File("data/group.jpg"), CV_LOAD_IMAGE_COLOR)
     drawAllContours(colorDest2, filteredContours, width = 2)
 

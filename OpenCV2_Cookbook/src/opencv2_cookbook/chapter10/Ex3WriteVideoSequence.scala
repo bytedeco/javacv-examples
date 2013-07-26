@@ -65,5 +65,5 @@ object Ex3WriteVideoSequence extends App {
 
     // Close the video file
     cvReleaseCapture(capture)
-    println("\nVideo procesing done.")
+    println("\nVideo processing done.")
 }
