@@ -16,7 +16,7 @@ import opencv2_cookbook.OpenCVUtils._
  */
 object Ex5EqualizeHistogram extends App {
 
-    // Load image as a grayscale
+    // Load image as a gray scale
     val src = loadAndShowOrExit(new File("data/group.jpg"), CV_LOAD_IMAGE_GRAYSCALE)
     // Show histogram of the source image
     show(new Histogram1D().getHistogramImage(src), "Input histogram")

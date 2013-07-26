@@ -102,7 +102,7 @@ class VideoProcessor(val capture: CvCapture,
         }
 
         // Release writer (if created) to make sure that data is flushed to the output file, and file is closed.
-        writer.foreach(cvReleaseVideoWriter(_))
+        writer.foreach(cvReleaseVideoWriter)
     }
 
     private def createWriter(): Option[CvVideoWriter] = if (writerParam.isEmpty) {

@@ -66,8 +66,8 @@ class ColorHistogram {
     import ColorHistogram._
 
     val numberOfBins = 256
-    private var _minRange = 0.0f
-    private var _maxRange = 255.0f
+    private val _minRange = 0.0f
+    private val _maxRange = 255.0f
 
     /**
      * Computes histogram of an image.

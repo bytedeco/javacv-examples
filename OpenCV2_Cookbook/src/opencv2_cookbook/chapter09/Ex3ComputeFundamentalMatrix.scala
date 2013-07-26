@@ -59,7 +59,7 @@ object Ex3ComputeFundamentalMatrix extends App {
     println("descriptor matrix size (Left) : " + descriptorsLeft.rows + " by " + descriptorsLeft.cols)
 
     // Construction of the BruteForce L2 matcher
-    val matcher = new BFMatcher(NORM_L2)
+    val matcher = new BFMatcher(NORM_L2, false)
 
     // Match the two image descriptors
     val matches = new DMatch()

@@ -31,7 +31,7 @@ class ImageComparator(val referenceImage: IplImage) {
      */
     def compare(image: IplImage): Double = {
         ColorHistogram.colorReduce(image, colorReductionFactor)
-        var inputH = hist.getHistogram(image)
+        val inputH = hist.getHistogram(image)
         cvCompareHist(referenceHistogram, inputH, CV_COMP_INTERSECT)
     }
 }

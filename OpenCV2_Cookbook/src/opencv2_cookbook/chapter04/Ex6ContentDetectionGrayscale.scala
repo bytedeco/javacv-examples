@@ -15,13 +15,13 @@ import opencv2_cookbook.OpenCVUtils._
 
 
 /**
- * Uses histogram of a region in an grayscale image to create 'template',
+ * Uses histogram of a region in an gray scale image to create 'template',
  * looks through the whole image to detect pixels that are similar to that template.
  * Example for section "Backprojecting a histogram to detect specific image content" in Chapter 4.
  */
 object Ex6ContentDetectionGrayscale extends App {
 
-    // Load image as a grayscale
+    // Load image as a gray scale
     val src = loadOrExit(new File("data/waves.jpg"), CV_LOAD_IMAGE_GRAYSCALE)
 
     // Display image with marked ROI

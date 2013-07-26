@@ -65,7 +65,7 @@ class RobustMatcher(detector: SURF = new SURF(100),
         // 2. Match the two image descriptors
 
         // Construction of the matcher
-        val matcher = new BFMatcher(NORM_L2)
+        val matcher = new BFMatcher(NORM_L2, false)
 
         // from image 1 to image 2
         // based on k nearest neighbours (with k=2)
@@ -143,7 +143,7 @@ class RobustMatcher(detector: SURF = new SURF(100),
         for (m1 <- matches1) {
             val m11 = m1._1
             var break = false
-            for (m2 <- matches2; if (!break)) {
+            for (m2 <- matches2; if !break) {
                 val m21 = m2._1
                 if (m11.queryIdx == m21.trainIdx && m21.queryIdx == m11.trainIdx) {
                     destSeq += new DMatch(m11.queryIdx, m11.trainIdx, m11.distance)

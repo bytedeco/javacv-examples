@@ -46,7 +46,7 @@ object Ex7DescribingSURF extends App {
     }
 
     // Create feature matcher
-    val matcher = new BFMatcher(NORM_L2)
+    val matcher = new BFMatcher(NORM_L2, false)
 
     val matches = new DMatch()
     // "match" is a keyword in Scala, to avoid conflict between a keyword and a method match of the BFMatcher,

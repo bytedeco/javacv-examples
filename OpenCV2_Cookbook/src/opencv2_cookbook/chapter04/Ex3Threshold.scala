@@ -18,7 +18,7 @@ import opencv2_cookbook.OpenCVUtils._
  * Separates pixels in an image into a foreground (black) and background (white) using OpenCV `cvThreshold` method.
  */
 object Ex3Threshold extends App {
-    // Load image as a grayscale
+    // Load image as a gray scale
     val src = loadAndShowOrExit(new File("data/group.jpg"), CV_LOAD_IMAGE_GRAYSCALE)
 
     val dest = IplImage.create(cvGetSize(src), src.depth, src.nChannels)
