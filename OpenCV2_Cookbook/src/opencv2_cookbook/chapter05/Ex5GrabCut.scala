@@ -24,12 +24,17 @@ object Ex5GrabCut extends App {
     // Define bounding rectangle, pixels outside this rectangle will be labeled as background.
     val rectangle = new CvRect(10, 100, 380, 180)
 
+    val size = cvGetSize(image)
     val result = IplImage.create(cvGetSize(image), IPL_DEPTH_8U, 1 /* channels */)
     val iterCount = 5
     val mode = GC_INIT_WITH_RECT
 
+    // Need to allocate arrays for temporary data
+    val bgdModel = new CvMat(null)
+    val fgdModel = new CvMat(null)
+
     // GrabCut segmentation
-    grabCut(image, result, rectangle, null, null, iterCount, mode)
+    grabCut(image, result, rectangle, bgdModel, fgdModel, iterCount, mode)
 
     // Extract foreground mask
     cvCmpS(result, GC_PR_FGD, result, CV_CMP_EQ)

@@ -10,7 +10,7 @@
     <groupId>javacv.examples</groupId>
     <artifactId>opencv2-cookbook</artifactId>
     <packaging>jar</packaging>
-    <version>0.5</version>
+    <version>0.6</version>
     <name>OpenCV2 Cookbook Examples for JavaCV</name>
     <url>https://code.google.com/p/javacv</url>
     <inceptionYear>2011</inceptionYear>
@@ -26,9 +26,9 @@
         <maven.compiler.source>1.6</maven.compiler.source>
         <maven.compiler.target>1.6</maven.compiler.target>
         <encoding>UTF-8</encoding>
-        <scala.version>2.10.2</scala.version>
-        <javacpp.version>0.5</javacpp.version>
-        <javacv.version>0.5</javacv.version>
+        <scala.version>2.10.3</scala.version>
+        <javacpp.version>0.6</javacpp.version>
+        <javacv.version>0.6</javacv.version>
         <platform.name>${os.name}-${os.arch}</platform.name>
     </properties>
 
@@ -97,20 +97,11 @@
             <plugin>
                 <groupId>net.alchim31.maven</groupId>
                 <artifactId>scala-maven-plugin</artifactId>
-                <version>3.1.3</version>
+                <version>3.1.6</version>
                 <executions>
                     <execution>
-                        <id>scala-compile-first</id>
-                        <phase>process-resources</phase>
                         <goals>
-                            <goal>add-source</goal>
                             <goal>compile</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>scala-test-compile</id>
-                        <phase>process-test-resources</phase>
-                        <goals>
                             <goal>testCompile</goal>
                         </goals>
                     </execution>
@@ -119,7 +110,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.0</version>
+                <version>3.1</version>
                 <executions>
                     <execution>
                         <phase>compile</phase>
@@ -133,7 +124,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.14</version>
+                <version>2.16</version>
                 <configuration>
                     <useFile>false</useFile>
                     <disableXmlReport>true</disableXmlReport>
