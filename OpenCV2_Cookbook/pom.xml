@@ -10,7 +10,7 @@
     <groupId>javacv.examples</groupId>
     <artifactId>opencv2-cookbook</artifactId>
     <packaging>jar</packaging>
-    <version>0.6</version>
+    <version>0.7</version>
     <name>OpenCV2 Cookbook Examples for JavaCV</name>
     <url>https://code.google.com/p/javacv</url>
     <inceptionYear>2011</inceptionYear>
@@ -27,8 +27,8 @@
         <maven.compiler.target>1.6</maven.compiler.target>
         <encoding>UTF-8</encoding>
         <scala.version>2.10.3</scala.version>
-        <javacpp.version>0.6</javacpp.version>
-        <javacv.version>0.6</javacv.version>
+        <javacpp.version>0.7</javacpp.version>
+        <javacv.version>0.7</javacv.version>
         <platform.name>${os.name}-${os.arch}</platform.name>
     </properties>
 
