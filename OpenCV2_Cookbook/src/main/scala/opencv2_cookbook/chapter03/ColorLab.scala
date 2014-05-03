@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2013 Jarek Sacha. All Rights Reserved.
+ * Copyright (c) 2011-2014 Jarek Sacha. All Rights Reserved.
  *
  * Author's e-mail: jpsacha at gmail.com
  */
@@ -19,9 +19,9 @@ package opencv2_cookbook.chapter03
  * See [[http://opencv.itseez.com/modules/imgproc/doc/miscellaneous_transformations.html?highlight=cvtcolor#void%20cvCvtColor(const%20CvArr*%20src,%20CvArr*%20dst,%20int%20code)]] documentation.
  */
 case class ColorLab(l: Double, a: Double, b: Double) {
-    def lAsUInt8: Int = (l * 255 / 100).toInt
+  def lAsUInt8: Int = (l * 255 / 100).toInt
 
-    def aAsUInt8: Int = (a + 128).toInt
+  def aAsUInt8: Int = (a + 128).toInt
 
-    def bAsUInt8: Int = (b + 128).toInt
+  def bAsUInt8: Int = (b + 128).toInt
 }

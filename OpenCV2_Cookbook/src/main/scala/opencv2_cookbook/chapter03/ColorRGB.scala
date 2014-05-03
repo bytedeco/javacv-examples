@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2013 Jarek Sacha. All Rights Reserved.
+ * Copyright (c) 2011-2014 Jarek Sacha. All Rights Reserved.
  *
  * Author's e-mail: jpsacha at gmail.com
  */
@@ -13,7 +13,7 @@ import java.awt.Color
  */
 case class ColorRGB(red: Int, green: Int, blue: Int) {
 
-    def this(color: Color) = this(color.getRed, color.getGreen, color.getBlue)
+  def this(color: Color) = this(color.getRed, color.getGreen, color.getBlue)
 
-    def toColor = new Color(red, green, blue)
+  def toColor = new Color(red, green, blue)
 }
