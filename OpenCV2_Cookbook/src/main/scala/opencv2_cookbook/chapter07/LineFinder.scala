@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2013 Jarek Sacha. All Rights Reserved.
+ * Copyright (c) 2011-2014 Jarek Sacha. All Rights Reserved.
  *
  * Author's e-mail: jpsacha at gmail.com
  */
@@ -7,8 +7,9 @@
 package opencv2_cookbook.chapter07
 
 
-import com.googlecode.javacv.cpp.opencv_core._
-import com.googlecode.javacv.cpp.opencv_imgproc._
+import org.bytedeco.javacpp.helper.opencv_core._
+import org.bytedeco.javacpp.opencv_core._
+import org.bytedeco.javacpp.opencv_imgproc._
 import scala.math._
 
 /**

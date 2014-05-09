@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2013 Jarek Sacha. All Rights Reserved.
+ * Copyright (c) 2011-2014 Jarek Sacha. All Rights Reserved.
  *
  * Author's e-mail: jpsacha at gmail.com
  */
@@ -7,12 +7,14 @@
 package opencv2_cookbook.chapter07
 
 import collection.mutable.ListBuffer
-import com.googlecode.javacpp.Loader
-import com.googlecode.javacv.cpp.opencv_core._
-import com.googlecode.javacv.cpp.opencv_highgui._
-import com.googlecode.javacv.cpp.opencv_imgproc._
 import java.io.File
 import opencv2_cookbook.OpenCVUtils._
+import org.bytedeco.javacpp.Loader
+import org.bytedeco.javacpp.helper.opencv_core.AbstractCvScalar._
+import org.bytedeco.javacpp.helper.{opencv_imgproc => imgproc}
+import org.bytedeco.javacpp.opencv_core._
+import org.bytedeco.javacpp.opencv_highgui._
+import org.bytedeco.javacpp.opencv_imgproc._
 
 
 /**
@@ -25,14 +27,14 @@ object Ex5ExtractContours extends App {
 
     // Extract connected components
     val contourSeq = new CvSeq(null)
-    val storage = CvMemStorage.create()
-    cvFindContours(src, storage, contourSeq, Loader.sizeof(classOf[CvContour]), CV_RETR_EXTERNAL, CV_CHAIN_APPROX_NONE)
+  val storage = cvCreateMemStorage()
+  imgproc.cvFindContours(src, storage, contourSeq, Loader.sizeof(classOf[CvContour]), CV_RETR_EXTERNAL, CV_CHAIN_APPROX_NONE)
 
     // Convert to a Scala collection for easier manipulation
     val contours = toScalaSeq(contourSeq)
 
     // Draw extracted contours
-    val colorDst = IplImage.create(cvGetSize(src), src.depth(), 3)
+    val colorDst = cvCreateImage(cvGetSize(src), src.depth(), 3)
     cvCvtColor(src, colorDst, CV_GRAY2BGR)
     draw(colorDst, contours)
     show(colorDst, "Contours")
@@ -65,6 +67,6 @@ object Ex5ExtractContours extends App {
      * Draw `contours` on the `image`.
      */
     def draw(image: IplImage, contours: Seq[CvSeq]) {
-        contours.foreach(cvDrawContours(image, _, CvScalar.RED, CvScalar.RED, -1, 1, CV_AA))
+      contours.foreach(cvDrawContours(image, _, RED, RED, -1, 1, CV_AA, cvPoint(0, 0)))
     }
 }
