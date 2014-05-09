@@ -4,6 +4,8 @@ organization := "javacv.examples"
 
 val javacvVersion = "0.8"
 
+val javacppVersion = "0.8-1-SNAPSHOT"
+
 version := javacvVersion + ".0-SNAPSHOT"
 
 scalaVersion := "2.10.4"
@@ -46,8 +48,13 @@ val platform = {
 }
 
 libraryDependencies ++= Seq(
-  "org.bytedeco" % "javacv" % javacvVersion excludeAll ExclusionRule(organization = "org.bytedeco.javacpp-presets"),
-  "org.bytedeco.javacpp-presets" % "opencv" % ("2.4.9-" + javacvVersion) classifier "" classifier platform,
+  "org.bytedeco" % "javacv" % javacvVersion excludeAll(
+    ExclusionRule(organization = "org.bytedeco.javacpp-presets"),
+    ExclusionRule(organization = "org.bytedeco.javacpp")
+    ),
+  "org.bytedeco.javacpp-presets" % "opencv" % ("2.4.9-" + javacvVersion) classifier "",
+  "org.bytedeco.javacpp-presets" % "opencv" % ("2.4.9-" + javacvVersion) classifier platform,
+  "org.bytedeco" % "javacpp" % javacppVersion,
   "org.scala-lang" % "scala-swing" % scalaVersion.value,
   "net.imagej" % "ij" % "1.47v",
   "junit" % "junit" % "4.11" % "test",
@@ -55,8 +62,7 @@ libraryDependencies ++= Seq(
 )
 
 resolvers ++= Seq(
-  "JavaCPP Repository" at "http://maven2.javacpp.googlecode.com/git/",
-  "JavaCV Repository" at "http://maven2.javacv.googlecode.com/git/",
+  Resolver.sonatypeRepo("snapshots"),
   "ImageJ Releases" at "http://maven.imagej.net/content/repositories/releases/"
 )
 
