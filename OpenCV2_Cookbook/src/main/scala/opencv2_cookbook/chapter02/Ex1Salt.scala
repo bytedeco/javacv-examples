@@ -20,7 +20,7 @@ import util.Random
 object Ex1Salt extends App {
 
   // Read input image
-  val image = loadMatAndShowOrExit(new File("data/boldt.jpg"), CV_LOAD_IMAGE_COLOR)
+  val image = loadCvMatAndShowOrExit(new File("data/boldt.jpg"), CV_LOAD_IMAGE_COLOR)
 
   // Add salt noise
   val dest = salt(image, 2000)

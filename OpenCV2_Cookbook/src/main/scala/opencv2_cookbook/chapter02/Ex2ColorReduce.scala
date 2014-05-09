@@ -20,7 +20,7 @@ import org.bytedeco.javacpp.opencv_highgui._
 object Ex2ColorReduce extends App {
 
   // Read input image
-  val image = loadMatAndShowOrExit(new File("data/boldt.jpg"), CV_LOAD_IMAGE_COLOR)
+  val image = loadCvMatAndShowOrExit(new File("data/boldt.jpg"), CV_LOAD_IMAGE_COLOR)
 
   // Add salt noise
   val dest = colorReduce(image)

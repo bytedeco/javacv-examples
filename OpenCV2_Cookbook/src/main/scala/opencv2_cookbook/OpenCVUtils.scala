@@ -96,7 +96,27 @@ object OpenCVUtils {
     *              Default is gray scale.
     * @return loaded image
     */
-  def loadMatAndShowOrExit(file: File, flags: Int = CV_LOAD_IMAGE_GRAYSCALE): CvMat = {
+  def loadCvMatAndShowOrExit(file: File, flags: Int = CV_LOAD_IMAGE_GRAYSCALE): CvMat = {
+    // Read input image
+    val image = loadCvMatOrExit(file, flags)
+    show(image, file.getName)
+    image
+  }
+
+  /** Load an image and show in a CanvasFrame.  If image cannot be loaded the application will exit with code 1.
+    *
+    * @param flags Flags specifying the color type of a loaded image:
+    *              <ul>
+    *              <li> `>0` Return a 3-channel color image</li>
+    *              <li> `=0` Return a gray scale image</li>
+    *              <li> `<0` Return the loaded image as is. Note that in the current implementation
+    *              the alpha channel, if any, is stripped from the output image. For example, a 4-channel
+    *              RGBA image is loaded as RGB if the `flags` is greater than 0.</li>
+    *              </ul>
+    *              Default is gray scale.
+    * @return loaded image
+    */
+  def loadMatAndShowOrExit(file: File, flags: Int = CV_LOAD_IMAGE_GRAYSCALE): Mat = {
     // Read input image
     val image = loadMatOrExit(file, flags)
     show(image, file.getName)
@@ -117,9 +137,33 @@ object OpenCVUtils {
     *              Default is gray scale.
     * @return loaded image
     */
-  def loadMatOrExit(file: File, flags: Int = CV_LOAD_IMAGE_GRAYSCALE): CvMat = {
+  def loadCvMatOrExit(file: File, flags: Int = CV_LOAD_IMAGE_GRAYSCALE): CvMat = {
     // Read input image
     val image = cvLoadImageM(file.getAbsolutePath, flags)
+    if (image == null) {
+      println("Couldn't load image: " + file.getAbsolutePath)
+      sys.exit(1)
+    }
+    image
+  }
+
+
+  /** Load an image. If image cannot be loaded the application will exit with code 1.
+    *
+    * @param flags Flags specifying the color type of a loaded image:
+    *              <ul>
+    *              <li> `>0` Return a 3-channel color image</li>
+    *              <li> `=0` Return a gray scale image</li>
+    *              <li> `<0` Return the loaded image as is. Note that in the current implementation
+    *              the alpha channel, if any, is stripped from the output image. For example, a 4-channel
+    *              RGBA image is loaded as RGB if the `flags` is greater than 0.</li>
+    *              </ul>
+    *              Default is gray scale.
+    * @return loaded image
+    */
+  def loadMatOrExit(file: File, flags: Int = CV_LOAD_IMAGE_GRAYSCALE): Mat = {
+    // Read input image
+    val image = imread(file.getAbsolutePath, flags)
     if (image == null) {
       println("Couldn't load image: " + file.getAbsolutePath)
       sys.exit(1)
@@ -143,6 +187,11 @@ object OpenCVUtils {
     canvas.showImage(mat.asIplImage())
   }
 
+  def show(mat: Mat, title: String) {
+    val canvas = new CanvasFrame(title, 1)
+    canvas.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE)
+    canvas.showImage(mat.asIplImage())
+  }
 
   /** Show image in a window. Closing the window will exit the application. */
   def show(image: Image, title: String) {
