@@ -1,14 +1,15 @@
 /*
- * Copyright (c) 2011-2013 Jarek Sacha. All Rights Reserved.
+ * Copyright (c) 2011-2014 Jarek Sacha. All Rights Reserved.
  *
  * Author's e-mail: jpsacha at gmail.com
  */
 
 package opencv2_cookbook.chapter04
 
-import com.googlecode.javacv.cpp.opencv_core._
-import com.googlecode.javacv.cpp.opencv_imgproc._
 import opencv2_cookbook.OpenCVUtils._
+import org.bytedeco.javacpp.helper.{opencv_imgproc => imgproc}
+import org.bytedeco.javacpp.opencv_core._
+import org.bytedeco.javacpp.opencv_imgproc._
 
 
 /**
@@ -53,8 +54,8 @@ class ContentFinder {
         val channels = ColorHistogram.splitChannels(image) map toIplImage32F
 
         // Back project
-        val dest = IplImage.create(cvGetSize(image), IPL_DEPTH_32F, 1)
-        cvCalcBackProject(channels, dest, histogram)
+        val dest = cvCreateImage(cvGetSize(image), IPL_DEPTH_32F, 1)
+      imgproc.cvCalcBackProject(channels, dest, histogram)
 
         if (threshold > 0) {
             cvThreshold(dest, dest, threshold, 1, CV_THRESH_BINARY)
