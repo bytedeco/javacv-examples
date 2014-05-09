@@ -237,10 +237,14 @@ object OpenCVUtils {
     bi
   }
 
-
   /** Draw circles at key point locations on an image. Circle radius is proportional to key point size. */
   def drawOnImage(image: IplImage, points: KeyPoint): Image = {
     drawOnImage(image, toArray(points))
+  }
+
+  /** Draw circles at key point locations on an image. Circle radius is proportional to key point size. */
+  def drawOnImage(image: Mat, points: KeyPoint): Image = {
+    drawOnImage(image.asIplImage(), toArray(points))
   }
 
 
