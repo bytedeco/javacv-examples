@@ -4,7 +4,7 @@ organization := "javacv.examples"
 
 val javacvVersion = "0.8"
 
-val javacppVersion = "0.8-1-SNAPSHOT"
+val javacppVersion = "0.8-2-SNAPSHOT"
 
 version := javacvVersion + ".0-SNAPSHOT"
 

@@ -368,6 +368,24 @@ object OpenCVUtils {
     m
   }
 
+  /** Convert between two OpenCV representations of points.
+    *
+    * This representation is needed, for instance, by `cvFindFundamentalMat` function.
+    *
+    * @param points input points
+    * @return matrix containing points. First index is the point index.
+    *         Second index is always 0. Third index corresponds to `x` and `y` coordinates.
+    */
+  def toCvMat(points: Point2f): CvMat = {
+    val oldPosition = points.position()
+    val m = cvCreateMat(points.capacity(), 1, CV_32FC(2))
+    for (i <- 0 until points.capacity) {
+      m.put(i, 0, 0, points.position(i).x)
+      m.put(i, 0, 1, points.position(i).y)
+    }
+    points.position(oldPosition)
+    m
+  }
 
   /** Convert `IplImage` to one where pixels are represented as 32 floating point numbers (`IPL_DEPTH_32F`).
     *

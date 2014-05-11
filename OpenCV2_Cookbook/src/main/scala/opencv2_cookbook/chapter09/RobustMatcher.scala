@@ -1,17 +1,17 @@
 /*
- * Copyright (c) 2011-2013 Jarek Sacha. All Rights Reserved.
+ * Copyright (c) 2011-2014 Jarek Sacha. All Rights Reserved.
  *
  * Author's e-mail: jpsacha at gmail.com
  */
 
 package opencv2_cookbook.chapter09
 
-import com.googlecode.javacv.cpp.opencv_calib3d._
-import com.googlecode.javacv.cpp.opencv_core._
-import com.googlecode.javacv.cpp.opencv_features2d._
-import com.googlecode.javacv.cpp.opencv_nonfree.SURF
+import org.bytedeco.javacpp.opencv_nonfree.SURF
 import opencv2_cookbook.OpenCVUtils._
 import opencv2_cookbook.chapter09.MatcherUtils._
+import org.bytedeco.javacpp.opencv_calib3d._
+import org.bytedeco.javacpp.opencv_core._
+import org.bytedeco.javacpp.opencv_features2d._
 import scala.collection.mutable.{ListBuffer, ArrayBuffer}
 
 
@@ -27,7 +27,7 @@ import scala.collection.mutable.{ListBuffer, ArrayBuffer}
   * @param confidenceLevel Confidence level (probability)
   */
 class RobustMatcher(detector: SURF = new SURF(100),
-                    extractor: DescriptorExtractor = DescriptorExtractor.create("SURF"),
+                    extractor: DescriptorExtractor = new DescriptorExtractor().create("SURF"),
                     ratio: Float = 0.65f,
                     refineF: Boolean = true,
                     minDistanceToEpipolar: Double = 3.0,
@@ -45,19 +45,19 @@ class RobustMatcher(detector: SURF = new SURF(100),
       *
       * @return fundamental matrix.
       */
-    def matchImages(image1: IplImage, image2: IplImage): Result = {
+    def matchImages(image1: Mat, image2: Mat): Result = {
 
         // 1a. Detection of the SURF features
         val keyPoints1 = new KeyPoint()
         val keyPoints2 = new KeyPoint()
-        detector.detect(image1, null, keyPoints1)
-        detector.detect(image2, null, keyPoints2)
+      detector.detect(image1, keyPoints1)
+      detector.detect(image2, keyPoints2)
         println("Number of SURF points (1): " + keyPoints1.capacity())
         println("Number of SURF points (2): " + keyPoints2.capacity())
 
         // 1b. Extraction of the SURF descriptors
-        val descriptors1 = new CvMat(null)
-        val descriptors2 = new CvMat(null)
+        val descriptors1 = new Mat()
+      val descriptors2 = new Mat()
         extractor.compute(image1, keyPoints1, descriptors1)
         extractor.compute(image2, keyPoints2, descriptors2)
         println("descriptor matrix size: " + descriptors1.rows + " by " + descriptors1.cols)
@@ -167,8 +167,8 @@ class RobustMatcher(detector: SURF = new SURF(100),
         val (points1, points2) = toCvPoint2D32f(matches, keyPoints1, keyPoints2)
 
         // Compute F matrix using RANSAC
-        val fundamentalMatrix = CvMat.create(3, 3, CV_32F)
-        val pointStatus = CvMat.create(matches.length, 1, CV_8U)
+        val fundamentalMatrix = cvCreateMat(3, 3, CV_32F)
+      val pointStatus = cvCreateMat(matches.length, 1, CV_8U)
         cvFindFundamentalMat(
             toCvMat(points1) /*  points in first image */ ,
             toCvMat(points2) /*  points in second image */ ,
