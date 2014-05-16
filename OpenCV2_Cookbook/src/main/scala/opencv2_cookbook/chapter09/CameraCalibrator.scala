@@ -80,7 +80,8 @@ class CameraCalibrator {
       }
 
       // Get the chessboard corners
-      val imageCorners = Array[Float](boardSize.width * boardSize.height)
+      // Allocate array to pass back corner coordinates: (x0, y0, x1, y1, ...)
+      val imageCorners = new Array[Float](boardSize.width * boardSize.height * 2)
       val cornerCount = Array(1)
       val found = cvFindChessboardCorners(image, boardSize, imageCorners, cornerCount,
         CV_CALIB_CB_ADAPTIVE_THRESH | CV_CALIB_CB_NORMALIZE_IMAGE)
@@ -95,7 +96,7 @@ class CameraCalibrator {
       )
 
       // If we have a good board, add it to our data
-      if (imageCorners.size == boardSize.width * boardSize.height) {
+      if (cornerCount(0) == boardSize.width * boardSize.height) {
         // Add image and scene points from one view
         imagePoints += imageCorners
         objectPoints += objectCorners
@@ -136,7 +137,7 @@ class CameraCalibrator {
       _distortionCoeffs, // output distortion matrix
       rotationVectors, translationVectors, // Rs, Ts
       flag, // set options
-      null
+      cvTermCriteria(CV_TERMCRIT_ITER + CV_TERMCRIT_EPS, 30, Double.MinPositiveValue)
     )
   }
 
@@ -174,7 +175,7 @@ class CameraCalibrator {
     val pointCountsBuf = pointCounts.getIntBuffer
     var totalPointCount = 0
     for ((objectP, imageP) <- objectPoints zip imagePoints) {
-      require(objectP.length == imagePoints.size)
+      require(objectP.length == imageP.size / 2, s"${objectP.length} != ${imageP.size / 2}")
       val n = objectP.length
       pointCountsBuf.put(n)
       totalPointCount += n
@@ -186,7 +187,7 @@ class CameraCalibrator {
     val imagePointsBuf = imagePointsCvMat.getFloatBuffer
     for ((objectP, imageP) <- objectPoints zip imagePoints) {
 
-      for (j <- 0 until objectP.length / 2) {
+      for (j <- 0 until objectP.length) {
         objectPointsBuf.put(objectP(j).x)
         objectPointsBuf.put(objectP(j).y)
         objectPointsBuf.put(objectP(j).z)
@@ -194,9 +195,6 @@ class CameraCalibrator {
         imagePointsBuf.put(imageP(2 * j))
         imagePointsBuf.put(imageP(2 * j + 1))
       }
-
-      //            // Reset position
-      //            imageP.position(0)
     }
 
     (objectPointsCvMat, imagePointsCvMat, pointCounts)

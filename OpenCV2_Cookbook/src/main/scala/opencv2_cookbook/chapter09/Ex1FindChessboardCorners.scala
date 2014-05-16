@@ -24,7 +24,8 @@ object Ex1FindChessboardCorners extends App {
 
   // Find chessboard corners
   val patternSize = cvSize(6, 4)
-  val corners = Array[Float](patternSize.width * patternSize.height)
+  // Allocate array to pass back corner coordinates: (x0, y0, x1, y1, ...)
+  val corners = new Array[Float](patternSize.width * patternSize.height * 2)
   val cornerCount = Array(1)
   val flags = CV_CALIB_CB_ADAPTIVE_THRESH | CV_CALIB_CB_NORMALIZE_IMAGE
   val patternFound = cvFindChessboardCorners(image, patternSize, corners, cornerCount, flags)
