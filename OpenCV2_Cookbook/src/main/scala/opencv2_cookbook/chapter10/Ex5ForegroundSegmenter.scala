@@ -1,12 +1,12 @@
 /*
- * Copyright (c) 2011-2013 Jarek Sacha. All Rights Reserved.
+ * Copyright (c) 2011-2014 Jarek Sacha. All Rights Reserved.
  *
  * Author's e-mail: jpsacha at gmail.com
  */
 
 package opencv2_cookbook.chapter10
 
-import com.googlecode.javacv.cpp.opencv_highgui._
+import org.bytedeco.javacpp.opencv_highgui._
 
 
 /** The first example for section "Extracting the foreground objects in video" in Chapter 10, page 272.
@@ -22,27 +22,27 @@ import com.googlecode.javacv.cpp.opencv_highgui._
 object Ex5ForegroundSegmenter extends App {
 
 
-    // Open video file
-    val capture = cvCreateFileCapture("data/bike.avi")
+  // Open video file
+  val capture = cvCreateFileCapture("data/bike.avi")
 
-    // Background / foreground segmenter.
-    val segmenter = new BGFGSegmenter()
+  // Background / foreground segmenter.
+  val segmenter = new BGFGSegmenter()
 
-    // Create video processor instance
-    val processor = new VideoProcessor(capture)
-    // Declare a window to display the video
-    processor.displayInput = "Input Video"
-    processor.displayOutput = "Output Video"
-    // Play the video at the original frame rate
-    processor.delay = math.round(1000d / processor.frameRate)
-    // Set the frame processor callback function (pass BGFGSegmenter `process` method as a closure)
-    processor.frameProcessor = segmenter.process
+  // Create video processor instance
+  val processor = new VideoProcessor(capture)
+  // Declare a window to display the video
+  processor.displayInput = "Input Video"
+  processor.displayOutput = "Output Video"
+  // Play the video at the original frame rate
+  processor.delay = math.round(1000d / processor.frameRate)
+  // Set the frame processor callback function (pass BGFGSegmenter `process` method as a closure)
+  processor.frameProcessor = segmenter.process
 
-    // Start the process
-    processor.run()
+  // Start the process
+  processor.run()
 
-    // Close the video file
-    cvReleaseCapture(capture)
+  // Close the video file
+  cvReleaseCapture(capture)
 
-    println("Done.")
+  println("Done.")
 }

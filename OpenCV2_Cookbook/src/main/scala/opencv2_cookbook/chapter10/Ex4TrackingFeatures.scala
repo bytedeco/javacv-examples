@@ -1,12 +1,12 @@
 /*
- * Copyright (c) 2011-2013 Jarek Sacha. All Rights Reserved.
+ * Copyright (c) 2011-2014 Jarek Sacha. All Rights Reserved.
  *
  * Author's e-mail: jpsacha at gmail.com
  */
 
 package opencv2_cookbook.chapter10
 
-import com.googlecode.javacv.cpp.opencv_highgui._
+import org.bytedeco.javacpp.opencv_highgui._
 
 
 /** The example for section "Tracking feature points in video" in Chapter 10, page 266.
@@ -21,27 +21,27 @@ import com.googlecode.javacv.cpp.opencv_highgui._
   */
 object Ex4TrackingFeatures extends App {
 
-    // Open video file
-    val capture = cvCreateFileCapture("data/bike.avi")
+  // Open video file
+  val capture = cvCreateFileCapture("data/bike.avi")
 
-    // Feature tracker
-    val tracker = new FeatureTracker()
+  // Feature tracker
+  val tracker = new FeatureTracker()
 
-    // Create video processor instance
-    val processor = new VideoProcessor(capture)
-    // Declare a window to display input and output the video
-    processor.displayInput = "Input Video"
-    processor.displayOutput = "Output Video"
-    // Play the video at the original frame rate
-    processor.delay = math.round(1000d / processor.frameRate)
-    // Set the frame processor callback function (pass FeatureTracker `process` method as a closure)
-    processor.frameProcessor = tracker.process
+  // Create video processor instance
+  val processor = new VideoProcessor(capture)
+  // Declare a window to display input and output the video
+  processor.displayInput = "Input Video"
+  processor.displayOutput = "Output Video"
+  // Play the video at the original frame rate
+  processor.delay = math.round(1000d / processor.frameRate)
+  // Set the frame processor callback function (pass FeatureTracker `process` method as a closure)
+  processor.frameProcessor = tracker.process
 
-    // Start the process
-    processor.run()
+  // Start the process
+  processor.run()
 
-    // Close the video file
-    cvReleaseCapture(capture)
+  // Close the video file
+  cvReleaseCapture(capture)
 
-    println("Done.")
+  println("Done.")
 }
