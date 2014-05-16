@@ -22,7 +22,7 @@ public final class DescriptorExtractorTest {
 
         // Test for bug https://github.com/bytedeco/javacpp-presets/issues/3
 
-        DescriptorExtractor surfDesc = new DescriptorExtractor().create("SURF");
+        DescriptorExtractor surfDesc = DescriptorExtractor.create("SURF");
         assertNotNull(surfDesc);
     }
 }

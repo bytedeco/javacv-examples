@@ -52,18 +52,20 @@ libraryDependencies ++= Seq(
     ExclusionRule(organization = "org.bytedeco.javacpp-presets"),
     ExclusionRule(organization = "org.bytedeco.javacpp")
     ),
-  "org.bytedeco.javacpp-presets" % "opencv" % ("2.4.9-" + javacvVersion) classifier "",
-  "org.bytedeco.javacpp-presets" % "opencv" % ("2.4.9-" + javacvVersion) classifier platform,
-  "org.bytedeco" % "javacpp" % javacppVersion,
-  "org.scala-lang" % "scala-swing" % scalaVersion.value,
-  "net.imagej" % "ij" % "1.47v",
-  "junit" % "junit" % "4.11" % "test",
-  "com.novocode" % "junit-interface" % "0.10" % "test"
+  "org.bytedeco.javacpp-presets" % "opencv"  % ("2.4.9-" + javacppVersion) classifier "",
+  "org.bytedeco.javacpp-presets" % "opencv"  % ("2.4.9-" + javacppVersion) classifier platform,
+  "org.bytedeco"                 % "javacpp" % javacppVersion,
+  "org.scala-lang"               % "scala-swing"     % scalaVersion.value,
+  "net.imagej"                   % "ij"              % "1.47v",
+  "junit"                        % "junit"           % "4.11" % "test",
+  "com.novocode"                 % "junit-interface" % "0.10" % "test"
 )
 
 resolvers ++= Seq(
   Resolver.sonatypeRepo("snapshots"),
-  "ImageJ Releases" at "http://maven.imagej.net/content/repositories/releases/"
+  "ImageJ Releases" at "http://maven.imagej.net/content/repositories/releases/",
+  // Use local maven repo for local javacv builds
+  "Local Maven Repository" at "file:///" + Path.userHome.absolutePath + "/.m2/repository"
 )
 
 autoCompilerPlugins := true

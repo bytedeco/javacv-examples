@@ -33,7 +33,7 @@ object Ex7DescribingSURF extends App {
   val upright = false
   val surf = new SURF(hessianThreshold, nOctaves, nOctaveLayers, extended, upright)
   //    val surfDesc = DescriptorExtractor.create("SURF")
-  val surfDesc = new DescriptorExtractor().create("SURF")
+  val surfDesc = DescriptorExtractor.create("SURF")
   val keyPoints = Array(new KeyPoint(), new KeyPoint())
   val descriptors = new Array[Mat](2)
 
@@ -51,7 +51,7 @@ object Ex7DescribingSURF extends App {
   val matches = new DMatch()
   // "match" is a keyword in Scala, to avoid conflict between a keyword and a method match of the BFMatcher,
   // we need to enclose method name in ticks: `match`.
-  matcher.`match`(descriptors(0), descriptors(1), matches, null)
+  matcher.`match`(descriptors(0), descriptors(1), matches)
   println("Matched: " + matches.capacity)
 
   // Select only 25 best matches

@@ -46,7 +46,7 @@ object Ex3ComputeFundamentalMatrix extends App {
   drawKeyPoints(imageLeft, keypointsLeft, "Left SURF Features")
 
   // Construction of the SURF descriptor extractor
-  val surfDesc = new DescriptorExtractor().create("SURF")
+  val surfDesc = DescriptorExtractor.create("SURF")
 
   // Extraction of the SURF descriptors
   val descriptorsRight = new Mat()
@@ -64,7 +64,7 @@ object Ex3ComputeFundamentalMatrix extends App {
   val matches = new DMatch()
   // "match" is a keyword in Scala, to avoid conflict between a keyword and a method match of the BFMatcher,
   // we need to enclose method name in ticks: `match`.
-  matcher.`match`(descriptorsRight, descriptorsLeft, matches, null)
+  matcher.`match`(descriptorsRight, descriptorsLeft, matches)
 
   println("Number of matched points: " + matches.capacity())
 
