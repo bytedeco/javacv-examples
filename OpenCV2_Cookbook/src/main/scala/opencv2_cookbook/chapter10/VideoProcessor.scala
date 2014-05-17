@@ -1,15 +1,15 @@
 /*
- * Copyright (c) 2011-2013 Jarek Sacha. All Rights Reserved.
+ * Copyright (c) 2011-2014 Jarek Sacha. All Rights Reserved.
  *
  * Author's e-mail: jpsacha at gmail.com
  */
 
 package opencv2_cookbook.chapter10
 
-import com.googlecode.javacv.CanvasFrame
-import com.googlecode.javacv.cpp.opencv_core.{CvSize, IplImage}
-import com.googlecode.javacv.cpp.opencv_highgui._
 import javax.swing.JFrame
+import org.bytedeco.javacpp.opencv_core._
+import org.bytedeco.javacpp.opencv_highgui._
+import org.bytedeco.javacv.CanvasFrame
 
 /** Video processor.
   *
@@ -47,7 +47,7 @@ class VideoProcessor(val capture: CvCapture,
         val w = cvGetCaptureProperty(capture, CV_CAP_PROP_FRAME_WIDTH).toInt
         val h = cvGetCaptureProperty(capture, CV_CAP_PROP_FRAME_HEIGHT).toInt
 
-        new CvSize(w, h)
+      cvSize(w, h)
     }
 
 
