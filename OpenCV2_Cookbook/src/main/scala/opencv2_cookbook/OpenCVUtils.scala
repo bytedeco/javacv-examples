@@ -488,6 +488,15 @@ object OpenCVUtils {
     dest
   }
 
+  /**
+   * Convert one (or collection) of `Point2f` to one (or collection) of `CvPoint2D32f`.
+   */
+  def toCvPoint2D32f(p: Point2f): CvPoint2D32f = {
+    val ref = p.position()
+    val p1 = for (i <- 0 until p.capacity()) yield p.position(i).asCvPoint2D32f()
+    p.position(ref)
+    toNativeVector(p1.toArray)
+  }
 
   /** Convert `CvRect` to AWT `Rectangle`. */
   def toRectangle(rect: CvRect): Rectangle = {

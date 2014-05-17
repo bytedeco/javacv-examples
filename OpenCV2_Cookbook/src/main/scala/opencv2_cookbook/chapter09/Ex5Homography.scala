@@ -32,7 +32,7 @@ object Ex5Homography extends App {
     confidenceLevel = 0.98,
     minDistanceToEpipolar = 1.0,
     ratio = 0.85F,
-    detector = new SURF(10),
+    detector = new SURF(10, 4, 2, true, false),
     refineF = true
   )
 
@@ -48,7 +48,7 @@ object Ex5Homography extends App {
   show(matchesCanvas, "Matches")
 
   // Convert keypoints into Point2f
-  val (points1, points2) = MatcherUtils.toCvPoint2D32f(matches.matches, matches.keyPoints1, matches.keyPoints2)
+  val (points1, points2) = MatcherUtils.toCvPoint2D32fPair(matches.matches, matches.keyPoints1, matches.keyPoints2)
   println("" + points1.capacity() + " " + points2.capacity())
 
   // Find the homography between image 1 and image 2
@@ -60,7 +60,7 @@ object Ex5Homography extends App {
 
   // Warp image 1 to image 2
   val im1Ipl = image1.asIplImage()
-  val result = cvCreateImage(cvSize(2 * im1Ipl.width, im1Ipl.height), image1.depth, im1Ipl.nChannels)
+  val result = cvCreateImage(cvSize(2 * im1Ipl.width, im1Ipl.height), im1Ipl.depth, im1Ipl.nChannels)
   cvWarpPerspective(im1Ipl, result, h)
 
   // Copy image 2 on the first half of full image

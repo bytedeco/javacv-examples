@@ -8,9 +8,11 @@ package opencv2_cookbook.chapter09
 
 import java.io.File
 import opencv2_cookbook.OpenCVUtils._
+import org.bytedeco.javacpp.helper.opencv_core.AbstractCvScalar._
 import org.bytedeco.javacpp.opencv_calib3d._
 import org.bytedeco.javacpp.opencv_core._
 import org.bytedeco.javacpp.opencv_features2d._
+import org.bytedeco.javacpp.opencv_imgproc._
 import org.bytedeco.javacpp.opencv_nonfree.SURF
 
 
@@ -31,7 +33,7 @@ object Ex4MatchingUsingSampleConsensus extends App {
     confidenceLevel = 0.98,
     minDistanceToEpipolar = 1.0,
     ratio = 0.65F,
-    detector = new SURF(10),
+    detector = new SURF(10, 4, 2, true, false),
     refineF = true
   )
 
@@ -49,7 +51,7 @@ object Ex4MatchingUsingSampleConsensus extends App {
   show(matchesCanvas, "Matches")
 
   // Draw the epipolar lines
-  val (points1, points2) = MatcherUtils.toCvPoint2D32f(matches.matches, matches.keyPoints1, matches.keyPoints2)
+  val (points1, points2) = MatcherUtils.toCvPoint2D32fPair(matches.matches, matches.keyPoints1, matches.keyPoints2)
   val lines1 = cvCreateMat(points1.capacity, 3, CV_32F)
   cvComputeCorrespondEpilines(toCvMat(points1), 1, matches.fundamentalMatrix, lines1)
   show(drawEpiLines(image2, lines1, points2), "Left Image Epilines (RANSAC)")
@@ -65,12 +67,10 @@ object Ex4MatchingUsingSampleConsensus extends App {
     *
     * @return new image  with epilines and points.
     */
-  private def drawEpiLines(image: Mat, epilines: CvMat, points: CvPoint2D32f): Mat = {
-    //        val canvas = cvCreateImage(cvGetSize(image), image.depth(), 3)
-    //        cvCvtColor(image, canvas, CV_GRAY2BGR)
-    val canvas = image.clone()
-    val white = new Scalar(255, 255, 255, 0)
-    val red = new Scalar(255, 0, 0, 0)
+  private def drawEpiLines(image: Mat, epilines: CvMat, points: CvPoint2D32f): IplImage = {
+    val src = image.asIplImage()
+    val canvas = cvCreateImage(cvGetSize(src), src.depth(), 3)
+    cvCvtColor(src, canvas, CV_GRAY2BGR)
     for (i <- 0 until epilines.rows()) {
       // draw the epipolar line between first and last column
       val a = epilines.get(i, 0, 0)
@@ -80,11 +80,11 @@ object Ex4MatchingUsingSampleConsensus extends App {
       val y0 = math.round(-(c + a * x0) / b).toInt
       val x1 = image.cols
       val y1 = math.round(-(c + a * x1) / b).toInt
-      line(canvas, new Point(x0, y0), new Point(x1, y1), white, 1, CV_AA, 0)
+      cvLine(canvas, cvPoint(x0, y0), cvPoint(x1, y1), WHITE, 1, CV_AA, 0)
 
       val xp = math.round(points.position(i).x())
       val yp = math.round(points.position(i).y())
-      circle(canvas, new Point(xp, yp), 3, red, 1, CV_AA, 0)
+      cvCircle(canvas, cvPoint(xp, yp), 3, RED, 1, CV_AA, 0)
     }
     points.position(0)
     canvas

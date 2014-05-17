@@ -8,9 +8,11 @@ package opencv2_cookbook.chapter09
 
 import java.io.File
 import opencv2_cookbook.OpenCVUtils._
+import org.bytedeco.javacpp.helper.opencv_core.AbstractCvScalar._
 import org.bytedeco.javacpp.opencv_calib3d._
 import org.bytedeco.javacpp.opencv_core._
 import org.bytedeco.javacpp.opencv_features2d._
+import org.bytedeco.javacpp.opencv_imgproc._
 import org.bytedeco.javacpp.opencv_nonfree._
 
 
@@ -30,7 +32,7 @@ object Ex3ComputeFundamentalMatrix extends App {
   val imageLeft = loadMatAndShowOrExit(new File("data/church03.jpg"))
 
   // Construction of the SURF feature detector
-  val surf = new SURF(3000)
+  val surf = new SURF(3000, 4, 2, true, false)
 
   // Detection of the SURF features
   val keypointsRight = new KeyPoint()
@@ -69,7 +71,7 @@ object Ex3ComputeFundamentalMatrix extends App {
   println("Number of matched points: " + matches.capacity())
 
   // Select few matches, use similar approach as in [[opencv2_cookbook.chapter08.Ex7DescribingSURF]]
-  val selectedMatches = selectBest(matches, matches.capacity / 2)
+  val selectedMatches = selectBest(matches, matches.capacity)
 
   // Use 7-Point method
   fundamentalMatrix7Point()
@@ -94,8 +96,6 @@ object Ex3ComputeFundamentalMatrix extends App {
     selected7Matches.position(0)
 
     // Draw selected matches
-    //        val imageMatches =
-    //          cvCreateImage(cvSize(imageRight.cols() + imageLeft.cols(), imageRight.rows()), imageRight.depth, 3)
     val blue = new Scalar(0, 0, 255, 0)
     val red = new Scalar(255, 0, 0, 0)
     val matchMask: Array[Byte] = null
@@ -120,8 +120,8 @@ object Ex3ComputeFundamentalMatrix extends App {
     KeyPoint.convert(keypointsLeft, selPointsLeft, pointIndexesLeft)
 
     // Check by drawing the points
-    show(drawOnImage(imageRight.asIplImage(), selPointsRight.asCvPoint2D32f()), "selPointsRight")
-    show(drawOnImage(imageLeft.asIplImage(), selPointsLeft.asCvPoint2D32f()), "selPointsLeft")
+    show(drawOnImage(imageRight.asIplImage(), toCvPoint2D32f(selPointsRight)), "selPointsRight")
+    show(drawOnImage(imageLeft.asIplImage(), toCvPoint2D32f(selPointsLeft)), "selPointsLeft")
 
     // Convert to CvMat as needed by `cvFindFundamentalMat`
     val selPointsMatRight = toCvMat(selPointsRight)
@@ -149,12 +149,12 @@ object Ex3ComputeFundamentalMatrix extends App {
       1 /* in image 1 (can also be 2) */ ,
       fundamentalMatrix1 /* F matrix */ ,
       lines1 /* epipolar lines */)
-    show(drawEpiLines(imageLeft, lines1, selPointsLeft.asCvPoint2D32f(), null), "Left Image Epilines")
+    show(drawEpiLines(imageLeft, lines1, toCvPoint2D32f(selPointsLeft), null), "Left Image Epilines")
 
     // Draw the right points corresponding epipolar lines in left image
     val lines2 = cvCreateMat(selPointsMatLeft.rows, 3, CV_32FC1)
     cvComputeCorrespondEpilines(selPointsMatLeft, 2, fundamentalMatrix1, lines2)
-    show(drawEpiLines(imageRight, lines2, selPointsRight.asCvPoint2D32f(), null), "Right Image Epilines")
+    show(drawEpiLines(imageRight, lines2, toCvPoint2D32f(selPointsRight), null), "Right Image Epilines")
   }
 
 
@@ -162,7 +162,7 @@ object Ex3ComputeFundamentalMatrix extends App {
   def fundamentalMatrix7RANSAC() {
 
     // Convert keypoints into Point2f
-    val (selPointsRight, selPointsLeft) = MatcherUtils.toCvPoint2D32f(selectedMatches, keypointsRight, keypointsLeft)
+    val (selPointsRight, selPointsLeft) = MatcherUtils.toCvPoint2D32fPair(selectedMatches, keypointsRight, keypointsLeft)
 
     // Check by drawing the points
     show(drawOnImage(imageRight.asIplImage(), selPointsRight), "selPointsRight (RANSAC)")
@@ -185,7 +185,7 @@ object Ex3ComputeFundamentalMatrix extends App {
       pointStatus)
 
     // Draw the left points corresponding epipolar lines in right image
-    val lines1 = cvCreateMat(selPointsMatRight.rows, 3, CV_32FC1)
+    val lines1 = cvCreateMat(selPointsMatRight.rows, 3, CV_32F)
     cvComputeCorrespondEpilines(
       selPointsMatRight,
       1 /* in image 1 (can also be 2) */ ,
@@ -210,13 +210,10 @@ object Ex3ComputeFundamentalMatrix extends App {
   }
 
 
-  private def drawEpiLines(image: Mat, lines: CvMat, points: CvPoint2D32f, inliers: CvMat): Mat = {
-    //        val canvas = cvCreateImage(cvGetSize(image), image.depth(), 3)
-    //        cvCvtColor(image, canvas, CV_GRAY2BGR)
-    val canvas = image.clone()
-    val white = new Scalar(255, 255, 255, 0)
-    val red = new Scalar(255, 0, 0, 0)
-    val yellow = new Scalar(255, 255, 0, 0)
+  private def drawEpiLines(image: Mat, lines: CvMat, points: CvPoint2D32f, inliers: CvMat): IplImage = {
+    val src = image.asIplImage()
+    val canvas = cvCreateImage(cvGetSize(src), src.depth(), 3)
+    cvCvtColor(src, canvas, CV_GRAY2BGR)
     for (i <- 0 until lines.rows()) {
       val inlier = inliers != null && math.round(inliers.get(i)) != 0
       if (inlier) {
@@ -228,12 +225,12 @@ object Ex3ComputeFundamentalMatrix extends App {
         val y0 = math.round(-(c + a * x0) / b).toInt
         val x1 = image.cols
         val y1 = math.round(-(c + a * x1) / b).toInt
-        line(canvas, new Point(x0, y0), new Point(x1, y1), white, 1, CV_AA, 0)
+        cvLine(canvas, cvPoint(x0, y0), cvPoint(x1, y1), WHITE, 1, CV_AA, 0)
       }
       val xp = math.round(points.position(i).x())
       val yp = math.round(points.position(i).y())
-      val (color, width) = if (inlier) (red, 2) else (yellow, 1)
-      circle(canvas, new Point(xp, yp), 3, color, width, CV_AA, 0)
+      val (color, width) = if (inlier) (RED, 2) else (YELLOW, 1)
+      cvCircle(canvas, cvPoint(xp, yp), 3, color, width, CV_AA, 0)
     }
     points.position(0)
     canvas
