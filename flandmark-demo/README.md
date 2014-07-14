@@ -2,7 +2,7 @@ flandmark-demo
 ==============
 
 Example of using [JVM wrapper](https://github.com/bytedeco/javacpp-presets/tree/master/flandmark) for 
-[flandmark](https://github.com/uricamic/flandmark/blob/master/examples/example1.cpp) library.
+[flandmark](https://github.com/uricamic/flandmark) library.
 
 Please address queries and questions to [JavaCPP discussion group](http://groups.google.com/group/javacpp-project).
 
