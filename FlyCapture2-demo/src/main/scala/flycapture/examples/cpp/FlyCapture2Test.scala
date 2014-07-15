@@ -2,14 +2,17 @@
  * Copyright (c) 2014 Jarek Sacha. All Rights Reserved.
  * Author's e-mail: jpsacha at gmail dot com
  */
-package flycapture
+package flycapture.examples.cpp
 
 import org.bytedeco.javacpp.FlyCapture2
 import org.bytedeco.javacpp.FlyCapture2._
 
 /**
- * Example of using FlyCapture2 C++ API.
- * Based on FlyCapture2Test.cpp example from FlyCapture SDK.
+ * The FlyCapture2Test sample program is a simple program designed to report information related to all compatible
+ * cameras attached to the host system, capture a series of images from a single camera,
+ * record the amount of time taken to grab these images, then save the last image in the current directory.
+ *
+ * Example of using FlyCapture2 C++ API. Based on FlyCapture2Test.cpp example from FlyCapture SDK.
  */
 object FlyCapture2Test extends App {
 

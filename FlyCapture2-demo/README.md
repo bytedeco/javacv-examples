@@ -12,8 +12,8 @@ Content
 
 Demo files:
 
-* `src/main/java/flycapture/FlyCapture2Test.scala` - Scala (JVM) version of example FlayCapture2 C++ API example FlyCapture2Test.
-* `src/main/java/flycapture/FlyCapture2Test_C.scala` - Scala (JVM) version of example FlayCapture2 C API example FlyCapture2Test_C.
+* `src/main/java/flycapture/examples/cpp/FlyCapture2Test` - Scala (JVM) version of example FlayCapture2 C++ API example FlyCapture2Test.
+* `src/main/java/flycapture/examples/c/FlyCapture2Test_C` - Scala (JVM) version of example FlayCapture2 C API example FlyCapture2Test_C.
 * `build.sbt` - the main SBT configuration file.
 * `project/build.properties` - version of SBT to use.
 * `project/plugins.sbt` - plugins used for creation of Eclipse projects.

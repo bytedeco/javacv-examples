@@ -2,7 +2,7 @@
  * Copyright (c) 2014 Jarek Sacha. All Rights Reserved.
  * Author's e-mail: jpsacha at gmail dot com
  */
-package flycapture
+package flycapture.examples.c
 
 import org.bytedeco.javacpp.FlyCapture2_C._
 
