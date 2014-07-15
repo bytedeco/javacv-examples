@@ -42,9 +42,9 @@ val platform = {
 }
 
 libraryDependencies ++= Seq(
-  "org.bytedeco.javacpp-presets" % "flycapture"  % "1.7.17-0.8-2-SNAPSHOT" classifier "",
-  "org.bytedeco.javacpp-presets" % "flycapture"  % "1.7.17-0.8-2-SNAPSHOT" classifier platform,
-  "org.bytedeco"                 % "javacpp" % "0.8-2-SNAPSHOT"
+  "org.bytedeco.javacpp-presets" % "flycapture" % "2.6.3.4-0.8-2-SNAPSHOT" classifier "",
+  "org.bytedeco.javacpp-presets" % "flycapture" % "2.6.3.4-0.8-2-SNAPSHOT" classifier platform,
+  "org.bytedeco"                 % "javacpp"    % "0.8-2-SNAPSHOT"
 )
 
 resolvers ++= Seq(
