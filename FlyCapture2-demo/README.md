@@ -12,8 +12,14 @@ Content
 
 Demo files:
 
-* `src/main/java/flycapture/examples/cpp/FlyCapture2Test` - Scala (JVM) version of example FlayCapture2 C++ API example FlyCapture2Test.
-* `src/main/java/flycapture/examples/c/FlyCapture2Test_C` - Scala (JVM) version of example FlayCapture2 C API example FlyCapture2Test_C.
+* C++ API examples in `src/main/scala/flycapture/examples/cpp`:
+    * `FlyCapture2Test` - for each attached cameras, print info and capture a couple of images.
+    * `GrabCallbackEx` - demonstrates how to set up an asynchronous image callback.
+* C API examples in `src/main/scala/flycapture/examples/c` :
+    * `FlyCapture2Test_C` - for each attached cameras, print info and capture a couple of images.
+    
+Build script:
+
 * `build.sbt` - the main SBT configuration file.
 * `project/build.properties` - version of SBT to use.
 * `project/plugins.sbt` - plugins used for creation of Eclipse projects.
