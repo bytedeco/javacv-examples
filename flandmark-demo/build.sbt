@@ -54,9 +54,9 @@ libraryDependencies ++= Seq(
     ExclusionRule(organization = "org.bytedeco.javacpp")
     ),
   "org.bytedeco.javacpp-presets" % "flandmark" %
-    ("0.1-" + javacppVersion) classifier "" excludeAll ExclusionRule(name = "opencv"),
+    ("1.7-" + javacppVersion) classifier "" excludeAll ExclusionRule(name = "opencv"),
   "org.bytedeco.javacpp-presets" % "flandmark" %
-    ("0.1-" + javacppVersion) classifier platform excludeAll ExclusionRule(name = "opencv"),
+    ("1.7-" + javacppVersion) classifier platform excludeAll ExclusionRule(name = "opencv"),
   "org.bytedeco.javacpp-presets" % "opencv" % ("2.4.9-" + javacppVersion) classifier "",
   "org.bytedeco.javacpp-presets" % "opencv" % ("2.4.9-" + javacppVersion) classifier platform,
   "org.bytedeco" % "javacpp" % javacppVersion
