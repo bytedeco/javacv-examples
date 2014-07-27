@@ -41,7 +41,6 @@ class LineFinder(val deltaRho: Double = 1,
         val storage = cvCreateMemStorage(0)
         lines = cvHoughLines2(binary, storage,
             CV_HOUGH_PROBABILISTIC, deltaRho, deltaTheta, minVotes, minLength, minGap)
-        lines
     }
 
 

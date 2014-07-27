@@ -2,14 +2,14 @@
 name := "flandmark-demo"
 
 // Project version
-version := "0.8.2"
+version := "0.9"
 
 // Version of Scala used by the project
-scalaVersion := "2.11.1"
+scalaVersion := "2.11.2"
 
-val javacvVersion = "0.8-2-SNAPSHOT"
+val javacvVersion = "0.9"
 
-val javacppVersion = "0.8-2-SNAPSHOT"
+val javacppVersion = "0.9"
 
 scalacOptions ++= Seq("-unchecked", "-deprecation", "-optimize", "-Xlint")
 
@@ -54,9 +54,9 @@ libraryDependencies ++= Seq(
     ExclusionRule(organization = "org.bytedeco.javacpp")
     ),
   "org.bytedeco.javacpp-presets" % "flandmark" %
-    ("1.7-" + javacppVersion) classifier "" excludeAll ExclusionRule(name = "opencv"),
+    ("1.07-" + javacppVersion) classifier "" excludeAll ExclusionRule(name = "opencv"),
   "org.bytedeco.javacpp-presets" % "flandmark" %
-    ("1.7-" + javacppVersion) classifier platform excludeAll ExclusionRule(name = "opencv"),
+    ("1.07-" + javacppVersion) classifier platform excludeAll ExclusionRule(name = "opencv"),
   "org.bytedeco.javacpp-presets" % "opencv" % ("2.4.9-" + javacppVersion) classifier "",
   "org.bytedeco.javacpp-presets" % "opencv" % ("2.4.9-" + javacppVersion) classifier platform,
   "org.bytedeco" % "javacpp" % javacppVersion

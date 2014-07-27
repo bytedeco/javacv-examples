@@ -125,6 +125,6 @@ class VideoProcessor(val capture: CvCapture,
 
     /** Write the output frame. */
     private def writeNextFrame(writer: Option[CvVideoWriter], frame: IplImage) {
-        if (!writer.isEmpty && cvWriteFrame(writer.get, frame) == 0) throw new Exception("Video writing failed.")
+        if (writer.isDefined && cvWriteFrame(writer.get, frame) == 0) throw new Exception("Video writing failed.")
     }
 }
