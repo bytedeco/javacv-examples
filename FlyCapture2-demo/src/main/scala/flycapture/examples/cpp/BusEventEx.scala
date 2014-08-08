@@ -11,6 +11,8 @@ import java.util.Date
 import org.bytedeco.javacpp.FlyCapture2._
 import org.bytedeco.javacpp.{IntPointer, Pointer}
 
+import scala.io.StdIn
+
 /**
  * The BusEventsEx demonstrates how to Register for Bus Events such as Camera Arrival/Removal and Bus Resets
  *
@@ -28,49 +30,44 @@ object BusEventEx extends App {
     r
   }
 
-  def toID(pParameter: Pointer): Int = {
-    pParameter.asByteBuffer().get()
-  }
+  def toID(pParameter: Pointer): Int = pParameter.asByteBuffer().get()
 
 
   println("BusEventEx  " + now)
 
   printBuildInfo()
 
-  val onBusReset = new BusEventCallback {
-    override def call(pParameter: Pointer, serialNumber: Int) = {
-      println(s"$now *** BUS RESET *** SN: $serialNumber, p : ${toID(pParameter)}")
+  // NOTE: We will be using a single callback method rather than a separate one for each event type.
+  // This is due to current JavaCPP limitation
+  // [[https://groups.google.com/d/msg/javacpp-project/bxTAlvLKn0M/SUS0z4qMvyAJ]]
+  val busEventCallback = new BusEventCallback {
+    override def call(pParameter: Pointer, serialNumber: Int): Unit = {
+      val eventName = toID(pParameter) match {
+        case BUS_RESET => "BUS_RESET"
+        case ARRIVAL => "ARRIVAL"
+        case REMOVAL => "REMOVAL"
+        case _ => "?"
+      }
+      println(f"$now *** $eventName%-9s *** SN: $serialNumber")
     }
   }
+
+  // We need separate handle for each registered callback to unregister it.
   val onResetCallbackHandle = new CallbackHandle()
-
-  val onBusArrival = new BusEventCallback {
-    override def call(pParameter: Pointer, serialNumber: Int) = {
-      println(s"$now *** BUS ARRIVAL *** SN: $serialNumber, p : ${toID(pParameter)}")
-    }
-  }
-  // In C/C++ this would look as follows
-  //   FlyCapture2::CallbackHandle onArrivalCallbackHandle;
   val onArrivalCallbackHandle = new CallbackHandle()
-
-  val onBusRemoval = new BusEventCallback {
-    override def call(pParameter: Pointer, serialNumber: Int) = {
-      println(s"$now *** BUS REMOVAL *** SN: $serialNumber, p : ${toID(pParameter)}")
-    }
-  }
   val onRemovalCallbackHandle = new CallbackHandle()
 
   // Register callbacks
-  // The `id` is used here for debugging, to see if correct callbacks are registered.
+  // The `id` is used for distinguishing event types.
   val busMgr = new BusManager()
-  busMgr.RegisterCallback(onBusReset, BUS_RESET, id(1), onResetCallbackHandle)
-  busMgr.RegisterCallback(onBusArrival, ARRIVAL, id(2), onArrivalCallbackHandle)
-  busMgr.RegisterCallback(onBusRemoval, REMOVAL, id(3), onRemovalCallbackHandle)
+  busMgr.RegisterCallback(busEventCallback, BUS_RESET, id(BUS_RESET), onResetCallbackHandle)
+  busMgr.RegisterCallback(busEventCallback, ARRIVAL, id(ARRIVAL), onArrivalCallbackHandle)
+  busMgr.RegisterCallback(busEventCallback, REMOVAL, id(REMOVAL), onRemovalCallbackHandle)
 
   // Wait for the user to plug or unplug cameras to see callback notifications
-  println("\nConnect or disconnect camera to see calback notifications.\n" +
+  println("\nConnect or disconnect camera to see callback notifications.\n" +
     "Press the Enter key to exit.")
-  readLine()
+  StdIn.readLine()
 
   // Un-register callbacks
   busMgr.UnregisterCallback(onResetCallbackHandle)
