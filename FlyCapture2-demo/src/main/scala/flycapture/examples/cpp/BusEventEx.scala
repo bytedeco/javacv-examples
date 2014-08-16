@@ -11,8 +11,6 @@ import java.util.Date
 import org.bytedeco.javacpp.FlyCapture2._
 import org.bytedeco.javacpp.{IntPointer, Pointer}
 
-import scala.io.StdIn
-
 /**
  * The BusEventsEx demonstrates how to Register for Bus Events such as Camera Arrival/Removal and Bus Resets
  *
@@ -67,7 +65,7 @@ object BusEventEx extends App {
   // Wait for the user to plug or unplug cameras to see callback notifications
   println("\nConnect or disconnect camera to see callback notifications.\n" +
     "Press the Enter key to exit.")
-  StdIn.readLine()
+  readLine()
 
   // Un-register callbacks
   busMgr.UnregisterCallback(onResetCallbackHandle)

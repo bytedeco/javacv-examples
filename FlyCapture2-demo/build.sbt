@@ -1,8 +1,8 @@
 name := "FlyCapture2-demo"
 
-version := "0.9"
+version := "0.9.1-SNAPSHOT"
 
-scalaVersion := "2.11.2"
+scalaVersion := "2.10.4"
 
 scalacOptions ++= Seq("-unchecked", "-deprecation", "-optimize", "-Xlint")
 
@@ -42,9 +42,9 @@ val platform = {
 }
 
 libraryDependencies ++= Seq(
-  "org.bytedeco.javacpp-presets" % "flycapture" % "2.6.3.4-0.9" classifier "",
-  "org.bytedeco.javacpp-presets" % "flycapture" % "2.6.3.4-0.9" classifier platform,
-  "org.bytedeco"                 % "javacpp"    % "0.9"
+  "org.bytedeco.javacpp-presets" % "flycapture" % "2.6.3.4-0.9.1-SNAPSHOT" classifier "",
+  "org.bytedeco.javacpp-presets" % "flycapture" % "2.6.3.4-0.9.1-SNAPSHOT" classifier platform,
+  "org.bytedeco"                 % "javacpp"    % "0.9.1-SNAPSHOT"
 )
 
 resolvers ++= Seq(
