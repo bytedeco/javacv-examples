@@ -7,11 +7,7 @@ package flycapture.examples.cpp
 import org.bytedeco.javacpp.FlyCapture2._
 
 /**
- * The FlyCapture2Test sample program is a simple program designed to report information related to all compatible
- * cameras attached to the host system, capture a series of images from a single camera,
- * record the amount of time taken to grab these images, then save the last image in the current directory.
- *
- * Example of using FlyCapture2 C++ API. Based on FlyCapture2Test.cpp example from FlyCapture SDK.
+ * The CameraPropertyInfoEx prints out property information from attached cameras.
  */
 object CameraPropertyInfoEx extends App {
 

@@ -12,7 +12,7 @@ import org.bytedeco.javacpp.FlyCapture2._
 import org.bytedeco.javacpp.{IntPointer, Pointer}
 
 /**
- * The BusEventsEx demonstrates how to Register for Bus Events such as Camera Arrival/Removal and Bus Resets
+ * The BusEventsEx demonstrates how to register for Bus Events such as Camera Arrival/Removal and Bus Resets.
  *
  * Example of using FlyCapture2 C++ API. Based on BusEventsEx.vb example from FlyCapture SDK.
  *
