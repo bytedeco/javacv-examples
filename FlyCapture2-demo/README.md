@@ -15,9 +15,10 @@ Demo files:
 * C++ API examples in `src/main/scala/flycapture/examples/cpp`:
     * `BusEventEx` - register for Bus Events such as Camera Arrival/Removal and Bus Resets.
     * `CameraPropertyInfoEx` - prints out property information from attached cameras.
+    * `ExtendedShutterEx` - demonstrates how to enable and calculate extended integration times.
     * `FlyCapture2Test` - for each attached cameras, print info and capture a couple of images.
     * `GrabCallbackEx` - demonstrates how to set up an asynchronous image callback.
-    * `SoftwareTriggerEx` - demonstrates of basic asynchronous trigger capabilities. 
+    * `SoftwareTriggerEx` - demonstrates use of basic asynchronous trigger capabilities. 
 * C API examples in `src/main/scala/flycapture/examples/c` :
     * `FlyCapture2Test_C` - for each attached cameras, print info and capture a couple of images.
     
@@ -43,5 +44,5 @@ How to build and run using SBT
     %> sbt run
    ```
 
-   It will download needed dependencies, including OpenCV, JavaCV, and flandmark, and run 
+   It will download needed dependencies, including OpenCV and flycapture, and run 
    the example code. 
