@@ -31,68 +31,73 @@ with code in Scala and Java using JavaCV wrapper.
 Here is the original C++ example that opens an image (without error checking), creates a window,
 displays image in the window, and waits for 5 seconds before exiting.
 
-    #include <opencv2/core/core.hpp>
-    #include <opencv2/highgui/highgui.hpp>
+```c
+#include <opencv2/core/core.hpp>
+#include <opencv2/highgui/highgui.hpp>
 
-    int main() {
-        // read an image
-        cv::Mat image = cv::imread("boldt.jpg");
-    
-        // create image window named "My Image"
-        cv::namedWindow("My Image");
-    
-        // show image on window
-        cv::imshow("My Image", image);
-    
-        // wait key for 5000 ms
-        cv::waitKey(5000);
+int main() {
+    // read an image
+    cv::Mat image = cv::imread("boldt.jpg");
 
-        return 1;
-    }
+    // create image window named "My Image"
+    cv::namedWindow("My Image");
+
+    // show image on window
+    cv::imshow("My Image", image);
+
+    // wait key for 5000 ms
+    cv::waitKey(5000);
+
+    return 1;
+}
+```
 
 The above C++ example translated to Scala using JavaCV wrapper:
 
-    import com.googlecode.javacv.CanvasFrame
-    import com.googlecode.javacv.cpp.opencv_highgui._
+```scala
+import com.googlecode.javacv.CanvasFrame
+import com.googlecode.javacv.cpp.opencv_highgui._
 
-    object MyFirstOpenCVApp extends App {   
-        // Read an image.
-        val image = cvLoadImage("boldt.jpg")
+object MyFirstOpenCVApp extends App {   
+    // Read an image.
+    val image = cvLoadImage("boldt.jpg")
 
-        // Create image window named "My Image."
-        val canvas = new CanvasFrame("My Image", 1)
+    // Create image window named "My Image."
+    val canvas = new CanvasFrame("My Image", 1)
 
-        // Request closing of the application when the image window is closed.
-        canvas.setDefaultCloseOperation(javax.swing.JFrame.EXIT_ON_CLOSE)
+    // Request closing of the application when the image window is closed.
+    canvas.setDefaultCloseOperation(javax.swing.JFrame.EXIT_ON_CLOSE)
 
-       // Show image on window.
-       canvas.showImage(image)
-    }
+   // Show image on window.
+   canvas.showImage(image)
+}
+```
 
 Now the same example expressed in a Java. Note that use of JavaCV API is exactly the same in Scala and Java code.
 
-    import com.googlecode.javacv.CanvasFrame;
-    import static com.googlecode.javacv.cpp.opencv_core.IplImage;
-    import static com.googlecode.javacv.cpp.opencv_highgui.cvLoadImage;
+```java
+import com.googlecode.javacv.CanvasFrame;
+import static com.googlecode.javacv.cpp.opencv_core.IplImage;
+import static com.googlecode.javacv.cpp.opencv_highgui.cvLoadImage;
 
-    public class MyFirstOpenCVApp {
+public class MyFirstOpenCVApp {
 
-        public static void main(String[] args) {
-        
-            // Read an image.
-            final IplImage image = cvLoadImage("boldt.jpg");
-        
-            // Create image window named "My Image".
-            final CanvasFrame canvas = new CanvasFrame("My Image", 1);
-        
-            // Request closing of the application when the image window is closed.
-            canvas.setDefaultCloseOperation(javax.swing.JFrame.EXIT_ON_CLOSE);
-                
-            // Show image on window.
-            canvas.showImage(image);
-        }
+    public static void main(String[] args) {
+    
+        // Read an image.
+        final IplImage image = cvLoadImage("boldt.jpg");
+    
+        // Create image window named "My Image".
+        final CanvasFrame canvas = new CanvasFrame("My Image", 1);
+    
+        // Request closing of the application when the image window is closed.
+        canvas.setDefaultCloseOperation(javax.swing.JFrame.EXIT_ON_CLOSE);
+            
+        // Show image on window.
+        canvas.showImage(image);
     }
-
+}
+```
 
 OpenCV Documentation is Your Friend
 -----------------------------------
