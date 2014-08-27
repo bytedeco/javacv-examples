@@ -59,17 +59,17 @@ import com.googlecode.javacv.CanvasFrame
 import com.googlecode.javacv.cpp.opencv_highgui._
 
 object MyFirstOpenCVApp extends App {   
-    // Read an image.
-    val image = cvLoadImage("boldt.jpg")
+  // Read an image.
+  val image = cvLoadImage("boldt.jpg")
 
-    // Create image window named "My Image."
-    val canvas = new CanvasFrame("My Image", 1)
+  // Create image window named "My Image."
+  val canvas = new CanvasFrame("My Image", 1)
 
-    // Request closing of the application when the image window is closed.
-    canvas.setDefaultCloseOperation(javax.swing.JFrame.EXIT_ON_CLOSE)
+  // Request closing of the application when the image window is closed.
+  canvas.setDefaultCloseOperation(javax.swing.JFrame.EXIT_ON_CLOSE)
 
-   // Show image on window.
-   canvas.showImage(image)
+  // Show image on window.
+  canvas.showImage(image)
 }
 ```
 
@@ -224,7 +224,7 @@ List of Examples
 Why Scala?
 ----------
 
-[http://www.scala-lang.org Scala] was chosen since it is more expressive than Java. 
+[Scala](http://www.scala-lang.org) was chosen since it is more expressive than Java. 
 You can achieve the same result with smaller amount of code. Smaller boilerplate code makes examples easier to read and understand. 
 Unlike many other JVM languages, compiled Scala code is fast, on par with Java. 
 Scala supports writing of scripts, code that can be executed without explicit compiling. 
@@ -232,8 +232,8 @@ Scala also has a console, called REPL, where single lines of code can be typed i
 Both of those features make prototyping of OpenCV-based programs easier in Scala than in Java.
 Last but not least, IDE support for Scala reached level of maturity allowing easy creation, modification, 
 and execution of Scala code. 
-In particular, the [http://blog.jetbrains.com/scala/ Scala plugin] for [http://www.jetbrains.com/idea/ JetBrains IDEA] 
+In particular, the [Scala plugin](http://blog.jetbrains.com/scala/)  for [JetBrains IDEA](http://www.jetbrains.com/idea/) 
 works very well. 
-Scala plugins for [http://scala-ide.org/index.html Eclipse] and [http://wiki.netbeans.org/Scala NetBeans] are also improving.
+Scala plugins for [Eclipse](http://scala-ide.org/index.html) and [NetBeans](https://github.com/dcaoyuan/nbscala) are also improving.
 
 [Next: Chapter 1>](src/main/scala/opencv2_cookbook/chapter01)
