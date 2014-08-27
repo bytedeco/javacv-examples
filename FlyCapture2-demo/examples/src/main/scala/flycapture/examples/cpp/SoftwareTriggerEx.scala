@@ -6,6 +6,9 @@
 
 package flycapture.examples.cpp
 
+import flycapture.CheckMacro
+import CheckMacro.check
+import flycapture.CheckMacro
 import org.bytedeco.javacpp.FlyCapture2._
 import org.bytedeco.javacpp.IntPointer
 
@@ -16,14 +19,14 @@ import org.bytedeco.javacpp.IntPointer
  */
 object SoftwareTriggerEx extends App {
 
-  val triggerInquiryRegister =  0x530
+  val triggerInquiryRegister = 0x530
   val softwareTriggerRegister = 0x62C
   val cameraPowerRegister = 0x610
 
   def checkSoftwareTriggerPresence(cam: Camera): Boolean = {
     val regValPtr = new IntPointer(1)
 
-    check(cam.ReadRegister(triggerInquiryRegister, regValPtr), " - cam.ReadRegister")
+    check(cam.ReadRegister(triggerInquiryRegister, regValPtr))
 
     (regValPtr.get & 0x10000) == 0x10000
   }
@@ -49,9 +52,8 @@ object SoftwareTriggerEx extends App {
 
   def fireSoftwareTrigger(cam: Camera) {
     val fireTriggerVal = 0x80000000
-    check(cam.WriteRegister(softwareTriggerRegister, fireTriggerVal), " - fireSoftwareTrigger()")
+    check(cam.WriteRegister(softwareTriggerRegister, fireTriggerVal))
   }
-
 
 
   printBuildInfo()
@@ -59,7 +61,7 @@ object SoftwareTriggerEx extends App {
   val busMgr = new BusManager()
   val numCameras = {
     val numCamerasPtr = new IntPointer(1)
-    check(busMgr.GetNumOfCameras(numCamerasPtr), " - GetNumOfCameras")
+    check(busMgr.GetNumOfCameras(numCamerasPtr))
     numCamerasPtr.get()
   }
   println("Number of cameras detected: " + numCameras)
@@ -70,17 +72,17 @@ object SoftwareTriggerEx extends App {
 
   println("Selecting first detected camera.")
   val guid = new PGRGuid()
-  check(busMgr.GetCameraFromIndex(0, guid), " - GetCameraFromIndex")
+  check(busMgr.GetCameraFromIndex(0, guid))
 
   // Connect to a camera
   val cam = new Camera()
-  check(cam.Connect(guid), " - Connect")
+  check(cam.Connect(guid))
 
   try {
     // Power on the camera
     println("Power on the camera")
     val cameraPowerVal = 0x80000000
-    check(cam.WriteRegister(cameraPowerRegister, cameraPowerVal), " - cam.WriteRegister")
+    check(cam.WriteRegister(cameraPowerRegister, cameraPowerVal))
 
     // Wait for camera to complete power-up
     val regVal = new IntPointer(1)
@@ -92,7 +94,7 @@ object SoftwareTriggerEx extends App {
         // ignore timeout errors, camera may not be responding to
         // register reads during power-up
       } else {
-        check(error, " - cam.ReadRegister")
+        check(error)
       }
       retries -= 1
     } while ((regVal.get() & cameraPowerVal) == 0 && retries > 0)
@@ -100,12 +102,12 @@ object SoftwareTriggerEx extends App {
 
     // Get the camera information
     val camInfo = new CameraInfo()
-    check(cam.GetCameraInfo(camInfo), " - GetCameraInfo")
+    check(cam.GetCameraInfo(camInfo))
     printCameraInfo(camInfo)
 
     // Get current trigger settings
     val triggerMode = new TriggerMode()
-    check(cam.GetTriggerMode(triggerMode), " - cam.GetTriggerMode")
+    check(cam.GetTriggerMode(triggerMode))
 
     // Set camera to trigger mode 0
     triggerMode.onOff(true)
@@ -114,7 +116,7 @@ object SoftwareTriggerEx extends App {
     // A source of 7 means software trigger
     triggerMode.source(7)
 
-    check(cam.SetTriggerMode(triggerMode), "- cam.SetTriggerMode()")
+    check(cam.SetTriggerMode(triggerMode))
 
     // Poll to ensure camera is ready
     if (!pollForTriggerReady(cam)) {
@@ -124,16 +126,16 @@ object SoftwareTriggerEx extends App {
 
     // Get the camera configuration
     val config = new FC2Config()
-    check(cam.GetConfiguration(config), " - cam.GetConfiguration()")
+    check(cam.GetConfiguration(config))
 
     // Set the grab timeout to 5 seconds
     config.grabTimeout(5000)
 
     // Set the camera configuration
-    check(cam.SetConfiguration(config), " - cam.SetConfiguration()")
+    check(cam.SetConfiguration(config))
 
     // Camera is ready, start capturing images
-    check(cam.StartCapture(), " - cam.StartCapture()")
+    check(cam.StartCapture())
 
     if (!checkSoftwareTriggerPresence(cam)) {
       println("SOFT_ASYNC_TRIGGER not implemented on this camera!  Stopping application.")
@@ -154,7 +156,7 @@ object SoftwareTriggerEx extends App {
 
       // Retrieve an image
       val rawImage = new Image()
-      check(cam.RetrieveBuffer(rawImage), " - RetrieveBuffer")
+      check(cam.RetrieveBuffer(rawImage))
 
       printf("Grabbed image %d\n", imageCount)
 
@@ -162,27 +164,27 @@ object SoftwareTriggerEx extends App {
       val convertedImage = new Image()
 
       // Convert the raw image
-      check(rawImage.Convert(PIXEL_FORMAT_MONO8, convertedImage), " - Convert")
+      check(rawImage.Convert(PIXEL_FORMAT_MONO8, convertedImage))
 
       // Create a unique filename
       val filename = "SoftwareTriggerEx-%d-%d.pgm".format(camInfo.serialNumber, imageCount)
       //
       // Save the image. If a file format is not passed in, then the file
       // extension is parsed to attempt to determine the file format.
-      check(convertedImage.Save(filename), " - Save")
+      check(convertedImage.Save(filename))
     }
 
     // Turn trigger mode off.
     triggerMode.onOff(false)
-    check(cam.SetTriggerMode(triggerMode), " - cam.SetTriggerMode")
+    check(cam.SetTriggerMode(triggerMode))
     println("Finished grabbing images")
 
     // Stop capturing images
-    check(cam.StopCapture(), " - cam.StopCapture()")
+    check(cam.StopCapture())
 
     // Turn trigger mode off.
     triggerMode.onOff(false)
-    check(cam.SetTriggerMode(triggerMode), " - cam.SetTriggerMode")
+    check(cam.SetTriggerMode(triggerMode))
     println("Finished grabbing images")
   } finally {
     println("Disconnecting camera.")

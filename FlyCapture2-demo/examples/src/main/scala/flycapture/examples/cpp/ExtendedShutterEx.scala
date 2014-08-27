@@ -6,6 +6,9 @@
 
 package flycapture.examples.cpp
 
+import flycapture.CheckMacro
+import CheckMacro.check
+import flycapture.CheckMacro
 import org.bytedeco.javacpp.FlyCapture2._
 import org.bytedeco.javacpp.IntPointer
 
@@ -48,7 +51,7 @@ object ExtendedShutterEx extends App {
   val busMgr = new BusManager()
   val numCameras = {
     val numCamerasPtr = new IntPointer(1)
-    check(busMgr.GetNumOfCameras(numCamerasPtr), " - GetNumOfCameras")
+    check(busMgr.GetNumOfCameras(numCamerasPtr))
     numCamerasPtr.get()
   }
   println("Number of cameras detected: " + numCameras)
@@ -59,21 +62,21 @@ object ExtendedShutterEx extends App {
 
   println("Selecting first detected camera.")
   val guid = new PGRGuid()
-  check(busMgr.GetCameraFromIndex(0, guid), " - GetCameraFromIndex")
+  check(busMgr.GetCameraFromIndex(0, guid))
 
   // Connect to a camera
   val cam = new Camera()
-  check(cam.Connect(guid), " - Connect")
+  check(cam.Connect(guid))
 
   try {
     val cameraInfo = new CameraInfo()
-    check(cam.GetCameraInfo(cameraInfo), " - GetCameraInfo")
+    check(cam.GetCameraInfo(cameraInfo))
     printCameraInfo(cameraInfo)
 
     // Check if the camera supports the FRAME_RATE property
     val propInfo = new PropertyInfo()
     propInfo.`type`(FRAME_RATE)
-    check(cam.GetPropertyInfo(propInfo), " - GetPropertyInfo")
+    check(cam.GetPropertyInfo(propInfo))
 
     // Detect shutter type
     val shutterType: ExtendedShutterType.Value =
@@ -81,12 +84,12 @@ object ExtendedShutterEx extends App {
         // Turn off frame rate
         val prop = new Property()
         prop.`type`(FRAME_RATE)
-        check(cam.GetProperty(prop), " - GetProperty")
+        check(cam.GetProperty(prop))
 
         prop.autoManualMode(false)
         prop.onOff(false)
 
-        check(cam.SetProperty(prop), " - SetProperty")
+        check(cam.SetProperty(prop))
 
         ExtendedShutterType.GENERAL_EXTENDED_SHUTTER
       } else {
@@ -97,14 +100,14 @@ object ExtendedShutterEx extends App {
         val k_extendedShutter = 0x1028
         val extendedShutterRegVal = new Array[Int](0)
         //
-        check(cam.ReadRegister(k_extendedShutter, extendedShutterRegVal), " - ReadRegister")
+        check(cam.ReadRegister(k_extendedShutter, extendedShutterRegVal))
 
         // Check if 31st bit is set
         //        std::bitset<32> extendedShutterBS((int) extendedShutterRegVal );
         //        if ( extendedShutterBS[31] == true )
         if ((extendedShutterRegVal(0) & (1 << 31)) != 0) {
           // Set the camera into extended shutter mode
-          check(cam.WriteRegister(k_extendedShutter, 0x80020000), " - WriteRegister")
+          check(cam.WriteRegister(k_extendedShutter, 0x80020000))
           ExtendedShutterType.DRAGONFLY_EXTENDED_SHUTTER
         }
         else {
@@ -120,7 +123,7 @@ object ExtendedShutterEx extends App {
     // Set the shutter property of the camera
     val prop = new Property()
     prop.`type`(SHUTTER)
-    check(cam.GetProperty(prop), " - GetProperty")
+    check(cam.GetProperty(prop))
 
     prop.autoManualMode(false)
     prop.absControl(true)
@@ -128,39 +131,38 @@ object ExtendedShutterEx extends App {
     val k_shutterVal = 3000.0f
     prop.absValue(k_shutterVal)
 
-    check(cam.SetProperty(prop), " - SetProperty")
+    check(cam.SetProperty(prop))
 
-    println(f"Shutter time set to $k_shutterVal%.2fms")
+    println(f"Shutter time set to $k_shutterVal%7.2f ms")
 
-    check(cam.GetProperty(prop), " - GetProperty")
-    println(f"Actcual shutter : ${prop.absValue()}%.2fms")
+    check(cam.GetProperty(prop))
+    println(f"Actcual shutter     ${prop.absValue()}%7.2f ms")
 
     propInfo.`type`(SHUTTER)
-    check(cam.GetPropertyInfo(propInfo), " - GetPropertyInfo")
-    println(f"Shutter min     : ${propInfo.absMin()}%.2fms")
-    println(f"Shutter max     : ${propInfo.absMax()}%.2fms")
-
+    check(cam.GetPropertyInfo(propInfo))
+    println(f"Shutter min         ${propInfo.absMin()}%7.2f ms")
+    println(f"Shutter max         ${propInfo.absMax()}%7.2f ms")
 
     // Enable time-stamping
     val embeddedInfo = new EmbeddedImageInfo()
-    check(cam.GetEmbeddedImageInfo(embeddedInfo), " - GetEmbeddedImageInfo")
+    check(cam.GetEmbeddedImageInfo(embeddedInfo))
     if (embeddedInfo.timestamp.available) embeddedInfo.timestamp.onOff(true)
-    check(cam.SetEmbeddedImageInfo(embeddedInfo), " - SetEmbeddedImageInfo")
+    check(cam.SetEmbeddedImageInfo(embeddedInfo))
 
     // Start the camera
-    check(cam.StartCapture(), " - StartCapture")
+    check(cam.StartCapture())
 
     val k_numImages = 5
     for (i <- 0 until k_numImages) {
       val image = new Image()
-      check(cam.RetrieveBuffer(image), " - RetrieveBuffer")
+      check(cam.RetrieveBuffer(image))
 
       val timestamp = image.GetTimeStamp()
       println(f"TimeStamp [${timestamp.cycleSeconds} ${timestamp.cycleCount}]")
     }
 
     // Stop capturing images
-    check(cam.StopCapture(), " - StopCapture")
+    check(cam.StopCapture())
 
   } finally {
     println("Disconnecting camera.")

@@ -4,30 +4,15 @@
  */
 package flycapture.examples
 
+import flycapture.CheckMacro
 import org.bytedeco.javacpp.FlyCapture2
 import org.bytedeco.javacpp.FlyCapture2._
+import CheckMacro.check
 
 /**
  * Helper functions for C++ API examples.
  */
 package object cpp {
-
-  /**
-   * Invokes the method and checks the return code.
-   * If the return code is different than `FC2_ERROR_OK` it throws an exception.
-   * Helper for using FlyCapture2 C API.
-   *
-   * @param method Method to be checked.
-   * @param errorMessage Error message used in the exception (if exception is thrown).
-   */
-  def check(method: => Error, errorMessage: String) {
-    println("Checking -> " + errorMessage)
-    val err = method
-    if (err.GetType() != FlyCapture2.PGRERROR_OK) {
-      val errorDesc = err.GetDescription().getString
-      throw new FC2Exception("Err: " + err.GetType() + " " + errorMessage + "\nInternal error description: " + errorDesc, err)
-    }
-  }
 
   /**
    * Query and print version of FlyCapture SDK.
@@ -76,7 +61,7 @@ package object cpp {
 
   def printPropertyInfo(cam: Camera, propType: Int, propName: String): Unit = {
     val propertyInfo = new PropertyInfo(propType)
-    check(cam.GetPropertyInfo(propertyInfo), "cam.GetPropertyInfo")
+    check(cam.GetPropertyInfo(propertyInfo))
     println("Property info " + propName + " [present : " + propertyInfo.present + "]")
     if (propertyInfo.present) {
       println("  autoSupported    : " + propertyInfo.autoSupported)
@@ -93,7 +78,7 @@ package object cpp {
         println("  pUnits           : " + propertyInfo.pUnits.getString)
         println("  pUnitAbbr        : " + propertyInfo.pUnitAbbr.getString)
         val property = new Property(propType)
-        check(cam.GetProperty(property), "cam.GetProperty")
+        check(cam.GetProperty(property))
         println("  property value")
         println("    absControl     : " + property.absControl)
         println("    absValue       : " + property.absValue)
