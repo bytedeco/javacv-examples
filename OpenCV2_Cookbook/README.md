@@ -1,6 +1,4 @@
-[Next: Chapter 1>](src/main/scala/opencv2_cookbook/chapter01)
-
-OpenCV2-Cookbook
+OpenCV2_Cookbook
 ================
 
 [OpenCV](http://opencv.org/) (Open Source Computer Vision) is a library of several hundred algorithms for computer vision and video analysis. 
