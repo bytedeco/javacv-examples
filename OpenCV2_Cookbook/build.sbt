@@ -2,11 +2,9 @@ name := "opencv2-cookbook"
 
 organization := "javacv.examples"
 
-val javacvVersion = "0.9"
+val javacppVersion = "0.9.1-SNAPSHOT"
 
-val javacppVersion = "0.9"
-
-version := javacvVersion
+version := javacppVersion
 
 scalaVersion := "2.11.2"
 
@@ -48,7 +46,7 @@ val platform = {
 }
 
 libraryDependencies ++= Seq(
-  "org.bytedeco" % "javacv" % javacvVersion excludeAll(
+  "org.bytedeco" % "javacv" % javacppVersion excludeAll(
     ExclusionRule(organization = "org.bytedeco.javacpp-presets"),
     ExclusionRule(organization = "org.bytedeco.javacpp")
     ),
@@ -58,7 +56,7 @@ libraryDependencies ++= Seq(
   "org.scala-lang.modules"      %% "scala-swing"     % "1.0.1",
   "net.imagej"                   % "ij"              % "1.49d",
   "junit"                        % "junit"           % "4.11" % "test",
-  "com.novocode"                 % "junit-interface" % "0.10" % "test"
+  "com.novocode"                 % "junit-interface" % "0.11" % "test"
 )
 
 resolvers ++= Seq(
