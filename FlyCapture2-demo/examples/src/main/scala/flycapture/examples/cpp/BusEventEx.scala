@@ -11,6 +11,8 @@ import java.util.Date
 import org.bytedeco.javacpp.FlyCapture2._
 import org.bytedeco.javacpp.{IntPointer, Pointer}
 
+import scala.io.StdIn.readLine
+
 
 /**
  * The BusEventsEx demonstrates how to register for Bus Events such as Camera Arrival/Removal and Bus Resets.

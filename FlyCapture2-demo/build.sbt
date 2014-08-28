@@ -6,7 +6,7 @@ version := "0.9.1-SNAPSHOT"
 
 val commonSettings = Seq(
   scalaVersion := "2.11.2",
-  scalacOptions ++= Seq("-unchecked", "-deprecation", "-optimize", "-Xlint"),
+  scalacOptions ++= Seq("-unchecked", "-deprecation", "-optimize", "-Xlint", "-Yinline-warnings", "-explaintypes"),
   // Some dependencies like `javacpp` are packaged with maven-plugin packaging
   classpathTypes += "maven-plugin",
   libraryDependencies ++= Seq(
