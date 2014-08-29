@@ -46,13 +46,9 @@ val platform = {
 }
 
 libraryDependencies ++= Seq(
-  "org.bytedeco" % "javacv" % javacppVersion excludeAll(
-    ExclusionRule(organization = "org.bytedeco.javacpp-presets"),
-    ExclusionRule(organization = "org.bytedeco.javacpp")
-    ),
+  "org.bytedeco"                 % "javacv"          % javacppVersion,
   "org.bytedeco.javacpp-presets" % "opencv"          % ("2.4.9-" + javacppVersion) classifier "",
   "org.bytedeco.javacpp-presets" % "opencv"          % ("2.4.9-" + javacppVersion) classifier platform,
-  "org.bytedeco"                 % "javacpp"         % javacppVersion,
   "org.scala-lang.modules"      %% "scala-swing"     % "1.0.1",
   "net.imagej"                   % "ij"              % "1.49d",
   "junit"                        % "junit"           % "4.11" % "test",
