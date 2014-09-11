@@ -112,7 +112,7 @@ object OpenCVUtils {
     show(image, file.getName)
     image
   }
-  
+
   /** Load an image. If image cannot be loaded the application will exit with code 1.
     *
     * @param flags Flags specifying the color type of a loaded image:
@@ -135,14 +135,14 @@ object OpenCVUtils {
     }
     image
   }
-  
+
   /** Show image in a window. Closing the window will exit the application. */
   def show(mat: CvMat, title: String) {
     val canvas = new CanvasFrame(title, 1)
     canvas.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE)
     canvas.showImage(mat.asIplImage())
   }
-  
+
   /** Load an image and show in a CanvasFrame.  If image cannot be loaded the application will exit with code 1.
     *
     * @param flags Flags specifying the color type of a loaded image:
@@ -162,7 +162,7 @@ object OpenCVUtils {
     show(image, file.getName)
     image
   }
-  
+
   /** Load an image. If image cannot be loaded the application will exit with code 1.
     *
     * @param flags Flags specifying the color type of a loaded image:
@@ -179,13 +179,13 @@ object OpenCVUtils {
   def loadOrExit(file: File, flags: Int = CV_LOAD_IMAGE_GRAYSCALE): Mat = {
     // Read input image
     val image = imread(file.getAbsolutePath, flags)
-    if (image == null) {
+    if (image.empty()) {
       println("Couldn't load image: " + file.getAbsolutePath)
       sys.exit(1)
     }
     image
   }
-  
+
   def show(mat: Mat, title: String) {
     val canvas = new CanvasFrame(title, 1)
     canvas.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE)
@@ -469,6 +469,17 @@ object OpenCVUtils {
     dest
   }
 
+  /** Copy content of a single object referred to by a pointer.
+    *
+    * If `src` is an "array", only the first element is copied.
+    *
+    * @param src source.
+    * @param dest destination.
+    */
+  def copy[T <: Pointer](src: T, dest: T) {
+    dest.put(src.limit(src.position() + 1))
+  }
+
   /**
    * Convert one (or collection) of `Point2f` to one (or collection) of `CvPoint2D32f`.
    */
@@ -495,17 +506,6 @@ object OpenCVUtils {
     dest.position(0)
 
     dest
-  }
-
-  /** Copy content of a single object referred to by a pointer.
-    *
-    * If `src` is an "array", only the first element is copied.
-    *
-    * @param src source.
-    * @param dest destination.
-    */
-  def copy[T <: Pointer](src: T, dest: T) {
-    dest.put(src.limit(src.position() + 1))
   }
 
   /** Convert `CvRect` to AWT `Rectangle`. */

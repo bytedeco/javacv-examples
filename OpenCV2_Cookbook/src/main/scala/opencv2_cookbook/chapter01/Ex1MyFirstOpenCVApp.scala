@@ -7,6 +7,7 @@
 package opencv2_cookbook.chapter01
 
 import javax.swing.JFrame._
+
 import org.bytedeco.javacpp.opencv_highgui._
 import org.bytedeco.javacv.CanvasFrame
 
@@ -18,7 +19,15 @@ import org.bytedeco.javacv.CanvasFrame
 object Ex1MyFirstOpenCVApp extends App {
 
   // Read an image
-  val image = cvLoadImage("data/boldt.jpg")
+  val image = imread("data/boldt.jpg")
+  if (image.empty()) {
+    // error handling
+    // no image has been created...
+    // possibly display an error message
+    // and quit the application
+    println("Error reading image...")
+    System.exit(0)
+  }
 
   // Create image window named "My Image".
   //

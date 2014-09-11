@@ -58,7 +58,7 @@ import com.googlecode.javacv.cpp.opencv_highgui._
 
 object MyFirstOpenCVApp extends App {   
   // Read an image.
-  val image = cvLoadImage("boldt.jpg")
+  val image = imread("boldt.jpg")
 
   // Create image window named "My Image."
   val canvas = new CanvasFrame("My Image", 1)
@@ -75,15 +75,15 @@ Now the same example expressed in a Java. Note that use of JavaCV API is exactly
 
 ```java
 import com.googlecode.javacv.CanvasFrame;
-import static com.googlecode.javacv.cpp.opencv_core.IplImage;
-import static com.googlecode.javacv.cpp.opencv_highgui.cvLoadImage;
+import static com.googlecode.javacv.cpp.opencv_core.*;
+import static com.googlecode.javacv.cpp.opencv_highgui.*;
 
 public class MyFirstOpenCVApp {
 
     public static void main(String[] args) {
     
         // Read an image.
-        final IplImage image = cvLoadImage("boldt.jpg");
+        final Mat image = imread("boldt.jpg");
     
         // Create image window named "My Image".
         final CanvasFrame canvas = new CanvasFrame("My Image", 1);
