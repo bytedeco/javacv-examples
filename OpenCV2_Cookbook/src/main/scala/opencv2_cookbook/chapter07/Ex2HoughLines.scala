@@ -26,8 +26,8 @@ import scala.math._
 object Ex2HoughLines extends App {
 
   // Read input image
-  val src = loadAndShowOrExit(new File("data/grid binary skeleton.png"), CV_LOAD_IMAGE_GRAYSCALE)
-  val src2 = loadAndShowOrExit(new File("data/grid binary.png"), CV_LOAD_IMAGE_GRAYSCALE)
+  val src = loadIplAndShowOrExit(new File("data/grid binary skeleton.png"), CV_LOAD_IMAGE_GRAYSCALE)
+  val src2 = loadIplAndShowOrExit(new File("data/grid binary.png"), CV_LOAD_IMAGE_GRAYSCALE)
 
   // Canny contours
   val canny = cvCreateImage(cvGetSize(src), src.depth(), 1)

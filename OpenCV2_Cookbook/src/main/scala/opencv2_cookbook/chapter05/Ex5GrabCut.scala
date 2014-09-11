@@ -7,6 +7,7 @@
 package opencv2_cookbook.chapter05
 
 import java.io.File
+
 import opencv2_cookbook.OpenCVUtils._
 import org.bytedeco.javacpp.opencv_core._
 import org.bytedeco.javacpp.opencv_highgui._
@@ -20,7 +21,7 @@ object Ex5GrabCut extends App {
 
   // Open image
   //  val image = loadCvMatAndShowOrExit(new File("data/group.jpg"), CV_LOAD_IMAGE_COLOR)
-  val image = loadMatAndShowOrExit(new File("data/group.jpg"), CV_LOAD_IMAGE_COLOR)
+  val image = loadAndShowOrExit(new File("data/group.jpg"), CV_LOAD_IMAGE_COLOR)
 
   // Define bounding rectangle, pixels outside this rectangle will be labeled as background.
   val rectangle = new Rect(10, 100, 380, 180)

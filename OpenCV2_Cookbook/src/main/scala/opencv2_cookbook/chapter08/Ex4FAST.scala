@@ -7,8 +7,9 @@
 package opencv2_cookbook.chapter08
 
 import java.io.File
+
 import opencv2_cookbook.OpenCVUtils._
-import org.bytedeco.javacpp.opencv_features2d.{KeyPoint, FastFeatureDetector}
+import org.bytedeco.javacpp.opencv_features2d.{FastFeatureDetector, KeyPoint}
 
 /**
  * The example for section "Detecting FAST features" in Chapter 8, page 203.
@@ -16,7 +17,7 @@ import org.bytedeco.javacpp.opencv_features2d.{KeyPoint, FastFeatureDetector}
 object Ex4FAST extends App {
 
   // Read input image
-  val image = loadMatAndShowOrExit(new File("data/church01.jpg"))
+  val image = loadAndShowOrExit(new File("data/church01.jpg"))
 
   // Detect FAST features
   val ffd = new FastFeatureDetector(

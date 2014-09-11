@@ -7,6 +7,7 @@
 package opencv2_cookbook.chapter02
 
 import java.io.File
+
 import opencv2_cookbook.OpenCVUtils._
 import org.bytedeco.javacpp.opencv_core._
 import org.bytedeco.javacpp.opencv_highgui._
@@ -20,9 +21,9 @@ import org.bytedeco.javacpp.opencv_highgui._
 object Ex5ROILogo extends App {
 
   // Read input image
-  val logo = loadAndShowOrExit(new File("data/logo.bmp"), CV_LOAD_IMAGE_COLOR)
-  val mask = loadAndShowOrExit(new File("data/logo.bmp"), CV_LOAD_IMAGE_GRAYSCALE)
-  val image = loadAndShowOrExit(new File("data/boldt.jpg"), CV_LOAD_IMAGE_COLOR)
+  val logo = loadIplAndShowOrExit(new File("data/logo.bmp"), CV_LOAD_IMAGE_COLOR)
+  val mask = loadIplAndShowOrExit(new File("data/logo.bmp"), CV_LOAD_IMAGE_GRAYSCALE)
+  val image = loadIplAndShowOrExit(new File("data/boldt.jpg"), CV_LOAD_IMAGE_COLOR)
 
   // Define region of interest that matches the size of the logo
   val roi = new IplROI()

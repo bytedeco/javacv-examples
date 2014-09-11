@@ -6,8 +6,8 @@
 
 package opencv2_cookbook.chapter07
 
-import collection.mutable.ListBuffer
 import java.io.File
+
 import opencv2_cookbook.OpenCVUtils._
 import org.bytedeco.javacpp.Loader
 import org.bytedeco.javacpp.helper.opencv_core.AbstractCvScalar._
@@ -16,6 +16,8 @@ import org.bytedeco.javacpp.opencv_core._
 import org.bytedeco.javacpp.opencv_highgui._
 import org.bytedeco.javacpp.opencv_imgproc._
 
+import scala.collection.mutable.ListBuffer
+
 
 /**
  * The example for section "Extracting the components' contours" in Chapter 7, page 182.
@@ -23,7 +25,7 @@ import org.bytedeco.javacpp.opencv_imgproc._
 object Ex5ExtractContours extends App {
 
     // Read input image
-    val src = loadAndShowOrExit(new File("data/binaryGroup.bmp"), CV_LOAD_IMAGE_GRAYSCALE)
+    val src = loadIplAndShowOrExit(new File("data/binaryGroup.bmp"), CV_LOAD_IMAGE_GRAYSCALE)
 
     // Extract connected components
     val contourSeq = new CvSeq(null)
@@ -43,7 +45,7 @@ object Ex5ExtractContours extends App {
     val lengthMin = 100
     val lengthMax = 1000
     val filteredContours = contours.filter(contour => lengthMin < contour.total() && contour.total() < lengthMax)
-    val colorDest2 = loadOrExit(new File("data/group.jpg"), CV_LOAD_IMAGE_COLOR)
+    val colorDest2 = loadIplImageOrExit(new File("data/group.jpg"), CV_LOAD_IMAGE_COLOR)
     draw(colorDest2, filteredContours)
     show(colorDest2, "Contours Filtered")
 

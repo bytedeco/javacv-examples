@@ -8,6 +8,7 @@ package opencv2_cookbook.chapter04
 
 import java.awt.Rectangle
 import java.io.File
+
 import opencv2_cookbook.OpenCVUtils._
 import org.bytedeco.javacpp.opencv_core._
 import org.bytedeco.javacpp.opencv_highgui._
@@ -33,7 +34,7 @@ object Ex8MeanShiftDetector extends App {
   //
 
   // Load image as a color
-  val templateImage = loadAndShowOrExit(new File("data/baboon1.jpg"), CV_LOAD_IMAGE_COLOR)
+  val templateImage = loadIplAndShowOrExit(new File("data/baboon1.jpg"), CV_LOAD_IMAGE_COLOR)
 
   // Display image with marked ROI
   val rect = new Rectangle(110, 260, 35, 40)
@@ -51,7 +52,7 @@ object Ex8MeanShiftDetector extends App {
   //
 
   // Load the second image where we want to locate a new baboon face
-  val targetImage = loadAndShowOrExit(new File("data/baboon3.jpg"), CV_LOAD_IMAGE_COLOR)
+  val targetImage = loadIplAndShowOrExit(new File("data/baboon3.jpg"), CV_LOAD_IMAGE_COLOR)
 
   // Convert to HSV color space
   val hsvTargetImage = cvCreateImage(cvGetSize(targetImage), targetImage.depth, 3)

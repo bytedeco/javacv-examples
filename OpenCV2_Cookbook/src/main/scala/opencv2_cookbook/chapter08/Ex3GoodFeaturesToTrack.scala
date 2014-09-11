@@ -7,8 +7,9 @@
 package opencv2_cookbook.chapter08
 
 import java.io.File
+
 import opencv2_cookbook.OpenCVUtils._
-import org.bytedeco.javacpp.opencv_features2d.{KeyPoint, GFTTDetector}
+import org.bytedeco.javacpp.opencv_features2d.{GFTTDetector, KeyPoint}
 
 
 /**
@@ -19,7 +20,7 @@ import org.bytedeco.javacpp.opencv_features2d.{KeyPoint, GFTTDetector}
 object Ex3GoodFeaturesToTrack extends App {
 
   // Read input image
-  val image = loadMatAndShowOrExit(new File("data/church01.jpg"))
+  val image = loadAndShowOrExit(new File("data/church01.jpg"))
 
   // Compute good features to track
   val gftt = new GFTTDetector(

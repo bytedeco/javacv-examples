@@ -8,6 +8,7 @@ package opencv2_cookbook.chapter04
 
 import java.awt.Rectangle
 import java.io.File
+
 import opencv2_cookbook.OpenCVUtils._
 import org.bytedeco.javacpp.helper.{opencv_imgproc => imgproc}
 import org.bytedeco.javacpp.opencv_core._
@@ -23,7 +24,7 @@ import org.bytedeco.javacpp.opencv_imgproc._
 object Ex6ContentDetectionGrayscale extends App {
 
   // Load image as a gray scale
-  val src = loadOrExit(new File("data/waves.jpg"), CV_LOAD_IMAGE_GRAYSCALE)
+  val src = loadIplImageOrExit(new File("data/waves.jpg"), CV_LOAD_IMAGE_GRAYSCALE)
 
   // Display image with marked ROI
   val rect = new Rectangle(360, 44, 40, 50)

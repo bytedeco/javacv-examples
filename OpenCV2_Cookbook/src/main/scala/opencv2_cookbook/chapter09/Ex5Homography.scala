@@ -7,6 +7,7 @@
 package opencv2_cookbook.chapter09
 
 import java.io.File
+
 import opencv2_cookbook.OpenCVUtils._
 import org.bytedeco.javacpp.opencv_calib3d._
 import org.bytedeco.javacpp.opencv_core._
@@ -22,8 +23,8 @@ import org.bytedeco.javacpp.opencv_nonfree.SURF
 object Ex5Homography extends App {
 
   // Read input images
-  val image1 = loadMatOrExit(new File("data/parliament1.bmp"))
-  val image2 = loadMatOrExit(new File("data/parliament2.bmp"))
+  val image1 = loadOrExit(new File("data/parliament1.bmp"))
+  val image2 = loadOrExit(new File("data/parliament2.bmp"))
   show(image1, "Image 1")
   show(image2, "Image 2")
 

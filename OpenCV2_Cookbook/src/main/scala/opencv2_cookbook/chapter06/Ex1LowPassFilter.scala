@@ -7,6 +7,7 @@
 package opencv2_cookbook.chapter06
 
 import java.io.File
+
 import opencv2_cookbook.OpenCVUtils._
 import org.bytedeco.javacpp.opencv_core._
 import org.bytedeco.javacpp.opencv_highgui._
@@ -19,7 +20,7 @@ import org.bytedeco.javacpp.opencv_imgproc._
 object Ex1LowPassFilter extends App {
 
   // Read input image
-  val src = loadMatAndShowOrExit(new File("data/boldt.jpg"), CV_LOAD_IMAGE_GRAYSCALE)
+  val src = loadAndShowOrExit(new File("data/boldt.jpg"), CV_LOAD_IMAGE_GRAYSCALE)
 
   // Blur with a Gaussian filter
   //    val dest = cvCreateImage(cvGetSize(src), src.depth, 1)
