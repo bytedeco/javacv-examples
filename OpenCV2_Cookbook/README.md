@@ -4,6 +4,10 @@ OpenCV2_Cookbook
 [OpenCV](http://opencv.org/) (Open Source Computer Vision) is a library of several hundred algorithms for computer vision and video analysis. 
 It started in the late 90’s as a C library; in version 2 a C++ API was added. 
 
+OpenCV can be used in Java Virtal Machine and Android without directly dealing with the native C++ libraries. 
+Here we will conventrate on the facilities provided by Bytedeco: 
+[JavaCV](https://github.com/bytedeco/javacv) and [OpenCV JavaCPP Presets](https://github.com/bytedeco/javacpp-presets).
+
 [JavaCV](https://github.com/bytedeco/javacv) is a library based on the 
 [JavaCPP Presets](https://github.com/bytedeco/javacpp-presets) that that depends commonly used 
 native libraries in the field of computer vision, like OpenCV, to facilitate the development of those applications 
@@ -23,8 +27,7 @@ Some of the examples are also provded in Java, for comparison.
 Quick Sample
 ------------
 
-Here is a quick preview that compares an original C++ example in the Cookbook (p. 18) 
-with code in Scala and Java using JavaCV wrapper.
+Here is a quick preview that compares an original C++ example with code in Scala and Java using JavaCV wrapper.
 
 Here is the original C++ example that opens an image (without error checking), creates a window,
 displays image in the window, and waits for 5 seconds before exiting.
@@ -50,7 +53,8 @@ int main() {
 }
 ```
 
-The above C++ example translated to Scala using JavaCV wrapper:
+The above C++ example translated to Scala using JavaCV wrapper, the functional difference is only that image window 
+stays open till user coses it:
 
 ```scala
 import com.googlecode.javacv.CanvasFrame
@@ -71,7 +75,8 @@ object MyFirstOpenCVApp extends App {
 }
 ```
 
-Now the same example expressed in a Java. Note that use of JavaCV API is exactly the same in Scala and Java code.
+Now the same example expressed in a Java. Note that use of JavaCV API is exactly the same in Scala and Java code. 
+The only practical difference is that in Java you have to explicily provide type for each variable, in Scala it is optional. 
 
 ```java
 import com.googlecode.javacv.CanvasFrame;
@@ -112,21 +117,23 @@ How to use JavaCV Examples
 The `OpenCV_Cookbok` example project is intended as a companion to the Cookbook. 
 The recommended way is to read the Cookbook and refer to JavaCV examples when in doubt how to translate 
 the Cookbook's C++ code to JavaCV. 
-The Cookbook provides explanation how the algorithms work. The JavaCV examples provide only very brief comments.
+The Cookbook provides explanation how the algorithms work. 
+The JavaCV examples provide only very brief comments related to specifics of JavaCV API.
 
-Simplest way to use the JavaCV examples is to browse the code located in [src/main] 
-or use Git to check them out to your computer.
+Simplest way to use the JavaCV examples is to browse the code located in [src/main] online. 
+You can also donload it to you computer either use Git or as a ZIP file.
  
-With a little bit of setup you can execute the examples on you own computer.
-The benefit is that you can start modifying the examples and build your own algorithms.
-The setup is explained in this module comments for [Chapter 1](src/main/scala/opencv2_cookbook/chapter01).
+With a minimal setup you can easily execute the examples on you own computer. 
+This is one of the benefits of JavaCV - it proved all binaries needed to run OpenCV on various platfoms. 
+The setup is explained in README for [Chapter 1](src/main/scala/opencv2_cookbook/chapter01).
 
 
 Organization of the Example Code
 --------------------------------
 
-The code is organized into packages that correspond to chapters in the Cookbook, 
-for instance [opencv2_cookbook.chapter8](src/main/scala/opencv2_cookbook/chapter01).
+The code is organized into packages that correspond to chapters in the Cookbook 1st edition, 
+for instance [opencv2_cookbook.chapter8](src/main/scala/opencv2_cookbook/chapter01). 
+It is quite similar to the 2nd edition. 
 Individual examples roughly correspond to sections within each chapter of the book.
 
 [Chapter 1](src/main/scala/opencv2_cookbook/chapter01) describes IDE setup to run the examples, 
@@ -224,7 +231,7 @@ Why Scala?
 
 [Scala](http://www.scala-lang.org) was chosen since it is more expressive than Java. 
 You can achieve the same result with smaller amount of code. Smaller boilerplate code makes examples easier to read and understand. 
-Unlike many other JVM languages, compiled Scala code is fast, on par with Java. 
+Compiled Scala code is fast, similar to Java and C++. 
 Scala supports writing of scripts, code that can be executed without explicit compiling. 
 Scala also has a console, called REPL, where single lines of code can be typed in and executed on a spot. 
 Both of those features make prototyping of OpenCV-based programs easier in Scala than in Java.
@@ -232,6 +239,6 @@ Last but not least, IDE support for Scala reached level of maturity allowing eas
 and execution of Scala code. 
 In particular, the [Scala plugin](http://blog.jetbrains.com/scala/)  for [JetBrains IDEA](http://www.jetbrains.com/idea/) 
 works very well. 
-Scala plugins for [Eclipse](http://scala-ide.org/index.html) and [NetBeans](https://github.com/dcaoyuan/nbscala) are also improving.
+There is also Scala support for [Eclipse](http://scala-ide.org/index.html) and [NetBeans](https://github.com/dcaoyuan/nbscala).
 
 [Next: Chapter 1>](src/main/scala/opencv2_cookbook/chapter01)
