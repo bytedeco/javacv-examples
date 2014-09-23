@@ -2,7 +2,7 @@ import sbt.Keys._
 
 name := "FlyCapture2-demo"
 
-version := "0.9.1-SNAPSHOT"
+version := "0.9-SNAPSHOT"
 
 val commonSettings = Seq(
   scalaVersion := "2.11.2",
@@ -10,8 +10,8 @@ val commonSettings = Seq(
   // Some dependencies like `javacpp` are packaged with maven-plugin packaging
   classpathTypes += "maven-plugin",
   libraryDependencies ++= Seq(
-    "org.bytedeco.javacpp-presets" % "flycapture"    % "2.6.3.4-0.9.1-SNAPSHOT" classifier "",
-    "org.bytedeco.javacpp-presets" % "flycapture"    % "2.6.3.4-0.9.1-SNAPSHOT" classifier platform,
+    "org.bytedeco.javacpp-presets" % "flycapture"    % "2.6.3.4-0.9" classifier "",
+    "org.bytedeco.javacpp-presets" % "flycapture"    % "2.6.3.4-0.9" classifier platform,
     "log4j"                        % "log4j"         % "1.2.17",
     "org.scala-lang"               % "scala-reflect" % scalaVersion.value,
     "org.scala-lang.modules"      %% "scala-parser-combinators" % "1.0.2"
@@ -38,8 +38,8 @@ val uiSettings = commonSettings ++ Seq(
     "org.scalafx"   %% "scalafxml-core" % "0.2.1",
     "org.controlsfx" % "controlsfx"     % "8.0.6_20"
   ),
-  addCompilerPlugin("org.scalamacros" % "paradise" % "2.0.1" cross CrossVersion.full),
-  incOptions := incOptions.value.withNameHashing(false)
+//  incOptions := incOptions.value.withNameHashing(false),
+  addCompilerPlugin("org.scalamacros" % "paradise" % "2.0.1" cross CrossVersion.full)
 )
 
 lazy val check_macro = project.in(file("check_macro")).settings(commonSettings: _*)
