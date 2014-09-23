@@ -7,13 +7,11 @@
 package opencv2_cookbook.chapter07
 
 import java.io.File
-
 import opencv2_cookbook.OpenCVUtils._
 import org.bytedeco.javacpp.helper.opencv_core._
 import org.bytedeco.javacpp.opencv_core._
 import org.bytedeco.javacpp.opencv_highgui._
 import org.bytedeco.javacpp.opencv_imgproc._
-
 import scala.math._
 
 
@@ -26,8 +24,7 @@ import scala.math._
 object Ex2HoughLines extends App {
 
   // Read input image
-  val src = loadAndShowOrExit(new File("data/grid binary skeleton.png"), CV_LOAD_IMAGE_GRAYSCALE)
-  val src2 = loadAndShowOrExit(new File("data/grid binary.png"), CV_LOAD_IMAGE_GRAYSCALE)
+  val src = loadAndShowOrExit(new File("data/road.jpg"), CV_LOAD_IMAGE_GRAYSCALE)
 
   // Canny contours
   val canny = cvCreateImage(cvGetSize(src), src.depth(), 1)
@@ -42,7 +39,7 @@ object Ex2HoughLines extends App {
   val method = CV_HOUGH_STANDARD
   val distanceResolutionInPixels = 1
   val angleResolutionInRadians = Pi / 180
-  val minimumVotes = 200
+  val minimumVotes = 80
   val lines = cvHoughLines2(
     canny,
     storage,
@@ -52,8 +49,8 @@ object Ex2HoughLines extends App {
     minimumVotes)
 
   // Draw lines on the canny contour image
-  val colorDst = cvCreateImage(cvGetSize(src2), src2.depth(), 3)
-  cvCvtColor(src2, colorDst, CV_GRAY2BGR)
+  val colorDst = cvCreateImage(cvGetSize(src), src.depth(), 3)
+  cvCvtColor(canny, colorDst, CV_GRAY2BGR)
   for (i <- 0 until lines.total) {
     val point = new CvPoint2D32f(cvGetSeqElem(lines, i))
     val rho = point.x
@@ -62,11 +59,10 @@ object Ex2HoughLines extends App {
     val b = sin(theta)
     val x0 = a * rho
     val y0 = b * rho
-    val pt1 = cvPoint(round(x0 + 10000 * (-b)).toInt, round(y0 + 10000 * a).toInt)
-    val pt2 = cvPoint(round(x0 - 10000 * (-b)).toInt, round(y0 - 10000 * a).toInt)
+    val pt1 = cvPoint(round(x0 + 1000 * (-b)).toInt, round(y0 + 1000 * a).toInt)
+    val pt2 = cvPoint(round(x0 - 1000 * (-b)).toInt, round(y0 - 1000 * a).toInt)
 
     cvLine(colorDst, pt1, pt2, CV_RGB(255, 0, 0), 1, CV_AA, 0)
   }
-  save(new File("Hough Lines.png"), colorDst)
   show(colorDst, "Hough Lines")
 }

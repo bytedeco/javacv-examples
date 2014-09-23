@@ -12,7 +12,7 @@ val commonSettings = Seq(
   libraryDependencies ++= Seq(
     "org.bytedeco.javacpp-presets" % "flycapture"    % "2.6.3.4-0.9.1-SNAPSHOT" classifier "",
     "org.bytedeco.javacpp-presets" % "flycapture"    % "2.6.3.4-0.9.1-SNAPSHOT" classifier platform,
-    "org.bytedeco"                 % "javacpp"       % "0.9.1-SNAPSHOT",
+    "log4j"                        % "log4j"         % "1.2.17",
     "org.scala-lang"               % "scala-reflect" % scalaVersion.value,
     "org.scala-lang.modules"      %% "scala-parser-combinators" % "1.0.2"
   ),
@@ -29,9 +29,24 @@ val commonSettings = Seq(
   javaOptions += "-Xmx1G"
 )
 
-lazy val checkMacro = project.in(file("check-macro")).settings(commonSettings : _*)
+val uiSettings = commonSettings ++ Seq(
+  libraryDependencies ++= Seq(
+    "org.clapper"   %% "grizzled-slf4j" % "1.0.2",
+    "org.slf4j"      % "slf4j-api"      % "1.7.7",
+    "org.slf4j"      % "slf4j-log4j12"  % "1.7.7",
+    "org.scalafx"   %% "scalafx"        % "8.0.20-R6",
+    "org.scalafx"   %% "scalafxml-core" % "0.2.1",
+    "org.controlsfx" % "controlsfx"     % "8.0.6_20"
+  ),
+  addCompilerPlugin("org.scalamacros" % "paradise" % "2.0.1" cross CrossVersion.full),
+  incOptions := incOptions.value.withNameHashing(false)
+)
 
-lazy val examples = project.in(file("examples")).settings(commonSettings : _*).dependsOn(checkMacro)
+lazy val check_macro = project.in(file("check_macro")).settings(commonSettings: _*)
+
+lazy val examples = project.in(file("examples")).settings(commonSettings: _*).dependsOn(check_macro)
+
+lazy val example_ui = project.in(file("example_ui")).settings(uiSettings: _*).dependsOn(check_macro)
 
 // Determine current platform
 lazy val platform = {
@@ -64,6 +79,9 @@ lazy val platform = {
   println("platform: " + platformName)
   platformName
 }
+
+// add a JVM option to use when forking a JVM for 'run'
+javaOptions += "-Xmx1G"
 
 // Set the prompt (for this build) to include the project id.
 shellPrompt in ThisBuild := { state => "sbt:" + Project.extract(state).currentRef.project + "> "}

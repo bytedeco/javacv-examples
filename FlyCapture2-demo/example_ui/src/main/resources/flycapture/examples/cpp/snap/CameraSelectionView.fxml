@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<!--
+  ~ Copyright (c) 2011-2014 Jarek Sacha. All Rights Reserved.
+  ~
+  ~ Author's e-mail: jpsacha at gmail.com
+  -->
+
+<BorderPane xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="flycapture.examples.cpp.snap.CameraSelectionView">
+    <padding>
+        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+    </padding>
+    <center>
+        <VBox>
+            <children>
+                <FlowPane>
+                    <children>
+                        <Label text="FlyCapture version">
+                            <FlowPane.margin>
+                                <Insets right="5.0" />
+                            </FlowPane.margin>
+                            <font>
+                                <Font name="System Bold" size="12.0" />
+                            </font>
+                        </Label>
+                        <Label fx:id="fc2VersionLabel" text="?" />
+                    </children>
+                    <padding>
+                        <Insets bottom="5.0" />
+                    </padding>
+                </FlowPane>
+                <HBox alignment="CENTER_LEFT" spacing="5.0">
+                    <children>
+                        <Label text="Camera List">
+                            <font>
+                                <Font name="System Bold" size="12.0" />
+                            </font>
+                        </Label>
+                        <Label fx:id="camerasDetectedLabel" text="(no cameras detected)">
+                            <font>
+                                <Font name="System Bold" size="12.0" />
+                            </font>
+                        </Label>
+                        <Button fx:id="refreshButton" disable="true" mnemonicParsing="false" text="Refresh">
+                            <HBox.margin>
+                                <Insets left="10.0" />
+                            </HBox.margin>
+                        </Button>
+                    </children>
+                </HBox>
+                <HBox>
+                    <children>
+                        <VBox>
+                            <children>
+                                <GridPane hgap="5.0" vgap="5.0">
+                                    <columnConstraints>
+                                        <ColumnConstraints minWidth="10.0" />
+                                        <ColumnConstraints minWidth="10.0" />
+                                    </columnConstraints>
+                                    <rowConstraints>
+                                        <RowConstraints />
+                                        <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                                    </rowConstraints>
+                                    <children>
+                                        <ListView fx:id="cameraListView" prefHeight="200.0" prefWidth="300.0" BorderPane.alignment="CENTER" GridPane.columnSpan="2147483647" GridPane.rowIndex="1" />
+                                    </children>
+                                    <BorderPane.margin>
+                                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                    </BorderPane.margin>
+                                </GridPane>
+                            </children>
+                            <HBox.margin>
+                                <Insets right="5.0" />
+                            </HBox.margin>
+                        </VBox>
+                        <VBox BorderPane.alignment="CENTER">
+                            <children>
+                                <Label text="Selected Camera Information">
+                                    <font>
+                                        <Font name="System Bold" size="12.0" />
+                                    </font>
+                                </Label>
+                                <GridPane>
+                                    <columnConstraints>
+                                        <ColumnConstraints hgrow="NEVER" minWidth="10.0" prefWidth="100.0" />
+                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="10.0" prefWidth="200.0" />
+                                    </columnConstraints>
+                                    <rowConstraints>
+                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                    </rowConstraints>
+                                    <children>
+                                        <Label text="Serial Number:" />
+                                        <Label fx:id="serialNumberLabel" text="?" GridPane.columnIndex="1" />
+                                        <Label text="Model:" GridPane.rowIndex="1" />
+                                        <Label fx:id="modelLabel" text="?" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                        <Label text="Sensor:" GridPane.rowIndex="2" />
+                                        <Label fx:id="sensorLabel" text="?" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                        <Label text="Resolution" GridPane.rowIndex="3" />
+                                        <Label fx:id="resolutionLabel" text="?" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                                    </children>
+                                </GridPane>
+                            </children>
+                            <opaqueInsets>
+                                <Insets />
+                            </opaqueInsets>
+                            <BorderPane.margin>
+                                <Insets left="10.0" top="5.0" />
+                            </BorderPane.margin>
+                            <HBox.margin>
+                                <Insets left="5.0" />
+                            </HBox.margin>
+                        </VBox>
+                    </children>
+                </HBox>
+            </children>
+        </VBox>
+    </center>
+</BorderPane>
