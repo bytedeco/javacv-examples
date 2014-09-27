@@ -14,7 +14,6 @@ import org.controlsfx.dialog.Dialogs
 import scala.reflect.runtime.universe.typeOf
 import scalafx.application.JFXApp.PrimaryStage
 import scalafx.application.{JFXApp, Platform}
-import scalafx.concurrent.Task
 import scalafx.scene.Scene
 
 /**
@@ -40,8 +39,22 @@ object CameraSelectionViewDemo extends JFXApp {
 
     // Initialize camera connections
     // Use worker thread for non-UI operations
-    // TODO Handle possible exceptions from Task
-    new Thread(Task {model.initialize()}).start()
+    new Thread(new javafx.concurrent.Task[Unit] {
+
+      override def call(): Unit = model.initialize()
+
+      override def failed() = {
+        super.failed()
+        Dialogs.
+          create().
+          owner(stage).
+          title(title).
+          masthead("Unexpected error when initializing UI. Application will terminate.").
+          showException(getException)
+
+        Platform.exit()
+      }
+    }).start()
   } catch {
     case t: Throwable =>
       logger.error("Unexpected error. Application will terminate.", t)

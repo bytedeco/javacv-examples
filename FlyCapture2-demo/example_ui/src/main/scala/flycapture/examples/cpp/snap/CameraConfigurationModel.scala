@@ -222,6 +222,11 @@ class CameraConfigurationModel(camera: CameraBase) {
         counter += 1
         counter.toString
       }
+
+      override def failed() = {
+        super.failed()
+        getException.printStackTrace()
+      }
     }
   }
 

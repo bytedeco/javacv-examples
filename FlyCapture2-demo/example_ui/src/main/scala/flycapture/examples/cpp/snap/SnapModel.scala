@@ -24,7 +24,7 @@ import scala.reflect.runtime.universe.typeOf
 import scalafx.Includes._
 import scalafx.application.Platform
 import scalafx.beans.property.{BooleanProperty, ObjectProperty, StringProperty}
-import scalafx.concurrent.{Task, Worker}
+import scalafx.concurrent.Worker
 import scalafx.scene.Scene
 import scalafx.scene.image.{PixelFormat, WritableImage}
 import scalafx.stage.FileChooser.ExtensionFilter
@@ -272,7 +272,17 @@ class SnapModel {
 
   def onSnap(): Unit = {
     logger.debug("onSnap()")
-    new Thread(Task {selectedCamera().foreach(snap)}).start()
+    new Thread(new javafx.concurrent.Task[Unit] {
+
+      override def call(): Unit = selectedCamera().foreach(snap)
+
+      override def failed() = {
+        super.failed()
+        Dialogs.create().
+          message("Error while snapping an image.").
+          showException(getException)
+      }
+    }).start()
   }
 
   private def snap(camera: CameraBase) {
@@ -539,6 +549,13 @@ class SnapModel {
             snappedFC2ImageLock.writeLock.unlock()
           }
           counter.toString
+        }
+
+        override def failed() = {
+          super.failed()
+          Dialogs.create().
+            message("Error while upodating live view.").
+            showException(getException)
         }
       }
   }

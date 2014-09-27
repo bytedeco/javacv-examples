@@ -82,7 +82,6 @@ package object snap {
    * @param op operation to be performed.
    */
   def onFX[R](op: => R): Unit = {
-    // TODO: Move to FXUtils
     if (Platform.isFxApplicationThread) {
       op
     } else {
@@ -99,7 +98,6 @@ package object snap {
    * @param op operation to be performed.
    */
   def onFXAndWait[R](op: => R): R = {
-    // TODO: Move to FXUtils
     if (Platform.isFxApplicationThread) {
       op
     } else {
@@ -123,7 +121,6 @@ package object snap {
    * @param op operation to be performed.
    */
   def offFXAndWait[R](op: => R): R = {
-    // TODO: Move to FXUtils
     if (!Platform.isFxApplicationThread) {
       op
     } else {

@@ -16,7 +16,6 @@ import scala.reflect.runtime.universe.typeOf
 import scalafx.Includes._
 import scalafx.application.JFXApp.PrimaryStage
 import scalafx.application.{JFXApp, Platform}
-import scalafx.concurrent.Task
 import scalafx.scene.Scene
 import scalafxml.core.{DependenciesByType, FXMLView}
 
@@ -58,13 +57,22 @@ object FlyCaptureSnapApp extends JFXApp {
 
     // Initialize camera connections
     // Use worker thread for non-UI operations
-    // TODO handle excaption in Task
-    new Thread(Task {snapModel.initialize()}).start()
+    new Thread(new javafx.concurrent.Task[Unit] {
+
+      override def call(): Unit = snapModel.initialize()
+      override def failed() = {
+        Dialogs.create().
+          owner(stage.delegate).
+          title(title).
+          masthead("Unexpected error while initializing UI. Application will terminate.").
+          showException(getException)
+        Platform.exit()
+      }
+    }).start()
   } catch {
     case t: Throwable =>
       logger.error("Unexpected error. Application will terminate.", t)
-      Dialogs.
-        create().
+      Dialogs.create().
         owner(null).
         title(title).
         masthead("Unexpected error. Application will terminate.").
