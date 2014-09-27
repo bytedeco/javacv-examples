@@ -10,8 +10,8 @@ val commonSettings = Seq(
   // Some dependencies like `javacpp` are packaged with maven-plugin packaging
   classpathTypes += "maven-plugin",
   libraryDependencies ++= Seq(
-    "org.bytedeco.javacpp-presets" % "flycapture"    % "2.6.3.4-0.9.1-SNAPSHOT" classifier "",
-    "org.bytedeco.javacpp-presets" % "flycapture"    % "2.6.3.4-0.9.1-SNAPSHOT" classifier platform,
+    "org.bytedeco.javacpp-presets" % "flycapture"    % "2.7.3.8-0.9.1-SNAPSHOT" classifier "",
+    "org.bytedeco.javacpp-presets" % "flycapture"    % "2.7.3.8-0.9.1-SNAPSHOT" classifier platform,
     "log4j"                        % "log4j"         % "1.2.17",
     "org.scala-lang"               % "scala-reflect" % scalaVersion.value,
     "org.scala-lang.modules"      %% "scala-parser-combinators" % "1.0.2"
