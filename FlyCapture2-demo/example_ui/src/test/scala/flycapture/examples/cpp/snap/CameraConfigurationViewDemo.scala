@@ -41,7 +41,7 @@ object CameraConfigurationViewDemo extends JFXApp {
   lazy val title = "Fly Capture CameraConfiguration Demo"
 
   try {
-    val cameraConfiguration = new CameraConfiguration(cam)
+    val cameraConfiguration = new CameraConfiguration(cam, null)
 
     // Create UI
     stage = new PrimaryStage() {

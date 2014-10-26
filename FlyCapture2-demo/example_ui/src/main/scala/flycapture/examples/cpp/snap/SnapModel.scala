@@ -441,7 +441,7 @@ class SnapModel {
 
     selectedCamera() match {
       case Some(camera) =>
-        val cameraConfiguration = new CameraConfiguration(camera)
+        val cameraConfiguration = new CameraConfiguration(camera, parent)
         // Create UI
         val dialogStage = new Stage() {
           title = "Camera Settings " + cameraInfo()

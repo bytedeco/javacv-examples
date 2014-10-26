@@ -9,17 +9,18 @@ package flycapture.examples.cpp.snap
 import org.bytedeco.javacpp.FlyCapture2.CameraBase
 
 import scala.reflect.runtime.universe.typeOf
+import scalafx.stage.Stage
 
 /**
  * Create camera configuration UI.
  *
  * @author Jarek Sacha 
  */
-class CameraConfiguration(camera: CameraBase) {
+class CameraConfiguration(camera: CameraBase, parent:Stage) {
 
   require(camera != null)
 
-  val model = new CameraConfigurationModel(camera)
+  val model = new CameraConfigurationModel(camera, parent)
 
   val view = onFXAndWait {
     createFXMLView(model, typeOf[CameraConfigurationModel], "CameraConfigurationView.fxml")
