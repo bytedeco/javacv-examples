@@ -46,6 +46,7 @@ val platform = {
 }
 
 libraryDependencies ++= Seq(
+  "org.bytedeco"                 % "javacpp"         % javacppVersion,
   "org.bytedeco"                 % "javacv"          % javacppVersion,
   "org.bytedeco.javacpp-presets" % "opencv"          % ("2.4.9-" + javacppVersion) classifier "",
   "org.bytedeco.javacpp-presets" % "opencv"          % ("2.4.9-" + javacppVersion) classifier platform,

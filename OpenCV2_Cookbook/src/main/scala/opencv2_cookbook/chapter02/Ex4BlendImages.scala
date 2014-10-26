@@ -21,14 +21,14 @@ import org.bytedeco.javacpp.opencv_highgui._
 object Ex4BlendImages extends App {
 
   // Read input images
-  val image1 = loadIplAndShowOrExit(new File("data/boldt.jpg"), CV_LOAD_IMAGE_COLOR)
-  val image2 = loadIplAndShowOrExit(new File("data/rain.jpg"), CV_LOAD_IMAGE_COLOR)
+  val image1 = loadAndShowOrExit(new File("data/boldt.jpg"), CV_LOAD_IMAGE_COLOR)
+  val image2 = loadAndShowOrExit(new File("data/rain.jpg"), CV_LOAD_IMAGE_COLOR)
 
   // Define output image
-  val result = cvCreateImage(cvGetSize(image1), image1.depth, 3)
+  val result = new Mat()
 
   // Create blended image
-  cvAddWeighted(image1, 0.7, image2, 0.9, 0.0, result)
+  addWeighted(image1, 0.7, image2, 0.9, 0.0, result)
 
   // Display
   show(result, "Blended")
