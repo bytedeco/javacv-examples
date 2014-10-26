@@ -7,6 +7,7 @@
 package opencv2_cookbook.chapter08
 
 import java.io.File
+
 import opencv2_cookbook.OpenCVUtils._
 import org.bytedeco.javacpp.opencv_core._
 import org.bytedeco.javacpp.opencv_features2d._
@@ -19,7 +20,7 @@ import org.bytedeco.javacpp.opencv_nonfree._
 object Ex6SIFT extends App {
 
   // Read input image
-  val image = loadMatAndShowOrExit(new File("data/church01.jpg"))
+  val image = loadAndShowOrExit(new File("data/church01.jpg"))
 
   // Detect SIFT features.
   val keyPoints = new KeyPoint()

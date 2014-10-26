@@ -7,6 +7,7 @@
 package opencv2_cookbook.chapter07
 
 import java.io.File
+
 import opencv2_cookbook.OpenCVUtils._
 import org.bytedeco.javacpp.helper.opencv_core._
 import org.bytedeco.javacpp.opencv_core._
@@ -21,7 +22,7 @@ import org.bytedeco.javacpp.opencv_imgproc._
 object Ex4HoughCircles extends App {
 
   // Read input image
-  val src = loadMatAndShowOrExit(new File("data/chariot.jpg"), CV_LOAD_IMAGE_GRAYSCALE)
+  val src = loadAndShowOrExit(new File("data/chariot.jpg"), CV_LOAD_IMAGE_GRAYSCALE)
 
 
   // Blur with a Gaussian filter

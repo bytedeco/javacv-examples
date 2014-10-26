@@ -7,6 +7,7 @@
 package opencv2_cookbook.chapter02
 
 import java.io.File
+
 import opencv2_cookbook.OpenCVUtils._
 import org.bytedeco.javacpp.opencv_core._
 import org.bytedeco.javacpp.opencv_highgui._
@@ -24,10 +25,10 @@ object Ex4BlendImages extends App {
   val image2 = loadAndShowOrExit(new File("data/rain.jpg"), CV_LOAD_IMAGE_COLOR)
 
   // Define output image
-  val result = cvCreateImage(cvGetSize(image1), image1.depth, 3)
+  val result = new Mat()
 
   // Create blended image
-  cvAddWeighted(image1, 0.7, image2, 0.9, 0.0, result)
+  addWeighted(image1, 0.7, image2, 0.9, 0.0, result)
 
   // Display
   show(result, "Blended")

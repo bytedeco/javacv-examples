@@ -7,9 +7,11 @@
 package opencv2_cookbook.chapter04
 
 import java.io.File
-import math.round
+
 import opencv2_cookbook.OpenCVUtils._
 import org.bytedeco.javacpp.opencv_highgui._
+
+import scala.math.round
 
 /**
  * The first example for section "Computing the image histogram" in Chapter 4, page 91.
@@ -18,7 +20,7 @@ import org.bytedeco.javacpp.opencv_highgui._
 object Ex1ComputeHistogram extends App {
 
   // Load image as a gray scale since we will be calculating histogram of an image with a single channel
-  val src = loadAndShowOrExit(new File("data/group.jpg"), CV_LOAD_IMAGE_GRAYSCALE)
+  val src = loadIplAndShowOrExit(new File("data/group.jpg"), CV_LOAD_IMAGE_GRAYSCALE)
 
   // Calculate histogram
   val h = new Histogram1D

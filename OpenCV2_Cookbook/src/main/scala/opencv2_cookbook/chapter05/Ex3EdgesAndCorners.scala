@@ -8,6 +8,7 @@ package opencv2_cookbook.chapter05
 
 
 import java.io.File
+
 import opencv2_cookbook.OpenCVUtils._
 
 
@@ -18,7 +19,7 @@ import opencv2_cookbook.OpenCVUtils._
 object Ex3EdgesAndCorners extends App {
 
   // Read input image
-  val image = loadAndShowOrExit(new File("data/building.jpg"))
+  val image = loadIplAndShowOrExit(new File("data/building.jpg"))
 
   val morpho = new MorphoFeatures
   morpho.threshold = 40

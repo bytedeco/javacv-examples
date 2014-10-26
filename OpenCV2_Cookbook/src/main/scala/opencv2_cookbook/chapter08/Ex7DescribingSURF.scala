@@ -7,6 +7,7 @@
 package opencv2_cookbook.chapter08
 
 import java.io.File
+
 import opencv2_cookbook.OpenCVUtils._
 import org.bytedeco.javacpp.opencv_core._
 import org.bytedeco.javacpp.opencv_features2d._
@@ -21,8 +22,8 @@ object Ex7DescribingSURF extends App {
 
   // Read input image
   val images = Array(
-    loadMatAndShowOrExit(new File("data/church01.jpg")),
-    loadMatAndShowOrExit(new File("data/church02.jpg"))
+    loadAndShowOrExit(new File("data/church01.jpg")),
+    loadAndShowOrExit(new File("data/church02.jpg"))
   )
 
   // Setup SURF feature detector and descriptor.
