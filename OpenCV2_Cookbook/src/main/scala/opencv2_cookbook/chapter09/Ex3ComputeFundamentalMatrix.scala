@@ -7,6 +7,7 @@
 package opencv2_cookbook.chapter09
 
 import java.io.File
+
 import opencv2_cookbook.OpenCVUtils._
 import org.bytedeco.javacpp.helper.opencv_core.AbstractCvScalar._
 import org.bytedeco.javacpp.opencv_calib3d._
@@ -28,8 +29,8 @@ import org.bytedeco.javacpp.opencv_nonfree._
 object Ex3ComputeFundamentalMatrix extends App {
 
   // Read input images
-  val imageRight = loadMatAndShowOrExit(new File("data/church01.jpg"))
-  val imageLeft = loadMatAndShowOrExit(new File("data/church03.jpg"))
+  val imageRight = loadAndShowOrExit(new File("data/church01.jpg"))
+  val imageLeft = loadAndShowOrExit(new File("data/church03.jpg"))
 
   // Construction of the SURF feature detector
   val surf = new SURF(3000, 4, 2, true, false)

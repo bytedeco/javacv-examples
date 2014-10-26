@@ -8,6 +8,7 @@ package opencv2_cookbook.chapter06
 
 
 import java.io.File
+
 import opencv2_cookbook.OpenCVUtils._
 import org.bytedeco.javacpp.opencv_core._
 import org.bytedeco.javacpp.opencv_highgui._
@@ -20,7 +21,7 @@ import org.bytedeco.javacpp.opencv_imgproc._
 object Ex3DirectionalFilters extends App {
 
     // Read input image with a salt noise
-    val src = loadAndShowOrExit(new File("data/boldt.jpg"), CV_LOAD_IMAGE_GRAYSCALE)
+    val src = loadIplAndShowOrExit(new File("data/boldt.jpg"), CV_LOAD_IMAGE_GRAYSCALE)
 
     val apertureSize = 3
 

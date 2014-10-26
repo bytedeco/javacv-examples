@@ -7,6 +7,7 @@
 package opencv2_cookbook.chapter04
 
 import java.io.File
+
 import opencv2_cookbook.OpenCVUtils._
 import org.bytedeco.javacpp.opencv_core._
 import org.bytedeco.javacpp.opencv_highgui._
@@ -18,7 +19,7 @@ import org.bytedeco.javacpp.opencv_highgui._
 object Ex4InvertLut extends App {
 
   // Load image as a gray scale
-  val src = loadAndShowOrExit(new File("data/group.jpg"), CV_LOAD_IMAGE_GRAYSCALE)
+  val src = loadIplAndShowOrExit(new File("data/group.jpg"), CV_LOAD_IMAGE_GRAYSCALE)
 
   // Create inverted lookup table
   val lut = cvCreateMat(1, 256, CV_8U)

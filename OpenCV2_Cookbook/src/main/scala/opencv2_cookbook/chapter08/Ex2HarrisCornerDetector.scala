@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2013 Jarek Sacha. All Rights Reserved.
+ * Copyright (c) 2011-2014 Jarek Sacha. All Rights Reserved.
  *
  * Author's e-mail: jpsacha at gmail.com
  */
@@ -7,6 +7,7 @@
 package opencv2_cookbook.chapter08
 
 import java.io.File
+
 import opencv2_cookbook.OpenCVUtils._
 
 
@@ -20,7 +21,7 @@ import opencv2_cookbook.OpenCVUtils._
 object Ex2HarrisCornerDetector extends App {
 
     // Read input image
-    val image = loadAndShowOrExit(new File("data/church01.jpg"))
+    val image = loadIplAndShowOrExit(new File("data/church01.jpg"))
 
     // Harris detector instance
     val harris = new HarrisDetector

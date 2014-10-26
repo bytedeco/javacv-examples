@@ -7,6 +7,7 @@
 package opencv2_cookbook.chapter09
 
 import java.io.File
+
 import opencv2_cookbook.OpenCVUtils._
 import org.bytedeco.javacpp.opencv_core._
 
@@ -27,7 +28,7 @@ object Ex2CalibrateCamera extends App {
   cameraCalibrator.addChessboardPoints(fileList, boardSize)
 
   // Load image for that will be undistorted
-  val image = loadAndShowOrExit(fileList(6))
+  val image = loadIplAndShowOrExit(fileList(6))
 
   // Calibrate camera
   cameraCalibrator.calibrate(cvGetSize(image))

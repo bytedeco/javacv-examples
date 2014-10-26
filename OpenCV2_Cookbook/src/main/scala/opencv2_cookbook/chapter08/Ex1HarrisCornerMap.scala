@@ -7,6 +7,7 @@
 package opencv2_cookbook.chapter08
 
 import java.io.File
+
 import opencv2_cookbook.OpenCVUtils._
 import org.bytedeco.javacpp.opencv_core._
 import org.bytedeco.javacpp.opencv_imgproc._
@@ -21,7 +22,7 @@ import org.bytedeco.javacpp.opencv_imgproc._
 object Ex1HarrisCornerMap extends App {
 
   // Read input image
-  val image = loadAndShowOrExit(new File("data/church01.jpg"))
+  val image = loadIplAndShowOrExit(new File("data/church01.jpg"))
 
   // Image to store the Harris detector responses.
   val cornerStrength = cvCreateImage(cvGetSize(image), IPL_DEPTH_32F, 1)

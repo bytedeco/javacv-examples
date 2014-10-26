@@ -8,6 +8,7 @@ package opencv2_cookbook.chapter04
 
 import java.awt.Rectangle
 import java.io.File
+
 import opencv2_cookbook.OpenCVUtils._
 import org.bytedeco.javacpp.opencv_highgui._
 import org.bytedeco.javacpp.opencv_imgproc._
@@ -21,7 +22,7 @@ import org.bytedeco.javacpp.opencv_imgproc._
 object Ex7ContentDetectionColor extends App {
 
   // Load image as a color
-  val colorImage = loadAndShowOrExit(new File("data/waves.jpg"), CV_LOAD_IMAGE_COLOR)
+  val colorImage = loadIplAndShowOrExit(new File("data/waves.jpg"), CV_LOAD_IMAGE_COLOR)
 
   // Reduce colors
   ColorHistogram.colorReduce(colorImage, 32)

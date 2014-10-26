@@ -7,6 +7,7 @@
 package opencv2_cookbook.chapter02
 
 import java.io.File
+
 import opencv2_cookbook.OpenCVUtils._
 import org.bytedeco.javacpp.opencv_core._
 import org.bytedeco.javacpp.opencv_highgui._
@@ -25,21 +26,10 @@ object Ex5ROILogo extends App {
   val image = loadAndShowOrExit(new File("data/boldt.jpg"), CV_LOAD_IMAGE_COLOR)
 
   // Define region of interest that matches the size of the logo
-  val roi = new IplROI()
-  roi.xOffset(385)
-  roi.yOffset(270)
-  roi.width(logo.width)
-  roi.height(logo.height)
-
-  val imageROI = image.roi(roi)
+  val imageROI = image(new Rect(image.cols - logo.cols, image.rows - logo.rows, logo.cols, logo.rows))
 
   // Combine input image with the logo. Mask is used to control blending.
-  cvCopy(logo, imageROI, mask)
-
-  // Clear ROI after processing is done.
-  // If ROI is not cleared further operations would apply to ROI only.
-  // For instance, if saving the image, only part within the ROI would be saved.
-  image.roi(null)
+  logo.copyTo(imageROI, mask)
 
   // Display
   show(image, "With Logo")

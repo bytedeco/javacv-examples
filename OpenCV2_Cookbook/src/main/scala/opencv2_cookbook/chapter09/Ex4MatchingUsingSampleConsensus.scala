@@ -7,6 +7,7 @@
 package opencv2_cookbook.chapter09
 
 import java.io.File
+
 import opencv2_cookbook.OpenCVUtils._
 import org.bytedeco.javacpp.helper.opencv_core.AbstractCvScalar._
 import org.bytedeco.javacpp.opencv_calib3d._
@@ -23,8 +24,8 @@ import org.bytedeco.javacpp.opencv_nonfree.SURF
 object Ex4MatchingUsingSampleConsensus extends App {
 
   // Read input images
-  val image1 = loadMatOrExit(new File("data/canal1.jpg"))
-  val image2 = loadMatOrExit(new File("data/canal2.jpg"))
+  val image1 = loadOrExit(new File("data/canal1.jpg"))
+  val image2 = loadOrExit(new File("data/canal2.jpg"))
   show(image1, "Right image")
   show(image2, "Left image")
 

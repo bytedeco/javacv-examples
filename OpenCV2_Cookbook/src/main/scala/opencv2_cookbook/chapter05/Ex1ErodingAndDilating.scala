@@ -8,6 +8,7 @@ package opencv2_cookbook.chapter05
 
 
 import java.io.File
+
 import opencv2_cookbook.OpenCVUtils._
 import org.bytedeco.javacpp.opencv_core._
 import org.bytedeco.javacpp.opencv_imgproc._
@@ -22,7 +23,7 @@ import org.bytedeco.javacpp.opencv_imgproc._
 object Ex1ErodingAndDilating extends App {
 
   // Read input image
-  val image = loadAndShowOrExit(new File("data/binary.bmp"))
+  val image = loadIplAndShowOrExit(new File("data/binary.bmp"))
 
   // Erode the image, by default 3x3 element is used
   val eroded = cvCreateImage(cvGetSize(image), image.depth, 1)
