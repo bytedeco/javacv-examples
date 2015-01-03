@@ -12,7 +12,7 @@ import opencv2_cookbook.OpenCVImageJUtils._
 import org.bytedeco.javacpp.helper.opencv_core.AbstractIplImage
 import org.bytedeco.javacpp.opencv_core._
 import org.bytedeco.javacpp.opencv_imgproc._
-import scala.math._
+import scala.math.abs
 
 
 /**
