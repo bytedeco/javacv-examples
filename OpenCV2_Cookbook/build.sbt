@@ -6,7 +6,7 @@ val javacppVersion = "0.10"
 
 version := javacppVersion
 
-scalaVersion := "2.11.4"
+scalaVersion := "2.11.5"
 
 scalacOptions ++= Seq("-unchecked", "-deprecation", "-optimize", "-Xlint")
 
@@ -51,7 +51,7 @@ libraryDependencies ++= Seq(
   "org.bytedeco.javacpp-presets" % "opencv"          % ("2.4.10-" + javacppVersion) classifier "",
   "org.bytedeco.javacpp-presets" % "opencv"          % ("2.4.10-" + javacppVersion) classifier platform,
   "org.scala-lang.modules"      %% "scala-swing"     % "1.0.1",
-  "net.imagej"                   % "ij"              % "1.49d",
+  "net.imagej"                   % "ij"              % "1.49m",
   "junit"                        % "junit"           % "4.12" % "test",
   "com.novocode"                 % "junit-interface" % "0.11" % "test"
 )
