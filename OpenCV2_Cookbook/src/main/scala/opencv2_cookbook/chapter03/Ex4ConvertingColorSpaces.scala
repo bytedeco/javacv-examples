@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2014 Jarek Sacha. All Rights Reserved.
+ * Copyright (c) 2011-2015 Jarek Sacha. All Rights Reserved.
  *
  * Author's e-mail: jpsacha at gmail.com
  */
@@ -23,7 +23,7 @@ object Ex4ConvertingColorSpaces extends App {
   val colorDetector = new ColorDetectorLab
 
   // 2. Read input image
-  val src = loadIplAndShowOrExit(new File("data/boldt.jpg"), CV_LOAD_IMAGE_COLOR)
+  val src = loadAndShowOrExit(new File("data/boldt.jpg"), CV_LOAD_IMAGE_COLOR)
 
   // 3. Set the input parameters
   colorDetector.colorDistanceThreshold = 30

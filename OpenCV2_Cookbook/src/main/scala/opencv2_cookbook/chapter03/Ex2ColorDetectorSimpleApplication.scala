@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2014 Jarek Sacha. All Rights Reserved.
+ * Copyright (c) 2011-2015 Jarek Sacha. All Rights Reserved.
  *
  * Author's e-mail: jpsacha at gmail.com
  */
@@ -9,8 +9,10 @@ package opencv2_cookbook.chapter03
 import java.awt.Cursor._
 import java.io.File
 import javax.swing.WindowConstants
-import org.bytedeco.javacpp.opencv_core.IplImage
+
+import org.bytedeco.javacpp.opencv_core.Mat
 import org.bytedeco.javacv.CanvasFrame
+
 import scala.swing.Dialog.Message.Error
 import scala.swing.FileChooser.Result.Approve
 import scala.swing._
@@ -58,7 +60,7 @@ object Ex2ColorDetectorSimpleApplication extends SimpleSwingApplication {
       }
 
       // Action performed when "Process" button is pressed
-      val processAction = Action("Process") {
+      lazy val processAction = Action("Process") {
         cursor = getPredefinedCursor(WAIT_CURSOR)
         try {
           controller.process()
@@ -82,7 +84,7 @@ object Ex2ColorDetectorSimpleApplication extends SimpleSwingApplication {
   /**
    * Display image in a window with given caption.
    */
-  private def showImage(caption: String, image: IplImage) {
+  private def showImage(caption: String, image: Mat) {
     // Note that you need to indicate to CanvasFrame not to apply gamma correction,
     // by setting gamma to 1, otherwise the image will not look correct.
     val canvas = new CanvasFrame(caption, 1)

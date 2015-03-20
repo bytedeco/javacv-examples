@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2014 Jarek Sacha. All Rights Reserved.
+ * Copyright (c) 2011-2015 Jarek Sacha. All Rights Reserved.
  *
  * Author's e-mail: jpsacha at gmail.com
  */
@@ -7,10 +7,11 @@
 package opencv2_cookbook.chapter03
 
 import ij.process.ByteProcessor
-import math._
 import opencv2_cookbook.OpenCVImageJUtils._
-import org.bytedeco.javacpp.helper.opencv_core.AbstractIplImage
-import org.bytedeco.javacpp.opencv_core.IplImage
+import org.bytedeco.javacpp.helper.opencv_core.AbstractMat
+import org.bytedeco.javacpp.opencv_core.Mat
+
+import scala.math._
 
 
 /** Example of using a strategy pattern in algorithm design.
@@ -50,10 +51,10 @@ class ColorDetector(private var _minDist: Int = 100,
   }
 
 
-  def process(iplImage: IplImage): IplImage = {
+  def process(image: Mat): Mat = {
 
     // Convert to ImageJ's ColorProcessor for easier pixel access
-    val src = toColorProcessor(iplImage)
+    val src = toColorProcessor(image)
 
     // Create output image
     val dest = new ByteProcessor(src.getWidth, src.getHeight)
@@ -68,8 +69,8 @@ class ColorDetector(private var _minDist: Int = 100,
       }
     }
 
-    // Convert back to OpenCV's IplImage
-    AbstractIplImage.createFrom(toBufferedImage(dest))
+    // Convert back to OpenCV's Mat
+    AbstractMat.createFrom(toBufferedImage(dest))
   }
 
 

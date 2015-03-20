@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2014 Jarek Sacha. All Rights Reserved.
+ * Copyright (c) 2011-2015 Jarek Sacha. All Rights Reserved.
  *
  * Author's e-mail: jpsacha at gmail.com
  */
@@ -8,15 +8,15 @@ package opencv2_cookbook.chapter03
 
 import java.awt.Cursor._
 import java.io.File
-import javax.swing.{JColorChooser, ImageIcon}
-import org.bytedeco.javacpp.opencv_core.IplImage
-import scala.Some
+import javax.swing.{ImageIcon, JColorChooser}
+
+import org.bytedeco.javacpp.opencv_core.Mat
+
 import scala.swing.Dialog.Message.Error
 import scala.swing.FileChooser.Result.Approve
 import scala.swing.GridBagPanel.Fill
 import scala.swing._
-import scala.swing.event.ButtonClicked
-import scala.swing.event.ValueChanged
+import scala.swing.event.{ButtonClicked, ValueChanged}
 
 
 /**
@@ -191,7 +191,7 @@ object Ex3ColorDetectorMVCApplication extends SimpleSwingApplication {
         }
       }
 
-      private def display(image: Option[IplImage]) {
+      private def display(image: Option[Mat]) {
         image match {
           case Some(x) => imageView.icon = new ImageIcon(x.getBufferedImage)
           case None =>

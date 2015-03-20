@@ -1,17 +1,15 @@
 /*
- * Copyright (c) 2011-2014 Jarek Sacha. All Rights Reserved.
+ * Copyright (c) 2011-2015 Jarek Sacha. All Rights Reserved.
  *
  * Author's e-mail: jpsacha at gmail.com
  */
 
 package opencv2_cookbook.chapter03
 
-import ij.process.ByteProcessor
-import java.awt.Color
-import opencv2_cookbook.OpenCVImageJUtils._
-import org.bytedeco.javacpp.helper.opencv_core.AbstractIplImage
+import org.bytedeco.javacpp.indexer.{ByteBufferIndexer, ByteIndexer}
 import org.bytedeco.javacpp.opencv_core._
 import org.bytedeco.javacpp.opencv_imgproc._
+
 import scala.math.abs
 
 
@@ -50,7 +48,7 @@ class ColorDetectorLab(private var _minDist: Int = 30,
     _targetLab = color
   }
 
-  def process(rgbImage: IplImage): IplImage = {
+  def process(rgbImage: Mat): Mat = {
 
     // Convert input from RGB to L*a*b* color space
     // Note that since destination image uses 8 bit unsigned integers, original L*a*b* values
@@ -58,37 +56,40 @@ class ColorDetectorLab(private var _minDist: Int = 30,
     //       L <- L*255/100
     //       a <- a + 128
     //       b <- b + 128
-    val labImage = cvCreateImage(cvGetSize(rgbImage), rgbImage.depth, 3)
-    cvCvtColor(rgbImage, labImage, CV_BGR2Lab)
+    val labImage = new Mat()
+    cvtColor(rgbImage, labImage, CV_BGR2Lab)
 
-    // Convert to ColorProcessor for easier pixel access
-    val src = toColorProcessor(labImage)
+    val indexer = labImage.createIndexer().asInstanceOf[ByteBufferIndexer]
 
     // Create output image
-    val dest = new ByteProcessor(src.getWidth, src.getHeight)
+    val dest = new Mat(labImage.rows, labImage.cols, CV_8U)
+    val destIndexer = dest.createIndexer().asInstanceOf[ByteIndexer]
 
     // Iterate through pixels and check if their distance from the target color is
     // withing the distance threshold, if it is set `dest` to 255
-    for (y <- 0 until src.getHeight) {
-      for (x <- 0 until src.getWidth) {
+    for (r <- 0 until labImage.rows) {
+      for (c <- 0 until labImage.cols) {
         // Need to remember that now Color is interpreted as L*a*b* scaled to (0-255), rather than RGB
         // though distance calculation here work the same as for RGB
-        if (distance(src.getColor(x, y)) < _minDist) {
-          dest.set(x, y, 255)
-        }
+        val v = if (distance(colorAt(indexer, r, c)) < _minDist) 255.toByte else 0.toByte
+        destIndexer.put(r, c, v)
       }
     }
 
-    // Convert back to IplImage
-    AbstractIplImage.createFrom(toBufferedImage(dest))
+    dest
   }
 
-  @inline
-  private def distance(color: Color): Double = {
+  case class Triple(l: Int, a: Int, b: Int)
+
+  private def colorAt(indexer: ByteBufferIndexer, c: Int, r: Int): Triple = {
+    Triple(indexer.get(c, r, 0) & 0xFF, indexer.get(c, r, 1) & 0xFF, indexer.get(c, r, 2) & 0xFF)
+  }
+
+  private def distance(color: Triple): Double = {
     // When converting to 8-bit representation L* is scaled, a* and b* are only shifted.
     // To make the distance calculations more proportional we scale here L* difference back.
-    abs(_targetLab.bAsUInt8 - color.getRed) +
-      abs(_targetLab.aAsUInt8 - color.getGreen) +
-      abs(_targetLab.lAsUInt8 - color.getBlue) / 255d * 100d
+    abs(_targetLab.lAsUInt8 - color.l) / 255d * 100d +
+      abs(_targetLab.aAsUInt8 - color.a) +
+      abs(_targetLab.bAsUInt8 - color.b)
   }
 }
