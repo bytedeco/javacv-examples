@@ -10,24 +10,22 @@ import java.util.concurrent.atomic.AtomicBoolean
 import javafx.{concurrent => jfxc}
 
 import flycapture.CheckMacro.check
+import flycapture.examples.cpp.FC2Exception
 import org.bytedeco.javacpp.FlyCapture2._
+import org.bytedeco.javacpp.IntPointer
 
 import scalafx.Includes._
-import scalafx.beans.property.BooleanProperty
+import scalafx.beans.property.{BooleanProperty, ObjectProperty}
 import scalafx.geometry.Pos
 import scalafx.scene.control._
 import scalafx.scene.layout.GridPane
+import scalafx.stage.Stage
 import scalafx.util.Duration
 
-/**
- * Model for camera configuration UI.
- *
- * @author Jarek Sacha 
- */
-class CameraConfigurationModel(camera: CameraBase) {
-  require(camera != null)
 
-  class PropertyControls(val propType: Int, val name: String, val isUsingValueB: Boolean = false) {
+object CameraConfigurationModel {
+
+  private class PropertyControls(val propType: Int, val name: String, val isUsingValueB: Boolean = false) {
     val slider = new Slider()
     val textField = new TextField {
       editable = false
@@ -40,7 +38,38 @@ class CameraConfigurationModel(camera: CameraBase) {
     val isUpdating = new AtomicBoolean(false)
   }
 
+  object TestPattern {
+    val Pattern1 = new TestPattern(1)
+    val Pattern2 = new TestPattern(2)
+    val None = new TestPattern(0)
+
+    val values = Seq(Pattern1, Pattern2, None)
+  }
+
+  sealed class TestPattern(val code: Int)
+
+}
+
+/**
+ * Model for camera configuration UI.
+ *
+ * @author Jarek Sacha 
+ */
+class CameraConfigurationModel(camera: CameraBase, parent: Stage) extends ShowMessage {
+
+
+  import flycapture.examples.cpp.snap.CameraConfigurationModel._
+
+  require(camera != null)
+
+  val title = "Camera Configuration"
+
   val absoluteMode = BooleanProperty(value = true)
+  val testPattern = new ObjectProperty[TestPattern]()
+  var propertyGridPane: GridPane = _
+
+  val testPatternReg: Int = 0x104C
+
 
   private val properties = Seq(
     new PropertyControls(BRIGHTNESS, "Brightness"),
@@ -67,10 +96,13 @@ class CameraConfigurationModel(camera: CameraBase) {
     //    new PropertyControls(TEMPERATURE, "TEMPERATURE")
   )
 
-  var propertyGridPane: GridPane = _
-
   private val updateViewScheduledService = new UpdateViewScheduledService()
 
+  testPattern.onChange { (_, _, newTestPattern) =>
+
+  }
+
+  override def parentWindow = parent
 
   def initialize(): Unit = {
 
@@ -170,7 +202,7 @@ class CameraConfigurationModel(camera: CameraBase) {
     }
   }
 
-  def updatePropertyControl(cam: CameraBase, p: PropertyControls): Unit = {
+  private def updatePropertyControl(cam: CameraBase, p: PropertyControls): Unit = {
     if (p.isUpdating.compareAndSet(false, true)) {
       try {
         val propertyInfo = new PropertyInfo(p.propType)
@@ -210,17 +242,51 @@ class CameraConfigurationModel(camera: CameraBase) {
     }
   }
 
-  class UpdateViewScheduledService() extends jfxc.ScheduledService[String]() {
-    private var counter = 0
+  def readTestPatternRegister(): TestPattern = {
+    val valuePtr = new IntPointer(1)
+    check(camera.ReadRegister(testPatternReg, valuePtr))
+    val v = valuePtr.get & 0x00
+
+    TestPattern.values.find(_.code == v).getOrElse(throw new Exception("Unrecognized test pattern code: " + v))
+  }
+
+  def writeTestPatternRegister(newTestPattern: TestPattern): Unit = {
+
+
+    val pattern = try {
+      readTestPatternRegister()
+    } catch {
+      case ex: Exception => showException(title, "Error reading test pattern register.", ex)
+        return
+    }
+
+    val newPatternRegisterValue = newTestPattern match {
+      case TestPattern.None => pattern.code & 0x00
+      case TestPattern.Pattern1 => pattern.code | (0x1 << 0)
+      case TestPattern.Pattern2 => pattern.code | (0x1 << 1)
+      case t => throw new Exception("Unsupported test pattern: " + t)
+    }
+
+    try {
+      check(camera.WriteRegister(testPatternReg, newPatternRegisterValue))
+    } catch {
+      case ex: FC2Exception => showException(title, "Error writing test pattern register.", ex)
+    }
+  }
+
+  private class UpdateViewScheduledService() extends jfxc.ScheduledService[Unit]() {
     setPeriod(Duration(100))
 
-    def createTask(): jfxc.Task[String] = new jfxc.Task[String]() {
-      override def call(): String = {
+    def createTask(): jfxc.Task[Unit] = new jfxc.Task[Unit]() {
+      override def call(): Unit = {
         onFXAndWait {
           properties.zipWithIndex.foreach { case (p, i) => updatePropertyControl(camera, p)}
         }
-        counter += 1
-        counter.toString
+      }
+
+      override def failed() = {
+        super.failed()
+        getException.printStackTrace()
       }
     }
   }
