@@ -1,4 +1,7 @@
-| [<Previous: Introduction](README.md) | **Chapter 1: Playing with Images** | [Next: Chapter 2>](src/main/scala/opencv2_cookbook/chapter02) |
+| [<Previous: Introduction](/OpenCV2_Cookbook) |  [Next: Chapter 2>](/OpenCV2_Cookbook/src/main/scala/opencv2_cookbook/chapter02) |
+
+Chapter 1: Playing with Images
+==============================
 
 There are only two things needed to start working with OpenCV from a Java platform:
  
@@ -19,7 +22,7 @@ Assuming that you already have JDK installed, the only thing necessary to run ex
 
 You can get the Cookbook Examples sources either by cloning the [GitHub repository](https://github.com/bytedeco/javacv-examples) or by downloading then as a ZIP archive clicking on the [Download ZIP](https://github.com/bytedeco/javacv-examples/archive/master.zip) button on the [GitHub page](https://github.com/bytedeco/javacv-examples).
 
-The examples are in the sub-directory [OpenCV2_Cookbook](https://github.com/bytedeco/javacv-examples/tree/master/OpenCV2_Cookbook). 
+The examples are in the sub-directory [OpenCV2_Cookbook](/OpenCV2_Cookbook). 
 
 
 ### Running Examples from Command Prompt using SBT ###
@@ -149,7 +152,7 @@ The image format is chosen based on the filename extension.
 Displaying Images
 -----------------
 
-The easy way to display image using JavaCV is to use `CanvasFrame` as in the example [`Ex1MyFirstOpenCVApp`](opencv2_cookbook.chapter01.Ex1MyFirstOpenCVApp). It shows the image in a new window.
+The easy way to display image using JavaCV is to use `CanvasFrame` as in the example [`Ex1MyFirstOpenCVApp`](/OpenCV2_Cookbook/src/main/scala/opencv2_cookbook/chapter01/Ex1MyFirstOpenCVApp). It shows the image in a new window.
 
 JavaCV adds to  `Mat` a method `getBufferedImage` to convert OpenCV data to Java's `java.awt.image.BufferedImage` that can be displayed using standard Java approach.
 You can see example of that in `Ex2MyFirstGUIApp`, see next section.
@@ -164,9 +167,9 @@ The framework enables writing a more concise Swing code, in this particular exam
 
 **Note:** The new GUI framework for building UIs is JavaFX. Working in scale you may consider [ScalaFX](http://scalafx.org) over Scala Swing. 
 
-You can find code for the `Ex2MyFirstGUIApp` example [here](opencv2_cookbook.chapter01.Ex2MyFirstGUIApp).
-For the sake of comparison an equivalent Java code is also [Ex2MyFirstGUIAppJava.java](OpenCV2_Cookbook/src/opencv2_cookbook/chapter01/Ex2MyFirstGUIAppJava.java).
+You can find code for the `Ex2MyFirstGUIApp` example [here](/OpenCV2_Cookbook/src/main/scala/opencv2_cookbook/chapter01/Ex2MyFirstGUIApp.scala).
+For the sake of comparison an equivalent Java code is also [Ex2MyFirstGUIAppJava.java](/OpenCV2_Cookbook/src/main/java/opencv2_cookbook/chapter01/Ex2MyFirstGUIAppJava.java).
 
 ![Ex2MyFirstGUIApp](http://bytedeco.org/javacv-examples/images/OpenCV2_Cookbook/Ch1_Ex2MyFirstGUIApp.png)
 
-| [<Previous: Introduction](README.md) | **Chapter 1: Playing with Images** | [Next: Chapter 2>](src/main/scala/opencv2_cookbook/chapter02) |
+| [<Previous: Introduction](/OpenCV2_Cookbook) | **Chapter 1: Playing with Images** | [Next: Chapter 2>](/OpenCV2_Cookbook/src/main/scala/opencv2_cookbook/chapter02) |

@@ -1,3 +1,5 @@
+[Next: Chapter 1>](src/main/scala/opencv2_cookbook/chapter01)
+
 OpenCV2_Cookbook
 ================
 
