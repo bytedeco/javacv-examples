@@ -147,8 +147,9 @@ List of Examples
 ----------------
 
 * [Chapter 1: Playing with Images](src/main/scala/opencv2_cookbook/chapter01)
-  - *`Ex1MyFirstOpenCVApp`* - load an image and show it in a window (CanvasFrame)
+  - *`Ex1MyFirstOpenCVApp`* - Load an image and show it in a window (CanvasFrame)
   - *`Ex2MyFirstGUIApp`* - Simple GUI application build using Scala Swing. The application has two buttons on the left "Open Image" and "Process". The opened image is displayed in the middle. When "Process" button is pressed the image is flipped upside down and its red and blue channels are swapped.
+  - *`Ex3LoadAndSave`* - Reading, saving, displaying, and drawing on an image.
 * [Chapter 2: Manipulating the Pixels](src/main/scala/opencv2_cookbook/chapter02)
   * *`Ex1Salt`* - Set individual, randomly selected, pixels to a fixed value. Use ImageJ's ImageProcessor to access pixels.
   * *`Ex2ColorReduce`* - Reduce colors in the image by modifying color values in all bands the same way.
