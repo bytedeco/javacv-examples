@@ -134,7 +134,7 @@ Organization of the Example Code
 --------------------------------
 
 The code is organized into packages that correspond to chapters in the Cookbook 1st edition, 
-for instance [opencv2_cookbook.chapter8](src/main/scala/opencv2_cookbook/chapter01). 
+for instance [opencv2_cookbook.chapter8](src/main/scala/opencv2_cookbook/chapter08). 
 It is quite similar to the 2nd edition. 
 Individual examples roughly correspond to sections within each chapter of the book.
 

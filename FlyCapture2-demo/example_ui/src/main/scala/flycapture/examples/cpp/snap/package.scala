@@ -6,17 +6,20 @@
 
 package flycapture.examples.cpp
 
-import java.io.IOException
+import java.io.{IOException, PrintWriter, StringWriter}
 import java.util.concurrent
 
 import grizzled.slf4j.Logger
 import org.apache.log4j.{BasicConfigurator, Level}
-import org.controlsfx.dialog.Dialogs
 
 import scala.reflect.runtime.universe._
 import scalafx.Includes._
 import scalafx.application.Platform
 import scalafx.scene.Parent
+import scalafx.scene.control.Alert.AlertType
+import scalafx.scene.control.{Alert, Label, TextArea}
+import scalafx.scene.layout.{GridPane, Priority}
+import scalafx.stage.Window
 import scalafxml.core.{DependenciesByType, FXMLView}
 
 /**
@@ -40,7 +43,7 @@ package object snap {
       new Thread.UncaughtExceptionHandler {
         override def uncaughtException(t: Thread, e: Throwable): Unit = {
           logger.error("Default handler caught exception: " + e.getMessage, e)
-          Dialogs.create().title(title).masthead("Unhandled exception.").showException(e)
+          showException(null, title, "Unhandled exception.", e)
         }
       }
     )
@@ -52,9 +55,7 @@ package object snap {
         override def uncaughtException(t: Thread, e: Throwable): Unit = {
           logger.error("FX handler caught exception: " + e.getMessage, e)
           e.printStackTrace()
-          onFX {
-            Dialogs.create().title(title).masthead("Unhandled exception.").showException(e)
-          }
+          showException(null, title, "Unhandled FX exception.", e)
         }
       }
     )
@@ -139,5 +140,45 @@ package object snap {
     }
   }
 
+  /**
+   * Show exception dialog.
+   */
+  def showException(owner: Window, dialogTitle: String, header: String, ex: Throwable): Unit = {
+    // Create expandable Exception.
+    val exceptionText = {
+      val sw = new StringWriter()
+      val pw = new PrintWriter(sw)
+      ex.printStackTrace(pw)
+      sw.toString
+    }
+
+    val label = new Label("The exception stacktrace was:")
+    val textArea = new TextArea {
+      text = exceptionText
+      editable = false
+      wrapText = true
+      maxWidth = Double.MaxValue
+      maxHeight = Double.MaxValue
+      vgrow = Priority.Always
+      hgrow = Priority.Always
+    }
+
+    val expContent = new GridPane {
+      maxWidth = Double.MaxValue
+      add(label, 0, 0)
+      add(textArea, 0, 1)
+    }
+
+    onFXAndWait {
+      new Alert(AlertType.Error) {
+        initOwner(owner)
+        title = dialogTitle
+        headerText = header
+        contentText = Option(ex.getMessage).getOrElse(ex.getClass.toString)
+        // Set expandable Exception into the dialog pane.
+        dialogPane().expandableContent = expContent
+      }.showAndWait()
+    }
+  }
 
 }

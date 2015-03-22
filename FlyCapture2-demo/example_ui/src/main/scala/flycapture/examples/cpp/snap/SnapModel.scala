@@ -8,7 +8,6 @@ package flycapture.examples.cpp.snap
 
 import java.io.{File, IOException}
 import java.util.concurrent.locks.ReentrantReadWriteLock
-import javafx.event.ActionEvent
 import javafx.{concurrent => jfxc}
 
 import flycapture.CheckMacro.check
@@ -17,8 +16,6 @@ import flycapture.examples.cpp.FC2Utils._
 import grizzled.slf4j.Logger
 import org.bytedeco.javacpp.FlyCapture2._
 import org.bytedeco.javacpp.{IntPointer, Pointer}
-import org.controlsfx.control.action.AbstractAction
-import org.controlsfx.dialog.{Dialog, Dialogs}
 
 import scala.reflect.runtime.universe.typeOf
 import scalafx.Includes._
@@ -26,6 +23,9 @@ import scalafx.application.Platform
 import scalafx.beans.property.{BooleanProperty, ObjectProperty, StringProperty}
 import scalafx.concurrent.{Task, Worker}
 import scalafx.scene.Scene
+import scalafx.scene.control.Alert.AlertType
+import scalafx.scene.control.ButtonBar.ButtonData
+import scalafx.scene.control.{Alert, ButtonType, Dialog}
 import scalafx.scene.image.{PixelFormat, WritableImage}
 import scalafx.stage.FileChooser.ExtensionFilter
 import scalafx.stage.{FileChooser, Stage}
@@ -197,22 +197,17 @@ class SnapModel {
 
       model.initialize()
 
-      val d = new Dialog(parent.delegate, "Select FlyCapture Camera")
-      d.setResizable(true)
-      d.setIconifiable(false)
-      d.setContent(root)
-      val connectAction = new AbstractAction("Connect") {
-        override def handle(event: ActionEvent): Unit = {
-          d.hide()
-        }
-      }
-      d.getActions.addAll(connectAction, Dialog.Actions.CANCEL)
-      val a = d.show()
-
-      a match {
-        case Dialog.Actions.CANCEL => None
-        case _ => Some(model.selectedItem)
-      }
+      val connectButtonType = new ButtonType("Connect", ButtonData.OKDone)
+      new Dialog[CameraID] {
+        initOwner(parent)
+        title = "Select FlyCapture Camera"
+        resizable = false
+        dialogPane().content = root
+        dialogPane().buttonTypes = Seq(connectButtonType, ButtonType.Cancel)
+        resultConverter = dialogButton =>
+          if (dialogButton == connectButtonType) model.selectedItem
+          else null
+      }.showAndWait().asInstanceOf[Option[CameraID]]
     }
 
     logger.trace("Selected camera: " + selectedItem)
@@ -380,10 +375,7 @@ class SnapModel {
           Some(tmp)
         } catch {
           case ex: FC2Exception =>
-            Dialogs.create().
-              title("Save Image").
-              masthead("Error preparing image for saving.").
-              showException(ex)
+            showException(parent, "Save Image", "Error preparing image for saving.", ex)
             tmp.ReleaseBuffer()
             None
         }
@@ -393,7 +385,10 @@ class SnapModel {
     }
 
     if (image.isEmpty) {
-      Dialogs.create().message("No image to save.").owner(parent.delegate).showError()
+      new Alert(AlertType.Error) {
+        initOwner(parent)
+        headerText = "No image to save."
+      }.showAndWait()
     } else {
       // Ask for file name
       val selectedFile = saveImageFileChooser.showSaveDialog(parent)
@@ -414,10 +409,7 @@ class SnapModel {
           check(image.get.Save(filePath))
         } catch {
           case ex: FC2Exception =>
-            Dialogs.create().
-              title("Save Image").
-              masthead("Error saving image to file: " + filePath).
-              showException(ex)
+            showException(parent, "Save Image", "Error saving image to file: " + filePath, ex)
         } finally {
           image.get.ReleaseBuffer()
         }
@@ -440,7 +432,11 @@ class SnapModel {
         dialogStage.showAndWait()
 
       case None =>
-        Dialogs.create().message("Camera not selected.").owner(parent.delegate).showWarning()
+        new Alert(AlertType.Warning) {
+          initOwner(parent)
+          title = "Select Camera"
+          headerText = "Camera not selected."
+        }.showAndWait()
     }
   }
 
@@ -498,7 +494,11 @@ class SnapModel {
             val modeChanged = imageFormat != currentImageFormat
             if (modeChanged) {
               onStopLiveCapture()
-              Dialogs.create().message("A mode change was detected while in Live Mode. Live Mode will stop.").showWarning()
+              new Alert(AlertType.Warning) {
+                initOwner(parent)
+                title = "Live View"
+                headerText = "A mode change was detected while in Live Mode. Live Mode will stop."
+              }.showAndWait()
               return counter.toString
             }
 

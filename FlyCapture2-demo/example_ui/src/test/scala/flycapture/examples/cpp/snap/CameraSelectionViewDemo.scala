@@ -9,7 +9,6 @@ package flycapture.examples.cpp.snap
 import grizzled.slf4j.Logger
 import org.apache.log4j.Level
 import org.bytedeco.javacpp.FlyCapture2.BusManager
-import org.controlsfx.dialog.Dialogs
 
 import scala.reflect.runtime.universe.typeOf
 import scalafx.application.JFXApp.PrimaryStage
@@ -45,12 +44,7 @@ object CameraSelectionViewDemo extends JFXApp {
   } catch {
     case t: Throwable =>
       logger.error("Unexpected error. Application will terminate.", t)
-      Dialogs.
-        create().
-        owner(null).
-        title(title).
-        masthead("Unexpected error. Application will terminate.").
-        showException(t)
+      showException(null, title, "Unexpected error. Application will terminate.", t)
 
       Platform.exit()
   }

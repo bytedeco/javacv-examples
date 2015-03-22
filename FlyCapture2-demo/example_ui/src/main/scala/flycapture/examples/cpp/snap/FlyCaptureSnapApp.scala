@@ -10,7 +10,6 @@ import java.io.IOException
 
 import grizzled.slf4j.Logger
 import org.apache.log4j.Level
-import org.controlsfx.dialog.Dialogs
 
 import scala.reflect.runtime.universe.typeOf
 import scalafx.Includes._
@@ -63,13 +62,7 @@ object FlyCaptureSnapApp extends JFXApp {
   } catch {
     case t: Throwable =>
       logger.error("Unexpected error. Application will terminate.", t)
-      Dialogs.
-        create().
-        owner(null).
-        title(title).
-        masthead("Unexpected error. Application will terminate.").
-        showException(t)
-
+      showException(stage, title, "Unexpected error. Application will terminate.", t)
       Platform.exit()
   }
 

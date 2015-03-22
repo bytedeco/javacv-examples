@@ -2,19 +2,21 @@ import sbt.Keys._
 
 name := "FlyCapture2-demo"
 
-version := "0.9.1-SNAPSHOT"
+version := "0.10"
+
+scalaVersion := "2.11.6"
 
 val commonSettings = Seq(
-  scalaVersion := "2.11.2",
+  scalaVersion := "2.11.6",
   scalacOptions ++= Seq("-unchecked", "-deprecation", "-optimize", "-Xlint", "-Yinline-warnings", "-explaintypes"),
   // Some dependencies like `javacpp` are packaged with maven-plugin packaging
   classpathTypes += "maven-plugin",
   libraryDependencies ++= Seq(
-    "org.bytedeco.javacpp-presets" % "flycapture"    % "2.6.3.4-0.9.1-SNAPSHOT" classifier "",
-    "org.bytedeco.javacpp-presets" % "flycapture"    % "2.6.3.4-0.9.1-SNAPSHOT" classifier platform,
+    "org.bytedeco.javacpp-presets" % "flycapture" % "2.7.3.13-0.10" classifier "",
+    "org.bytedeco.javacpp-presets" % "flycapture" % "2.7.3.13-0.10" classifier platform,
     "log4j"                        % "log4j"         % "1.2.17",
     "org.scala-lang"               % "scala-reflect" % scalaVersion.value,
-    "org.scala-lang.modules"      %% "scala-parser-combinators" % "1.0.2"
+    "org.scala-lang.modules" %% "scala-parser-combinators" % "1.0.3"
   ),
   resolvers ++= Seq(
     Resolver.sonatypeRepo("snapshots"),
@@ -32,11 +34,10 @@ val commonSettings = Seq(
 val uiSettings = commonSettings ++ Seq(
   libraryDependencies ++= Seq(
     "org.clapper"   %% "grizzled-slf4j" % "1.0.2",
-    "org.slf4j"      % "slf4j-api"      % "1.7.7",
-    "org.slf4j"      % "slf4j-log4j12"  % "1.7.7",
-    "org.scalafx"   %% "scalafx"        % "8.0.20-R6",
-    "org.scalafx"   %% "scalafxml-core" % "0.2.1",
-    "org.controlsfx" % "controlsfx"     % "8.0.6_20"
+    "org.slf4j" % "slf4j-api" % "1.7.10",
+    "org.slf4j" % "slf4j-log4j12" % "1.7.10",
+    "org.scalafx" %% "scalafx" % "8.0.40-R8",
+    "org.scalafx" %% "scalafxml-core" % "0.2.1"
   ),
   addCompilerPlugin("org.scalamacros" % "paradise" % "2.0.1" cross CrossVersion.full),
   incOptions := incOptions.value.withNameHashing(false)
