@@ -1,7 +1,7 @@
-[Next: Chapter 1>](src/main/scala/opencv2_cookbook/chapter01)
-
 OpenCV2_Cookbook
 ================
+
+| [Next: Chapter 1>](src/main/scala/opencv2_cookbook/chapter01) |
 
 [OpenCV](http://opencv.org/) (Open Source Computer Vision) is a library of several hundred algorithms for computer vision and video analysis. 
 It started in the late 90’s as a C library; in version 2 a C++ API was added. 
@@ -34,7 +34,7 @@ Here is a quick preview that compares an original C++ example with code in Scala
 Here is the original C++ example that opens an image (without error checking), creates a window,
 displays image in the window, and waits for 5 seconds before exiting.
 
-```c
+``` c
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
 
@@ -58,7 +58,7 @@ int main() {
 The above C++ example translated to Scala using JavaCV wrapper, the functional difference is only that image window 
 stays open till user coses it:
 
-```scala
+``` scala
 import com.googlecode.javacv.CanvasFrame
 import com.googlecode.javacv.cpp.opencv_highgui._
 
@@ -80,7 +80,7 @@ object MyFirstOpenCVApp extends App {
 Now the same example expressed in a Java. Note that use of JavaCV API is exactly the same in Scala and Java code. 
 The only practical difference is that in Java you have to explicily provide type for each variable, in Scala it is optional. 
 
-```java
+``` java
 import com.googlecode.javacv.CanvasFrame;
 import static com.googlecode.javacv.cpp.opencv_core.*;
 import static com.googlecode.javacv.cpp.opencv_highgui.*;
@@ -244,4 +244,4 @@ In particular, the [Scala plugin](http://blog.jetbrains.com/scala/)  for [JetBra
 works very well. 
 There is also Scala support for [Eclipse](http://scala-ide.org/index.html) and [NetBeans](https://github.com/dcaoyuan/nbscala).
 
-[Next: Chapter 1>](src/main/scala/opencv2_cookbook/chapter01)
+| [Next: Chapter 1>](src/main/scala/opencv2_cookbook/chapter01) |

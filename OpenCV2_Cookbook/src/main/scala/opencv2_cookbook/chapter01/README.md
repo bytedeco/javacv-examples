@@ -1,7 +1,8 @@
-| [<Previous: Introduction](/OpenCV2_Cookbook) |  [Next: Chapter 2>](/OpenCV2_Cookbook/src/main/scala/opencv2_cookbook/chapter02) |
 
 Chapter 1: Playing with Images
 ==============================
+
+| [<Previous: Introduction](/OpenCV2_Cookbook) |  [Next: Chapter 2>](/OpenCV2_Cookbook/src/main/scala/opencv2_cookbook/chapter02) |
 
 There are only two things needed to start working with OpenCV from a Java platform:
  
