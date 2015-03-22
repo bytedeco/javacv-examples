@@ -153,7 +153,7 @@ The image format is chosen based on the filename extension.
 Displaying Images
 -----------------
 
-The easy way to display image using JavaCV is to use `CanvasFrame` as in the example [`Ex1MyFirstOpenCVApp`](/OpenCV2_Cookbook/src/main/scala/opencv2_cookbook/chapter01/Ex1MyFirstOpenCVApp). It shows the image in a new window.
+The easy way to display image using JavaCV is to use `CanvasFrame` as in the example [`Ex1MyFirstOpenCVApp`](/OpenCV2_Cookbook/src/main/scala/opencv2_cookbook/chapter01/Ex1MyFirstOpenCVApp.scala). It shows the image in a new window.
 
 JavaCV adds to  `Mat` a method `getBufferedImage` to convert OpenCV data to Java's `java.awt.image.BufferedImage` that can be displayed using standard Java approach.
 You can see example of that in `Ex2MyFirstGUIApp`, see next section.
