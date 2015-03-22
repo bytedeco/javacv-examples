@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2014 Jarek Sacha. All Rights Reserved.
+ * Copyright (c) 2011-2015 Jarek Sacha. All Rights Reserved.
  *
  * Author's e-mail: jpsacha at gmail.com
  */
@@ -7,6 +7,7 @@
 package opencv2_cookbook.chapter01
 
 import java.awt.Cursor._
+import java.io.File
 import javax.swing.ImageIcon
 
 import org.bytedeco.javacpp.opencv_core._
@@ -31,8 +32,7 @@ import scala.swing._
   */
 object Ex2MyFirstGUIApp extends SimpleSwingApplication {
 
-  private lazy val fileChooser = new FileChooser
-
+  private lazy val fileChooser = new FileChooser(new File("."))
 
   def top: Frame = new MainFrame {
     title = "My First GUI Scala App"
