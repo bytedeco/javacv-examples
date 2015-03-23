@@ -4,7 +4,9 @@
  */
 package flycapture.examples.cpp
 
+import flycapture.CheckMacro
 import org.bytedeco.javacpp.FlyCapture2._
+import CheckMacro.check
 
 /**
  * The FlyCapture2Test sample program is a simple program designed to report information related to all compatible
@@ -20,20 +22,20 @@ object FlyCapture2Test extends App {
 
     // Connect to a camera
     val cam = new Camera()
-    check(cam.Connect(guid), " - Connect")
+    check(cam.Connect(guid))
 
     // Get the camera information
     val camInfo = new CameraInfo()
-    check(cam.GetCameraInfo(camInfo), " - GetCameraInfo")
+    check(cam.GetCameraInfo(camInfo))
     printCameraInfo(camInfo)
 
     // Start capturing images
-    check(cam.StartCapture(), " - StartCapture")
+    check(cam.StartCapture())
 
     val rawImage = new Image()
     for (imageCnt <- 0 until numImages) {
       // Retrieve an image
-      check(cam.RetrieveBuffer(rawImage), " - RetrieveBuffer")
+      check(cam.RetrieveBuffer(rawImage))
 
       printf("Grabbed image %d\n", imageCnt)
 
@@ -41,21 +43,21 @@ object FlyCapture2Test extends App {
       val convertedImage = new Image()
 
       // Convert the raw image
-      check(rawImage.Convert(PIXEL_FORMAT_MONO8, convertedImage), " - Convert")
+      check(rawImage.Convert(PIXEL_FORMAT_MONO8, convertedImage))
 
       // Create a unique filename
       val filename = "FlyCapture2Test-%d-%d.pgm".format(camInfo.serialNumber, imageCnt)
       //
       // Save the image. If a file format is not passed in, then the file
       // extension is parsed to attempt to determine the file format.
-      check(convertedImage.Save(filename), " - Save")
+      check(convertedImage.Save(filename))
     }
 
     // Stop capturing images
-    check(cam.StopCapture(), " - StopCapture")
+    check(cam.StopCapture())
 
     // Disconnect the camera
-    check(cam.Disconnect(), " - Disconnect")
+    check(cam.Disconnect())
   }
 
 
@@ -63,12 +65,12 @@ object FlyCapture2Test extends App {
 
   val busMgr = new BusManager()
   val numCameras = Array[Int](0)
-  check(busMgr.GetNumOfCameras(numCameras), " - GetNumOfCameras")
+  check(busMgr.GetNumOfCameras(numCameras))
   println("Number of cameras detected: " + numCameras(0))
 
   for (i <- 0 until numCameras(0)) {
     val guid = new PGRGuid()
-    check(busMgr.GetCameraFromIndex(i, guid), " - GetCameraFromIndex")
+    check(busMgr.GetCameraFromIndex(i, guid))
 
     runSingleCamera(guid)
   }

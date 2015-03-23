@@ -7,8 +7,10 @@
 package opencv2_cookbook.chapter02
 
 import java.io.File
+
 import opencv2_cookbook.OpenCVUtils._
-import org.bytedeco.javacpp.opencv_core.CvMat
+import org.bytedeco.javacpp.indexer.ByteIndexer
+import org.bytedeco.javacpp.opencv_core.Mat
 import org.bytedeco.javacpp.opencv_highgui._
 
 
@@ -20,7 +22,7 @@ import org.bytedeco.javacpp.opencv_highgui._
 object Ex2ColorReduce extends App {
 
   // Read input image
-  val image = loadCvMatAndShowOrExit(new File("data/boldt.jpg"), CV_LOAD_IMAGE_COLOR)
+  val image = loadAndShowOrExit(new File("data/boldt.jpg"), CV_LOAD_IMAGE_COLOR)
 
   // Add salt noise
   val dest = colorReduce(image)
@@ -34,17 +36,20 @@ object Ex2ColorReduce extends App {
    * @param image input image.
    * @param div color reduction factor.
    */
-  def colorReduce(image: CvMat, div: Int = 64): CvMat = {
+  def colorReduce(image: Mat, div: Int = 64): Mat = {
+
+    // Indexer is used to access value in the image
+    val indexer = image.createIndexer().asInstanceOf[ByteIndexer]
 
     // Total number of elements, combining components from each channel
     val nbElements = image.rows * image.cols * image.channels
     for (i <- 0 until nbElements) {
-      // Convert to integer
-      val v = image.get(i).toInt
+      // Convert to integer, byte is treated as an unsigned value
+      val v = indexer.get(i) & 0xFF
       // Use integer division to reduce number of values
       val newV = v / div * div + div / 2
       // Put back into the image
-      image.put(i, newV)
+      indexer.put(i, (newV & 0xFF).toByte)
     }
 
     image

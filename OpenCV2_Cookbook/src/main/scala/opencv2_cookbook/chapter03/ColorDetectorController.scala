@@ -1,12 +1,12 @@
 /*
- * Copyright (c) 2011-2014 Jarek Sacha. All Rights Reserved.
+ * Copyright (c) 2011-2015 Jarek Sacha. All Rights Reserved.
  *
  * Author's e-mail: jpsacha at gmail.com
  */
 
 package opencv2_cookbook.chapter03
 
-import org.bytedeco.javacpp.opencv_core.IplImage
+import org.bytedeco.javacpp.opencv_core.Mat
 import org.bytedeco.javacpp.opencv_highgui._
 
 
@@ -32,12 +32,12 @@ object ColorDetectorController {
   /**
    * Image to be processed.
    */
-  private var _inputImage: Option[IplImage] = None
+  private var _inputImage: Option[Mat] = None
 
   /**
    * Image result.
    */
-  private var _result: Option[IplImage] = None
+  private var _result: Option[Mat] = None
 
 
   /**
@@ -71,22 +71,22 @@ object ColorDetectorController {
   /**
    * Get current input image
    */
-  def inputImage: Option[IplImage] = _inputImage
+  def inputImage: Option[Mat] = _inputImage
 
 
   /**
    * Get result image, mau be `null`.
    */
-  def result: Option[IplImage] = _result
+  def result: Option[Mat] = _result
 
 
   /**
    * Read the input image from a file. Return `true` if reading completed successfully.
    */
   def setInputImage(fileName: String): Boolean = {
-    _inputImage = cvLoadImage(fileName, CV_LOAD_IMAGE_UNCHANGED) match {
+    _inputImage = imread(fileName, CV_LOAD_IMAGE_UNCHANGED) match {
       case null => None
-      case x: IplImage => Some(x)
+      case x: Mat => Some(x)
     }
     _inputImage != null
   }

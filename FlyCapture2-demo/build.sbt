@@ -1,16 +1,56 @@
+import sbt.Keys._
+
 name := "FlyCapture2-demo"
 
-version := "0.9"
+version := "0.10"
 
-scalaVersion := "2.11.2"
+scalaVersion := "2.11.6"
 
-scalacOptions ++= Seq("-unchecked", "-deprecation", "-optimize", "-Xlint")
+val commonSettings = Seq(
+  scalaVersion := "2.11.6",
+  scalacOptions ++= Seq("-unchecked", "-deprecation", "-optimize", "-Xlint", "-Yinline-warnings", "-explaintypes"),
+  // Some dependencies like `javacpp` are packaged with maven-plugin packaging
+  classpathTypes += "maven-plugin",
+  libraryDependencies ++= Seq(
+    "org.bytedeco.javacpp-presets" % "flycapture" % "2.7.3.13-0.10" classifier "",
+    "org.bytedeco.javacpp-presets" % "flycapture" % "2.7.3.13-0.10" classifier platform,
+    "log4j"                        % "log4j"         % "1.2.17",
+    "org.scala-lang"               % "scala-reflect" % scalaVersion.value,
+    "org.scala-lang.modules" %% "scala-parser-combinators" % "1.0.3"
+  ),
+  resolvers ++= Seq(
+    Resolver.sonatypeRepo("snapshots"),
+    "ImageJ Releases" at "http://maven.imagej.net/content/repositories/releases/",
+    // Use local maven repo for local javacv builds
+    "Local Maven Repository" at "file:///" + Path.userHome.absolutePath + "/.m2/repository"
+  ),
+  autoCompilerPlugins := true,
+  // fork a new JVM for 'run' and 'test:run'
+  fork := true,
+  // add a JVM option to use when forking a JVM for 'run'
+  javaOptions += "-Xmx1G"
+)
 
-// Some dependencies like `javacpp` are packaged with maven-plugin packaging
-classpathTypes += "maven-plugin"
+val uiSettings = commonSettings ++ Seq(
+  libraryDependencies ++= Seq(
+    "org.clapper"   %% "grizzled-slf4j" % "1.0.2",
+    "org.slf4j" % "slf4j-api" % "1.7.10",
+    "org.slf4j" % "slf4j-log4j12" % "1.7.10",
+    "org.scalafx" %% "scalafx" % "8.0.40-R8",
+    "org.scalafx" %% "scalafxml-core" % "0.2.1"
+  ),
+  addCompilerPlugin("org.scalamacros" % "paradise" % "2.0.1" cross CrossVersion.full),
+  incOptions := incOptions.value.withNameHashing(false)
+)
+
+lazy val check_macro = project.in(file("check_macro")).settings(commonSettings: _*)
+
+lazy val examples = project.in(file("examples")).settings(commonSettings: _*).dependsOn(check_macro)
+
+lazy val example_ui = project.in(file("example_ui")).settings(uiSettings: _*).dependsOn(check_macro)
 
 // Determine current platform
-val platform = {
+lazy val platform = {
   // Determine platform name using code similar to javacpp
   // com.googlecode.javacpp.Loader.java line 60-84
   val jvmName = System.getProperty("java.vm.name").toLowerCase
@@ -40,24 +80,6 @@ val platform = {
   println("platform: " + platformName)
   platformName
 }
-
-libraryDependencies ++= Seq(
-  "org.bytedeco.javacpp-presets" % "flycapture" % "2.6.3.4-0.9" classifier "",
-  "org.bytedeco.javacpp-presets" % "flycapture" % "2.6.3.4-0.9" classifier platform,
-  "org.bytedeco"                 % "javacpp"    % "0.9"
-)
-
-resolvers ++= Seq(
-  Resolver.sonatypeRepo("snapshots"),
-  "ImageJ Releases" at "http://maven.imagej.net/content/repositories/releases/",
-  // Use local maven repo for local javacv builds
-  "Local Maven Repository" at "file:///" + Path.userHome.absolutePath + "/.m2/repository"
-)
-
-autoCompilerPlugins := true
-
-// fork a new JVM for 'run' and 'test:run'
-fork := true
 
 // add a JVM option to use when forking a JVM for 'run'
 javaOptions += "-Xmx1G"

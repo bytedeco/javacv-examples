@@ -1,15 +1,15 @@
 /*
- * Copyright (c) 2011-2014 Jarek Sacha. All Rights Reserved.
+ * Copyright (c) 2011-2015 Jarek Sacha. All Rights Reserved.
  *
  * Author's e-mail: jpsacha at gmail.com
  */
 
 package opencv2_cookbook
 
-import ij.process._
 import java.awt.image._
-import java.awt.image.{BufferedImage => BI}
-import org.bytedeco.javacpp.opencv_core.IplImage
+
+import ij.process._
+import org.bytedeco.javacpp.opencv_core.{IplImage, Mat}
 
 
 /** Helper methods for integration with ImageJ. */
@@ -26,8 +26,25 @@ object OpenCVImageJUtils {
   def toImageProcessor(image: IplImage): ImageProcessor = {
     val bi = image.getBufferedImage
     bi.getType match {
-      case BI.TYPE_BYTE_GRAY => new ByteProcessor(bi)
-      case BI.TYPE_3BYTE_BGR => new ColorProcessor(bi)
+      case BufferedImage.TYPE_BYTE_GRAY => new ByteProcessor(bi)
+      case BufferedImage.TYPE_3BYTE_BGR => new ColorProcessor(bi)
+      case t => throw new IllegalArgumentException("Unsupported BufferedImage type " + t)
+    }
+  }
+
+  /** Convert OpenCV `Mat` to ImageJ's ImageProcessor.
+    *
+    * Depending on the type input image different instance
+    * of `ImageProcessor` will be created, for color images it will be `ColorProcessor`, for 8-bit gray level `ByteProcessor`.
+    * Other pixel types are currently not supported.
+    *
+    * @param image input image.
+    */
+  def toImageProcessor(image: Mat): ImageProcessor = {
+    val bi = image.getBufferedImage
+    bi.getType match {
+      case BufferedImage.TYPE_BYTE_GRAY => new ByteProcessor(bi)
+      case BufferedImage.TYPE_3BYTE_BGR => new ColorProcessor(bi)
       case t => throw new IllegalArgumentException("Unsupported BufferedImage type " + t)
     }
   }
@@ -46,6 +63,18 @@ object OpenCVImageJUtils {
     }
   }
 
+  /** Convert OpenCV `Mat` to ImageJ's `ColorProcessor`.
+    *
+    * @param image input image.
+    * @throws IllegalArgumentException if `Mat` is not a color image.
+    */
+  def toColorProcessor(image: Mat): ColorProcessor = {
+    val ip = toImageProcessor(image)
+    ip match {
+      case colorProcessor: ColorProcessor => colorProcessor
+      case _ => throw new IllegalArgumentException("Input image is not a color image.")
+    }
+  }
 
   /** Convert ImageJ's `ImageProcessor` to `BufferedImage`. */
   def toBufferedImage(ip: ImageProcessor): BufferedImage = {
@@ -56,7 +85,7 @@ object OpenCVImageJUtils {
       case BP => ip.getBufferedImage
       case CP =>
         // Create BufferedImage of RGB type that JavaCV likes
-        val dest = new BufferedImage(ip.getWidth, ip.getHeight, BI.TYPE_3BYTE_BGR)
+        val dest = new BufferedImage(ip.getWidth, ip.getHeight, BufferedImage.TYPE_3BYTE_BGR)
         // Easiest way to transfer the data is to draw the input image on the output image,
         // This handles all needed color representation conversions, since both are variants of
         val g = dest.getGraphics
@@ -74,7 +103,7 @@ object OpenCVImageJUtils {
     *
     * @param image     input image
     * @return ImageProcessor created from input BufferedImage.
-    * @throws UnsupportedImageModelException when enable to create ImagePlus.
+    * @throws IllegalArgumentException when enable to create ImagePlus.
     */
   def toImageProcessor(image: BufferedImage): ImageProcessor = {
     val raster = image.getRaster
@@ -94,8 +123,8 @@ object OpenCVImageJUtils {
       val w = image.getWidth
       val h = image.getHeight
       bi.getType match {
-        case BI.TYPE_BYTE_GRAY => new ByteProcessor(bi)
-        case BI.TYPE_BYTE_BINARY =>
+        case BufferedImage.TYPE_BYTE_GRAY => new ByteProcessor(bi)
+        case BufferedImage.TYPE_BYTE_BINARY =>
           val bp = new ByteProcessor(w, h)
           val data = bi.getData
           val p = Array(0)

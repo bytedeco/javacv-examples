@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2014 Jarek Sacha. All Rights Reserved.
+ * Copyright (c) 2011-2015 Jarek Sacha. All Rights Reserved.
  *
  * Author's e-mail: jpsacha at gmail.com
  */
@@ -7,10 +7,13 @@
 package opencv2_cookbook.chapter01
 
 import java.awt.Cursor._
+import java.io.File
 import javax.swing.ImageIcon
+
 import org.bytedeco.javacpp.opencv_core._
 import org.bytedeco.javacpp.opencv_highgui._
 import org.bytedeco.javacpp.opencv_imgproc._
+
 import scala.swing.Dialog.Message.Error
 import scala.swing.FileChooser.Result.Approve
 import scala.swing._
@@ -29,14 +32,13 @@ import scala.swing._
   */
 object Ex2MyFirstGUIApp extends SimpleSwingApplication {
 
-  private lazy val fileChooser = new FileChooser
-
+  private lazy val fileChooser = new FileChooser(new File("."))
 
   def top: Frame = new MainFrame {
     title = "My First GUI Scala App"
 
     // Variable for holding loaded image
-    var image: Option[IplImage] = None
+    var image: Option[Mat] = None
 
 
     //
@@ -61,7 +63,7 @@ object Ex2MyFirstGUIApp extends SimpleSwingApplication {
     }
 
     // Action performed when "Process" button is pressed
-    val processAction = Action("Process") {
+    lazy val processAction = Action("Process") {
       cursor = getPredefinedCursor(WAIT_CURSOR)
       try {
         // Process and update image display if image is loaded
@@ -83,7 +85,7 @@ object Ex2MyFirstGUIApp extends SimpleSwingApplication {
     //
 
     // Component for displaying the image
-    val imageView = new Label
+    lazy val imageView = new Label
 
     // Create button panel
     val buttonsPanel = new GridPanel(rows0 = 0, cols0 = 1) {
@@ -109,7 +111,7 @@ object Ex2MyFirstGUIApp extends SimpleSwingApplication {
 
 
   /** Ask user for location and open new image. */
-  private def openImage(): Option[IplImage] = {
+  private def openImage(): Option[Mat] = {
     // Ask user for the location of the image file
     if (fileChooser.showOpenDialog(null) != Approve) {
       return None
@@ -117,8 +119,8 @@ object Ex2MyFirstGUIApp extends SimpleSwingApplication {
 
     // Load the image
     val path = fileChooser.selectedFile.getAbsolutePath
-    val newImage = cvLoadImage(path)
-    if (newImage != null) {
+    val newImage = imread(path)
+    if (!newImage.empty()) {
       Some(newImage)
     } else {
       Dialog.showMessage(null, "Cannot open image file: " + path, top.title, Error)
@@ -128,10 +130,10 @@ object Ex2MyFirstGUIApp extends SimpleSwingApplication {
 
 
   /** Process image in place.  */
-  private def processImage(src: IplImage) {
+  private def processImage(src: Mat) {
     // Flip upside down
-    cvFlip(src, src, 0)
+    flip(src, src, 0)
     // Swap red and blue channels
-    cvCvtColor(src, src, CV_BGR2RGB)
+    cvtColor(src, src, CV_BGR2RGB)
   }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2014 Jarek Sacha. All Rights Reserved.
+ * Copyright (c) 2011-2015 Jarek Sacha. All Rights Reserved.
  *
  * Author's e-mail: jpsacha at gmail.com
  */
@@ -9,14 +9,15 @@ package opencv2_cookbook.chapter01;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.io.File;
 
 import static javax.swing.JOptionPane.ERROR_MESSAGE;
 import static javax.swing.JOptionPane.showMessageDialog;
-import static org.bytedeco.javacpp.opencv_core.IplImage;
-import static org.bytedeco.javacpp.opencv_core.cvFlip;
-import static org.bytedeco.javacpp.opencv_highgui.cvLoadImage;
+import static org.bytedeco.javacpp.opencv_core.Mat;
+import static org.bytedeco.javacpp.opencv_core.flip;
+import static org.bytedeco.javacpp.opencv_highgui.imread;
 import static org.bytedeco.javacpp.opencv_imgproc.CV_BGR2RGB;
-import static org.bytedeco.javacpp.opencv_imgproc.cvCvtColor;
+import static org.bytedeco.javacpp.opencv_imgproc.cvtColor;
 
 
 /**
@@ -34,7 +35,7 @@ public final class Ex2MyFirstGUIAppJava extends JFrame {
 
     private static final long serialVersionUID = 1L;
 
-    private final JFileChooser fileChooser = new JFileChooser();
+    private final JFileChooser fileChooser = new JFileChooser(new File("."));
 
     /**
      * Component for displaying the image
@@ -44,12 +45,11 @@ public final class Ex2MyFirstGUIAppJava extends JFrame {
     /**
      * Variable for holding loaded image
      */
-    private IplImage image = null;
+    private Mat image = null;
 
 
     private Ex2MyFirstGUIAppJava() throws HeadlessException {
         super("My First GUI Java App");
-
 
         //
         // Define actions
@@ -86,7 +86,7 @@ public final class Ex2MyFirstGUIAppJava extends JFrame {
                 setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
                 try {
                     // Load image and update display. If new image was not loaded do nothing.
-                    final IplImage img = openImage();
+                    final Mat img = openImage();
 
                     if (img != null) {
                         image = img;
@@ -99,7 +99,6 @@ public final class Ex2MyFirstGUIAppJava extends JFrame {
                 }
             }
         };
-
 
         //
         // Create UI
@@ -129,7 +128,7 @@ public final class Ex2MyFirstGUIAppJava extends JFrame {
      *
      * @return Opened image or {@code null} if image was not loaded.
      */
-    private IplImage openImage() {
+    private Mat openImage() {
 
         // Ask user for the location of the image file
         if (fileChooser.showOpenDialog(null) != JFileChooser.APPROVE_OPTION) {
@@ -138,7 +137,7 @@ public final class Ex2MyFirstGUIAppJava extends JFrame {
 
         // Load the image
         final String path = fileChooser.getSelectedFile().getAbsolutePath();
-        final IplImage newImage = cvLoadImage(path);
+        final Mat newImage = imread(path);
         if (newImage != null) {
             return newImage;
         } else {
@@ -153,11 +152,11 @@ public final class Ex2MyFirstGUIAppJava extends JFrame {
      *
      * @param src image to process.
      */
-    private void processImage(final IplImage src) {
+    private void processImage(final Mat src) {
         // Flip upside down
-        cvFlip(src, src, 0);
+        flip(src, src, 0);
         // Swap red and blue channels
-        cvCvtColor(src, src, CV_BGR2RGB);
+        cvtColor(src, src, CV_BGR2RGB);
     }
 
 

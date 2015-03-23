@@ -2,13 +2,11 @@ name := "opencv2-cookbook"
 
 organization := "javacv.examples"
 
-val javacvVersion = "0.9"
+val javacppVersion = "0.10"
 
-val javacppVersion = "0.9"
+version := javacppVersion
 
-version := javacvVersion
-
-scalaVersion := "2.11.2"
+scalaVersion := "2.11.6"
 
 scalacOptions ++= Seq("-unchecked", "-deprecation", "-optimize", "-Xlint")
 
@@ -48,17 +46,14 @@ val platform = {
 }
 
 libraryDependencies ++= Seq(
-  "org.bytedeco" % "javacv" % javacvVersion excludeAll(
-    ExclusionRule(organization = "org.bytedeco.javacpp-presets"),
-    ExclusionRule(organization = "org.bytedeco.javacpp")
-    ),
-  "org.bytedeco.javacpp-presets" % "opencv"          % ("2.4.9-" + javacppVersion) classifier "",
-  "org.bytedeco.javacpp-presets" % "opencv"          % ("2.4.9-" + javacppVersion) classifier platform,
   "org.bytedeco"                 % "javacpp"         % javacppVersion,
+  "org.bytedeco"                 % "javacv"          % javacppVersion,
+  "org.bytedeco.javacpp-presets" % "opencv"          % ("2.4.10-" + javacppVersion) classifier "",
+  "org.bytedeco.javacpp-presets" % "opencv"          % ("2.4.10-" + javacppVersion) classifier platform,
   "org.scala-lang.modules"      %% "scala-swing"     % "1.0.1",
-  "net.imagej"                   % "ij"              % "1.49d",
-  "junit"                        % "junit"           % "4.11" % "test",
-  "com.novocode"                 % "junit-interface" % "0.10" % "test"
+  "net.imagej" % "ij" % "1.49p",
+  "junit"                        % "junit"           % "4.12" % "test",
+  "com.novocode"                 % "junit-interface" % "0.11" % "test"
 )
 
 resolvers ++= Seq(

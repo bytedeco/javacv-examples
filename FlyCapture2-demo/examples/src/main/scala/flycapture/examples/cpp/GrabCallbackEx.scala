@@ -4,6 +4,9 @@
  */
 package flycapture.examples.cpp
 
+import flycapture.CheckMacro
+import CheckMacro.check
+import flycapture.CheckMacro
 import org.bytedeco.javacpp.FlyCapture2._
 import org.bytedeco.javacpp.Pointer
 
@@ -47,19 +50,19 @@ object GrabCallbackEx extends App {
 
     // Connect to a camera
     val cam = new Camera()
-    check(cam.Connect(guid), " - Connect")
+    check(cam.Connect(guid))
 
     // Get the camera information
     val camInfo = new CameraInfo()
-    check(cam.GetCameraInfo(camInfo), " - GetCameraInfo")
+    check(cam.GetCameraInfo(camInfo))
     printCameraInfo(camInfo)
 
     // Start capturing images
     println("Start capture")
-    check(cam.StartCapture(OnImageGrabbed, null), " - StartCapture")
+    check(cam.StartCapture(OnImageGrabbed, null))
 
     val frameRateProp = new Property(FRAME_RATE)
-    check(cam.GetProperty(frameRateProp), " - GetProperty")
+    check(cam.GetProperty(frameRateProp))
 
     println("Capture in loop")
     for (imageCnt <- 0 until numImages) {
@@ -70,22 +73,22 @@ object GrabCallbackEx extends App {
     }
 
     // Stop capturing images
-    check(cam.StopCapture(), " - StopCapture")
+    check(cam.StopCapture())
 
     // Disconnect the camera
-    check(cam.Disconnect(), " - Disconnect")
+    check(cam.Disconnect())
   }
 
   printBuildInfo()
 
   val busMgr = new BusManager()
   val numCameras = Array[Int](0)
-  check(busMgr.GetNumOfCameras(numCameras), " - GetNumOfCameras")
+  check(busMgr.GetNumOfCameras(numCameras))
   println("Number of cameras detected: " + numCameras(0))
 
   for (i <- 0 until numCameras(0)) {
     val guid = new PGRGuid()
-    check(busMgr.GetCameraFromIndex(i, guid), " - GetCameraFromIndex")
+    check(busMgr.GetCameraFromIndex(i, guid))
 
     runSingleCamera(guid)
   }

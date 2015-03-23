@@ -8,6 +8,7 @@ package opencv2_cookbook.chapter07
 
 
 import java.io.File
+
 import opencv2_cookbook.OpenCVUtils._
 import org.bytedeco.javacpp.Loader
 import org.bytedeco.javacpp.helper.opencv_core.AbstractCvScalar._
@@ -15,6 +16,7 @@ import org.bytedeco.javacpp.helper.{opencv_imgproc => imgproc}
 import org.bytedeco.javacpp.opencv_core._
 import org.bytedeco.javacpp.opencv_highgui._
 import org.bytedeco.javacpp.opencv_imgproc._
+
 import scala.collection.mutable.ListBuffer
 
 
@@ -28,7 +30,7 @@ object Ex6ShapeDescriptors extends App {
   //
 
   // Read input image
-  val src = loadAndShowOrExit(new File("data/binaryGroup.bmp"), CV_LOAD_IMAGE_GRAYSCALE)
+  val src = loadIplAndShowOrExit(new File("data/binaryGroup.bmp"), CV_LOAD_IMAGE_GRAYSCALE)
 
   // Extract connected components
   val contourSeq = new CvSeq(null)
@@ -48,7 +50,7 @@ object Ex6ShapeDescriptors extends App {
   val lengthMin = 100
   val lengthMax = 1000
   val filteredContours = contours.filter(contour => lengthMin < contour.total() && contour.total() < lengthMax)
-  val colorDest2 = loadOrExit(new File("data/group.jpg"), CV_LOAD_IMAGE_COLOR)
+  val colorDest2 = loadIplImageOrExit(new File("data/group.jpg"), CV_LOAD_IMAGE_COLOR)
   drawAllContours(colorDest2, filteredContours, width = 2)
 
   //

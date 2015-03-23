@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<!--
+  ~ Copyright (c) 2011-2014 Jarek Sacha. All Rights Reserved.
+  ~
+  ~ Author's e-mail: jpsacha at gmail.com
+  -->
+
+<BorderPane xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="flycapture.examples.cpp.snap.SnapView">
+    <top>
+        <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+            <items>
+                <Button fx:id="selectCameraButton" mnemonicParsing="false" text="Select">
+                    <tooltip>
+                        <Tooltip text="Select new camera" />
+                    </tooltip>
+                </Button>
+                <Separator orientation="VERTICAL" />
+                <Button fx:id="snapButton" disable="true" mnemonicParsing="false" text="Snap">
+                    <tooltip>
+                        <Tooltip text="Snap single image" />
+                    </tooltip>
+                </Button>
+                <Separator orientation="VERTICAL" />
+                <Button fx:id="startButton" disable="true" mnemonicParsing="false" text="Start">
+                    <tooltip>
+                        <Tooltip text="Start camera capture" />
+                    </tooltip>
+                </Button>
+                <Button fx:id="stopButton" disable="true" mnemonicParsing="false" text="Stop">
+                    <tooltip>
+                        <Tooltip text="Stop camera capture" />
+                    </tooltip>
+                </Button>
+                <Separator orientation="VERTICAL" />
+            <Button fx:id="saveImageButton" disable="true" mnemonicParsing="false" text="Save">
+               <tooltip>
+                  <Tooltip text="Save last captured image" />
+               </tooltip>
+            </Button>
+            <Separator orientation="VERTICAL" />
+            <Button fx:id="settingsButton" disable="true" mnemonicParsing="false" text="Settings" />
+            </items>
+        </ToolBar>
+    </top>
+    <center>
+        <ImageView fx:id="snapImageView" fitHeight="400.0" fitWidth="640.0" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER" />
+    </center>
+    <bottom>
+        <HBox BorderPane.alignment="CENTER">
+            <children>
+                <Label text="FlyCapture SDK v. " />
+                <Label fx:id="flycaptureVersionLabel" text="?" />
+            <Separator orientation="VERTICAL">
+               <HBox.margin>
+                  <Insets left="5.0" right="5.0" />
+               </HBox.margin>
+            </Separator>
+            <Label fx:id="cameraInfoLabel" text="No camera connected" />
+            </children>
+         <padding>
+             <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+         </padding>
+        </HBox>
+    </bottom>
+</BorderPane>
