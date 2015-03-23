@@ -22,11 +22,11 @@ import scalafx.Includes._
 import scalafx.application.Platform
 import scalafx.beans.property.{BooleanProperty, ObjectProperty, StringProperty}
 import scalafx.concurrent.Worker
-import scalafx.scene.Scene
 import scalafx.scene.control.Alert.AlertType
 import scalafx.scene.control.ButtonBar.ButtonData
 import scalafx.scene.control.{Alert, ButtonType, Dialog}
 import scalafx.scene.image.{PixelFormat, WritableImage}
+import scalafx.scene.{Scene, image => sfxsi}
 import scalafx.stage.FileChooser.ExtensionFilter
 import scalafx.stage.{FileChooser, Stage}
 import scalafx.util.Duration
@@ -434,8 +434,11 @@ class SnapModel {
         val cameraConfiguration = new CameraConfiguration(camera, parent)
         // Create UI
         val dialogStage = new Stage() {
+          initOwner(parent)
           title = "Camera Settings " + cameraInfo()
-          scene = new Scene(cameraConfiguration.view)
+          scene = new Scene(cameraConfiguration.view) {
+            icons += new sfxsi.Image("/flycapture/examples/cpp/snap/logo.png")
+          }
         }
         dialogStage.showAndWait()
 

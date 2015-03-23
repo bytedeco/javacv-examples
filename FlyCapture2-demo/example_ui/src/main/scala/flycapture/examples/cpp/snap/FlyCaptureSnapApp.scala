@@ -16,6 +16,7 @@ import scalafx.Includes._
 import scalafx.application.JFXApp.PrimaryStage
 import scalafx.application.{JFXApp, Platform}
 import scalafx.scene.Scene
+import scalafx.scene.image.Image
 import scalafxml.core.{DependenciesByType, FXMLView}
 
 /**
@@ -49,7 +50,9 @@ object FlyCaptureSnapApp extends JFXApp {
     // Create UI
     stage = new PrimaryStage() {
       title = "FlyCapture Snap Example"
-      scene = new Scene(root)
+      scene = new Scene(root) {
+        icons += new Image("/flycapture/examples/cpp/snap/logo.png")
+      }
     }
 
     snapModel.parent = stage
