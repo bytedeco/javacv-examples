@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2014 Jarek Sacha. All Rights Reserved.
+ * Copyright (c) 2011-2015 Jarek Sacha. All Rights Reserved.
  *
  * Author's e-mail: jpsacha at gmail.com
  */
@@ -16,7 +16,7 @@ import org.bytedeco.javacpp.opencv_highgui._
 import scala.util.Random
 
 /**
- * Set individual, randomly selected, pixels to a fixed value.
+ * Demonstrates use of `ByteIndexer` to set individual, randomly selected, pixels to a fixed value.
  *
  * Illustrates access to pixel values using absolute indexing.
  */
@@ -39,12 +39,14 @@ object Ex1Salt extends App {
    */
   def salt(image: Mat, n: Int): Mat = {
 
-    val nbChannels = image.channels
+    // Random number generator
     val random = new Random()
+
     // Get access to image data
     val indexer = image.createIndexer().asInstanceOf[ByteIndexer]
 
     // Place `n` grains at random locations
+    val nbChannels = image.channels
     for (i <- 1 to n) {
       // Create random index of a pixel
       val row = random.nextInt(image.rows)

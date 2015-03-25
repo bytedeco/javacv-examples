@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2014 Jarek Sacha. All Rights Reserved.
+ * Copyright (c) 2011-2015 Jarek Sacha. All Rights Reserved.
  *
  * Author's e-mail: jpsacha at gmail.com
  */
@@ -22,7 +22,7 @@ object Ex5ROILogo extends App {
 
   // Read input image
   val logo = loadAndShowOrExit(new File("data/logo.bmp"), CV_LOAD_IMAGE_COLOR)
-  val mask = loadAndShowOrExit(new File("data/logo.bmp"), CV_LOAD_IMAGE_GRAYSCALE)
+  val mask = loadOrExit(new File("data/logo.bmp"), CV_LOAD_IMAGE_GRAYSCALE)
   val image = loadAndShowOrExit(new File("data/boldt.jpg"), CV_LOAD_IMAGE_COLOR)
 
   // Define region of interest that matches the size of the logo
