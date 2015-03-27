@@ -8,7 +8,7 @@ version := javacppVersion
 
 scalaVersion := "2.11.6"
 
-scalacOptions ++= Seq("-unchecked", "-deprecation", "-optimize", "-Xlint")
+scalacOptions ++= Seq("-unchecked", "-deprecation", "-Xlint")
 
 // Some dependencies like `javacpp` are packaged with maven-plugin packaging
 classpathTypes += "maven-plugin"
@@ -51,7 +51,6 @@ libraryDependencies ++= Seq(
   "org.bytedeco.javacpp-presets" % "opencv"          % ("2.4.10-" + javacppVersion) classifier "",
   "org.bytedeco.javacpp-presets" % "opencv"          % ("2.4.10-" + javacppVersion) classifier platform,
   "org.scala-lang.modules"      %% "scala-swing"     % "1.0.1",
-  "net.imagej" % "ij" % "1.49p",
   "junit"                        % "junit"           % "4.12" % "test",
   "com.novocode"                 % "junit-interface" % "0.11" % "test"
 )

@@ -227,7 +227,6 @@ List of Examples
   * *`VideoProcessor`* - Helper class for dealing with video files, loading and applying processing to individual frames, used by examples: `Ex2ProcessVideoFrames`, `Ex3WriteVideoSequence`, `Ex4TrackingFeatures`, and `Ex5ForegroundSegmenter`.
 * [Utilities](src/main/scala/opencv2_cookbook)
   * *`OpenCVUtils`* - reading and writing of image files, display of images, drawing of features on images, conversions between OpenCV image and data representations.
-  * *`OpenCVImageJUtils`* - conversion between OpenCV and ImageJ image representations.
 
 Why Scala?
 ----------
