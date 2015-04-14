@@ -6,7 +6,7 @@
 
 package opencv2_cookbook.chapter03
 
-import org.bytedeco.javacpp.indexer.ByteIndexer
+import org.bytedeco.javacpp.indexer.UByteIndexer
 import org.bytedeco.javacpp.opencv_core.Mat
 
 import scala.math._
@@ -47,15 +47,15 @@ class ColorDetector(private var _minDist: Int = 100,
   def process(image: Mat): Mat = {
 
     // Indexer for input image
-    val srcI = image.createIndexer().asInstanceOf[ByteIndexer]
+    val srcI = image.createIndexer().asInstanceOf[UByteIndexer]
 
     // Create output image and itx indexer
     val dest = new Mat(image.rows, image.cols, org.bytedeco.javacpp.opencv_core.CV_8U)
-    val destI = dest.createIndexer().asInstanceOf[ByteIndexer]
+    val destI = dest.createIndexer().asInstanceOf[UByteIndexer]
 
     // Iterate through pixels and check if their distance from the target color is
     // withing the distance threshold, if it is set `dest` to 255.
-    val brg = new Array[Byte](3)
+    val brg = new Array[Int](3)
     for (y <- 0 until image.rows) {
       for (x <- 0 until image.cols) {
         srcI.get(y, x, brg)

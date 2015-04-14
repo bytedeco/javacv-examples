@@ -6,7 +6,7 @@
 
 package opencv2_cookbook.chapter03
 
-import org.bytedeco.javacpp.indexer.{ByteBufferIndexer, ByteIndexer}
+import org.bytedeco.javacpp.indexer.{UByteBufferIndexer, UByteIndexer}
 import org.bytedeco.javacpp.opencv_core._
 import org.bytedeco.javacpp.opencv_imgproc._
 
@@ -59,11 +59,11 @@ class ColorDetectorLab(private var _minDist: Int = 30,
     val labImage = new Mat()
     cvtColor(rgbImage, labImage, CV_BGR2Lab)
 
-    val indexer = labImage.createIndexer().asInstanceOf[ByteBufferIndexer]
+    val indexer = labImage.createIndexer().asInstanceOf[UByteBufferIndexer]
 
     // Create output image
     val dest = new Mat(labImage.rows, labImage.cols, CV_8U)
-    val destIndexer = dest.createIndexer().asInstanceOf[ByteIndexer]
+    val destIndexer = dest.createIndexer().asInstanceOf[UByteIndexer]
 
     // Iterate through pixels and check if their distance from the target color is
     // withing the distance threshold, if it is set `dest` to 255
@@ -81,8 +81,8 @@ class ColorDetectorLab(private var _minDist: Int = 30,
 
   case class Triple(l: Int, a: Int, b: Int)
 
-  private def colorAt(indexer: ByteBufferIndexer, c: Int, r: Int): Triple = {
-    Triple(indexer.get(c, r, 0) & 0xFF, indexer.get(c, r, 1) & 0xFF, indexer.get(c, r, 2) & 0xFF)
+  private def colorAt(indexer: UByteBufferIndexer, c: Int, r: Int): Triple = {
+    Triple(indexer.get(c, r, 0), indexer.get(c, r, 1), indexer.get(c, r, 2))
   }
 
   private def distance(color: Triple): Double = {

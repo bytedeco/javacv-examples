@@ -10,6 +10,7 @@ import java.awt.Cursor._
 import java.io.File
 import javax.swing.{ImageIcon, JColorChooser}
 
+import opencv2_cookbook.OpenCVUtils._
 import org.bytedeco.javacpp.opencv_core.Mat
 
 import scala.swing.Dialog.Message.Error
@@ -163,7 +164,7 @@ object Ex3ColorDetectorMVCApplication extends SimpleSwingApplication {
           colorDetectorController.inputImage match {
             case Some(image) =>
               colorDetectorController.process()
-              imageView.icon = new ImageIcon(colorDetectorController.result.get.getBufferedImage)
+              imageView.icon = new ImageIcon(toBufferedImage(colorDetectorController.result.get))
             case None => Dialog.showMessage(buttonsPanel, "Image not opened", title, Error)
           }
         }
@@ -193,7 +194,8 @@ object Ex3ColorDetectorMVCApplication extends SimpleSwingApplication {
 
       private def display(image: Option[Mat]) {
         image match {
-          case Some(x) => imageView.icon = new ImageIcon(x.getBufferedImage)
+          case Some(x) =>
+            imageView.icon = new ImageIcon(toBufferedImage(x))
           case None =>
         }
       }

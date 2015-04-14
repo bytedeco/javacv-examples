@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2014 Jarek Sacha. All Rights Reserved.
+ * Copyright (c) 2011-2015 Jarek Sacha. All Rights Reserved.
  *
  * Author's e-mail: jpsacha at gmail.com
  */
@@ -16,15 +16,16 @@ import org.bytedeco.javacpp.opencv_imgproc._
 
 /**
  * The third example for section "Computing the image histogram" in Chapter 4, page 93.
- * Separates pixels in an image into a foreground (black) and background (white) using OpenCV `cvThreshold` method.
+ * Separates pixels in an image into a foreground (black) and background (white) using OpenCV `threshold` method.
  */
 object Ex3Threshold extends App {
+
   // Load image as a gray scale
-  val src = loadIplAndShowOrExit(new File("data/group.jpg"), CV_LOAD_IMAGE_GRAYSCALE)
+  val src = loadAndShowOrExit(new File("data/group.jpg"), CV_LOAD_IMAGE_GRAYSCALE)
 
-  val dest = cvCreateImage(cvGetSize(src), src.depth, src.nChannels)
+  val dest = new Mat()
 
-  cvThreshold(src, dest, 60, 255, CV_THRESH_BINARY)
+  threshold(src, dest, 60, 255, CV_THRESH_BINARY)
 
   show(dest, "Thresholded")
 }

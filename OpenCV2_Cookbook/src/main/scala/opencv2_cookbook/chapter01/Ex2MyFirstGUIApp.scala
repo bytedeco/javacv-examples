@@ -13,6 +13,7 @@ import javax.swing.ImageIcon
 import org.bytedeco.javacpp.opencv_core._
 import org.bytedeco.javacpp.opencv_highgui._
 import org.bytedeco.javacpp.opencv_imgproc._
+import org.bytedeco.javacv.{Java2DFrameConverter, OpenCVFrameConverter}
 
 import scala.swing.Dialog.Message.Error
 import scala.swing.FileChooser.Result.Approve
@@ -52,8 +53,11 @@ object Ex2MyFirstGUIApp extends SimpleSwingApplication {
         // Load image and update display. If new image was not loaded do nothing.
         openImage() match {
           case Some(x) =>
+            val converter = new OpenCVFrameConverter.ToIplImage()
+            val frame = converter.convert(x)
+            val bi = new Java2DFrameConverter().convert(frame)
             image = Some(x)
-            imageView.icon = new ImageIcon(x.getBufferedImage)
+            imageView.icon = new ImageIcon(bi)
             processAction.enabled = true
           case None =>
         }
@@ -70,7 +74,10 @@ object Ex2MyFirstGUIApp extends SimpleSwingApplication {
         image match {
           case Some(x) =>
             processImage(x)
-            imageView.icon = new ImageIcon(x.getBufferedImage)
+            val converter = new OpenCVFrameConverter.ToIplImage()
+            val frame = converter.convert(x)
+            val bi = new Java2DFrameConverter().convert(frame)
+            imageView.icon = new ImageIcon(bi)
           case None =>
             Dialog.showMessage(null, "Image not opened", title, Error)
         }

@@ -1,66 +1,62 @@
 /*
- * Copyright (c) 2011-2014 Jarek Sacha. All Rights Reserved.
+ * Copyright (c) 2011-2015 Jarek Sacha. All Rights Reserved.
  *
  * Author's e-mail: jpsacha at gmail.com
  */
 
 package opencv2_cookbook.chapter04
 
-import opencv2_cookbook.OpenCVUtils._
-import org.bytedeco.javacpp.helper.{opencv_imgproc => imgproc}
 import org.bytedeco.javacpp.opencv_core._
 import org.bytedeco.javacpp.opencv_imgproc._
+import org.bytedeco.javacpp.{FloatPointer, IntPointer, PointerPointer, opencv_imgproc => imgproc}
 
 
 /**
  * Used by examples from section "Backprojecting a histogram to detect specific image content" in chapter 4.
- * There are some differences in implementation.
- * The original OpenCV2 Cookbook examples use C++ API for histogram operations that are not available in JavaCV.
- * In particular, the histogram representations and the C++ `cv::calcBackProject` (not available in JavaCV)
- * takes additional arguments that are not available in `cvCalcBackProject`, like `channels`, `ranges`, `scale`, `uniform`.
  */
 class ContentFinder {
-    private var _threshold = -1f
-    private var _histogram: CvHistogram = null
+  private val _histogram = new Mat()
+  private var _threshold = -1f
+  private var _isSparse = false
+  /**
+   * Find content back projecting a histogram.
+   * @param image input used for back projection.
+   * @return Result of the back-projection of the histogram. Image is binary (0,255) if threshold is larger than 0.
+   */
+  def find(image: Mat): Mat = {
 
-    def threshold: Float = _threshold
+    val channels = Array(0, 1, 2)
 
-    /**
-     * Set threshold for converting the back-projected image to a binary.
-     * If value is negative no thresholding will be done.
-     */
-    def threshold_=(t: Float) { _threshold = t }
+    find(image, 0.0f, 255.0f, channels)
+  }
+  def find(image: Mat, minValue: Float, maxValue: Float, channels: Array[Int]): Mat = {
+    val result = new Mat()
 
-    def histogram: CvHistogram = _histogram
+    // Create parameters that can be used for both 1D and 3D/color histograms.
+    // Since C++ calcBackProject is using arrays of arrays we need to do some wrapping `PointerPointer` objects.
+    val histRange = Array(minValue, maxValue)
+    val intPtrChannels = new IntPointer(channels: _*)
+    val ptrPtrHistRange: PointerPointer[FloatPointer] = new PointerPointer[FloatPointer](histRange, histRange, histRange)
 
-    /**
-     * Set reference histogram, it will be normalized.
-     */
-    def histogram_=(h: CvHistogram) {
-        _histogram = h
-        cvNormalizeHist(h, 1)
-    }
+    calcBackProject(image, 1, intPtrChannels, histogram, result, ptrPtrHistRange, 255, true)
 
-    /**
-     * Find content back projecting a histogram.
-     * @param image input used for back projection.
-     * @return Result of the back-projection of the histogram. Image is binary (0,255) if threshold is larger than 0.
-     *         The returned image depth is `IPL_DEPTH_8U`.
-     */
-    def find(image: IplImage): IplImage = {
+    if (threshold > 0)
+      imgproc.threshold(result, result, 255 * threshold, 255, THRESH_BINARY)
 
-        // Split the input image into channels, each image passed to `cvCalcBackProject` must be single channel.
-        // Convert each channel image to a to 32 bit floating point image.
-        val channels = ColorHistogram.splitChannels(image) map toIplImage32F
-
-        // Back project
-        val dest = cvCreateImage(cvGetSize(image), IPL_DEPTH_32F, 1)
-      imgproc.cvCalcBackProject(channels, dest, histogram)
-
-        if (threshold > 0) {
-            cvThreshold(dest, dest, threshold, 1, CV_THRESH_BINARY)
-        }
-
-        toIplImage8U(dest)
-    }
+    result
+  }
+  def threshold: Float = _threshold
+  /**
+   * Set threshold for converting the back-projected image to a binary.
+   * If value is negative no thresholding will be done.
+   */
+  def threshold_=(t: Float) { _threshold = t }
+  def histogram: Mat = _histogram
+  /**
+   * Set reference histogram, it will be normalized.
+   */
+  def histogram_=(h: Mat) {
+    _isSparse = false
+    normalize(h, _histogram)
+  }
 }

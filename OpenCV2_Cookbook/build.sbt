@@ -2,7 +2,7 @@ name := "opencv2-cookbook"
 
 organization := "javacv.examples"
 
-val javacppVersion = "0.10"
+val javacppVersion = "0.11"
 
 version := javacppVersion
 
@@ -48,8 +48,8 @@ val platform = {
 libraryDependencies ++= Seq(
   "org.bytedeco"                 % "javacpp"         % javacppVersion,
   "org.bytedeco"                 % "javacv"          % javacppVersion,
-  "org.bytedeco.javacpp-presets" % "opencv"          % ("2.4.10-" + javacppVersion) classifier "",
-  "org.bytedeco.javacpp-presets" % "opencv"          % ("2.4.10-" + javacppVersion) classifier platform,
+  "org.bytedeco.javacpp-presets" % "opencv" % ("2.4.11-" + javacppVersion) classifier "",
+  "org.bytedeco.javacpp-presets" % "opencv" % ("2.4.11-" + javacppVersion) classifier platform,
   "org.scala-lang.modules"      %% "scala-swing"     % "1.0.1",
   "junit"                        % "junit"           % "4.12" % "test",
   "com.novocode"                 % "junit-interface" % "0.11" % "test"

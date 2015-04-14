@@ -9,10 +9,15 @@ package opencv2_cookbook.chapter03
 import java.awt.Color
 
 object ColorRGB {
-  /** Factory meethod for creating a color from a 3 byte array. */
+  /** Factory method for creating a color from a 3 byte array. */
   def fromBGR(b: Array[Byte]): ColorRGB = {
     require(b.length == 3)
     ColorRGB(b(2) & 0xFF, b(1) & 0xFF, b(0) & 0xFF)
+  }
+  /** Factory method for creating a color from a 3 int array. */
+  def fromBGR(b: Array[Int]): ColorRGB = {
+    require(b.length == 3)
+    ColorRGB(b(2), b(1), b(0))
   }
 }
 

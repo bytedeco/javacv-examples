@@ -25,11 +25,11 @@ The key image processing example considered in Chapter 3 is color detection. Col
 
 ``` scala
 // Indexer for input image
-val srcI = image.createIndexer().asInstanceOf[ByteIndexer]
+val srcI = image.createIndexer().asInstanceOf[UByteIndexer]
 
 // Create output image and itx indexer
 val dest = new Mat(image.rows, image.cols, org.bytedeco.javacpp.opencv_core.CV_8U)
-val destI = dest.createIndexer().asInstanceOf[ByteIndexer]
+val destI = dest.createIndexer().asInstanceOf[UByteIndexer]
 
 // Iterate through pixels and check if their distance from the target color is
 // withing the distance threshold, if it is set `dest` to 255.

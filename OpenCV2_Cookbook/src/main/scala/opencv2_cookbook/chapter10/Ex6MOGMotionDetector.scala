@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2014 Jarek Sacha. All Rights Reserved.
+ * Copyright (c) 2011-2015 Jarek Sacha. All Rights Reserved.
  *
  * Author's e-mail: jpsacha at gmail.com
  */
@@ -8,6 +8,8 @@ package opencv2_cookbook.chapter10
 
 
 import javax.swing.JFrame
+
+import opencv2_cookbook.OpenCVUtils._
 import org.bytedeco.javacpp.opencv_core._
 import org.bytedeco.javacpp.opencv_highgui._
 import org.bytedeco.javacpp.opencv_imgproc._
@@ -53,7 +55,7 @@ object Ex6MOGMotionDetector extends App {
     // Complement the image, so foreground is black
     threshold(foreground, foreground, 128, 255, CV_THRESH_BINARY_INV)
 
-    canvasFrame.showImage(foreground)
+    canvasFrame.showImage(toBufferedImage(foreground))
 
     // Delay
     Thread.sleep(delay)

@@ -1,19 +1,22 @@
 /*
- * Copyright (c) 2011-2014 Jarek Sacha. All Rights Reserved.
+ * Copyright (c) 2011-2015 Jarek Sacha. All Rights Reserved.
  *
  * Author's e-mail: jpsacha at gmail.com
  */
 
 package opencv2_cookbook.chapter09
 
-import java.io.{IOException, File}
+import java.io.{File, IOException}
 import javax.swing.WindowConstants
+
+import opencv2_cookbook.OpenCVUtils._
 import org.bytedeco.javacpp.helper.opencv_core.AbstractCvScalar
 import org.bytedeco.javacpp.opencv_calib3d._
 import org.bytedeco.javacpp.opencv_core._
 import org.bytedeco.javacpp.opencv_highgui._
 import org.bytedeco.javacpp.opencv_imgproc._
 import org.bytedeco.javacv.CanvasFrame
+
 import scala.collection.mutable.ArrayBuffer
 
 
@@ -107,7 +110,7 @@ class CameraCalibrator {
       cvDrawChessboardCorners(image, boardSize, imageCorners, cornerCount(0), found)
       val canvas = new CanvasFrame("Corners on Chessboard: " + file.getName, 1)
       canvas.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE)
-      canvas.showImage(image)
+      canvas.showImage(toBufferedImage(image))
     }
 
     successes

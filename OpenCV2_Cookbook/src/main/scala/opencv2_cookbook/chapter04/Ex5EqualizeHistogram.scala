@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2014 Jarek Sacha. All Rights Reserved.
+ * Copyright (c) 2011-2015 Jarek Sacha. All Rights Reserved.
  *
  * Author's e-mail: jpsacha at gmail.com
  */
@@ -18,7 +18,7 @@ import org.bytedeco.javacpp.opencv_highgui._
 object Ex5EqualizeHistogram extends App {
 
   // Load image as a gray scale
-  val src = loadIplAndShowOrExit(new File("data/group.jpg"), CV_LOAD_IMAGE_GRAYSCALE)
+  val src = loadAndShowOrExit(new File("data/group.jpg"), CV_LOAD_IMAGE_GRAYSCALE)
   // Show histogram of the source image
   show(new Histogram1D().getHistogramImage(src), "Input histogram")
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2014 Jarek Sacha. All Rights Reserved.
+ * Copyright (c) 2011-2015 Jarek Sacha. All Rights Reserved.
  *
  * Author's e-mail: jpsacha at gmail.com
  */
@@ -7,99 +7,51 @@
 package opencv2_cookbook.chapter04
 
 
-import org.bytedeco.javacpp.helper.{opencv_imgproc => imgproc}
 import org.bytedeco.javacpp.opencv_core._
 import org.bytedeco.javacpp.opencv_imgproc._
+import org.bytedeco.javacpp.{FloatPointer, IntPointer, PointerPointer}
 
 /**
- * Companion methods for `ColorHistogram`.
- */
-object ColorHistogram {
-  /**
-   * Reduce number of colors, described in OpenCV Cookbook Chapter 2.
-   * @param image input image that will have colors modified after this call.
-   * @param div color reduction factor.
-   */
-  def colorReduce(image: IplImage, div: Int = 64) {
-
-    val mat = image.asCvMat()
-
-    // Total number of elements, combining components from each channel
-    val nbElements = mat.rows * mat.cols * mat.channels
-    for (i <- 0 until nbElements) {
-      // Convert to integer
-      val v = mat.get(i).toInt
-      // Use integer division to reduce number of values
-      val newV = v / div * div + div / 2
-      // Put back into the image
-      mat.put(i, newV)
-    }
-  }
-
-  /**
-   * Split channels in a 3 channel image, for instance, color image.
-   * @param src 3 channel image
-   * @return array of 3 channels
-   */
-  def splitChannels(src: IplImage): Array[IplImage] = {
-    require(src != null, "Argument `src` cannot be null.")
-    require(src.nChannels == 3, "Expecting 3 channel (color) image")
-
-    val size = cvGetSize(src)
-    val channel0 = cvCreateImage(size, src.depth, 1)
-    val channel1 = cvCreateImage(size, src.depth, 1)
-    val channel2 = cvCreateImage(size, src.depth, 1)
-    cvSplit(src, channel0, channel1, channel2, null)
-
-    Array(channel0, channel1, channel2)
-  }
-}
-
-/**
- * Helper class that simplifies usage of OpenCV `cv::calcHist` function for color images.
+ * Helper class that simplifies usage of OpenCV `calcHist` function for color images.
  *
  * See OpenCV [[http://opencv.itseez.com/modules/imgproc/doc/histograms.html?highlight=histogram]]
  * documentation to learn backend details.
  */
-class ColorHistogram {
+class ColorHistogram(var numberOfBins: Int = 256) {
 
-  import ColorHistogram._
-
-  val numberOfBins = 256
   private val _minRange = 0.0f
   private val _maxRange = 255.0f
 
   /**
    * Computes histogram of an image.
-   * Returned CvHistogram object has to be manually deallocated after use using `cvReleaseHist`.
    *
    * @param image input image
    * @return OpenCV histogram object
    */
-  def getHistogram(image: IplImage): CvHistogram = {
+  def getHistogram(image: Mat): Mat = {
 
     require(image != null)
-    require(image.nChannels == 3, "Expecting 3 channel (color) image")
-
-    // Allocate histogram object
-    val dims = 3
-    val sizes = Array(numberOfBins, numberOfBins, numberOfBins)
-    val histType = CV_HIST_SPARSE
-    val minMax = Array(_minRange, _maxRange)
-    val ranges = Array(minMax, minMax, minMax)
-    val uniform = 1
-    val hist = imgproc.cvCreateHist(dims, sizes, histType, ranges, uniform)
-
-    // Split bands, as required by `cvCalcHist`
-    val channel0 = cvCreateImage(cvGetSize(image), image.depth, 1)
-    val channel1 = cvCreateImage(cvGetSize(image), image.depth, 1)
-    val channel2 = cvCreateImage(cvGetSize(image), image.depth, 1)
-    cvSplit(image, channel0, channel1, channel2, null)
+    require(image.channels == 3, "Expecting 3 channel (color) image")
 
     // Compute histogram
-    val accumulate = 0
-    val mask = null
-    imgproc.cvCalcHist(Array(channel0, channel1, channel2), hist, accumulate, mask)
+    val hist = new Mat()
+
+    // Since C++ `calcHist` is using arrays of arrays we need wrap to do some wrapping
+    // in `IntPointer` and `PointerPointer` objects.
+    val intPtrChannels = new IntPointer(0, 1, 2)
+    val intPtrHistSize = new IntPointer(numberOfBins, numberOfBins, numberOfBins)
+    val histRange = Array(_minRange, _maxRange)
+    val ptrPtrHistRange: PointerPointer[FloatPointer] = new PointerPointer[FloatPointer](histRange, histRange, histRange)
+    calcHist(image,
+      1, // histogram of 1 image only
+      intPtrChannels, // the channel used
+      new Mat(), // no mask is used
+      hist, // the resulting histogram
+      3, // it is a 3D histogram
+      intPtrHistSize, // number of bins
+      ptrPtrHistRange, // pixel value range
+      true, // uniform
+      false) // no accumulation
     hist
   }
 
@@ -110,30 +62,76 @@ class ColorHistogram {
    *                      Pixels with saturation larger than minimum will be used in histogram computation
    * @return histogram of the hue channel, its range is from 0 to 180.
    */
-  def getHueHistogram(image: IplImage, minSaturation: Int = 0): CvHistogram = {
+  def getHueHistogram(image: Mat, minSaturation: Int = 0): Mat = {
     require(image != null)
-    require(image.nChannels == 3, "Expecting 3 channel (color) image")
+    require(image.channels == 3, "Expecting 3 channel (color) image")
 
     // Convert RGB to HSV color space
-    val hsvImage = cvCreateImage(cvGetSize(image), image.depth, 3)
-    cvCvtColor(image, hsvImage, CV_BGR2HSV)
+    val hsvImage = new Mat()
+    cvtColor(image, hsvImage, CV_BGR2HSV)
 
-    // Split the 3 channels into 3 images
-    val hsvChannels = splitChannels(hsvImage)
+    val saturationMask = new Mat()
+    if (minSaturation > 0) {
+      // Split the 3 channels into 3 images
+      val hsvChannels = new MatVector()
+      split(hsvImage, hsvChannels)
 
-    val saturationMask = if (minSaturation > 0) {
-      val saturationMask = cvCreateImage(cvGetSize(hsvImage), IPL_DEPTH_8U, 1)
-      cvThreshold(hsvChannels(1), saturationMask, minSaturation, 255, CV_THRESH_BINARY)
-      saturationMask
-    } else {
-      null
+      threshold(hsvChannels.get(1), saturationMask, minSaturation, 255, CV_THRESH_BINARY)
     }
 
-    // Compute histogram of the hue channel
-    val h1D = new Histogram1D()
-    h1D.setRanges(0, 180)
-    h1D.getHistogram(hsvChannels(0), saturationMask)
+    // Prepare arguments for a 1D hue histogram
+    val hist = new Mat()
+    // range is from 0 to 180
+    val histRanges = Array(0f, 180f)
+    // the hue channel
+    val channels = Array(0)
+
+    // Compute histogram
+    calcHist(hsvImage,
+      1, // histogram of 1 image only
+      channels, // the channel used
+      saturationMask, // binary mask
+      hist, // the resulting histogram
+      1, // it is a 1D histogram
+      Array(numberOfBins), // number of bins
+      histRanges // pixel value range
+    )
+
+    hist
   }
 
+  /**
+   * Computes the 2D ab histogram. BGR source image is converted to Lab
+   */
+  def getabHistogram(image: Mat): Mat = {
 
+    val hist = new Mat()
+
+    // Convert to Lab color space
+    val lab = new Mat()
+    cvtColor(image, lab, CV_BGR2Lab)
+
+    // Prepare arguments for a 2D color histogram
+    val histRange = Array(0f, 255f)
+    val ptrPtrHistRange: PointerPointer[FloatPointer] = new PointerPointer[FloatPointer](histRange, histRange, histRange)
+    // the two channels used are ab
+    val intPtrChannels = new IntPointer(1, 2)
+    val intPtrHistSize = new IntPointer(numberOfBins, numberOfBins)
+
+
+    // Compute histogram
+    calcHist(lab,
+      1, // histogram of 1 image only
+      intPtrChannels, // the channel used
+      new Mat(), // no mask is used
+      hist, // the resulting histogram
+      2, // it is a 2D histogram
+      intPtrHistSize, // number of bins
+      ptrPtrHistRange, // pixel value range
+      true, // Uniform
+      false // do not accumulate
+    )
+
+    hist
+  }
 }

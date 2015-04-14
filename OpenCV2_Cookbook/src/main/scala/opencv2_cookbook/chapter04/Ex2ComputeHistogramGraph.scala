@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2014 Jarek Sacha. All Rights Reserved.
+ * Copyright (c) 2011-2015 Jarek Sacha. All Rights Reserved.
  *
  * Author's e-mail: jpsacha at gmail.com
  */
@@ -18,7 +18,7 @@ import org.bytedeco.javacpp.opencv_highgui._
 object Ex2ComputeHistogramGraph extends App {
 
   // Load image as a gray scale since we will be calculating histogram of an image with a single channel
-  val src = loadIplAndShowOrExit(new File("data/group.jpg"), CV_LOAD_IMAGE_GRAYSCALE)
+  val src = loadAndShowOrExit(new File("data/group.jpg"), CV_LOAD_IMAGE_GRAYSCALE)
 
   // Calculate histogram
   val h = new Histogram1D
