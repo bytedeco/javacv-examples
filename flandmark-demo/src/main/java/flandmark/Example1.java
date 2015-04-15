@@ -2,6 +2,7 @@ package flandmark;
 
 import org.bytedeco.javacpp.BytePointer;
 import org.bytedeco.javacv.CanvasFrame;
+import org.bytedeco.javacv.OpenCVFrameConverter;
 
 import javax.naming.OperationNotSupportedException;
 import javax.swing.*;
@@ -68,7 +69,9 @@ public final class Example1 {
         cvCopy(image, image1);
         CanvasFrame canvas = new CanvasFrame(title, 1);
         canvas.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        canvas.showImage(image1);
+        final OpenCVFrameConverter.ToIplImage converter = new OpenCVFrameConverter.ToIplImage();
+
+        canvas.showImage(converter.convert(image1));
     }
 
     public static void detectFaceInImage(final IplImage orig,
