@@ -50,7 +50,7 @@ val nbChannels = image.channels
 // Random number generator
 val random = new Random()
 // Get access to image data
-val indexer = image.createIndexer().asInstanceOf[ByteIndexer]
+val indexer = image.createIndexer().asInstanceOf[UByteIndexer]
 
 // Place `n` grains at random locations
 for (i <- 1 to n) {
@@ -87,7 +87,7 @@ Since we do not care here about location of pixels or channels, each is processe
 val image : Mat = ...
 
 // Indexer is used to access value in the image
-val indexer = image.createIndexer().asInstanceOf[ByteIndexer]
+val indexer = image.createIndexer().asInstanceOf[UByteIndexer]
 
 // Total number of elements, combining components from each channel
 val nbElements = image.rows * image.cols * image.channels

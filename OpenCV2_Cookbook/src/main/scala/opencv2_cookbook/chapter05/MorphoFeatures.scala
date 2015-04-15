@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2014 Jarek Sacha. All Rights Reserved.
+ * Copyright (c) 2011-2015 Jarek Sacha. All Rights Reserved.
  *
  * Author's e-mail: jpsacha at gmail.com
  */
@@ -8,6 +8,8 @@ package opencv2_cookbook.chapter05
 
 import java.awt.geom.Ellipse2D
 import java.awt.{Color, Graphics2D, Image}
+
+import opencv2_cookbook.OpenCVUtils._
 import org.bytedeco.javacpp.opencv_core._
 import org.bytedeco.javacpp.opencv_imgproc._
 
@@ -104,11 +106,11 @@ class MorphoFeatures {
   def drawOnImage(binary: IplImage, image: IplImage): Image = {
 
     // OpenCV drawing seems to crash a lot, so use Java2D
-    val binaryRaster = binary.getBufferedImage.getData
+    val binaryRaster = toBufferedImage(binary).getData
     val radius = 3
     val diameter = radius * 2
 
-    val imageBI = image.getBufferedImage
+    val imageBI = toBufferedImage(image)
     val width = imageBI.getWidth
     val height = imageBI.getHeight
     val g2d = imageBI.getGraphics.asInstanceOf[Graphics2D]

@@ -1,12 +1,11 @@
 /*
- * Copyright (c) 2011-2014 Jarek Sacha. All Rights Reserved.
+ * Copyright (c) 2011-2015 Jarek Sacha. All Rights Reserved.
  *
  * Author's e-mail: jpsacha at gmail.com
  */
 
 package opencv2_cookbook.chapter04
 
-import java.awt.Rectangle
 import java.io.File
 
 import opencv2_cookbook.OpenCVUtils._
@@ -29,65 +28,49 @@ import org.bytedeco.javacpp.opencv_video._
   */
 object Ex8MeanShiftDetector extends App {
 
+  val Red = new Scalar(0, 0, 255, 128)
+
   //
   // Prepare 'template'
   //
 
   // Load image as a color
-  val templateImage = loadIplAndShowOrExit(new File("data/baboon1.jpg"), CV_LOAD_IMAGE_COLOR)
+  val templateImage = loadAndShowOrExit(new File("data/baboon1.jpg"), CV_LOAD_IMAGE_COLOR)
 
   // Display image with marked ROI
-  val rect = new Rectangle(110, 260, 35, 40)
-  show(drawOnImage(templateImage, rect), "Input template")
+  val rect = new Rect(110, 260, 35, 40)
+  show(drawOnImage(templateImage, rect, Red), "Input template")
 
   // Define ROI for sample histogram
-  templateImage.roi(toIplROI(rect))
+  val imageROI = templateImage(rect)
 
   // Compute histogram within the ROI
   val minSaturation = 65
-  val templateHueHist = new ColorHistogram().getHueHistogram(templateImage, minSaturation)
+  val templateHueHist = new ColorHistogram().getHueHistogram(imageROI, minSaturation)
+
+  val finder = new ContentFinder()
+  finder.histogram = templateHueHist
 
   //
   //  Search a target image for best match to the 'template'
   //
 
   // Load the second image where we want to locate a new baboon face
-  val targetImage = loadIplAndShowOrExit(new File("data/baboon3.jpg"), CV_LOAD_IMAGE_COLOR)
+  val targetImage = loadAndShowOrExit(new File("data/baboon3.jpg"), CV_LOAD_IMAGE_COLOR)
 
   // Convert to HSV color space
-  val hsvTargetImage = cvCreateImage(cvGetSize(targetImage), targetImage.depth, 3)
-  cvCvtColor(targetImage, hsvTargetImage, CV_BGR2HSV)
+  val hsvTargetImage = new Mat()
+  cvtColor(targetImage, hsvTargetImage, CV_BGR2HSV)
 
-  // Identify pixels with low saturation
-  val saturationChannel = ColorHistogram.splitChannels(hsvTargetImage)(1)
-  cvThreshold(saturationChannel, saturationChannel, minSaturation, 255, CV_THRESH_BINARY)
-  show(saturationChannel, "Target saturation mask")
+  // Get back-projection of hue histogram
+  finder.threshold = -1f
+  val hueBackProjectionImage = finder.find(hsvTargetImage, 0f, 180f, Array(0))
+  show(hueBackProjectionImage, "Backprojection of second image")
 
-  // Get back-projection of the hue histogram of the 'template'
-  val finder = new ContentFinder()
-  finder.histogram = templateHueHist
-  val result = finder.find(hsvTargetImage)
-  show(result, "Back-projection.")
+  // Search for object with mean-shift
+  val criteria = new TermCriteria(TermCriteria.MAX_ITER, 10, 0.01)
+  val r = meanShift(hueBackProjectionImage, rect, criteria)
+  println("meanshift = " + r)
 
-  // Eliminate low saturation pixels, to reduce noise abd improve search quality
-  cvAnd(result, saturationChannel, result, null)
-  show(result, "Back-projection with reduced saturation pixels.")
-
-  // Starting position for the search
-  val targetRect = new CvRect()
-  targetRect.x(rect.x)
-  targetRect.y(rect.y)
-  targetRect.width(rect.width)
-  targetRect.height(rect.height)
-
-  // Search termination criteria
-  val termCriteria = new CvTermCriteria()
-  termCriteria.max_iter(10)
-  termCriteria.epsilon(0.01)
-  termCriteria.`type`(CV_TERMCRIT_ITER)
-
-  // Search using mean shift algorithm.
-  val searchResults = new CvConnectedComp()
-  val iterations = cvMeanShift(result, targetRect, termCriteria, searchResults)
-  show(drawOnImage(targetImage, toRectangle(searchResults.rect())), "Output in " + iterations + " iterations.")
+  show(drawOnImage(targetImage, rect, Red), s"Image 2 result in $r iterations")
 }

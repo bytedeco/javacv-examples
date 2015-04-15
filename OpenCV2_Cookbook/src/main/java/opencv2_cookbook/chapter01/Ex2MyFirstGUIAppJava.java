@@ -13,6 +13,7 @@ import java.io.File;
 
 import static javax.swing.JOptionPane.ERROR_MESSAGE;
 import static javax.swing.JOptionPane.showMessageDialog;
+import static opencv2_cookbook.OpenCVUtils.toBufferedImage;
 import static org.bytedeco.javacpp.opencv_core.Mat;
 import static org.bytedeco.javacpp.opencv_core.flip;
 import static org.bytedeco.javacpp.opencv_highgui.imread;
@@ -66,7 +67,7 @@ public final class Ex2MyFirstGUIAppJava extends JFrame {
                     // Process and update image display if image is loaded
                     if (image != null) {
                         processImage(image);
-                        imageView.setIcon(new ImageIcon(image.getBufferedImage()));
+                        imageView.setIcon(new ImageIcon(toBufferedImage(image)));
                     } else {
                         showMessageDialog(Ex2MyFirstGUIAppJava.this, "Image not opened", getTitle(), ERROR_MESSAGE);
                     }
@@ -90,7 +91,7 @@ public final class Ex2MyFirstGUIAppJava extends JFrame {
 
                     if (img != null) {
                         image = img;
-                        imageView.setIcon(new ImageIcon(image.getBufferedImage()));
+                        imageView.setIcon(new ImageIcon(toBufferedImage(image)));
                         processAction.setEnabled(true);
 
                     }

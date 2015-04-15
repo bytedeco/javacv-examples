@@ -10,7 +10,7 @@ import javax.swing.JFrame._
 
 import org.bytedeco.javacpp.opencv_core._
 import org.bytedeco.javacpp.opencv_highgui._
-import org.bytedeco.javacv.CanvasFrame
+import org.bytedeco.javacv.{CanvasFrame, OpenCVFrameConverter}
 
 /**
  * Example of reading, saving, displaying, and drawing on an image.
@@ -38,7 +38,8 @@ object Ex3LoadAndSave extends App {
   canvas.setDefaultCloseOperation(EXIT_ON_CLOSE)
 
   // Show image on window
-  canvas.showImage(image)
+  val converter = new OpenCVFrameConverter.ToIplImage()
+  canvas.showImage(converter.convert(image))
 
 
   // we create another empty image
@@ -55,7 +56,7 @@ object Ex3LoadAndSave extends App {
   canvas.setDefaultCloseOperation(EXIT_ON_CLOSE)
 
   // Show image on window
-  canvas2.showImage(result)
+  canvas2.showImage(converter.convert(result))
 
   // save result
   imwrite("output.bmp", result)
@@ -84,5 +85,5 @@ object Ex3LoadAndSave extends App {
     false) //When true, the image data origin is at the bottom-left corner. Otherwise, it is at the top-left corner.
 
   canvas3.setDefaultCloseOperation(EXIT_ON_CLOSE)
-  canvas3.showImage(image3)
+  canvas3.showImage(converter.convert(image3))
 }

@@ -160,11 +160,11 @@ List of Examples
   * *`Ex1ColorDetector`* - Compare RGB colors to some target color, colors that are similar to the target color are assigned to white in the output image, other pixels are set to black.
   * *`Ex2ColorDetectorSimpleApplication`* - Same processing is the first example, but demonstrates simple UI.
   * *`Ex3ColorDetectorMVCApplication`* - Same processing is the first example, but demonstrates a more elaborated UI.
-  * *`Ex4ConvertingColorSpaces`* - Similar to the first example, but color distance is calculated in `L*a*b*` color space. Illustrates use of `cvCvtColor` function.
+  * *`Ex4ConvertingColorSpaces`* - Similar to the first example, but color distance is calculated in `L*a*b*` color space. Illustrates use of `cvtColor` function.
 * [Chapter 4: Counting the Pixels with Histograms](src/main/scala/opencv2_cookbook/chapter04)
   * *`Ex1ComputeHistogram`* - Computes histogram using utility class `Histogram1D` and prints values to the screen. 
   * *`Ex2ComputeHistogramGraph`* - Displays a graph of a histogram created using utility class `Histogram1D`.
-  * *`Ex3Threshold`* - Separates pixels in an image into a foreground and background using OpenCV `cvThreshold()` method.
+  * *`Ex3Threshold`* - Separates pixels in an image into a foreground and background using OpenCV `threshold()` method.
   * *`Ex4InvertLut`* - Creates inverted image by inverting its look-up table.
   * *`Ex5EqualizeHistogram`* - Enhances image using histogram equalization.
   * *`Ex6ContentDetectionGrayscale`* - Uses histogram of a region in an grayscale image to create 'template', looks through the whole image to detect pixels that are similar to that template. Illustrates use of method `cvCalcBackProject()`.
@@ -227,7 +227,6 @@ List of Examples
   * *`VideoProcessor`* - Helper class for dealing with video files, loading and applying processing to individual frames, used by examples: `Ex2ProcessVideoFrames`, `Ex3WriteVideoSequence`, `Ex4TrackingFeatures`, and `Ex5ForegroundSegmenter`.
 * [Utilities](src/main/scala/opencv2_cookbook)
   * *`OpenCVUtils`* - reading and writing of image files, display of images, drawing of features on images, conversions between OpenCV image and data representations.
-  * *`OpenCVImageJUtils`* - conversion between OpenCV and ImageJ image representations.
 
 Why Scala?
 ----------

@@ -11,7 +11,7 @@ import java.io.File
 import javax.swing.WindowConstants
 
 import org.bytedeco.javacpp.opencv_core.Mat
-import org.bytedeco.javacv.CanvasFrame
+import org.bytedeco.javacv.{CanvasFrame, OpenCVFrameConverter}
 
 import scala.swing.Dialog.Message.Error
 import scala.swing.FileChooser.Result.Approve
@@ -89,6 +89,7 @@ object Ex2ColorDetectorSimpleApplication extends SimpleSwingApplication {
     // by setting gamma to 1, otherwise the image will not look correct.
     val canvas = new CanvasFrame(caption, 1)
     canvas.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE)
-    canvas.showImage(image)
+    val converter = new OpenCVFrameConverter.ToIplImage()
+    canvas.showImage(converter.convert(image))
   }
 }

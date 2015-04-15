@@ -9,7 +9,7 @@ package opencv2_cookbook.chapter02
 import java.io.File
 
 import opencv2_cookbook.OpenCVUtils._
-import org.bytedeco.javacpp.indexer.ByteIndexer
+import org.bytedeco.javacpp.indexer.UByteIndexer
 import org.bytedeco.javacpp.opencv_core.Mat
 import org.bytedeco.javacpp.opencv_highgui._
 
@@ -43,7 +43,7 @@ object Ex1Salt extends App {
     val random = new Random()
 
     // Get access to image data
-    val indexer = image.createIndexer().asInstanceOf[ByteIndexer]
+    val indexer = image.createIndexer().asInstanceOf[UByteIndexer]
 
     // Place `n` grains at random locations
     val nbChannels = image.channels

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2014 Jarek Sacha. All Rights Reserved.
+ * Copyright (c) 2011-2015 Jarek Sacha. All Rights Reserved.
  *
  * Author's e-mail: jpsacha at gmail.com
  */
@@ -30,7 +30,7 @@ object Ex9ImageComparator extends App {
   )
 
   // Load reference image
-  val reference = loadIplImageOrExit(referenceImageFile, CV_LOAD_IMAGE_COLOR)
+  val reference = loadOrExit(referenceImageFile, CV_LOAD_IMAGE_COLOR)
 
   // Setup comparator
   val comparator = new ImageComparator(reference)
@@ -40,8 +40,8 @@ object Ex9ImageComparator extends App {
 
   // Compute similarity for test images
   for (file <- testImageFiles) {
-    val image = loadIplImageOrExit(file, CV_LOAD_IMAGE_COLOR)
-    val imageSize = image.width * image.height
+    val image = loadOrExit(file, CV_LOAD_IMAGE_COLOR)
+    val imageSize = image.cols() * image.rows()
     // Compute histogram match and normalize by image size.
     // 1 means perfect match.
     val score = comparator.compare(image) / imageSize

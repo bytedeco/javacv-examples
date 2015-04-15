@@ -1,19 +1,16 @@
 /*
- * Copyright (c) 2011-2014 Jarek Sacha. All Rights Reserved.
+ * Copyright (c) 2011-2015 Jarek Sacha. All Rights Reserved.
  *
  * Author's e-mail: jpsacha at gmail.com
  */
 
 package opencv2_cookbook.chapter04
 
-import java.awt.Rectangle
 import java.io.File
 
 import opencv2_cookbook.OpenCVUtils._
-import org.bytedeco.javacpp.helper.{opencv_imgproc => imgproc}
 import org.bytedeco.javacpp.opencv_core._
 import org.bytedeco.javacpp.opencv_highgui._
-import org.bytedeco.javacpp.opencv_imgproc._
 
 
 /**
@@ -24,30 +21,31 @@ import org.bytedeco.javacpp.opencv_imgproc._
 object Ex6ContentDetectionGrayscale extends App {
 
   // Load image as a gray scale
-  val src = loadIplImageOrExit(new File("data/waves.jpg"), CV_LOAD_IMAGE_GRAYSCALE)
+  val src = loadAndShowOrExit(new File("data/waves.jpg"), CV_LOAD_IMAGE_GRAYSCALE)
+
+  val rectROI = new Rect(216, 33, 24, 30)
 
   // Display image with marked ROI
-  val rect = new Rectangle(360, 44, 40, 50)
-  show(drawOnImage(src, rect), "Input")
+  show(drawOnImage(src, rectROI, new Scalar(1d, 255d, 255d, 0.5)), "Input")
 
   // Define ROI
-  src.roi(toIplROI(rect))
+  val imageROI = src(rectROI)
+  show(imageROI, "Reference")
 
   // Compute histogram within the ROI
-  val h = new Histogram1D().getHistogram(src)
+  val h = new Histogram1D()
+  val hist = h.getHistogram(imageROI)
+  show(h.getHistogramImage(imageROI), "Reference Histogram")
 
-  // Normalize histogram so the sum of all bins is equal to 1.
-  cvNormalizeHist(h, 1)
+  val finder = new ContentFinder()
+  finder.histogram = hist
 
-  // Remove ROI, we will be using full image for the rest
-  src.roi(null)
+  val result1 = finder.find(src)
+  val tmp = new Mat()
+  result1.convertTo(tmp, CV_8U, -1, 255)
+  show(tmp, "Back-projection result")
 
-  // Back projection is done using 32 floating point copy of the input image.
-  // The output is also 32 bit floating point
-  val dest = cvCreateImage(cvGetSize(src), IPL_DEPTH_32F, src.nChannels)
-  imgproc.cvCalcBackProject(Array(toIplImage32F(src)), dest, h)
-  cvReleaseHist(h)
-
-  // Show results
-  show(scaleTo01(dest), "Backprojection result")
+  finder.threshold = 0.12f
+  val result2 = finder.find(src)
+  show(result2, "Detection result")
 }

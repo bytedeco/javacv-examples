@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2014 Jarek Sacha. All Rights Reserved.
+ * Copyright (c) 2011-2015 Jarek Sacha. All Rights Reserved.
  *
  * Author's e-mail: jpsacha at gmail.com
  */
@@ -18,7 +18,8 @@ import org.bytedeco.javacpp.helper.opencv_core.CvArr
 import org.bytedeco.javacpp.opencv_core._
 import org.bytedeco.javacpp.opencv_features2d.{DMatch, KeyPoint}
 import org.bytedeco.javacpp.opencv_highgui._
-import org.bytedeco.javacv.CanvasFrame
+import org.bytedeco.javacv.OpenCVFrameConverter.ToMat
+import org.bytedeco.javacv.{CanvasFrame, Java2DFrameConverter, OpenCVFrameConverter}
 
 
 /** Helper methods that simplify use of OpenCV API. */
@@ -41,7 +42,7 @@ object OpenCVUtils {
     * @return Loaded image
     */
   @deprecated(message = "`Mat` is preferred way to represent an image, use `IplImage` is discouraged.", since = "0.9")
-  def loadIplAndShowOrExit(file: File, flags: Int = CV_LOAD_IMAGE_GRAYSCALE): IplImage = {
+  def loadIplAndShowOrExit(file: File, flags: Int = CV_LOAD_IMAGE_COLOR): IplImage = {
     try {
       val image = loadIplImageOrExit(file, flags)
       show(image, file.getName)
@@ -72,7 +73,7 @@ object OpenCVUtils {
     * @return Loaded image
     */
   @deprecated(message = "`Mat` is preferred way to represent an image, use `IplImage` is discouraged.", since = "0.9")
-  def loadIplImageOrExit(file: File, flags: Int = CV_LOAD_IMAGE_GRAYSCALE): IplImage = {
+  def loadIplImageOrExit(file: File, flags: Int = CV_LOAD_IMAGE_COLOR): IplImage = {
     // Verify file
     if (!file.exists()) {
       throw new FileNotFoundException("Image file does not exist: " + file.getAbsolutePath)
@@ -88,9 +89,10 @@ object OpenCVUtils {
   /** Show image in a window. Closing the window will exit the application. */
   @deprecated(message = "`Mat` is preferred way to represent an image, use `IplImage` is discouraged.", since = "0.9")
   def show(image: IplImage, title: String) {
+    val converter = new OpenCVFrameConverter.ToIplImage()
     val canvas = new CanvasFrame(title, 1)
     canvas.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE)
-    canvas.showImage(image)
+    canvas.showImage(converter.convert(image))
   }
 
   /** Load an image and show in a CanvasFrame.  If image cannot be loaded the application will exit with code 1.
@@ -106,7 +108,7 @@ object OpenCVUtils {
     *              Default is gray scale.
     * @return loaded image
     */
-  def loadCvMatAndShowOrExit(file: File, flags: Int = CV_LOAD_IMAGE_GRAYSCALE): CvMat = {
+  def loadCvMatAndShowOrExit(file: File, flags: Int = CV_LOAD_IMAGE_COLOR): CvMat = {
     // Read input image
     val image = loadCvMatOrExit(file, flags)
     show(image, file.getName)
@@ -126,7 +128,7 @@ object OpenCVUtils {
     *              Default is gray scale.
     * @return loaded image
     */
-  def loadCvMatOrExit(file: File, flags: Int = CV_LOAD_IMAGE_GRAYSCALE): CvMat = {
+  def loadCvMatOrExit(file: File, flags: Int = CV_LOAD_IMAGE_COLOR): CvMat = {
     // Read input image
     val image = cvLoadImageM(file.getAbsolutePath, flags)
     if (image == null) {
@@ -137,10 +139,12 @@ object OpenCVUtils {
   }
 
   /** Show image in a window. Closing the window will exit the application. */
+  @deprecated(message = "`Mat` is preferred way to represent an image, use `CvMat` is discouraged.", since = "0.9")
   def show(mat: CvMat, title: String) {
+    val converter = new OpenCVFrameConverter.ToIplImage()
     val canvas = new CanvasFrame(title, 1)
     canvas.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE)
-    canvas.showImage(mat.asIplImage())
+    canvas.showImage(converter.convert(mat.asIplImage()))
   }
 
   /** Load an image and show in a CanvasFrame.  If image cannot be loaded the application will exit with code 1.
@@ -156,7 +160,7 @@ object OpenCVUtils {
     *              Default is gray scale.
     * @return loaded image
     */
-  def loadAndShowOrExit(file: File, flags: Int = CV_LOAD_IMAGE_GRAYSCALE): Mat = {
+  def loadAndShowOrExit(file: File, flags: Int = CV_LOAD_IMAGE_COLOR): Mat = {
     // Read input image
     val image = loadOrExit(file, flags)
     show(image, file.getName)
@@ -176,7 +180,7 @@ object OpenCVUtils {
     *              Default is gray scale.
     * @return loaded image
     */
-  def loadOrExit(file: File, flags: Int = CV_LOAD_IMAGE_GRAYSCALE): Mat = {
+  def loadOrExit(file: File, flags: Int = CV_LOAD_IMAGE_COLOR): Mat = {
     // Read input image
     val image = imread(file.getAbsolutePath, flags)
     if (image.empty()) {
@@ -187,9 +191,10 @@ object OpenCVUtils {
   }
 
   def show(mat: Mat, title: String) {
+    val converter = new ToMat()
     val canvas = new CanvasFrame(title, 1)
     canvas.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE)
-    canvas.showImage(mat.asIplImage())
+    canvas.showImage(converter.convert(mat))
   }
 
   /** Show image in a window. Closing the window will exit the application. */
@@ -205,14 +210,16 @@ object OpenCVUtils {
   def drawOnImage(image: IplImage, points: CvPoint2D32f): Image = {
     // OpenCV drawing seems to crash a lot, so use Java2D
     val radius = 3
-    val bi = image.getBufferedImage
+    val converter = new OpenCVFrameConverter.ToIplImage()
+    val frame = converter.convert(image)
+    val bi = new Java2DFrameConverter().convert(frame)
     val canvas = new BufferedImage(bi.getWidth, bi.getHeight, BufferedImage.TYPE_INT_RGB)
     val g2d = canvas.getGraphics.asInstanceOf[Graphics2D]
     g2d.drawImage(bi, 0, 0, null)
     g2d.setColor(Color.RED)
     val w = radius * 2
     // Plot points
-    toArray(points).foreach { p => g2d.draw(new Ellipse2D.Double(p.x - radius, p.y - radius, w, w))}
+    toArray(points).foreach { p => g2d.draw(new Ellipse2D.Double(p.x - radius, p.y - radius, w, w)) }
 
     canvas
   }
@@ -243,7 +250,9 @@ object OpenCVUtils {
 
     // OpenCV drawing seems to crash a lot, so use Java2D
     val minR = 2
-    val bi = image.getBufferedImage
+    val converter = new OpenCVFrameConverter.ToIplImage()
+    val frame = converter.convert(image)
+    val bi = new Java2DFrameConverter().convert(frame)
     val g2d = bi.getGraphics.asInstanceOf[Graphics2D]
     g2d.setColor(Color.WHITE)
 
@@ -271,6 +280,18 @@ object OpenCVUtils {
     points
   }
 
+  def toBufferedImage(ipl: IplImage): BufferedImage = {
+    val openCVConverter = new OpenCVFrameConverter.ToIplImage()
+    val java2DConverter = new Java2DFrameConverter()
+    java2DConverter.convert(openCVConverter.convert(ipl))
+  }
+
+  def toBufferedImage(mat: Mat): BufferedImage = {
+    val openCVConverter = new ToMat()
+    val java2DConverter = new Java2DFrameConverter()
+    java2DConverter.convert(openCVConverter.convert(mat))
+  }
+
   /** Draw circles at key point locations on an image. Circle radius is proportional to key point size. */
   def drawOnImage(image: Mat, points: KeyPoint): Image = {
     drawOnImage(image.asIplImage(), toArray(points))
@@ -283,9 +304,24 @@ object OpenCVUtils {
     * @param color color to use
     * @return new image with drawn overlay
     */
+  def drawOnImage(image: Mat, overlay: Rect, color: Scalar): Mat = {
+    val dest = image.clone()
+    rectangle(dest, overlay, color)
+    dest
+  }
+
+  /** Draw a shape on an image.
+    *
+    * @param image input image
+    * @param overlay shape to draw
+    * @param color color to use
+    * @return new image with drawn overlay
+    */
   @deprecated(message = "`Mat` is preferred way to represent an image, use `IplImage` is discouraged.", since = "0.9")
   def drawOnImage(image: IplImage, overlay: Shape, color: Color = Color.RED): Image = {
-    val bi = image.getBufferedImage
+    val converter = new OpenCVFrameConverter.ToIplImage()
+    val frame = converter.convert(image)
+    val bi = new Java2DFrameConverter().convert(frame)
     val canvas = new BufferedImage(bi.getWidth, bi.getHeight, BufferedImage.TYPE_INT_RGB)
     val g = canvas.createGraphics()
     g.drawImage(bi, 0, 0, null)
@@ -334,7 +370,7 @@ object OpenCVUtils {
   def toArray(matches: DMatch): Array[DMatch] = {
     val oldPosition = matches.position()
     val result = new Array[DMatch](matches.capacity())
-    for (i <- 0 until result.size) {
+    for (i <- result.indices) {
       val src = matches.position(i)
       val dest = new DMatch()
       copy(src, dest)
@@ -458,7 +494,7 @@ object OpenCVUtils {
     */
   def toNativeVector(src: Array[DMatch]): DMatch = {
     val dest = new DMatch(src.length)
-    for (i <- 0 until src.length) {
+    for (i <- src.indices) {
       // Since there is no way to `put` objects into a vector DMatch,
       // We have to reassign all values individually, and hope that API will not any new ones.
       copy(src(i), dest.position(i))
@@ -497,7 +533,7 @@ object OpenCVUtils {
     */
   def toNativeVector(src: Array[CvPoint2D32f]): CvPoint2D32f = {
     val dest = new CvPoint2D32f(src.length)
-    for (i <- 0 until src.length) {
+    for (i <- src.indices) {
       // Since there is no way to `put` objects into a vector CvPoint2D32f,
       // We have to reassign all values individually, and hope that API will not any new ones.
       copy(src(i), dest.position(i))
@@ -510,6 +546,6 @@ object OpenCVUtils {
 
   /** Convert `CvRect` to AWT `Rectangle`. */
   def toRectangle(rect: CvRect): Rectangle = {
-    new Rectangle(rect.x, rect.y, rect.width, rect height)
+    new Rectangle(rect.x, rect.y, rect.width, rect.height)
   }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2014 Jarek Sacha. All Rights Reserved.
+ * Copyright (c) 2011-2015 Jarek Sacha. All Rights Reserved.
  *
  * Author's e-mail: jpsacha at gmail.com
  */
@@ -8,6 +8,8 @@ package opencv2_cookbook.chapter08
 
 import java.awt.geom._
 import java.awt.{Color, Graphics2D, Image, Point}
+
+import opencv2_cookbook.OpenCVUtils._
 import org.bytedeco.javacpp.opencv_core._
 import org.bytedeco.javacpp.opencv_imgproc._
 
@@ -108,7 +110,7 @@ class HarrisDetector {
   private def getCorners(cornerMap: IplImage): List[Point] = {
 
     // Get access to image data on the JVM side
-    val r = cornerMap.getBufferedImage.getRaster
+    val r = toBufferedImage(cornerMap).getRaster
 
     // Iterate over the pixels to obtain all feature points
     val width = r.getWidth
@@ -133,7 +135,7 @@ class HarrisDetector {
 
     // OpenCV drawing seems to crash a lot, so use Java2D
     val radius = 3
-    val bi = image.getBufferedImage
+    val bi = toBufferedImage(image)
     val g2d = bi.getGraphics.asInstanceOf[Graphics2D]
     val w = radius * 2
     g2d.setColor(Color.WHITE)

@@ -6,9 +6,7 @@
 
 package opencv2_cookbook.chapter03
 
-import ij.process.ByteProcessor
-import opencv2_cookbook.OpenCVImageJUtils._
-import org.bytedeco.javacpp.helper.opencv_core.AbstractMat
+import org.bytedeco.javacpp.indexer.UByteIndexer
 import org.bytedeco.javacpp.opencv_core.Mat
 
 import scala.math._
@@ -25,8 +23,8 @@ import scala.math._
   *
   * This Scala code functionally is equivalent to C++ code in chapter 3 section
   * "Using the Strategy pattern in algorithm design".
-  * The original example in the book is using "C++ API". To make operations on image pixels easier and more efficient
-  * OpenCV color image is converted to ImageJ representation during processing.
+  * The original example in the book is using "C++ API".
+  * Here we use JavaCPP Indexer to access pixel values in the image.
   *
   * Unlike the in the C++ example, this class does not pre-allocates and hold space for process image,
   * it is create only when needed.
@@ -34,48 +32,45 @@ import scala.math._
 class ColorDetector(private var _minDist: Int = 100,
                     private var _target: ColorRGB = ColorRGB(130, 190, 230)) {
 
-
   def colorDistanceThreshold: Int = _minDist
-
 
   def colorDistanceThreshold_=(dist: Int) {
     _minDist = max(0, dist)
   }
 
-
   def targetColor: ColorRGB = _target
-
 
   def targetColor_=(color: ColorRGB) {
     _target = color
   }
 
-
   def process(image: Mat): Mat = {
 
-    // Convert to ImageJ's ColorProcessor for easier pixel access
-    val src = toColorProcessor(image)
+    // Indexer for input image
+    val srcI = image.createIndexer().asInstanceOf[UByteIndexer]
 
-    // Create output image
-    val dest = new ByteProcessor(src.getWidth, src.getHeight)
+    // Create output image and itx indexer
+    val dest = new Mat(image.rows, image.cols, org.bytedeco.javacpp.opencv_core.CV_8U)
+    val destI = dest.createIndexer().asInstanceOf[UByteIndexer]
 
     // Iterate through pixels and check if their distance from the target color is
     // withing the distance threshold, if it is set `dest` to 255.
-    for (y <- 0 until src.getHeight) {
-      for (x <- 0 until src.getWidth) {
-        if (distance(src.getColor(x, y)) < _minDist) {
-          dest.set(x, y, 255)
-        }
+    val brg = new Array[Int](3)
+    for (y <- 0 until image.rows) {
+      for (x <- 0 until image.cols) {
+        srcI.get(y, x, brg)
+        val c = ColorRGB.fromBGR(brg)
+        val t = if (distance(c) < colorDistanceThreshold) (255 & 0xFF).toByte else 0.toByte
+        destI.put(y, x, t)
       }
     }
 
-    // Convert back to OpenCV's Mat
-    AbstractMat.createFrom(toBufferedImage(dest))
+    dest
   }
 
-
-  @inline
-  private def distance(color: java.awt.Color): Double = {
-    abs(_target.red - color.getRed) + abs(_target.green - color.getGreen) + abs(_target.blue - color.getBlue)
+  private def distance(color: ColorRGB): Double = {
+    abs(targetColor.red - color.red) +
+      abs(targetColor.green - color.green) +
+      abs(targetColor.blue - color.blue)
   }
 }

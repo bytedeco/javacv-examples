@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2014 Jarek Sacha. All Rights Reserved.
+ * Copyright (c) 2011-2015 Jarek Sacha. All Rights Reserved.
  *
  * Author's e-mail: jpsacha at gmail.com
  */
@@ -9,7 +9,7 @@ package opencv2_cookbook.chapter01
 import javax.swing.JFrame._
 
 import org.bytedeco.javacpp.opencv_highgui._
-import org.bytedeco.javacv.CanvasFrame
+import org.bytedeco.javacv.{CanvasFrame, OpenCVFrameConverter}
 
 
 /** Example of loading and displaying and image  using JavaCV API,
@@ -39,5 +39,6 @@ object Ex1MyFirstOpenCVApp extends App {
   canvas.setDefaultCloseOperation(EXIT_ON_CLOSE)
 
   // Show image on window
-  canvas.showImage(image)
+  val converter = new OpenCVFrameConverter.ToIplImage()
+  canvas.showImage(converter.convert(image))
 }
