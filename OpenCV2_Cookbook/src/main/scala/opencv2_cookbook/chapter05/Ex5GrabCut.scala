@@ -41,8 +41,5 @@ object Ex5GrabCut extends App {
 
   // Prepare image for display: extract foreground
   threshold(result, result, GC_PR_FGD - 0.5, GC_PR_FGD + 0.5, THRESH_BINARY)
-
-  // FIXME: simplify - avoid conversions to IplImage, do processing on original Mat representation
-  show(toIplImage8U(result.asIplImage()), "Result foreground mask")
-
+  show(to8U(result), "Result foreground mask")
 }

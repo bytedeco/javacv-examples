@@ -345,6 +345,20 @@ object OpenCVUtils {
     cvSaveImage(file.getAbsolutePath, image)
   }
 
+  /** Save the image to the specified file.
+    *
+    * The image format is chosen based on the filename extension (see `imread()` in OpenCV documentation for the list of extensions).
+    * Only 8-bit (or 16-bit in case of PNG, JPEG 2000, and TIFF) single-channel or
+    * 3-channel (with ‘BGR’ channel order) images can be saved using this function.
+    * If the format, depth or channel order is different, use Mat::convertTo() , and cvtColor() to convert it before saving.
+    *
+    * @param file file to save to. File name extension decides output image format.
+    * @param image image to save.
+    */
+  def save(file: File, image: Mat) {
+    imwrite(file.getAbsolutePath, image)
+  }
+
   /** Scale input image pixel values so the minimum value is 0 and maximum is 1.
     *
     * This mostly used to prepare a gray scale floating point images for display.
@@ -455,6 +469,27 @@ object OpenCVUtils {
 
     val dest = cvCreateImage(cvGetSize(src), IPL_DEPTH_8U, src.nChannels)
     cvConvertScale(src, dest, scale, offset)
+    dest
+  }
+
+  /**
+   * Convert `Mat` to one where pixels are represented as 8 bit unsigned integers (`CV_8U`).
+   * It creates a copy of the input image.
+   *
+   * @param src input image.
+   * @return copy of the input with pixels values represented as 8 bit unsigned integers.
+   */
+  def to8U(src: Mat, doScaling: Boolean = true): Mat = {
+    val min = Array(Double.MaxValue)
+    val max = Array(Double.MinValue)
+    minMaxLoc(src, min, max, null, null, new Mat())
+    val (scale, offset) = if (doScaling) {
+      val s = 255d / (max(0) - min(0))
+      (s, -min(0) * s)
+    } else (1d, 0d)
+
+    val dest = new Mat()
+    src.convertTo(dest, CV_8U, scale, offset)
     dest
   }
 

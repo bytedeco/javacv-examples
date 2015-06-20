@@ -10,6 +10,9 @@ package opencv2_cookbook.chapter05
 import java.io.File
 
 import opencv2_cookbook.OpenCVUtils._
+import org.bytedeco.javacpp.opencv_core._
+import org.bytedeco.javacpp.opencv_highgui._
+import org.bytedeco.javacpp.opencv_imgproc._
 
 
 /**
@@ -19,15 +22,20 @@ import opencv2_cookbook.OpenCVUtils._
 object Ex3EdgesAndCorners extends App {
 
   // Read input image
-  val image = loadIplAndShowOrExit(new File("data/building.jpg"))
+  val image = loadAndShowOrExit(new File("data/building2.jpg"), CV_LOAD_IMAGE_GRAYSCALE)
 
-  val morpho = new MorphoFeatures
-  morpho.threshold = 40
+  //  resize(image, image, new Size(), 0.7, 0.7, INTER_LINEAR)
+
+  val morpho = new MorphoFeatures()
+  morpho.thresholdValue = 40
 
   val edges = morpho.getEdges(image)
   show(edges, "Edges")
 
+  morpho.thresholdValue = -1
   val corners = morpho.getCorners(image)
+  morphologyEx(corners, corners, MORPH_TOPHAT, new Mat())
+  threshold(corners, corners, 35, 255, THRESH_BINARY_INV)
   val cornersOnImage = morpho.drawOnImage(corners, image)
   show(cornersOnImage, "Corners on image")
 }

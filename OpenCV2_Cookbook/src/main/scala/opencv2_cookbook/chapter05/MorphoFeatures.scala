@@ -10,6 +10,7 @@ import java.awt.geom.Ellipse2D
 import java.awt.{Color, Graphics2D, Image}
 
 import opencv2_cookbook.OpenCVUtils._
+import org.bytedeco.javacpp.BytePointer
 import org.bytedeco.javacpp.opencv_core._
 import org.bytedeco.javacpp.opencv_imgproc._
 
@@ -21,11 +22,11 @@ import org.bytedeco.javacpp.opencv_imgproc._
 class MorphoFeatures {
 
   // Threshold to produce binary image
-  var threshold = -1
+  var thresholdValue = -1
 
   // Structural elements used in corner detection
-  private val cross = cvCreateStructuringElementEx(5, 5, 2, 2, CV_SHAPE_CUSTOM,
-    Array(
+  private val cross   = new Mat(5, 5, CV_8U,
+    new BytePointer(
       0, 0, 1, 0, 0,
       0, 0, 1, 0, 0,
       1, 1, 1, 1, 1,
@@ -33,8 +34,8 @@ class MorphoFeatures {
       0, 0, 1, 0, 0
     )
   )
-  private val diamond = cvCreateStructuringElementEx(5, 5, 2, 2, CV_SHAPE_CUSTOM,
-    Array(
+  private val diamond = new Mat(5, 5, CV_8U,
+    new BytePointer(
       0, 0, 1, 0, 0,
       0, 1, 1, 1, 0,
       1, 1, 1, 1, 1,
@@ -42,9 +43,17 @@ class MorphoFeatures {
       0, 0, 1, 0, 0
     )
   )
-  private val square = cvCreateStructuringElementEx(5, 5, 2, 2, CV_SHAPE_RECT)
-  private val x = cvCreateStructuringElementEx(5, 5, 2, 2, CV_SHAPE_CUSTOM,
-    Array(
+  private val square  = new Mat(5, 5, CV_8U,
+    new BytePointer(
+      1, 1, 1, 1, 1,
+      1, 1, 1, 1, 1,
+      1, 1, 1, 1, 1,
+      1, 1, 1, 1, 1,
+      1, 1, 1, 1, 1
+    )
+  )
+  private val x       = new Mat(5, 5, CV_8U,
+    new BytePointer(
       1, 0, 0, 0, 1,
       0, 1, 0, 1, 0,
       0, 0, 1, 0, 0,
@@ -54,11 +63,10 @@ class MorphoFeatures {
   )
 
 
-  def getEdges(image: IplImage): IplImage = {
+  def getEdges(image: Mat): Mat = {
     // Get gradient image
-    val result = cvCreateImage(cvGetSize(image), image.depth, 1)
-    val element3 = cvCreateStructuringElementEx(3, 3, 1, 1, CV_SHAPE_RECT)
-    cvMorphologyEx(image, result, null, element3, MORPH_GRADIENT, 1)
+    val result = new Mat()
+    morphologyEx(image, result, MORPH_GRADIENT, new Mat())
 
     // Apply threshold to obtain a binary image
     applyThreshold(result)
@@ -67,24 +75,25 @@ class MorphoFeatures {
   }
 
 
-  def getCorners(image: IplImage): IplImage = {
-    val result = cvCreateImage(cvGetSize(image), image.depth, 1)
+  def getCorners(image: Mat): Mat = {
+
+    val result = new Mat()
 
     // Dilate with a cross
-    cvDilate(image, result, cross, 1)
+    dilate(image, result, cross)
 
     // Erode with a diamond
-    cvErode(result, result, diamond, 1)
+    erode(result, result, diamond)
 
-    val result2 = cvCreateImage(cvGetSize(image), image.depth, 1)
+    val result2 = new Mat()
     // Dilate with X
-    cvDilate(image, result2, x, 1)
+    dilate(image, result2, x)
 
     // Erode with a square
-    cvErode(result2, result2, square, 1)
+    erode(result2, result2, square)
 
     // Corners are obtained by differentiating the two closed images
-    cvAbsDiff(result2, result, result)
+    absdiff(result2, result, result)
 
     // Apply threshold to get binary image
     applyThreshold(result)
@@ -93,9 +102,9 @@ class MorphoFeatures {
   }
 
 
-  private def applyThreshold(image: IplImage) {
-    if (threshold > 0) {
-      cvThreshold(image, image, threshold, 255, CV_THRESH_BINARY_INV)
+  private def applyThreshold(image: Mat) {
+    if (thresholdValue > 0) {
+      threshold(image, image, thresholdValue, 255, CV_THRESH_BINARY_INV)
     }
   }
 
@@ -103,11 +112,11 @@ class MorphoFeatures {
   /**
    * Draw circles at feature point locations on an image it assumes that images are of the same size.
    */
-  def drawOnImage(binary: IplImage, image: IplImage): Image = {
+  def drawOnImage(binary: Mat, image: Mat): Image = {
 
     // OpenCV drawing seems to crash a lot, so use Java2D
     val binaryRaster = toBufferedImage(binary).getData
-    val radius = 3
+    val radius = 6
     val diameter = radius * 2
 
     val imageBI = toBufferedImage(image)

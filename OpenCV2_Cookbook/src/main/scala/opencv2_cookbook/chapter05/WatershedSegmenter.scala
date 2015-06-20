@@ -15,33 +15,33 @@ import org.bytedeco.javacpp.opencv_imgproc._
  */
 class WatershedSegmenter {
 
-  private var _markers: IplImage = _
+  private var _markers: Mat = _
 
 
-  def setMarkers(markerImage: IplImage) {
-    _markers = cvCreateImage(cvGetSize(markerImage), IPL_DEPTH_32S, 1 /* channels */)
-    cvConvertScale(markerImage, _markers, 1 /* scale */ , 0 /* shift */)
+  def setMarkers(markerImage: Mat) {
+    _markers = new Mat()
+    markerImage.convertTo(_markers, CV_32SC1)
   }
 
 
-  def process(image: IplImage): IplImage = {
-    cvWatershed(image, _markers)
+  def process(image: Mat): Mat = {
+    watershed(image, _markers)
     _markers
   }
 
 
-  def getSegmentation: IplImage = {
+  def segmentation: Mat = {
     // all segment with label higher than 255
     // will be assigned value 255
-    val result = cvCreateImage(cvGetSize(_markers), IPL_DEPTH_8U, 1 /* channels */)
-    cvConvertScale(_markers, result, 1 /* scale */ , 0 /* shift */)
+    val result = new Mat()
+    _markers.convertTo(result, CV_8U, 1 /* scale */ , 0 /* shift */)
     result
   }
 
 
-  def getWatersheds: IplImage = {
-    val result = cvCreateImage(cvGetSize(_markers), IPL_DEPTH_8U, 1 /* channels */)
-    cvConvertScale(_markers, result, 255 /* scale */ , 255 /* shift */)
+  def watersheds: Mat = {
+    val result = new Mat()
+    _markers.convertTo(result, CV_8U, 255 /* scale */ , 255 /* shift */)
     result
   }
 }

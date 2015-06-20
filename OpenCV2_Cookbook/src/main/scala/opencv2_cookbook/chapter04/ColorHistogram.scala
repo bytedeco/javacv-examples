@@ -41,7 +41,7 @@ class ColorHistogram(var numberOfBins: Int = 256) {
     val intPtrChannels = new IntPointer(0, 1, 2)
     val intPtrHistSize = new IntPointer(numberOfBins, numberOfBins, numberOfBins)
     val histRange = Array(_minRange, _maxRange)
-    val ptrPtrHistRange: PointerPointer[FloatPointer] = new PointerPointer[FloatPointer](histRange, histRange, histRange)
+    val ptrPtrHistRange = new PointerPointer[FloatPointer](histRange, histRange, histRange)
     calcHist(image,
       1, // histogram of 1 image only
       intPtrChannels, // the channel used
@@ -113,7 +113,7 @@ class ColorHistogram(var numberOfBins: Int = 256) {
 
     // Prepare arguments for a 2D color histogram
     val histRange = Array(0f, 255f)
-    val ptrPtrHistRange: PointerPointer[FloatPointer] = new PointerPointer[FloatPointer](histRange, histRange, histRange)
+    val ptrPtrHistRange = new PointerPointer[FloatPointer](histRange, histRange, histRange)
     // the two channels used are ab
     val intPtrChannels = new IntPointer(1, 2)
     val intPtrHistSize = new IntPointer(numberOfBins, numberOfBins)
