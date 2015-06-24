@@ -22,7 +22,7 @@ It is intended as a companion to the book
 “[OpenCV 2 Computer Vision Application Programming Cookbook](http://www.laganiere.name/opencvCookbook/)” by Robert Laganière. 
 The original examples in the Cookbook are written in C++. Here we show how to use JavaCV to perform the same tasks.
 
-The code in the example module is primatily written in [Scala](http://www.scala-lang.org), one of the leading JVM languages. 
+The code in the example module is primarily written in [Scala](http://www.scala-lang.org), one of the leading JVM languages. 
 It can be easily converted to Java and other languages running on JVM, for instance, [Groovy](http://groovy.codehaus.org/).
 Some of the examples are also provded in Java, for comparison.
 
@@ -56,7 +56,7 @@ int main() {
 ```
 
 The above C++ example translated to Scala using JavaCV wrapper, the functional difference is only that image window 
-stays open till user coses it:
+stays open till user closes it:
 
 ``` scala
 import com.googlecode.javacv.CanvasFrame
