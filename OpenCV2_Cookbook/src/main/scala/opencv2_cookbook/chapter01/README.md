@@ -11,7 +11,7 @@ There are only two things needed to start working with OpenCV from a Java platfo
 
 Installation of OpenCV is not required, all needed Java and native binaries can be automatically downloaded by the build tool.
 
-Here we will focus on [SBT](http://www.scala-sbt.org/) as a build tool (description of Gradle or other setup may be added in the feature, if you are willing to contribute setup and description it will be added here)
+Here we will focus on [SBT](http://www.scala-sbt.org/) as a build tool (description of Gradle or other setup may be added in the future, if you are willing to contribute setup and description it will be added here)
 
 One of the important features of SBT, compared for instance to Maven, is the ability to easy run example code from command line. You can also use SBT to interactively execute commands with classpath initialized to your project classpath. This is a very good way to experiment with JavaCV and other projects.
 
@@ -30,7 +30,7 @@ The examples are in the sub-directory [OpenCV2_Cookbook](/OpenCV2_Cookbook).
 
 
 1. Open command prompt or a terminal.
-2. Change directory the location of `OpenCV2_Cookbook`
+2. Change directory to the location of `OpenCV2_Cookbook`
 3. Type `sbt` to start `SBT`
 4. If this is the first time you run SBT it may take a while to download all needed dependencies. Once everything is ready you should see prompt: `sbt:opencv2_cookbook>`
 5. Type `run` and you will see a long list of available examples:
