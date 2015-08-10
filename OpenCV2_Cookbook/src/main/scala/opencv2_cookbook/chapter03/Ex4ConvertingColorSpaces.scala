@@ -9,7 +9,7 @@ package opencv2_cookbook.chapter03
 import java.io.File
 
 import opencv2_cookbook.OpenCVUtils._
-import org.bytedeco.javacpp.opencv_highgui._
+import org.bytedeco.javacpp.opencv_imgcodecs._
 
 /**
  * Example for section "Converting color spaces" in Chapter 3.
@@ -23,7 +23,7 @@ object Ex4ConvertingColorSpaces extends App {
   val colorDetector = new ColorDetectorLab
 
   // 2. Read input image
-  val src = loadAndShowOrExit(new File("data/boldt.jpg"), CV_LOAD_IMAGE_COLOR)
+  val src = loadAndShowOrExit(new File("data/boldt.jpg"), IMREAD_COLOR)
 
   // 3. Set the input parameters
   colorDetector.colorDistanceThreshold = 30

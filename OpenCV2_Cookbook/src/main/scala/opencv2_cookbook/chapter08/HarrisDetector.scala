@@ -6,10 +6,7 @@
 
 package opencv2_cookbook.chapter08
 
-import java.awt.geom._
-import java.awt.{Color, Graphics2D, Image, Point}
-
-import opencv2_cookbook.OpenCVUtils._
+import org.bytedeco.javacpp.indexer.UByteIndexer
 import org.bytedeco.javacpp.opencv_core._
 import org.bytedeco.javacpp.opencv_imgproc._
 
@@ -26,7 +23,7 @@ class HarrisDetector {
   /** Aperture size for Harris edge detector. */
   var aperture = 3
   /** Harris parameter. */
-  var k = 0.01
+  var k        = 0.01
 
   /** Maximum strength for threshold computations. */
   var maxStrength = 0.0
@@ -34,19 +31,19 @@ class HarrisDetector {
   var nonMaxSize = 3
 
   /** Image of corner strength, computed by Harris edge detector. It is created by method `detect()`. */
-  private var cornerStrength: Option[IplImage] = None
+  private var cornerStrength: Option[Mat] = None
   /** Image of local corner maxima. It is created by method `detect()`. */
-  private var localMax: Option[IplImage] = None
+  private var localMax      : Option[Mat] = None
 
 
   /** Compute Harris corners.
     *
     * Results of computation can be retrieved using `getCornerMap` and `getCorners`.
     */
-  def detect(image: IplImage) {
+  def detect(image: Mat) {
     // Harris computations
-    cornerStrength = Some(cvCreateImage(cvGetSize(image), IPL_DEPTH_32F, 1))
-    cvCornerHarris(image, cornerStrength.get, neighborhood, aperture, k)
+    cornerStrength = Some(new Mat())
+    cornerHarris(image, cornerStrength.get, neighborhood, aperture, k)
 
     // Internal threshold computation.
     //
@@ -55,10 +52,10 @@ class HarrisDetector {
     // Passing back values through function parameter pointers works in C bout not on JVM.
     // We need to pass them as 1 element array, as a work around for pointers in C API.
     val maxStrengthA = Array(maxStrength)
-    cvMinMaxLoc(
+    minMaxLoc(
       cornerStrength.get,
       Array(0.0) /* not used here, but required by API */ ,
-      maxStrengthA)
+      maxStrengthA, null, null, new Mat())
     // Read back the computed maxStrength
     maxStrength = maxStrengthA(0)
 
@@ -66,32 +63,32 @@ class HarrisDetector {
     //
     // Dilation will replace values in the image by its largest neighbour value.
     // This process will modify all the pixels but the local maxima (and plateaus)
-    val dilated = cvCreateImage(cvGetSize(cornerStrength.get), cornerStrength.get.depth, 1)
-    cvDilate(cornerStrength.get, dilated, null, 1)
-    localMax = Some(cvCreateImage(cvGetSize(image), IPL_DEPTH_8U, 1))
+    val dilated = new Mat()
+    dilate(cornerStrength.get, dilated, new Mat())
+    localMax = Some(new Mat())
     // Find maxima by detecting which pixels were not modified by dilation
-    cvCmp(cornerStrength.get, dilated, localMax.get, CV_CMP_EQ)
+    compare(cornerStrength.get, dilated, localMax.get, CMP_EQ)
   }
 
 
   /** Get the corner map from the computed Harris values. Require call to `detect`.
     * @throws IllegalStateException if `cornerStrength` and `localMax` are not yet computed.
     */
-  def getCornerMap(qualityLevel: Double): IplImage = {
+  def getCornerMap(qualityLevel: Double): Mat = {
     if (cornerStrength.isEmpty || localMax.isEmpty) {
       throw new IllegalStateException("Need to call `detect()` before it is possible to compute corner map.")
     }
 
     // Threshold the corner strength
-    val threshold = qualityLevel * maxStrength
-    val cornerTh = cvCreateImage(cvGetSize(cornerStrength.get), cornerStrength.get.depth, 1)
-    cvThreshold(cornerStrength.get, cornerTh, threshold, 255, CV_THRESH_BINARY)
+    val t = qualityLevel * maxStrength
+    val cornerTh = new Mat()
+    threshold(cornerStrength.get, cornerTh, t, 255, THRESH_BINARY)
 
-    val cornerMap = cvCreateImage(cvGetSize(cornerTh), IPL_DEPTH_8U, 1)
-    cvConvertScale(cornerTh, cornerMap, 1, 0)
+    val cornerMap = new Mat()
+    cornerTh.convertTo(cornerMap, CV_8U)
 
     // non-maxima suppression
-    cvAnd(cornerMap, localMax.get, cornerMap, null)
+    bitwise_and(cornerMap, localMax.get, cornerMap)
 
     cornerMap
   }
@@ -107,15 +104,14 @@ class HarrisDetector {
 
 
   /** Get the feature points vector from the computed corner map.  */
-  private def getCorners(cornerMap: IplImage): List[Point] = {
+  private def getCorners(cornerMap: Mat): List[Point] = {
 
-    // Get access to image data on the JVM side
-    val r = toBufferedImage(cornerMap).getRaster
+    val i = cornerMap.createIndexer[UByteIndexer]()
 
-    // Iterate over the pixels to obtain all feature points
-    val width = r.getWidth
-    val height = r.getHeight
-    val points = for (y <- 0 until height; x <- 0 until width if r.getSample(x, y, 0) != 0) yield new Point(x, y)
+    // Iterate over the pixels to obtain all feature points where matrix has non-zero values
+    val width = cornerMap.cols
+    val height = cornerMap.rows
+    val points = for (y <- 0 until height; x <- 0 until width if i.get(y, x) != 0) yield new Point(x, y)
 
     points.toList
   }
@@ -124,23 +120,10 @@ class HarrisDetector {
   /**
    * Draw circles at feature point locations on an image
    */
-  def drawOnImage(image: IplImage, points: List[Point]): Image = {
-    //        val radius = 3
-    //        val thickness = 2
-    //        points.foreach(p => {
-    //            println("(" + p.x + ", " + p.y + ")")
-    //            val center = new CvPoint(new CvPoint2D32f(p.x, p.y))
-    //            cvCircle(image, center, radius, CvScalar.WHITE, thickness, 8, 0)
-    //        })
-
-    // OpenCV drawing seems to crash a lot, so use Java2D
-    val radius = 3
-    val bi = toBufferedImage(image)
-    val g2d = bi.getGraphics.asInstanceOf[Graphics2D]
-    val w = radius * 2
-    g2d.setColor(Color.WHITE)
-    points.foreach(p => g2d.draw(new Ellipse2D.Double(p.x - radius, p.y - radius, w, w)))
-
-    bi
+  def drawOnImage(image: Mat, points: List[Point]): Unit = {
+    val radius = 4
+    val thickness = 1
+    val color = new Scalar(255, 255, 255, 0)
+    points.foreach { p => circle(image, new Point(p.x, p.y), radius, color, thickness, 8, 0) }
   }
 }

@@ -9,7 +9,7 @@ package opencv2_cookbook.chapter04
 import java.io.File
 
 import opencv2_cookbook.OpenCVUtils._
-import org.bytedeco.javacpp.opencv_highgui._
+import org.bytedeco.javacpp.opencv_imgcodecs._
 
 /**
  * Modifies image using histogram equalization.
@@ -18,7 +18,7 @@ import org.bytedeco.javacpp.opencv_highgui._
 object Ex5EqualizeHistogram extends App {
 
   // Load image as a gray scale
-  val src = loadAndShowOrExit(new File("data/group.jpg"), CV_LOAD_IMAGE_GRAYSCALE)
+  val src = loadAndShowOrExit(new File("data/group.jpg"), IMREAD_GRAYSCALE)
   // Show histogram of the source image
   show(new Histogram1D().getHistogramImage(src), "Input histogram")
 

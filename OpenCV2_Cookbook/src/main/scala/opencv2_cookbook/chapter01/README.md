@@ -11,7 +11,7 @@ There are only two things needed to start working with OpenCV from a Java platfo
 
 Installation of OpenCV is not required, all needed Java and native binaries can be automatically downloaded by the build tool.
 
-Here we will focus on [SBT](http://www.scala-sbt.org/) as a build tool (description of Gradle or other setup may be added in the feature, if you are willing to contribute setup and description it will be added here)
+Here we will focus on [SBT](http://www.scala-sbt.org/) as a build tool (description of Gradle or other setup may be added in the feature, if you are willing to contribute setup and description it will be added here).
 
 One of the important features of SBT, compared for instance to Maven, is the ability to easy run example code from command line. You can also use SBT to interactively execute commands with classpath initialized to your project classpath. This is a very good way to experiment with JavaCV and other projects.
 
@@ -21,9 +21,7 @@ Assuming that you already have JDK installed, the only thing necessary to run ex
 
 ### Getting the OpenCV Cookbook Examples for JavaCV ###
 
-You can get the Cookbook Examples sources either by cloning the [GitHub repository](https://github.com/bytedeco/javacv-examples) or by downloading then as a ZIP archive clicking on the [Download ZIP](https://github.com/bytedeco/javacv-examples/archive/master.zip) button on the [GitHub page](https://github.com/bytedeco/javacv-examples).
-
-The examples are in the sub-directory [OpenCV2_Cookbook](/OpenCV2_Cookbook). 
+You can get the Cookbook Examples sources either by cloning the [GitHub repository](https://github.com/bytedeco/javacv-examples) or by downloading then as a ZIP archive clicking on the [Download ZIP](https://github.com/bytedeco/javacv-examples/archive/master.zip) button on the [GitHub page](https://github.com/bytedeco/javacv-examples). The examples are in the sub-directory [OpenCV2_Cookbook](/OpenCV2_Cookbook). 
 
 
 ### Running Examples from Command Prompt using SBT ###
@@ -68,34 +66,30 @@ Loading, Displaying, and Saving Images with JavaCV
 A simple example of loading and displaying an image using JavaCV is in class `opencv2_cookbook.chapter01.Ex1MyFirstOpenCVApp`:
 
 ``` scala
-import javax.swing.JFrame._
-import org.bytedeco.javacpp.opencv_highgui._
-import org.bytedeco.javacv.CanvasFrame
+import javax.swing.JFrame
+
+import org.bytedeco.javacpp.opencv_imgcodecs._
+import org.bytedeco.javacv.{CanvasFrame, OpenCVFrameConverter}
 
 object Ex1MyFirstOpenCVApp extends App {
 
   // Read an image
   val image = imread("data/boldt.jpg")
   if (image.empty()) {
-    // error handling
-    // no image has been created...
-    // possibly display an error message
-    // and quit the application
     println("Error reading image...")
     System.exit(0)
   }
 
   // Create image window named "My Image".
-  //
-  // Note that you need to indicate to CanvasFrame not to apply gamma correction,
-  // by setting gamma to 1, otherwise the image will not look correct.
   val canvas = new CanvasFrame("My Image", 1)
 
   // Request closing of the application when the image window is closed
-  canvas.setDefaultCloseOperation(EXIT_ON_CLOSE)
+  canvas.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE)
 
+  // Convert from OpenCV Mat to Java Buffered image for display
+  val converter = new OpenCVFrameConverter.ToMat()
   // Show image on window
-  canvas.showImage(image)
+  canvas.showImage(converter.convert(image))
 }
 ```
 
@@ -113,22 +107,21 @@ Here are some examples.
 
 ``` scala
 import org.bytedeco.javacpp.opencv_core.Mat
-import org.bytedeco.javacpp.opencv_highgui._
+import org.bytedeco.javacpp.opencv_imgcodecs._
 
 val image1: Mat = imread("data/boldt.jpg")
-val image2: Mat = imread("data/boldt.jpg", CV_LOAD_IMAGE_COLOR)
-val image3: Mat = imread("data/boldt.jpg", CV_LOAD_IMAGE_GRAYSCALE)
+val image2: Mat = imread("data/boldt.jpg", IMREAD_COLOR)
+val image3: Mat = imread("data/boldt.jpg", IMREAD_GRAYSCALE)
 ```
-The default value for the conversion parameter is `CV_LOAD_IMAGE_COLOR`.
+The default value for the conversion parameter is `IMREAD_COLOR`.
 
 If image cannot be loaded both `imread` will return `null`. You may want to wrap a call to `imread` in a method that throws an exception if an image cannot be loaded.
 
 ``` scala
-def load(file: File, flags: Int = CV_LOAD_IMAGE_GRAYSCALE): Mat = {
+def load(file: File, flags: Int = IMREAD_GRAYSCALE): Mat = {
     // Verify file
     if (!file.exists()) {
-        throw new FileNotFoundException("Image file does not exist: " +
-                                        file.getAbsolutePath)
+        throw new FileNotFoundException("Image file does not exist: " + file.getAbsolutePath)
     }
     // Read input image
     val image = imread(file.getAbsolutePath, flags)

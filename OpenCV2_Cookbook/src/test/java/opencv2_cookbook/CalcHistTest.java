@@ -12,7 +12,7 @@ import org.bytedeco.javacpp.PointerPointer;
 import org.junit.Test;
 
 import static org.bytedeco.javacpp.opencv_core.Mat;
-import static org.bytedeco.javacpp.opencv_highgui.imread;
+import static org.bytedeco.javacpp.opencv_imgcodecs.imread;
 import static org.bytedeco.javacpp.opencv_imgproc.calcHist;
 import static org.junit.Assert.assertNotNull;
 

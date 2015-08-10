@@ -10,7 +10,7 @@ import java.io.File
 
 import opencv2_cookbook.OpenCVUtils._
 import org.bytedeco.javacpp.opencv_core._
-import org.bytedeco.javacpp.opencv_highgui._
+import org.bytedeco.javacpp.opencv_imgcodecs._
 import org.bytedeco.javacpp.opencv_imgproc._
 
 /**
@@ -19,7 +19,7 @@ import org.bytedeco.javacpp.opencv_imgproc._
 object Ex2MedianFilter extends App {
 
   // Read input image with a salt noise
-  val src = loadAndShowOrExit(new File("data/boldt_salt.jpg"), CV_LOAD_IMAGE_GRAYSCALE)
+  val src = loadAndShowOrExit(new File("data/boldt_salt.jpg"), IMREAD_GRAYSCALE)
 
   // Remove noise with a median filter
   val dest       = new Mat()

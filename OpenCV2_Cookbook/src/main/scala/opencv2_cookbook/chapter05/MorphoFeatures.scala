@@ -104,7 +104,7 @@ class MorphoFeatures {
 
   private def applyThreshold(image: Mat) {
     if (thresholdValue > 0) {
-      threshold(image, image, thresholdValue, 255, CV_THRESH_BINARY_INV)
+      threshold(image, image, thresholdValue, 255, THRESH_BINARY_INV)
     }
   }
 

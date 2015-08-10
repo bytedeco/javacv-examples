@@ -9,14 +9,9 @@ package opencv2_cookbook.chapter07
 import java.io.File
 
 import opencv2_cookbook.OpenCVUtils._
-import org.bytedeco.javacpp.Loader
-import org.bytedeco.javacpp.helper.opencv_core.AbstractCvScalar._
-import org.bytedeco.javacpp.helper.{opencv_imgproc => imgproc}
 import org.bytedeco.javacpp.opencv_core._
-import org.bytedeco.javacpp.opencv_highgui._
+import org.bytedeco.javacpp.opencv_imgcodecs._
 import org.bytedeco.javacpp.opencv_imgproc._
-
-import scala.collection.mutable.ListBuffer
 
 
 /**
@@ -24,51 +19,40 @@ import scala.collection.mutable.ListBuffer
  */
 object Ex5ExtractContours extends App {
 
-    // Read input image
-    val src = loadIplAndShowOrExit(new File("data/binaryGroup.bmp"), CV_LOAD_IMAGE_GRAYSCALE)
+  // Read input image
+  val src = loadAndShowOrExit(new File("data/binaryGroup.bmp"), IMREAD_GRAYSCALE)
 
-    // Extract connected components
-    val contourSeq = new CvSeq(null)
-  val storage = cvCreateMemStorage()
-  imgproc.cvFindContours(src, storage, contourSeq, Loader.sizeof(classOf[CvContour]), CV_RETR_EXTERNAL, CV_CHAIN_APPROX_NONE)
+  // Extract connected components
+  val contours = new MatVector()
+  val hierarchy = new Mat()
+  findContours(src, contours, RETR_EXTERNAL, CHAIN_APPROX_NONE, new Point(0, 0))
 
-    // Convert to a Scala collection for easier manipulation
-    val contours = toScalaSeq(contourSeq)
+  val result = new Mat(src.size(), CV_8UC3, new Scalar(0))
+  drawContours(result, contours,
+    -1, // draw all contours
+    new Scalar(0, 0, 255, 0))
+  show(result, "Contours")
 
-    // Draw extracted contours
-    val colorDst = cvCreateImage(cvGetSize(src), src.depth(), 3)
-    cvCvtColor(src, colorDst, CV_GRAY2BGR)
-    draw(colorDst, contours)
-    show(colorDst, "Contours")
+  // Eliminate too short or too long contours
+  val lengthMin = 100
+  val lengthMax = 1000
+  val filteredContoursSeq = toSeq(contours).filter(contour =>
+    lengthMin < contour.total() && contour.total() < lengthMax)
 
-    // Eliminate too short or too long contours
-    val lengthMin = 100
-    val lengthMax = 1000
-    val filteredContours = contours.filter(contour => lengthMin < contour.total() && contour.total() < lengthMax)
-    val colorDest2 = loadIplImageOrExit(new File("data/group.jpg"), CV_LOAD_IMAGE_COLOR)
-    draw(colorDest2, filteredContours)
-    show(colorDest2, "Contours Filtered")
+  val result2 = loadOrExit(new File("data/group.jpg"), IMREAD_COLOR)
+  drawContours(result2, toMatVector(filteredContoursSeq),
+    -1, // draw all contours
+    new Scalar(0, 0, 255, 0))
+  show(result2, "Contours Filtered")
 
+  /**
+   * Convert to a Scala Seq collection.
+   */
+  def toSeq(matVector: MatVector): Seq[Mat] =
+    for (i <- 0 until matVector.size.toInt) yield matVector.get(i)
 
-    /**
-     * Convert to a Scala Seq collection.
-     */
-    def toScalaSeq(cvSeq: CvSeq): Seq[CvSeq] = {
-        val seqBuilder = new ListBuffer[CvSeq]()
-        var element = cvSeq
-        while (element != null && !element.isNull) {
-            if (element.elem_size() > 0) {
-                seqBuilder += element
-            }
-            element = element.h_next()
-        }
-        seqBuilder.toSeq
-    }
-
-    /**
-     * Draw `contours` on the `image`.
-     */
-    def draw(image: IplImage, contours: Seq[CvSeq]) {
-      contours.foreach(cvDrawContours(image, _, RED, RED, -1, 1, CV_AA, cvPoint(0, 0)))
-    }
+  /**
+   * Convert Scala sequence to MatVector.
+   */
+  def toMatVector(seq: Seq[Mat]): MatVector = new MatVector(seq: _*)
 }

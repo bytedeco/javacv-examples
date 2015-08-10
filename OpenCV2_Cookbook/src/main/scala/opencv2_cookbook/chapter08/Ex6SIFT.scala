@@ -11,7 +11,7 @@ import java.io.File
 import opencv2_cookbook.OpenCVUtils._
 import org.bytedeco.javacpp.opencv_core._
 import org.bytedeco.javacpp.opencv_features2d._
-import org.bytedeco.javacpp.opencv_nonfree._
+import org.bytedeco.javacpp.opencv_xfeatures2d.SIFT
 
 
 /**
@@ -23,13 +23,13 @@ object Ex6SIFT extends App {
   val image = loadAndShowOrExit(new File("data/church01.jpg"))
 
   // Detect SIFT features.
-  val keyPoints = new KeyPoint()
+  val keyPoints = new KeyPointVector()
   val nFeatures = 0
   val nOctaveLayers = 3
   val contrastThreshold = 0.03
   val edgeThreshold = 10
   val sigma = 1.6
-  val sift = new SIFT(nFeatures, nOctaveLayers, contrastThreshold, edgeThreshold, sigma)
+  val sift = SIFT.create(nFeatures, nOctaveLayers, contrastThreshold, edgeThreshold, sigma)
   sift.detect(image, keyPoints)
 
   // Draw keyPoints

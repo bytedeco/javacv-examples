@@ -57,7 +57,7 @@ class ColorDetectorLab(private var _minDist: Int = 30,
     //       a <- a + 128
     //       b <- b + 128
     val labImage = new Mat()
-    cvtColor(rgbImage, labImage, CV_BGR2Lab)
+    cvtColor(rgbImage, labImage, COLOR_BGR2Lab)
 
     val indexer = labImage.createIndexer().asInstanceOf[UByteBufferIndexer]
 

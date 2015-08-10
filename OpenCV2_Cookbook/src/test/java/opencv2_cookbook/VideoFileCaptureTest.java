@@ -11,7 +11,7 @@ import org.junit.Test;
 import java.io.File;
 
 import static org.bytedeco.javacpp.opencv_core.IplImage;
-import static org.bytedeco.javacpp.opencv_highgui.*;
+import static org.bytedeco.javacpp.opencv_videoio.*;
 import static org.junit.Assert.*;
 
 /**

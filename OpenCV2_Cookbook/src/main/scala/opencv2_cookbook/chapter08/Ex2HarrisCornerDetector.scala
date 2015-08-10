@@ -9,6 +9,7 @@ package opencv2_cookbook.chapter08
 import java.io.File
 
 import opencv2_cookbook.OpenCVUtils._
+import org.bytedeco.javacpp.opencv_imgcodecs._
 
 
 /**
@@ -20,17 +21,17 @@ import opencv2_cookbook.OpenCVUtils._
  */
 object Ex2HarrisCornerDetector extends App {
 
-    // Read input image
-    val image = loadIplAndShowOrExit(new File("data/church01.jpg"))
+  // Read input image
+  val image = loadAndShowOrExit(new File("data/church01.jpg"), IMREAD_GRAYSCALE)
 
-    // Harris detector instance
-    val harris = new HarrisDetector
-    // Compute Harris values
-    harris.detect(image)
-    // Detect Harris corners
-    val pts = harris.getCorners(0.01)
+  // Harris detector instance
+  val harris = new HarrisDetector
+  // Compute Harris values
+  harris.detect(image)
+  // Detect Harris corners
+  val pts = harris.getCorners(0.01)
 
-    // Draw Harris corners
-    val cornerCircles = harris.drawOnImage(image, pts)
-    show(cornerCircles, "Harris Corners")
+  // Draw Harris corners
+  harris.drawOnImage(image, pts)
+  show(image, "Harris Corners")
 }

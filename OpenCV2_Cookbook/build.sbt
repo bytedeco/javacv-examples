@@ -1,9 +1,9 @@
 name := "opencv2-cookbook"
 organization := "javacv.examples"
 
-val javacppVersion = "0.11"
+val javacppVersion = "1.1-SNAPSHOT"
 version := javacppVersion
-scalaVersion := "2.11.6"
+scalaVersion := "2.11.7"
 scalacOptions ++= Seq("-unchecked", "-deprecation", "-Xlint")
 
 // Some dependencies like `javacpp` are packaged with maven-plugin packaging
@@ -12,7 +12,7 @@ classpathTypes += "maven-plugin"
 // Platform classifier for native library dependencies
 val platform = org.bytedeco.javacpp.Loader.getPlatform
 // Libraries with native dependencies
-val bytedecoPresetLibs = Seq("opencv" -> "2.4.11-0.11").flatMap {
+val bytedecoPresetLibs = Seq("opencv" -> s"3.0.0-$javacppVersion").flatMap {
   case (lib, ver) => Seq(
     // Add both: dependency and its native binaries for the current `platform`
     "org.bytedeco.javacpp-presets" % lib % ver,
@@ -28,6 +28,12 @@ libraryDependencies ++= Seq(
   "com.novocode"            % "junit-interface" % "0.11" % "test"
 ) ++ bytedecoPresetLibs
 
+// Used for testing local builds and snapshots of JavaCPP/JavaCV
+resolvers ++= Seq(
+  Resolver.sonatypeRepo("snapshots"),
+  // Use local maven repo for local javacv builds
+  "Local Maven Repository" at "file:///" + Path.userHome.absolutePath + "/.m2/repository"
+)
 
 autoCompilerPlugins := true
 

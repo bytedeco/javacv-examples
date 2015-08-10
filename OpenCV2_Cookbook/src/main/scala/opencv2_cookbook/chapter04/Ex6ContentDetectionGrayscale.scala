@@ -10,7 +10,7 @@ import java.io.File
 
 import opencv2_cookbook.OpenCVUtils._
 import org.bytedeco.javacpp.opencv_core._
-import org.bytedeco.javacpp.opencv_highgui._
+import org.bytedeco.javacpp.opencv_imgcodecs._
 
 
 /**
@@ -21,7 +21,7 @@ import org.bytedeco.javacpp.opencv_highgui._
 object Ex6ContentDetectionGrayscale extends App {
 
   // Load image as a gray scale
-  val src = loadAndShowOrExit(new File("data/waves.jpg"), CV_LOAD_IMAGE_GRAYSCALE)
+  val src = loadAndShowOrExit(new File("data/waves.jpg"), IMREAD_GRAYSCALE)
 
   val rectROI = new Rect(216, 33, 24, 30)
 

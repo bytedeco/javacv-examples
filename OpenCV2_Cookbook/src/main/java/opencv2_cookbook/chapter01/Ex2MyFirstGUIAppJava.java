@@ -16,8 +16,8 @@ import static javax.swing.JOptionPane.showMessageDialog;
 import static opencv2_cookbook.OpenCVUtils.toBufferedImage;
 import static org.bytedeco.javacpp.opencv_core.Mat;
 import static org.bytedeco.javacpp.opencv_core.flip;
-import static org.bytedeco.javacpp.opencv_highgui.imread;
-import static org.bytedeco.javacpp.opencv_imgproc.CV_BGR2RGB;
+import static org.bytedeco.javacpp.opencv_imgcodecs.imread;
+import static org.bytedeco.javacpp.opencv_imgproc.COLOR_BGR2RGB;
 import static org.bytedeco.javacpp.opencv_imgproc.cvtColor;
 
 
@@ -157,7 +157,7 @@ public final class Ex2MyFirstGUIAppJava extends JFrame {
         // Flip upside down
         flip(src, src, 0);
         // Swap red and blue channels
-        cvtColor(src, src, CV_BGR2RGB);
+        cvtColor(src, src, COLOR_BGR2RGB);
     }
 
 

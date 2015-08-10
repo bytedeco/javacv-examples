@@ -1,30 +1,19 @@
-OpenCV2_Cookbook
-================
+OpenCV2 Cookbook Examples
+=========================
 
 | [Next: Chapter 1>](src/main/scala/opencv2_cookbook/chapter01) |
 
-[OpenCV](http://opencv.org/) (Open Source Computer Vision) is a library of several hundred algorithms for computer vision and video analysis. 
-It started in the late 90’s as a C library; in version 2 a C++ API was added. 
+Overview
+--------
 
-OpenCV can be used in Java Virtal Machine and Android without directly dealing with the native C++ libraries. 
-Here we will conventrate on the facilities provided by Bytedeco: 
-[JavaCV](https://github.com/bytedeco/javacv) and [OpenCV JavaCPP Presets](https://github.com/bytedeco/javacpp-presets).
+**OpenCV2 Cookbook Examples** are JavaCV versions of the examples presented in the Robert Laganière's book "[OpenCV 2 Computer Vision Application Programming Cookbook](https://www.packtpub.com/application-development/opencv-3-computer-vision-application-programming-cookbook)". The examples in the book use [OpenCV](http://opencv.org/) C++ API. Here they are translated to use [JavaCV](https://github.com/bytedeco/javacv) and [JavaCPP-Presets](https://github.com/bytedeco/javacpp-presets) APIs.
 
-[JavaCV](https://github.com/bytedeco/javacv) is a library based on the 
-[JavaCPP Presets](https://github.com/bytedeco/javacpp-presets) that that depends commonly used 
-native libraries in the field of computer vision, like OpenCV, to facilitate the development of those applications 
-on the Java platform. 
-It provides easy-to-use interfaces to grab frames from cameras and audio/video streams, process them, 
-and record them back on disk or send them over the network.
+[OpenCV](http://opencv.org/) (Open Source Computer Vision) is a library of several hundred algorithms for computer vision and video analysis. OpenCV can be us on JVM using two approaches. First are Java [wrappers provided by OpenCV](http://docs.opencv.org/doc/tutorials/introduction/desktop_java/java_dev_intro.html). Second are are wrappers based on [JavaCPP](https://github.com/bytedeco/javacpp) (C++ wrapper engine for JVM) called [OpenCV JavaCPP Presets](https://github.com/bytedeco/javacpp-presets). There are also JavaCPP presets for other computer vison related libraries like: [FFmpeg](http://ffmpeg.org/), [libdc1394](http://damien.douxchamps.net/ieee1394/libdc1394/), [PGR FlyCapture](http://www.ptgrey.com/products/pgrflycapture/), [OpenKinect](http://openkinect.org/), [videoInput](http://muonics.net/school/spring05/videoInput/), [ARToolKitPlus](http://studierstube.icg.tugraz.at/handheld_ar/artoolkitplus.php), [flandmark](http://cmp.felk.cvut.cz/~uricamic/flandmark/), and [others](https://github.com/bytedeco/javacpp-presets). JavaCV combines libraries in JavaCPP Presets and add some additional functionality that makes them easier use on JVM.
 
-The `OpenCV_Cookbok` example project illustrates use of OpenCV, through JavaCV, in JVM. 
-It is intended as a companion to the book 
-“[OpenCV 2 Computer Vision Application Programming Cookbook](http://www.laganiere.name/opencvCookbook/)” by Robert Laganière. 
-The original examples in the Cookbook are written in C++. Here we show how to use JavaCV to perform the same tasks.
+The *OpenCV Cookbok Examples* project illustrates use of OpenCV through JavaCV and OpenCV JavaCPP Presets. Current version is updated to match the second edition of the Robert Laganière's book "[OpenCV 2 Computer Vision Application Programming Cookbook](https://www.packtpub.com/application-development/opencv-3-computer-vision-application-programming-cookbook)". It is intended for use with OpernCV v.3 (JavaCV v.1). 
 
-The code in the example module is primatily written in [Scala](http://www.scala-lang.org), one of the leading JVM languages. 
-It can be easily converted to Java and other languages running on JVM, for instance, [Groovy](http://groovy.codehaus.org/).
-Some of the examples are also provded in Java, for comparison.
+While code in the examples is primarily written in [Scala](http://www.scala-lang.org), one of the leading JVM languages. It can be easily converted to Java and other languages running on JVM, for instance, [Groovy](http://groovy.codehaus.org/). The use of the JavaCV API is very similar in most HVM languages.
+
 
 Quick Sample
 ------------
@@ -37,69 +26,113 @@ displays image in the window, and waits for 5 seconds before exiting.
 ``` c
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
+#include <opencv2/imgcodecs/imgcodecs.hpp>
 
 int main() {
-    // read an image
-    cv::Mat image = cv::imread("boldt.jpg");
+    // Read an image
+    cv::Mat src = cv::imread("data/boldt.jpg");
+    display(src, "Input")
 
-    // create image window named "My Image"
-    cv::namedWindow("My Image");
-
-    // show image on window
-    cv::imshow("My Image", image);
+	// Apply Laplacian filter
+    cv::Mat dest;
+    cv::Laplacian(src, dest, src.depth(), 1, 3, 0, BORDER_DEFAULT);
+    display(dest, "Laplacian");
 
     // wait key for 5000 ms
     cv::waitKey(5000);
 
     return 1;
 }
-```
 
-The above C++ example translated to Scala using JavaCV wrapper, the functional difference is only that image window 
-stays open till user coses it:
+//---------------------------------------------------------------------------
 
-``` scala
-import com.googlecode.javacv.CanvasFrame
-import com.googlecode.javacv.cpp.opencv_highgui._
+void display(Mat image, char* caption) {
+    // Create image window named "My Image"
+    cv::namedWindow(caption);
 
-object MyFirstOpenCVApp extends App {   
-  // Read an image.
-  val image = imread("boldt.jpg")
-
-  // Create image window named "My Image."
-  val canvas = new CanvasFrame("My Image", 1)
-
-  // Request closing of the application when the image window is closed.
-  canvas.setDefaultCloseOperation(javax.swing.JFrame.EXIT_ON_CLOSE)
-
-  // Show image on window.
-  canvas.showImage(image)
+    // Show image on window
+    cv::imshow(caption, image);
 }
 ```
 
-Now the same example expressed in a Java. Note that use of JavaCV API is exactly the same in Scala and Java code. 
-The only practical difference is that in Java you have to explicily provide type for each variable, in Scala it is optional. 
+The above C++ example translated to Scala using JavaCV wrapper:
+
+``` scala
+import javax.swing._
+import org.bytedeco.javacpp.opencv_core._
+import org.bytedeco.javacpp.opencv_imgcodecs._
+import org.bytedeco.javacpp.opencv_imgproc._
+import org.bytedeco.javacv._
+
+object MyFirstOpenCVApp extends App {
+
+  // Read an image.
+  val src = imread("data/boldt.jpg")
+  display(src, "Input")
+
+  // Apply Laplacian filter
+  val dest = new Mat()
+  Laplacian(src, dest, src.depth(), 1, 3, 0, BORDER_DEFAULT)
+  display(dest, "Laplacian")
+
+//---------------------------------------------------------------------------
+
+  def display(image: Mat, caption: String): Unit = {
+    // Create image window named "My Image."
+    val canvas = new CanvasFrame(caption, 1)
+
+    // Request closing of the application when the image window is closed.
+    canvas.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE)
+
+    // Convert from OpenCV Mat to Java Buffered image for display
+    val converter = new OpenCVFrameConverter.ToMat()
+    // Show image on window
+    canvas.showImage(converter.convert(image))
+  }
+}
+```
+
+Now the same example expressed in a Java. Note that use of JavaCV API is exactly the same in Scala and Java code. The only practical difference is that in Java code is more verbose, you have to explicitly provide type for each variable, in Scala it is optional. 
 
 ``` java
-import com.googlecode.javacv.CanvasFrame;
-import static com.googlecode.javacv.cpp.opencv_core.*;
-import static com.googlecode.javacv.cpp.opencv_highgui.*;
+import org.bytedeco.javacpp.opencv_core.Mat;
+import org.bytedeco.javacv.CanvasFrame;
+import org.bytedeco.javacv.OpenCVFrameConverter;
 
-public class MyFirstOpenCVApp {
+import javax.swing.*;
+
+import static org.bytedeco.javacpp.opencv_core.BORDER_DEFAULT;
+import static org.bytedeco.javacpp.opencv_imgcodecs.imread;
+import static org.bytedeco.javacpp.opencv_imgproc.Laplacian;
+
+
+public class MyFirstOpenCVAppInJava {
 
     public static void main(String[] args) {
-    
+
         // Read an image.
-        final Mat image = imread("boldt.jpg");
-    
+        final Mat src = imread("data/boldt.jpg");
+        display(src, "Input");
+
+        // Apply Laplacian filter
+        final Mat dest = new Mat();
+        Laplacian(src, dest, src.depth(), 1, 3, 0, BORDER_DEFAULT);
+        display(dest, "Laplacian");
+    }
+
+//---------------------------------------------------------------------------
+
+    static void display(Mat image, String caption) {
         // Create image window named "My Image".
-        final CanvasFrame canvas = new CanvasFrame("My Image", 1);
-    
+        final CanvasFrame canvas = new CanvasFrame(caption, 1.0);
+
         // Request closing of the application when the image window is closed.
-        canvas.setDefaultCloseOperation(javax.swing.JFrame.EXIT_ON_CLOSE);
-            
+        canvas.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+
+        // Convert from OpenCV Mat to Java Buffered image for display
+        final OpenCVFrameConverter converter = new OpenCVFrameConverter.ToMat();
         // Show image on window.
-        canvas.showImage(image);
+        canvas.showImage(converter.convert(image));
     }
 }
 ```
@@ -107,27 +140,17 @@ public class MyFirstOpenCVApp {
 OpenCV Documentation is Your Friend
 -----------------------------------
 
-If you are looking for a particular OpenCV operation, use the [OpenCV documentation](http://docs.opencv.org/). 
-The Quick Search box is particularly helpful. 
-The documentation contains descriptions of alternative ways how C/C++ OpenCV API can be used. 
-The JavaCV equivalent maybe similar to the OpenCV C API.
-
+If you are looking for a particular OpenCV operation, use the [OpenCV documentation](http://docs.opencv.org/). The Quick Search box is particularly helpful. The documentation contains descriptions of alternative ways how C/C++ OpenCV API can be used. 
 
 How to use JavaCV Examples
 --------------------------
 
-The `OpenCV_Cookbok` example project is intended as a companion to the Cookbook. 
-The recommended way is to read the Cookbook and refer to JavaCV examples when in doubt how to translate 
-the Cookbook's C++ code to JavaCV. 
-The Cookbook provides explanation how the algorithms work. 
-The JavaCV examples provide only very brief comments related to specifics of JavaCV API.
+The *OpenCV Cookbok Examples* project is intended as a companion to the Robert Laganière's book "[OpenCV 2 Computer Vision Application Programming Cookbook](https://www.packtpub.com/application-development/opencv-3-computer-vision-application-programming-cookbook)". The recommended way is to read the Cookbook and refer to JavaCV examples when in doubt how to translate the Cookbook's C++ code to JavaCV. The Cookbook provides explanation how the algorithms work. The JavaCV examples provide only very brief comments related to specifics of JavaCV API.
 
 Simplest way to use the JavaCV examples is to browse the code located in [src/main] online. 
 You can also donload it to you computer either use Git or as a ZIP file.
  
-With a minimal setup you can easily execute the examples on you own computer. 
-This is one of the benefits of JavaCV - it proved all binaries needed to run OpenCV on various platfoms. 
-The setup is explained in README for [Chapter 1](src/main/scala/opencv2_cookbook/chapter01).
+With a minimal setup you can easily execute the examples on you own computer. This is one of the benefits of JavaCV - it proveds all binaries needed to run OpenCV on various platfoms. The setup is explained in README for [Chapter 1](src/main/scala/opencv2_cookbook/chapter01).
 
 
 Organization of the Example Code
@@ -231,16 +254,9 @@ List of Examples
 Why Scala?
 ----------
 
-[Scala](http://www.scala-lang.org) was chosen since it is more expressive than Java. 
-You can achieve the same result with smaller amount of code. Smaller boilerplate code makes examples easier to read and understand. 
-Compiled Scala code is fast, similar to Java and C++. 
-Scala supports writing of scripts, code that can be executed without explicit compiling. 
-Scala also has a console, called REPL, where single lines of code can be typed in and executed on a spot. 
-Both of those features make prototyping of OpenCV-based programs easier in Scala than in Java.
-Last but not least, IDE support for Scala reached level of maturity allowing easy creation, modification, 
-and execution of Scala code. 
-In particular, the [Scala plugin](http://blog.jetbrains.com/scala/)  for [JetBrains IDEA](http://www.jetbrains.com/idea/) 
-works very well. 
-There is also Scala support for [Eclipse](http://scala-ide.org/index.html) and [NetBeans](https://github.com/dcaoyuan/nbscala).
+[Scala](http://www.scala-lang.org) was chosen since it is more expressive than Java. You can achieve the same result with smaller amount of code. Smaller boilerplate code makes examples easier to read and understand. Compiled Scala code is fast, similar to Java and C++. 
+
+Unlike Java or C++, Scala supports writing of scripts - code that can be executed without explicit compiling. Scala also has a console, called REPL, where single lines of code can be typed in and executed on a spot. Both of those features make prototyping of OpenCV-based programs easier in Scala than in Java. Last but not least, IDE support for Scala reached level of maturity allowing easy creation, modification, and execution of Scala code.In particular, the [Scala plugin](http://blog.jetbrains.com/scala/)  for [JetBrains IDEA](http://www.jetbrains.com/idea/) 
+works very well. There is also Scala support for [Eclipse](http://scala-ide.org/index.html) and [NetBeans](https://github.com/dcaoyuan/nbscala).
 
 | [Next: Chapter 1>](src/main/scala/opencv2_cookbook/chapter01) |

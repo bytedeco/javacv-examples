@@ -6,16 +6,17 @@
 
 package opencv2_cookbook.chapter01
 
-import javax.swing.JFrame._
+import javax.swing.JFrame
 
-import org.bytedeco.javacpp.opencv_highgui._
+import org.bytedeco.javacpp.opencv_imgcodecs._
 import org.bytedeco.javacv.{CanvasFrame, OpenCVFrameConverter}
 
 
-/** Example of loading and displaying and image  using JavaCV API,
-  * corresponds to C++ example in Chapter 1 page 18.
-  * Please note how in the Scala example code CanvasFrame from JavaCV API is used to display the image.
-  */
+/**
+ * Example of loading and displaying and image  using JavaCV API,
+ * corresponds to C++ example in Chapter 1 page 18.
+ * Please note how in the Scala example code CanvasFrame from JavaCV API is used to display the image.
+ */
 object Ex1MyFirstOpenCVApp extends App {
 
   // Read an image
@@ -36,9 +37,10 @@ object Ex1MyFirstOpenCVApp extends App {
   val canvas = new CanvasFrame("My Image", 1)
 
   // Request closing of the application when the image window is closed
-  canvas.setDefaultCloseOperation(EXIT_ON_CLOSE)
+  canvas.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE)
 
+  // Convert from OpenCV Mat to Java Buffered image for display
+  val converter = new OpenCVFrameConverter.ToMat()
   // Show image on window
-  val converter = new OpenCVFrameConverter.ToIplImage()
   canvas.showImage(converter.convert(image))
 }

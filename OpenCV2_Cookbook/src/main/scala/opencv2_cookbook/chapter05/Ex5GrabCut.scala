@@ -10,7 +10,7 @@ import java.io.File
 
 import opencv2_cookbook.OpenCVUtils._
 import org.bytedeco.javacpp.opencv_core._
-import org.bytedeco.javacpp.opencv_highgui._
+import org.bytedeco.javacpp.opencv_imgcodecs._
 import org.bytedeco.javacpp.opencv_imgproc._
 
 
@@ -20,14 +20,12 @@ import org.bytedeco.javacpp.opencv_imgproc._
 object Ex5GrabCut extends App {
 
   // Open image
-  //  val image = loadCvMatAndShowOrExit(new File("data/group.jpg"), CV_LOAD_IMAGE_COLOR)
-  val image = loadAndShowOrExit(new File("data/group.jpg"), CV_LOAD_IMAGE_COLOR)
+  //  val image = loadCvMatAndShowOrExit(new File("data/group.jpg"), IMREAD_COLOR)
+  val image = loadAndShowOrExit(new File("data/group.jpg"), IMREAD_COLOR)
 
   // Define bounding rectangle, pixels outside this rectangle will be labeled as background.
   val rectangle = new Rect(10, 100, 380, 180)
 
-  //  val size = cvGetSize(image)
-  //    val result = cvCreateImage(cvGetSize(image), IPL_DEPTH_8U, 1 /* channels */)
   val result = new Mat()
   val iterCount = 5
   val mode = GC_INIT_WITH_RECT
@@ -41,5 +39,5 @@ object Ex5GrabCut extends App {
 
   // Prepare image for display: extract foreground
   threshold(result, result, GC_PR_FGD - 0.5, GC_PR_FGD + 0.5, THRESH_BINARY)
-  show(to8U(result), "Result foreground mask")
+  show(toMat8U(result), "Result foreground mask")
 }

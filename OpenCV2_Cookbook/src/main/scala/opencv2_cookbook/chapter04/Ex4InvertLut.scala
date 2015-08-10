@@ -11,7 +11,7 @@ import java.io.File
 import opencv2_cookbook.OpenCVUtils._
 import org.bytedeco.javacpp.indexer.UByteIndexer
 import org.bytedeco.javacpp.opencv_core._
-import org.bytedeco.javacpp.opencv_highgui._
+import org.bytedeco.javacpp.opencv_imgcodecs._
 
 /**
  * Creates inverted image by inverting its look-up table.
@@ -20,7 +20,7 @@ import org.bytedeco.javacpp.opencv_highgui._
 object Ex4InvertLut extends App {
 
   // Load image as a gray scale
-  val src = loadAndShowOrExit(new File("data/group.jpg"), CV_LOAD_IMAGE_GRAYSCALE)
+  val src = loadAndShowOrExit(new File("data/group.jpg"), IMREAD_GRAYSCALE)
 
   // Create inverted lookup table
   val dim = 256

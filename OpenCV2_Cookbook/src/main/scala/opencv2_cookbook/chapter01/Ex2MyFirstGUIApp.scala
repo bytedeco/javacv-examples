@@ -11,7 +11,7 @@ import java.io.File
 import javax.swing.ImageIcon
 
 import org.bytedeco.javacpp.opencv_core._
-import org.bytedeco.javacpp.opencv_highgui._
+import org.bytedeco.javacpp.opencv_imgcodecs._
 import org.bytedeco.javacpp.opencv_imgproc._
 import org.bytedeco.javacv.{Java2DFrameConverter, OpenCVFrameConverter}
 
@@ -20,17 +20,18 @@ import scala.swing.FileChooser.Result.Approve
 import scala.swing._
 
 
-/** The last section in the chapter 1 of the Cookbook demonstrates how to create a simple GUI application.
-  *
-  * The Cookbook is using Qt GUI Toolkit. This example is using Scala Swing to create an similar application.
-  *
-  * The application has two buttons on the left "Open Image" and "Process".
-  * The opened image is displayed in the middle.
-  * When "Process" button is pressed the image is flipped upside down and its red and blue channels are swapped.
-  *
-  * Unlike most of other examples in this module, this example is done the Scala way,
-  * without regard to for direct porting to Java. A Java equivalent is in [[opencv2_cookbook.chapter01.Ex2MyFirstGUIAppJava]].
-  */
+/**
+ * The last section in the chapter 1 of the Cookbook demonstrates how to create a simple GUI application.
+ *
+ * The Cookbook is using Qt GUI Toolkit. This example is using Scala Swing to create an similar application.
+ *
+ * The application has two buttons on the left "Open Image" and "Process".
+ * The opened image is displayed in the middle.
+ * When "Process" button is pressed the image is flipped upside down and its red and blue channels are swapped.
+ *
+ * Unlike most of other examples in this module, this example is done the Scala way,
+ * without regard to for direct porting to Java. A Java equivalent is in [[opencv2_cookbook.chapter01.Ex2MyFirstGUIAppJava]].
+ */
 object Ex2MyFirstGUIApp extends SimpleSwingApplication {
 
   private lazy val fileChooser = new FileChooser(new File("."))
@@ -53,7 +54,7 @@ object Ex2MyFirstGUIApp extends SimpleSwingApplication {
         // Load image and update display. If new image was not loaded do nothing.
         openImage() match {
           case Some(x) =>
-            val converter = new OpenCVFrameConverter.ToIplImage()
+            val converter = new OpenCVFrameConverter.ToMat()
             val frame = converter.convert(x)
             val bi = new Java2DFrameConverter().convert(frame)
             image = Some(x)
@@ -74,7 +75,7 @@ object Ex2MyFirstGUIApp extends SimpleSwingApplication {
         image match {
           case Some(x) =>
             processImage(x)
-            val converter = new OpenCVFrameConverter.ToIplImage()
+            val converter = new OpenCVFrameConverter.ToMat()
             val frame = converter.convert(x)
             val bi = new Java2DFrameConverter().convert(frame)
             imageView.icon = new ImageIcon(bi)
@@ -141,6 +142,6 @@ object Ex2MyFirstGUIApp extends SimpleSwingApplication {
     // Flip upside down
     flip(src, src, 0)
     // Swap red and blue channels
-    cvtColor(src, src, CV_BGR2RGB)
+    cvtColor(src, src, COLOR_BGR2RGB)
   }
 }

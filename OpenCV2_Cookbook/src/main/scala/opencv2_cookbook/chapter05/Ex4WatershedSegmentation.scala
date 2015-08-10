@@ -10,7 +10,7 @@ import java.io.File
 
 import opencv2_cookbook.OpenCVUtils._
 import org.bytedeco.javacpp.opencv_core._
-import org.bytedeco.javacpp.opencv_highgui._
+import org.bytedeco.javacpp.opencv_imgcodecs._
 import org.bytedeco.javacpp.opencv_imgproc._
 
 
@@ -20,8 +20,8 @@ import org.bytedeco.javacpp.opencv_imgproc._
 object Ex4WatershedSegmentation extends App {
 
   // Read input image
-  val image  = loadAndShowOrExit(new File("data/group.jpg"), CV_LOAD_IMAGE_COLOR)
-  val binary = loadAndShowOrExit(new File("data/binary.bmp"), CV_LOAD_IMAGE_GRAYSCALE)
+  val image  = loadAndShowOrExit(new File("data/group.jpg"), IMREAD_COLOR)
+  val binary = loadAndShowOrExit(new File("data/binary.bmp"), IMREAD_GRAYSCALE)
 
   // Eliminate noise and smaller objects, repeat erosion 6 times
   val fg = new Mat()
@@ -46,7 +46,7 @@ object Ex4WatershedSegmentation extends App {
   threshold(bg, bg,
     1 /* threshold */ ,
     128 /* max value */ ,
-    CV_THRESH_BINARY_INV)
+    THRESH_BINARY_INV)
   show(bg, "Background")
 
   // Create marker image

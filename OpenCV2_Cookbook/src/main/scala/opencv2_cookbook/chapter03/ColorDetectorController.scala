@@ -7,7 +7,7 @@
 package opencv2_cookbook.chapter03
 
 import org.bytedeco.javacpp.opencv_core.Mat
-import org.bytedeco.javacpp.opencv_highgui._
+import org.bytedeco.javacpp.opencv_imgcodecs._
 
 
 /**
@@ -84,7 +84,7 @@ object ColorDetectorController {
    * Read the input image from a file. Return `true` if reading completed successfully.
    */
   def setInputImage(fileName: String): Boolean = {
-    _inputImage = imread(fileName, CV_LOAD_IMAGE_UNCHANGED) match {
+    _inputImage = imread(fileName, IMREAD_UNCHANGED) match {
       case null => None
       case x: Mat => Some(x)
     }

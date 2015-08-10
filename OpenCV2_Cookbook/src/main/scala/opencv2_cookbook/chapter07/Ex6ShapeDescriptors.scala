@@ -10,14 +10,9 @@ package opencv2_cookbook.chapter07
 import java.io.File
 
 import opencv2_cookbook.OpenCVUtils._
-import org.bytedeco.javacpp.Loader
-import org.bytedeco.javacpp.helper.opencv_core.AbstractCvScalar._
-import org.bytedeco.javacpp.helper.{opencv_imgproc => imgproc}
 import org.bytedeco.javacpp.opencv_core._
-import org.bytedeco.javacpp.opencv_highgui._
+import org.bytedeco.javacpp.opencv_imgcodecs._
 import org.bytedeco.javacpp.opencv_imgproc._
-
-import scala.collection.mutable.ListBuffer
 
 
 /**
@@ -25,97 +20,93 @@ import scala.collection.mutable.ListBuffer
  */
 object Ex6ShapeDescriptors extends App {
 
+  val Red     = new Scalar(0, 0, 255, 0)
+  val Magenta = new Scalar(255, 0, 255, 0)
+  val Yellow  = new Scalar(0, 255, 255, 0)
+  val Blue    = new Scalar(255, 0, 0, 0)
+  val Cyan    = new Scalar(255, 255, 0, 0)
+  val Green   = new Scalar(0, 255, 0, 0)
+
   //
   // First part is the same as in example `Ex5ExtractContours`; extracts contours.
   //
 
   // Read input image
-  val src = loadIplAndShowOrExit(new File("data/binaryGroup.bmp"), CV_LOAD_IMAGE_GRAYSCALE)
+  val src = loadAndShowOrExit(new File("data/binaryGroup.bmp"), IMREAD_GRAYSCALE)
 
   // Extract connected components
-  val contourSeq = new CvSeq(null)
-  val storage = cvCreateMemStorage()
-  imgproc.cvFindContours(src, storage, contourSeq, Loader.sizeof(classOf[CvContour]), CV_RETR_EXTERNAL, CV_CHAIN_APPROX_NONE)
-
-  // Convert to a Scala collection for easier manipulation
-  val contours = toScalaSeq(contourSeq)
+  val contourVec = new MatVector()
+  val storage    = cvCreateMemStorage()
+  findContours(src, contourVec, RETR_EXTERNAL, CHAIN_APPROX_NONE)
 
   // Draw extracted contours
-  val colorDst = cvCreateImage(cvGetSize(src), src.depth(), 3)
-  cvCvtColor(src, colorDst, CV_GRAY2BGR)
-  drawAllContours(colorDst, contours)
+  val colorDst = new Mat(src.size(), CV_8UC3, new Scalar(0))
+  drawContours(colorDst, contourVec, -1 /* draw all contours */ , Red)
   show(colorDst, "Contours")
+
+  // Convert to a Scala collection for easier manipulation/filtering
+  val contours = toSeq(contourVec)
 
   // Eliminate too short or too long contours
   val lengthMin = 100
   val lengthMax = 1000
   val filteredContours = contours.filter(contour => lengthMin < contour.total() && contour.total() < lengthMax)
-  val colorDest2 = loadIplImageOrExit(new File("data/group.jpg"), CV_LOAD_IMAGE_COLOR)
-  drawAllContours(colorDest2, filteredContours, width = 2)
+  val colorDest2 = loadOrExit(new File("data/group.jpg"), IMREAD_COLOR)
+  drawContours(colorDest2, toMatVector(filteredContours), -1, Red, 2, LINE_8, noArray(), Int.MaxValue, new Point())
 
   //
   // Second part computes shapes descriptors from the extracted contours.
   //
 
   // Testing the bounding box
-  val update = 0
-  val rectangle0 = cvBoundingRect(filteredContours(0), update)
-  cvRectangleR(colorDest2, rectangle0, MAGENTA, 2, CV_AA, 0)
+  //  val update = 0
+  val rectangle0 = boundingRect(filteredContours.head)
+  // Draw rectangle
+  rectangle(colorDest2, rectangle0, Magenta, 2, LINE_AA, 0)
 
   // Testing the enclosing circle
-  val center1 = Array(0f, 0f)
+  val center1 = new Point2f()
   val radius1 = Array(1f)
-  cvMinEnclosingCircle(filteredContours(1), center1, radius1)
-  cvCircle(colorDest2, cvPointFrom32f(center1), radius1(0).toInt, MAGENTA, 2, CV_AA, 0)
+  minEnclosingCircle(filteredContours(1), center1, radius1)
+  // Draw circle
+  circle(colorDest2, new Point(cvRound(center1.x), cvRound(center1.y)), radius1(0).toInt, Yellow, 2, LINE_AA, 0)
 
   // Testing the approximate polygon
-  val poly2 = cvApproxPoly(filteredContours(2), Loader.sizeof(classOf[CvContour]), storage, CV_POLY_APPROX_DP, 5, 1)
-  // Draw only the first poly
-  cvDrawContours(colorDest2, poly2, MAGENTA, MAGENTA, -1, 2, CV_AA, cvPoint(0, 0))
+  val poly2 = new Mat()
+  approxPolyDP(filteredContours(2), poly2, 5, true)
+  // Draw only the first poly.
+  polylines(colorDest2, toMatVector(Seq(poly2)), true, Blue, 2, LINE_AA, 0)
 
   // Testing the convex hull
-  val orientation = CV_CLOCKWISE
-  val returnPoints = 1
-  val convexHullPoints3 = cvConvexHull2(filteredContours(3), storage, CV_CLOCKWISE, returnPoints)
-  drawAllContours(colorDest2, toScalaSeq(convexHullPoints3), MAGENTA, 2)
+  val clockwise    = true
+  val returnPoints = true
+  val hull         = new Mat()
+  convexHull(filteredContours(3), hull, clockwise, returnPoints)
+  polylines(colorDest2, toMatVector(Seq(hull)), true, Cyan, 2, LINE_AA, 0)
 
   // Testing the moments for all filtered contours, and marking center of mass on the image
   for (c <- filteredContours) {
-    val moments = new CvMoments()
-    cvMoments(c, moments, 0)
-    val xCenter = math.round(moments.m10() / moments.m00).toInt
-    val yCenter = math.round(moments.m01() / moments.m00).toInt
-    cvCircle(colorDest2, cvPoint(xCenter, yCenter), 2, GREEN, 2, CV_AA, 0)
+    val ms = moments(c)
+    val xCenter = math.round(ms.m10() / ms.m00).toInt
+    val yCenter = math.round(ms.m01() / ms.m00).toInt
+    circle(colorDest2, new Point(xCenter, yCenter), 2, Green, 2, LINE_AA, 0)
   }
 
-
   // Show the image with marked contours and shape descriptors
-  show(colorDest2, "Contours Filtered")
+  show(colorDest2, "Some Shape Descriptors")
 
 
   //------------------------------------------------------------------------
 
 
   /**
-   * Convert OpenCV sequence to a Scala collection for easier handling.
+   * Convert to a Scala Seq collection.
    */
-  def toScalaSeq(cvSeq: CvSeq): Seq[CvSeq] = {
-    val seqBuilder = new ListBuffer[CvSeq]()
-    var element = cvSeq
-    while (element != null && !element.isNull) {
-      if (element.elem_size() > 0) {
-        seqBuilder += element
-      }
-      element = element.h_next()
-    }
-    seqBuilder.toSeq
-  }
-
+  private def toSeq(matVector: MatVector): Seq[Mat] =
+    for (i <- 0 until matVector.size.toInt) yield matVector.get(i)
 
   /**
-   * Draw `contours` on the `image`.
+   * Convert Scala sequence to MatVector.
    */
-  def drawAllContours(image: IplImage, contours: Seq[CvSeq], color: CvScalar = RED, width: Int = 1) {
-    contours.foreach(cvDrawContours(image, _, color, color, -1, width, CV_AA, cvPoint(0, 0)))
-  }
+  private def toMatVector(seq: Seq[Mat]): MatVector = new MatVector(seq: _*)
 }

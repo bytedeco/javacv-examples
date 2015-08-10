@@ -7,11 +7,13 @@
 package opencv2_cookbook.chapter07
 
 import java.io.File
+
 import opencv2_cookbook.OpenCVUtils._
-import org.bytedeco.javacpp.helper.opencv_core._
+import org.bytedeco.javacpp.indexer.FloatBufferIndexer
 import org.bytedeco.javacpp.opencv_core._
-import org.bytedeco.javacpp.opencv_highgui._
+import org.bytedeco.javacpp.opencv_imgcodecs._
 import org.bytedeco.javacpp.opencv_imgproc._
+
 import scala.math._
 
 
@@ -24,45 +26,59 @@ import scala.math._
 object Ex2HoughLines extends App {
 
   // Read input image
-  val src = loadIplAndShowOrExit(new File("data/road.jpg"), CV_LOAD_IMAGE_GRAYSCALE)
+  val src = loadAndShowOrExit(new File("data/road.jpg"), IMREAD_GRAYSCALE)
 
   // Canny contours
-  val canny = cvCreateImage(cvGetSize(src), src.depth(), 1)
+  val canny      = new Mat()
   val threshold1 = 125
   val threshold2 = 350
   val apertureSize = 3
-  cvCanny(src, canny, threshold1, threshold2, apertureSize)
+  Canny(src, canny, threshold1, threshold2, apertureSize, false /*L2 gradient*/)
   show(canny, "Canny Contours")
 
   // Hough transform for line detection
-  val storage = cvCreateMemStorage(0)
-  val method = CV_HOUGH_STANDARD
+  val lines                      = new Mat()
+  val storage                    = cvCreateMemStorage(0)
+  val method                     = HOUGH_STANDARD
   val distanceResolutionInPixels = 1
-  val angleResolutionInRadians = Pi / 180
-  val minimumVotes = 80
-  val lines = cvHoughLines2(
+  val angleResolutionInRadians   = Pi / 180
+  val minimumVotes               = 80
+  HoughLines(
     canny,
-    storage,
-    method,
+    lines,
     distanceResolutionInPixels,
     angleResolutionInRadians,
     minimumVotes)
 
   // Draw lines on the canny contour image
-  val colorDst = cvCreateImage(cvGetSize(src), src.depth(), 3)
-  cvCvtColor(canny, colorDst, CV_GRAY2BGR)
-  for (i <- 0 until lines.total) {
-    val point = new CvPoint2D32f(cvGetSeqElem(lines, i))
-    val rho = point.x
-    val theta = point.y
-    val a = cos(theta)
-    val b = sin(theta)
-    val x0 = a * rho
-    val y0 = b * rho
-    val pt1 = cvPoint(round(x0 + 1000 * (-b)).toInt, round(y0 + 1000 * a).toInt)
-    val pt2 = cvPoint(round(x0 - 1000 * (-b)).toInt, round(y0 - 1000 * a).toInt)
+  val indexer = lines.createIndexer().asInstanceOf[FloatBufferIndexer]
+  val result  = new Mat()
+  src.copyTo(result)
+  cvtColor(src, result, COLOR_GRAY2BGR)
+  for (i <- 0 until lines.rows()) {
+    val rho = indexer.get(i, 0, 0)
+    val theta = indexer.get(i, 0, 1)
 
-    cvLine(colorDst, pt1, pt2, CV_RGB(255, 0, 0), 1, CV_AA, 0)
+    val (pt1, pt2) = if (theta < Pi / 4.0 || theta > 3.0 * Pi / 4.0) {
+      // ~vertical line
+      // point of intersection of the line with first row
+      val p1 = new Point(round(rho / cos(theta)).toInt, 0)
+      // point of intersection of the line with last row
+      val p2 = new Point(round((rho - result.rows * sin(theta)) / cos(theta)).toInt, result.rows)
+      (p1, p2)
+    } else {
+      // ~horizontal line
+      // point of intersection of the line with first column
+      val p1 = new Point(0, round(rho / sin(theta)).toInt)
+      // point of intersection of the line with last column
+      val p2 = new Point(result.cols, round((rho - result.cols * cos(theta)) / sin(theta)).toInt)
+      (p1, p2)
+    }
+
+    // draw a white line
+    line(result, pt1, pt2, new Scalar(0, 0, 255, 0), 1, LINE_8, 0)
   }
-  show(colorDst, "Hough Lines")
+
+  save(new File("result.tif"), result)
+  show(toMat8U(result), "Hough Lines")
 }

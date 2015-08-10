@@ -68,7 +68,7 @@ class ColorHistogram(var numberOfBins: Int = 256) {
 
     // Convert RGB to HSV color space
     val hsvImage = new Mat()
-    cvtColor(image, hsvImage, CV_BGR2HSV)
+    cvtColor(image, hsvImage, COLOR_BGR2HSV)
 
     val saturationMask = new Mat()
     if (minSaturation > 0) {
@@ -76,7 +76,7 @@ class ColorHistogram(var numberOfBins: Int = 256) {
       val hsvChannels = new MatVector()
       split(hsvImage, hsvChannels)
 
-      threshold(hsvChannels.get(1), saturationMask, minSaturation, 255, CV_THRESH_BINARY)
+      threshold(hsvChannels.get(1), saturationMask, minSaturation, 255, THRESH_BINARY)
     }
 
     // Prepare arguments for a 1D hue histogram
@@ -109,7 +109,7 @@ class ColorHistogram(var numberOfBins: Int = 256) {
 
     // Convert to Lab color space
     val lab = new Mat()
-    cvtColor(image, lab, CV_BGR2Lab)
+    cvtColor(image, lab, COLOR_BGR2Lab)
 
     // Prepare arguments for a 2D color histogram
     val histRange = Array(0f, 255f)

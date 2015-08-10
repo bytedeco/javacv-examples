@@ -10,7 +10,7 @@ import java.io.File
 
 import opencv2_cookbook.OpenCVUtils._
 import org.bytedeco.javacpp.opencv_core._
-import org.bytedeco.javacpp.opencv_highgui._
+import org.bytedeco.javacpp.opencv_imgcodecs._
 
 
 /**
@@ -21,8 +21,8 @@ import org.bytedeco.javacpp.opencv_highgui._
 object Ex4BlendImages extends App {
 
   // Read input images
-  val image1 = loadAndShowOrExit(new File("data/boldt.jpg"), CV_LOAD_IMAGE_COLOR)
-  val image2 = loadAndShowOrExit(new File("data/rain.jpg"), CV_LOAD_IMAGE_COLOR)
+  val image1 = loadAndShowOrExit(new File("data/boldt.jpg"), IMREAD_COLOR)
+  val image2 = loadAndShowOrExit(new File("data/rain.jpg"), IMREAD_COLOR)
 
   // Define output image
   val result = new Mat()

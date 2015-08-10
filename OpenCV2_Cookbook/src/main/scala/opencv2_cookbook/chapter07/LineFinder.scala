@@ -7,9 +7,10 @@
 package opencv2_cookbook.chapter07
 
 
-import org.bytedeco.javacpp.helper.opencv_core._
+import org.bytedeco.javacpp.indexer.IntBufferIndexer
 import org.bytedeco.javacpp.opencv_core._
 import org.bytedeco.javacpp.opencv_imgproc._
+
 import scala.math._
 
 /**
@@ -30,42 +31,33 @@ class LineFinder(val deltaRho: Double = 1,
                  val minLength: Double = 0,
                  val minGap: Double = 0d) {
 
-    private var lines: CvSeq = null
+  private var lines: Mat = null
 
 
-    /**
-     * Apply probabilistic Hough transform.
-     */
-    def findLines(binary: CvMat) {
-        // Hough transform for line detection
-        val storage = cvCreateMemStorage(0)
-        lines = cvHoughLines2(binary, storage,
-            CV_HOUGH_PROBABILISTIC, deltaRho, deltaTheta, minVotes, minLength, minGap)
+  /**
+   * Apply probabilistic Hough transform.
+   */
+  def findLines(binary: Mat) {
+    // Hough transform for line detection
+    lines = new Mat()
+    HoughLinesP(binary, lines, deltaRho, deltaTheta, minVotes, minLength, minGap)
+  }
+
+
+  /**
+   * Draws detected lines on an image
+   */
+  def drawDetectedLines(image: Mat) {
+
+    val indexer = lines.createIndexer().asInstanceOf[IntBufferIndexer]
+
+    for (i <- 0 until lines.rows()) {
+      val pt1 = new Point(indexer.get(i, 0, 0), indexer.get(i, 0, 1))
+      val pt2 = new Point(indexer.get(i, 0, 2), indexer.get(i, 0, 3))
+
+      // draw the segment on the image
+      line(image, pt1, pt2, new Scalar(0, 0, 255, 128), 1, LINE_AA, 0)
     }
-
-
-    /**
-     * Draws detected lines on an image
-     */
-    def drawDetectedLines(image: IplImage) {
-        for (i <- 0 until lines.total) {
-            // from JavaCPP, the equivalent of the C code:
-            // CvPoint* line = (CvPoint*)cvGetSeqElem(lines,i);
-            // CvPoint first=line[0], second=line[1]
-            // is:
-            // CvPoint first=line.position(0), second=line.position(1);
-
-            val line = cvGetSeqElem(lines, i)
-            val pt1 = new CvPoint(line).position(0)
-            val pt2 = new CvPoint(line).position(1)
-
-            //            System.out.println("Line spotted: ")
-            //            System.out.println("\t pt1: " + pt1)
-            //            System.out.println("\t pt2: " + pt2)
-
-            // draw the segment on the image
-            cvLine(image, pt1, pt2, CV_RGB(255, 0, 0), 1, CV_AA, 0)
-        }
-    }
+  }
 
 }

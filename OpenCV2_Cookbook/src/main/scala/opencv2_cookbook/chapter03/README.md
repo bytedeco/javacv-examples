@@ -95,14 +95,14 @@ The last example, [Ex4ConvertingColorSpaces](Ex4ConvertingColorSpaces.scala), co
 Conversion between color spaces can be done with a single call 
 
 ``` scala
-cvtColor(rgbImage, labImage, CV_BGR2Lab)   
+cvtColor(rgbImage, labImage, COLOR_BGR2Lab)
 ```
 
 The simplicity can be deceiving. Function `cvtColor` expects that the output image is of the same type as input. The an RGB color is typically represented by three 8-bit unsigned integers, that is, each band, red, green, and blue, takes integer values in the range from 0 to 255. However, a color in CIE `L*a*b*` color space is typically represented by floating point numbers. `L*` is in range 0 to 100, `a*` and `b*` are in range -100 to 100. Since `cvtColor` expects input and output image to be of the same type, things get a bit complicated. If the input is a regular RGB color image, unsigned 8-bit bit per channel, `cvtColor` scales and shifts `L*`, `a*`, and `b*` values to fit within unsigned 8-bit bit range 0-255: `L <- L*255/100`,  `a <- a + 128`, `b <- b + 128`. One of the premises of `L*a*b*` is that color differences there are "linear" with human perception. Note that when converting to `L*a*b*` unsigned 8-bit bit, the `L*` was scaled differently than `a*` and `b*`, you need to keep this in mind when making color distance calculations. To avoid all those issues you can first convert RGB image to use floating point channels than convert to `L*a*b*` using `cvtColor`. in this case `L*a*b*` are not scaled and are within their normal range.
 
 Since example in the OpenCV2 Cookbook used 8-bit per channel color image, the JavaCV example does the same, but compensates for that in distance calculations by scaling back the `L*` channel to be comparable with `a*` and `b*`. 
 
-One additional thing to keep in mind is that the OpenCV stores RGB channels in reverse order, that is, they are actually stored as BGR. Notice that code snippet above is using flag `CV_BGR2Lab`. The `L*a*b*` images are stored in normal order. Unlike the Example 1 that used [ColorDetector](ColorDetector.scala), this example is is using [ColorDetectorLab](ColorDetectorLab.scala). Now, before iterating over image, the input is first converted to `L*a*b*`
+One additional thing to keep in mind is that the OpenCV stores RGB channels in reverse order, that is, they are actually stored as BGR. Notice that code snippet above is using flag `COLOR_BGR2Lab`. The `L*a*b*` images are stored in normal order. Unlike the Example 1 that used [ColorDetector](ColorDetector.scala), this example is is using [ColorDetectorLab](ColorDetectorLab.scala). Now, before iterating over image, the input is first converted to `L*a*b*`
 
 ``` scala
 // Convert input from RGB to L*a*b* color space
@@ -112,7 +112,7 @@ One additional thing to keep in mind is that the OpenCV stores RGB channels in r
 //       a <- a + 128
 //       b <- b + 128
 val labImage = new Mat()
-cvtColor(rgbImage, labImage, CV_BGR2Lab)   
+cvtColor(rgbImage, labImage, COLOR_BGR2Lab)
 ```
 
 The channel order and scaling of `L*` is dealt with in the distance calculations:

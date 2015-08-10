@@ -10,6 +10,7 @@ import java.io.File
 
 import opencv2_cookbook.OpenCVUtils._
 import org.bytedeco.javacpp.opencv_core._
+import org.bytedeco.javacpp.opencv_imgcodecs._
 import org.bytedeco.javacpp.opencv_imgproc._
 
 
@@ -22,19 +23,20 @@ import org.bytedeco.javacpp.opencv_imgproc._
 object Ex1HarrisCornerMap extends App {
 
   // Read input image
-  val image = loadIplAndShowOrExit(new File("data/church01.jpg"))
+  val image = loadAndShowOrExit(new File("data/church01.jpg"), IMREAD_GRAYSCALE)
 
   // Image to store the Harris detector responses.
-  val cornerStrength = cvCreateImage(cvGetSize(image), IPL_DEPTH_32F, 1)
+  val cornerStrength = new Mat()
   // Detect Harris Corners
-  cvCornerHarris(image, cornerStrength,
+  cornerHarris(image, cornerStrength,
     3 /* neighborhood size */ ,
     3 /* aperture size */ ,
     0.01 /* Harris parameter */)
 
   // Threshold to retain only locations of strongest corners
-  val harrisCorners = cvCreateImage(cvGetSize(image), IPL_DEPTH_8U, 1)
-  val threshold = 0.0001
-  cvThreshold(cornerStrength, harrisCorners, threshold, 255, CV_THRESH_BINARY_INV)
-  show(harrisCorners, "Harris Corner Map")
+  val harrisCorners = new Mat()
+  val t             = 0.0001
+  threshold(cornerStrength, harrisCorners, t, 255, THRESH_BINARY_INV)
+  // FIXME: `show` should work without converting to 8U
+  show(toMat8U(harrisCorners), "Harris Corner Map")
 }
