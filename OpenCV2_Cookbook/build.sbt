@@ -1,7 +1,7 @@
 name := "opencv2-cookbook"
 organization := "javacv.examples"
 
-val javacppVersion = "1.1-SNAPSHOT"
+val javacppVersion = "1.1"
 version := javacppVersion
 scalaVersion := "2.11.7"
 scalacOptions ++= Seq("-unchecked", "-deprecation", "-Xlint")
