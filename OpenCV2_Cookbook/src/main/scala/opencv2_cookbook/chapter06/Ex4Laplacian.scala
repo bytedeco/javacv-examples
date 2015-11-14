@@ -10,7 +10,7 @@ package opencv2_cookbook.chapter06
 import java.io.File
 
 import opencv2_cookbook.OpenCVUtils._
-import org.bytedeco.javacpp.opencv_highgui._
+import org.bytedeco.javacpp.opencv_imgcodecs._
 
 
 /**
@@ -19,15 +19,15 @@ import org.bytedeco.javacpp.opencv_highgui._
 object Ex4Laplacian extends App {
 
     // Read input image
-    val src = loadIplAndShowOrExit(new File("data/boldt.jpg"), CV_LOAD_IMAGE_GRAYSCALE)
+    val src = loadAndShowOrExit(new File("data/boldt.jpg"), IMREAD_GRAYSCALE)
 
     // Compute floating point Laplacian edge strength
     val laplacian = new LaplacianZC()
     laplacian.aperture = 7
     val flap = laplacian.computeLaplacian(src)
-    show(toIplImage8U(scaleTo01(flap)), "Laplacian")
+    show(toMat8U(flap), "Laplacian")
 
     // Locate edges using zero-crossing
-    val edges = laplacian.getZeroCrossings(50000f)
+    val edges = laplacian.getZeroCrossings(flap)
     show(edges, "Laplacian Edges")
 }

@@ -9,7 +9,8 @@ package opencv2_cookbook.chapter01
 import javax.swing.JFrame._
 
 import org.bytedeco.javacpp.opencv_core._
-import org.bytedeco.javacpp.opencv_highgui._
+import org.bytedeco.javacpp.opencv_imgcodecs._
+import org.bytedeco.javacpp.opencv_imgproc._
 import org.bytedeco.javacv.{CanvasFrame, OpenCVFrameConverter}
 
 /**
@@ -18,7 +19,7 @@ import org.bytedeco.javacv.{CanvasFrame, OpenCVFrameConverter}
 object Ex3LoadAndSave extends App {
 
   // read the input image as a gray-scale image
-  var image = imread("data/puppy.bmp", CV_LOAD_IMAGE_COLOR)
+  var image = imread("data/puppy.bmp", IMREAD_COLOR)
 
   if (image.empty()) {
     // error handling
@@ -38,7 +39,7 @@ object Ex3LoadAndSave extends App {
   canvas.setDefaultCloseOperation(EXIT_ON_CLOSE)
 
   // Show image on window
-  val converter = new OpenCVFrameConverter.ToIplImage()
+  val converter = new OpenCVFrameConverter.ToMat()
   canvas.showImage(converter.convert(image))
 
 

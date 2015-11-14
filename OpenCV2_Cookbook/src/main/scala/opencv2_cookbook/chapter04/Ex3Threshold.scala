@@ -10,7 +10,7 @@ import java.io.File
 
 import opencv2_cookbook.OpenCVUtils._
 import org.bytedeco.javacpp.opencv_core._
-import org.bytedeco.javacpp.opencv_highgui._
+import org.bytedeco.javacpp.opencv_imgcodecs._
 import org.bytedeco.javacpp.opencv_imgproc._
 
 
@@ -21,11 +21,11 @@ import org.bytedeco.javacpp.opencv_imgproc._
 object Ex3Threshold extends App {
 
   // Load image as a gray scale
-  val src = loadAndShowOrExit(new File("data/group.jpg"), CV_LOAD_IMAGE_GRAYSCALE)
+  val src = loadAndShowOrExit(new File("data/group.jpg"), IMREAD_GRAYSCALE)
 
   val dest = new Mat()
 
-  threshold(src, dest, 60, 255, CV_THRESH_BINARY)
+  threshold(src, dest, 60, 255, THRESH_BINARY)
 
   show(dest, "Thresholded")
 }

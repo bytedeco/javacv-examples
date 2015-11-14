@@ -36,7 +36,7 @@ class ContentFinder {
     // Since C++ calcBackProject is using arrays of arrays we need to do some wrapping `PointerPointer` objects.
     val histRange = Array(minValue, maxValue)
     val intPtrChannels = new IntPointer(channels: _*)
-    val ptrPtrHistRange: PointerPointer[FloatPointer] = new PointerPointer[FloatPointer](histRange, histRange, histRange)
+    val ptrPtrHistRange = new PointerPointer[FloatPointer](histRange, histRange, histRange)
 
     calcBackProject(image, 1, intPtrChannels, histogram, result, ptrPtrHistRange, 255, true)
 

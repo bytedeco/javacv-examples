@@ -10,7 +10,7 @@ import java.io.File
 
 import opencv2_cookbook.OpenCVUtils._
 import org.bytedeco.javacpp.opencv_core._
-import org.bytedeco.javacpp.opencv_highgui._
+import org.bytedeco.javacpp.opencv_imgcodecs._
 import org.bytedeco.javacpp.opencv_imgproc._
 import org.bytedeco.javacpp.opencv_video._
 
@@ -35,7 +35,7 @@ object Ex8MeanShiftDetector extends App {
   //
 
   // Load image as a color
-  val templateImage = loadAndShowOrExit(new File("data/baboon1.jpg"), CV_LOAD_IMAGE_COLOR)
+  val templateImage = loadAndShowOrExit(new File("data/baboon1.jpg"), IMREAD_COLOR)
 
   // Display image with marked ROI
   val rect = new Rect(110, 260, 35, 40)
@@ -56,11 +56,11 @@ object Ex8MeanShiftDetector extends App {
   //
 
   // Load the second image where we want to locate a new baboon face
-  val targetImage = loadAndShowOrExit(new File("data/baboon3.jpg"), CV_LOAD_IMAGE_COLOR)
+  val targetImage = loadAndShowOrExit(new File("data/baboon3.jpg"), IMREAD_COLOR)
 
   // Convert to HSV color space
   val hsvTargetImage = new Mat()
-  cvtColor(targetImage, hsvTargetImage, CV_BGR2HSV)
+  cvtColor(targetImage, hsvTargetImage, COLOR_BGR2HSV)
 
   // Get back-projection of hue histogram
   finder.threshold = -1f

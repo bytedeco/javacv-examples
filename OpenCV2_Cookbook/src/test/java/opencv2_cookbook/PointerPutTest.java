@@ -6,10 +6,10 @@
 
 package opencv2_cookbook;
 
+import org.bytedeco.javacpp.opencv_core.DMatch;
 import org.junit.Assert;
 import org.junit.Test;
 
-import static org.bytedeco.javacpp.opencv_features2d.DMatch;
 import static org.junit.Assert.assertNotNull;
 
 
@@ -104,50 +104,6 @@ public final class PointerPutTest {
         for (int i = 0; i < expected.length; i++) {
             assertEquals("dest.position(" + i + ")", expected[i], dest.position(i), 0.1);
         }
-    }
-
-
-    /**
-     * Check Pointer.put on a elements of a native array - copy some.
-     */
-    @Test
-    public void copyContainerSomeDMatch() throws Exception {
-
-        final MyDMatch[] expected = new MyDMatch[]{
-                new MyDMatch(11.1f, 12, 13, 14),
-                new MyDMatch(21.1f, 22, 23, 24),
-                new MyDMatch(31.1f, 32, 33, 34),
-                new MyDMatch(41.1f, 42, 43, 44),
-        };
-
-        // Allocate native array of DMatch with 4 elements
-        final DMatch src = new DMatch(expected.length);
-
-        // Assign values to source array elements
-        for (int i = 0; i < expected.length; i++) {
-            src.position(i).distance(expected[i].distance);
-            src.position(i).imgIdx(expected[i].imgIdx);
-            src.position(i).queryIdx(expected[i].queryIdx);
-            src.position(i).trainIdx(expected[i].trainIdx);
-        }
-
-        // Verify initialization
-        for (int i = 0; i < expected.length; i++) {
-            assertEquals("src.position(" + i + ")", expected[i], src.position(i), 0.1);
-        }
-
-        // Copy to a new native array
-        final DMatch dest = new DMatch(2);
-
-        // Copy from source (0) to destination (0)
-        //   dest.position(0).put(src.position(0).limit(1));
-        OpenCVUtils.copy(src.position(0), dest.position(0));
-        assertEquals("dest.position(" + 0 + ")", expected[0], dest.position(0), 0.1);
-
-        // Copy from source (3) to destination (1)
-        //   dest.position(1).put(src.position(3).limit(4));
-        OpenCVUtils.copy(src.position(3), dest.position(1));
-        assertEquals("dest.position(" + 1 + ")", expected[3], dest.position(1), 0.1);
     }
 
 

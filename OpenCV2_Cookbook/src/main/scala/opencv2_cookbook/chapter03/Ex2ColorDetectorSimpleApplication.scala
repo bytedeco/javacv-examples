@@ -89,7 +89,7 @@ object Ex2ColorDetectorSimpleApplication extends SimpleSwingApplication {
     // by setting gamma to 1, otherwise the image will not look correct.
     val canvas = new CanvasFrame(caption, 1)
     canvas.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE)
-    val converter = new OpenCVFrameConverter.ToIplImage()
+    val converter = new OpenCVFrameConverter.ToMat()
     canvas.showImage(converter.convert(image))
   }
 }

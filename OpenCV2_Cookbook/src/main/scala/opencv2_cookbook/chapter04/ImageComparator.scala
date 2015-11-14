@@ -6,7 +6,7 @@
 
 package opencv2_cookbook.chapter04
 
-import org.bytedeco.javacpp.opencv_core.Mat
+import org.bytedeco.javacpp.opencv_core._
 import org.bytedeco.javacpp.opencv_imgproc._
 
 
@@ -26,6 +26,6 @@ class ImageComparator(val referenceImage: Mat, val numberOfBins: Int = 8) {
    */
   def compare(image: Mat): Double = {
     val inputH = hist.getHistogram(image)
-    compareHist(referenceHistogram, inputH, CV_COMP_INTERSECT)
+    compareHist(referenceHistogram, inputH, HISTCMP_INTERSECT)
   }
 }

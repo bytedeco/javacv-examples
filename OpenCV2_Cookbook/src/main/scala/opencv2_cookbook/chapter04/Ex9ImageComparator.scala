@@ -9,7 +9,7 @@ package opencv2_cookbook.chapter04
 import java.io.File
 
 import opencv2_cookbook.OpenCVUtils._
-import org.bytedeco.javacpp.opencv_highgui._
+import org.bytedeco.javacpp.opencv_imgcodecs._
 
 
 /**
@@ -30,7 +30,7 @@ object Ex9ImageComparator extends App {
   )
 
   // Load reference image
-  val reference = loadOrExit(referenceImageFile, CV_LOAD_IMAGE_COLOR)
+  val reference = loadOrExit(referenceImageFile, IMREAD_COLOR)
 
   // Setup comparator
   val comparator = new ImageComparator(reference)
@@ -40,7 +40,7 @@ object Ex9ImageComparator extends App {
 
   // Compute similarity for test images
   for (file <- testImageFiles) {
-    val image = loadOrExit(file, CV_LOAD_IMAGE_COLOR)
+    val image = loadOrExit(file, IMREAD_COLOR)
     val imageSize = image.cols() * image.rows()
     // Compute histogram match and normalize by image size.
     // 1 means perfect match.

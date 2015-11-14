@@ -23,7 +23,7 @@ An `Indexer` helps to locate (index) and access pixels within a `Mat` object. De
 You can also *index* (access) pixels in an image in different ways:
  * by specifying `(x,y)` or `(column, raw)` coordinates, for use with gray level images, for instance `put(x, y, value)`,
  * by specifying `(x,y,channel)` or `(column, raw, channel)` for multi-channel images, for instance, color images, for instance `put(x, y, channel, value)`,
- * by directly indexing stored values by single one dimantional coordinate `(i)`, assuming that an image is one long collection of pixels, for instance `put(i, value)`, works with any image.
+ * by directly indexing stored values by single one dimensional coordinate `(i)`, assuming that an image is one long collection of pixels, for instance `put(i, value)`, works with any image.
 
 The first two approaches are straightforward. To iterate over pixels and channel values you need know number of columns (`Mat.cols`), number of rows (`Mat.rows`), and number of channels (`Mat.channels`).
 
@@ -120,7 +120,7 @@ The approach has two steps. First a kernel is constructed describing the linear 
 Here is a n example of sharpening an image using linear filtering:
 ``` scala
 // Read input image
-val image = loadAndShowOrExit(new File("data/boldt.jpg"), CV_LOAD_IMAGE_COLOR)
+val image = loadAndShowOrExit(new File("data/boldt.jpg"), IMREAD_COLOR)
 
 // Define output image
 val dest = new Mat()
@@ -191,9 +191,9 @@ Here is an example of modifying a small portion of an image. A watermark is adde
 
 ``` scala
 // Read input image
-val logo = loadAndShowOrExit(new File("data/logo.bmp"), CV_LOAD_IMAGE_COLOR)
-val mask = loadOrExit(new File("data/logo.bmp"), CV_LOAD_IMAGE_GRAYSCALE)
-val image = loadAndShowOrExit(new File("data/boldt.jpg"), CV_LOAD_IMAGE_COLOR)
+val logo = loadAndShowOrExit(new File("data/logo.bmp"), IMREAD_COLOR)
+val mask = loadOrExit(new File("data/logo.bmp"), IMREAD_GRAYSCALE)
+val image = loadAndShowOrExit(new File("data/boldt.jpg"), IMREAD_COLOR)
 
 // Define region of interest that matches the size of the logo
 val imageROI = image(new Rect(image.cols - logo.cols, image.rows - logo.rows, logo.cols, logo.rows))

@@ -14,27 +14,24 @@ import org.bytedeco.javacpp.opencv_imgproc._
 
 
 /**
- * Example of using morphological opening and closing.
- * This Scala code functionally is equivalent to C++ code in chapter 5 section
+ * Example of using morphological opening and closing in chapter 5 section
  * "Opening and closing images using morphological filters".
- * The original example in the book is using "C++ API". Calls here use "C API" supported by JavaCV.
  */
 object Ex2OpeningAndClosing extends App {
 
   // Read input image
-  val image = loadIplAndShowOrExit(new File("data/binary.bmp"))
+  val image = loadAndShowOrExit(new File("data/binary.bmp"))
 
   // Create 5x5 structural element
-  val values: Array[Int] = null
-  val element5 = cvCreateStructuringElementEx(5, 5, 2, 2, CV_SHAPE_RECT, values)
+  val element5 = new Mat(5, 5, CV_8U, new Scalar(1d))
 
   // Closing
-  val closed = cvCreateImage(cvGetSize(image), image.depth, 1)
-  cvMorphologyEx(image, closed, null, element5, MORPH_CLOSE, 1)
+  val closed = new Mat()
+  morphologyEx(image, closed, MORPH_CLOSE, element5)
   show(closed, "Closed")
 
   // Opening
-  val opened = cvCreateImage(cvGetSize(image), image.depth, 1)
-  cvMorphologyEx(image, opened, null, element5, MORPH_OPEN, 1)
+  val opened = new Mat()
+  morphologyEx(image, opened, MORPH_OPEN, element5)
   show(opened, "Opened")
 }

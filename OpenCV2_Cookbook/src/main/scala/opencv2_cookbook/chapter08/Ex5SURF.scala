@@ -11,7 +11,7 @@ import java.io.File
 import opencv2_cookbook.OpenCVUtils._
 import org.bytedeco.javacpp.opencv_core._
 import org.bytedeco.javacpp.opencv_features2d._
-import org.bytedeco.javacpp.opencv_nonfree._
+import org.bytedeco.javacpp.opencv_xfeatures2d._
 
 
 /**
@@ -23,13 +23,13 @@ object Ex5SURF extends App {
   val image = loadAndShowOrExit(new File("data/church01.jpg"))
 
   // Detect SURF features.
-  val keyPoints = new KeyPoint()
+  val keyPoints = new KeyPointVector()
   val hessianThreshold = 2500d
   val nOctaves = 4
   val nOctaveLayers = 2
   val extended = true
   val upright = false
-  val surf = new SURF(hessianThreshold, nOctaves, nOctaveLayers, extended, upright)
+  val surf = SURF.create(hessianThreshold, nOctaves, nOctaveLayers, extended, upright)
   surf.detect(image, keyPoints)
 
   // Draw keyPoints

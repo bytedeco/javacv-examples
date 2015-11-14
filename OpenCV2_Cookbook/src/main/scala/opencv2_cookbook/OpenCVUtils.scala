@@ -8,94 +8,24 @@ package opencv2_cookbook
 
 
 import java.awt._
-import java.awt.geom.Ellipse2D
 import java.awt.image.BufferedImage
-import java.io.{File, FileNotFoundException, IOException}
+import java.io.File
 import javax.swing.JFrame
 
-import org.bytedeco.javacpp.Pointer
-import org.bytedeco.javacpp.helper.opencv_core.CvArr
-import org.bytedeco.javacpp.opencv_core._
-import org.bytedeco.javacpp.opencv_features2d.{DMatch, KeyPoint}
-import org.bytedeco.javacpp.opencv_highgui._
+import org.bytedeco.javacpp.indexer.FloatIndexer
+import org.bytedeco.javacpp.opencv_core.{Point, _}
+import org.bytedeco.javacpp.opencv_imgcodecs._
+import org.bytedeco.javacpp.opencv_imgproc._
 import org.bytedeco.javacv.OpenCVFrameConverter.ToMat
-import org.bytedeco.javacv.{CanvasFrame, Java2DFrameConverter, OpenCVFrameConverter}
+import org.bytedeco.javacv.{CanvasFrame, Java2DFrameConverter}
+
+import scala.math.round
 
 
 /** Helper methods that simplify use of OpenCV API. */
 object OpenCVUtils {
 
-  /** Load an image and show in a CanvasFrame.
-    *
-    * If image cannot be loaded the application will exit with code 1.
-    *
-    * @param file image file
-    * @param flags Flags specifying the color type of a loaded image:
-    *              <ul>
-    *              <li> `>0` Return a 3-channel color image</li>
-    *              <li> `=0` Return a gray scale image</li>
-    *              <li> `<0` Return the loaded image as is. Note that in the current implementation
-    *              the alpha channel, if any, is stripped from the output image. For example, a 4-channel
-    *              RGBA image is loaded as RGB if the `flags` is greater than 0.</li>
-    *              </ul>
-    *              Default is gray scale.
-    * @return Loaded image
-    */
-  @deprecated(message = "`Mat` is preferred way to represent an image, use `IplImage` is discouraged.", since = "0.9")
-  def loadIplAndShowOrExit(file: File, flags: Int = CV_LOAD_IMAGE_COLOR): IplImage = {
-    try {
-      val image = loadIplImageOrExit(file, flags)
-      show(image, file.getName)
-      image
-    }
-    catch {
-      case ex: IOException =>
-        println("Couldn't load image: " + file.getAbsolutePath)
-        sys.exit(1)
-    }
-  }
-
-
-  /** Load an image, if image cannot be loaded the application will exit with code 1.
-    *
-    * @param file image file
-    * @param flags Flags specifying the color type of a loaded image:
-    *              <ul>
-    *              <li> `>0` Return a 3-channel color image</li>
-    *              <li> `=0` Return a gray scale image</li>
-    *              <li> `<0` Return the loaded image as is. Note that in the current implementation
-    *              the alpha channel, if any, is stripped from the output image. For example, a 4-channel
-    *              RGBA image is loaded as RGB if the `flags` is greater than 0.</li>
-    *              </ul>
-    *              Default is gray scale.
-    * @throws FileNotFoundException when file does not exist
-    * @throws IOException when image cannot be read
-    * @return Loaded image
-    */
-  @deprecated(message = "`Mat` is preferred way to represent an image, use `IplImage` is discouraged.", since = "0.9")
-  def loadIplImageOrExit(file: File, flags: Int = CV_LOAD_IMAGE_COLOR): IplImage = {
-    // Verify file
-    if (!file.exists()) {
-      throw new FileNotFoundException("Image file does not exist: " + file.getAbsolutePath)
-    }
-    // Read input image
-    val image = cvLoadImage(file.getAbsolutePath, flags)
-    if (image == null) {
-      throw new IOException("Couldn't load image: " + file.getAbsolutePath)
-    }
-    image
-  }
-
-  /** Show image in a window. Closing the window will exit the application. */
-  @deprecated(message = "`Mat` is preferred way to represent an image, use `IplImage` is discouraged.", since = "0.9")
-  def show(image: IplImage, title: String) {
-    val converter = new OpenCVFrameConverter.ToIplImage()
-    val canvas = new CanvasFrame(title, 1)
-    canvas.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE)
-    canvas.showImage(converter.convert(image))
-  }
-
-  /** Load an image and show in a CanvasFrame.  If image cannot be loaded the application will exit with code 1.
+  /** Load an image and show in a CanvasFrame. If image cannot be loaded the application will exit with code 1.
     *
     * @param flags Flags specifying the color type of a loaded image:
     *              <ul>
@@ -108,59 +38,7 @@ object OpenCVUtils {
     *              Default is gray scale.
     * @return loaded image
     */
-  def loadCvMatAndShowOrExit(file: File, flags: Int = CV_LOAD_IMAGE_COLOR): CvMat = {
-    // Read input image
-    val image = loadCvMatOrExit(file, flags)
-    show(image, file.getName)
-    image
-  }
-
-  /** Load an image. If image cannot be loaded the application will exit with code 1.
-    *
-    * @param flags Flags specifying the color type of a loaded image:
-    *              <ul>
-    *              <li> `>0` Return a 3-channel color image</li>
-    *              <li> `=0` Return a gray scale image</li>
-    *              <li> `<0` Return the loaded image as is. Note that in the current implementation
-    *              the alpha channel, if any, is stripped from the output image. For example, a 4-channel
-    *              RGBA image is loaded as RGB if the `flags` is greater than 0.</li>
-    *              </ul>
-    *              Default is gray scale.
-    * @return loaded image
-    */
-  def loadCvMatOrExit(file: File, flags: Int = CV_LOAD_IMAGE_COLOR): CvMat = {
-    // Read input image
-    val image = cvLoadImageM(file.getAbsolutePath, flags)
-    if (image == null) {
-      println("Couldn't load image: " + file.getAbsolutePath)
-      sys.exit(1)
-    }
-    image
-  }
-
-  /** Show image in a window. Closing the window will exit the application. */
-  @deprecated(message = "`Mat` is preferred way to represent an image, use `CvMat` is discouraged.", since = "0.9")
-  def show(mat: CvMat, title: String) {
-    val converter = new OpenCVFrameConverter.ToIplImage()
-    val canvas = new CanvasFrame(title, 1)
-    canvas.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE)
-    canvas.showImage(converter.convert(mat.asIplImage()))
-  }
-
-  /** Load an image and show in a CanvasFrame.  If image cannot be loaded the application will exit with code 1.
-    *
-    * @param flags Flags specifying the color type of a loaded image:
-    *              <ul>
-    *              <li> `>0` Return a 3-channel color image</li>
-    *              <li> `=0` Return a gray scale image</li>
-    *              <li> `<0` Return the loaded image as is. Note that in the current implementation
-    *              the alpha channel, if any, is stripped from the output image. For example, a 4-channel
-    *              RGBA image is loaded as RGB if the `flags` is greater than 0.</li>
-    *              </ul>
-    *              Default is gray scale.
-    * @return loaded image
-    */
-  def loadAndShowOrExit(file: File, flags: Int = CV_LOAD_IMAGE_COLOR): Mat = {
+  def loadAndShowOrExit(file: File, flags: Int = IMREAD_COLOR): Mat = {
     // Read input image
     val image = loadOrExit(file, flags)
     show(image, file.getName)
@@ -180,7 +58,7 @@ object OpenCVUtils {
     *              Default is gray scale.
     * @return loaded image
     */
-  def loadOrExit(file: File, flags: Int = CV_LOAD_IMAGE_COLOR): Mat = {
+  def loadOrExit(file: File, flags: Int = IMREAD_COLOR): Mat = {
     // Read input image
     val image = imread(file.getAbsolutePath, flags)
     if (image.empty()) {
@@ -190,6 +68,7 @@ object OpenCVUtils {
     image
   }
 
+  /** Show image in a window. Closing the window will exit the application. */
   def show(mat: Mat, title: String) {
     val converter = new ToMat()
     val canvas = new CanvasFrame(title, 1)
@@ -205,65 +84,44 @@ object OpenCVUtils {
   }
 
 
-  /** Draw circles at feature point locations on an image. */
-  @deprecated(message = "`Mat` is preferred way to represent an image, use `IplImage` is discouraged.", since = "0.9")
-  def drawOnImage(image: IplImage, points: CvPoint2D32f): Image = {
-    // OpenCV drawing seems to crash a lot, so use Java2D
-    val radius = 3
-    val converter = new OpenCVFrameConverter.ToIplImage()
-    val frame = converter.convert(image)
-    val bi = new Java2DFrameConverter().convert(frame)
-    val canvas = new BufferedImage(bi.getWidth, bi.getHeight, BufferedImage.TYPE_INT_RGB)
-    val g2d = canvas.getGraphics.asInstanceOf[Graphics2D]
-    g2d.drawImage(bi, 0, 0, null)
-    g2d.setColor(Color.RED)
-    val w = radius * 2
-    // Plot points
-    toArray(points).foreach { p => g2d.draw(new Ellipse2D.Double(p.x - radius, p.y - radius, w, w)) }
-
-    canvas
-  }
-
-  /** Convert native vector to JVM array.
-    *
-    * @param points pointer to a native vector containing KeyPoints.
-    */
-  def toArray(points: CvPoint2D32f): Array[CvPoint2D32f] = {
-    val oldPosition = points.position()
-    // Convert points to scala sequence
-    val dest = for (i <- Array.range(0, points.capacity)) yield new CvPoint2D32f(points.position(i))
-    // Reset position explicitly to avoid issues from other uses of this position-based container.
-    points.position(oldPosition)
+  /** Draw red circles at point locations on an image. */
+  def drawOnImage(image: Mat, points: Point2fVector): Mat = {
+    val dest = image.clone()
+    val radius = 5
+    val red = new Scalar(0, 0, 255, 0)
+    for (i <- 0 until points.size.toInt) {
+      val p = points.get(i)
+      circle(dest, new Point(round(p.x), round(p.y)), radius, red)
+    }
 
     dest
   }
 
-  /** Draw circles at key point locations on an image. Circle radius is proportional to key point size. */
-  @deprecated(message = "`Mat` is preferred way to represent an image, use `IplImage` is discouraged.", since = "0.9")
-  def drawOnImage(image: IplImage, points: KeyPoint): Image = {
-    drawOnImage(image, toArray(points))
+  /** Draw a shape on an image.
+    *
+    * @param image input image
+    * @param overlay shape to draw
+    * @param color color to use
+    * @return new image with drawn overlay
+    */
+  def drawOnImage(image: Mat, overlay: Rect, color: Scalar): Mat = {
+    val dest = image.clone()
+    rectangle(dest, overlay, color)
+    dest
   }
 
-  /** Draw circles at key point locations on an image. Circle radius is proportional to key point size. */
-  @deprecated(message = "`Mat` is preferred way to represent an image, use `IplImage` is discouraged.", since = "0.9")
-  def drawOnImage(image: IplImage, points: Array[KeyPoint]): Image = {
-
-    // OpenCV drawing seems to crash a lot, so use Java2D
-    val minR = 2
-    val converter = new OpenCVFrameConverter.ToIplImage()
-    val frame = converter.convert(image)
-    val bi = new Java2DFrameConverter().convert(frame)
-    val g2d = bi.getGraphics.asInstanceOf[Graphics2D]
-    g2d.setColor(Color.WHITE)
-
-    points.foreach(p => {
-      val radius = p.size() / 2
-      val r = if (radius == Float.NaN || radius < minR) minR else radius
-      val pt = p.pt
-      g2d.draw(new Ellipse2D.Double(pt.x - r, pt.y - r, r * 2, r * 2))
-    })
-
-    bi
+  /** Save the image to the specified file.
+    *
+    * The image format is chosen based on the filename extension (see `imread()` in OpenCV documentation for the list of extensions).
+    * Only 8-bit (or 16-bit in case of PNG, JPEG 2000, and TIFF) single-channel or
+    * 3-channel (with ‘BGR’ channel order) images can be saved using this function.
+    * If the format, depth or channel order is different, use Mat::convertTo() , and cvtColor() to convert it before saving.
+    *
+    * @param file file to save to. File name extension decides output image format.
+    * @param image image to save.
+    */
+  def save(file: File, image: Mat) {
+    imwrite(file.getAbsolutePath, image)
   }
 
   /** Convert native vector to JVM array.
@@ -280,10 +138,31 @@ object OpenCVUtils {
     points
   }
 
-  def toBufferedImage(ipl: IplImage): BufferedImage = {
-    val openCVConverter = new OpenCVFrameConverter.ToIplImage()
-    val java2DConverter = new Java2DFrameConverter()
-    java2DConverter.convert(openCVConverter.convert(ipl))
+  /** Convert native vector to JVM array.
+    *
+    * @param keyPoints pointer to a native vector containing KeyPoints.
+    */
+  def toArray(keyPoints: KeyPointVector): Array[KeyPoint] = {
+    // for the simplicity of the implementation we will assume that number of key points is within Int range.
+    require(keyPoints.size() <= Int.MaxValue)
+    val n = keyPoints.size().toInt
+
+    // Convert keyPoints to Scala sequence
+    for (i <- Array.range(0, n)) yield new KeyPoint(keyPoints.get(i))
+  }
+
+  /** Convert native vector to JVM array.
+    *
+    * @param matches pointer to a native vector containing DMatches.
+    * @return
+    */
+  def toArray(matches: DMatchVector): Array[DMatch] = {
+    // for the simplicity of the implementation we will assume that number of key points is within Int range.
+    require(matches.size() <= Int.MaxValue)
+    val n = matches.size().toInt
+
+    // Convert keyPoints to Scala sequence
+    for (i <- Array.range(0, n)) yield new DMatch(matches.get(i))
   }
 
   def toBufferedImage(mat: Mat): BufferedImage = {
@@ -292,260 +171,114 @@ object OpenCVUtils {
     java2DConverter.convert(openCVConverter.convert(mat))
   }
 
-  /** Draw circles at key point locations on an image. Circle radius is proportional to key point size. */
-  def drawOnImage(image: Mat, points: KeyPoint): Image = {
-    drawOnImage(image.asIplImage(), toArray(points))
-  }
 
-  /** Draw a shape on an image.
-    *
-    * @param image input image
-    * @param overlay shape to draw
-    * @param color color to use
-    * @return new image with drawn overlay
-    */
-  def drawOnImage(image: Mat, overlay: Rect, color: Scalar): Mat = {
-    val dest = image.clone()
-    rectangle(dest, overlay, color)
-    dest
-  }
+  def toPoint(p: Point2f): Point = new Point(round(p.x), round(p.y))
 
-  /** Draw a shape on an image.
-    *
-    * @param image input image
-    * @param overlay shape to draw
-    * @param color color to use
-    * @return new image with drawn overlay
-    */
-  @deprecated(message = "`Mat` is preferred way to represent an image, use `IplImage` is discouraged.", since = "0.9")
-  def drawOnImage(image: IplImage, overlay: Shape, color: Color = Color.RED): Image = {
-    val converter = new OpenCVFrameConverter.ToIplImage()
-    val frame = converter.convert(image)
-    val bi = new Java2DFrameConverter().convert(frame)
-    val canvas = new BufferedImage(bi.getWidth, bi.getHeight, BufferedImage.TYPE_INT_RGB)
-    val g = canvas.createGraphics()
-    g.drawImage(bi, 0, 0, null)
-    g.setPaint(color)
-    g.draw(overlay)
-    g.dispose()
-    canvas
-  }
 
-  /** Save the image to the specified file.
-    *
-    * The image format is chosen based on the filename extension (see `imread()` in OpenCV documentation for the list of extensions).
-    * Only 8-bit (or 16-bit in case of PNG, JPEG 2000, and TIFF) single-channel or
-    * 3-channel (with ‘BGR’ channel order) images can be saved using this function.
-    * If the format, depth or channel order is different, use Mat::convertTo() , and cvtColor() to convert it before saving.
-    *
-    * @param file file to save to. File name extension decides output image format.
-    * @param image image to save.
-    */
-  def save(file: File, image: CvArr) {
-    cvSaveImage(file.getAbsolutePath, image)
-  }
 
-  /** Scale input image pixel values so the minimum value is 0 and maximum is 1.
-    *
-    * This mostly used to prepare a gray scale floating point images for display.
-    * @param image input image
-    * @return 32 bit floating point image (depth = `IPL_DEPTH_32F`).
-    */
-  @deprecated(message = "`Mat` is preferred way to represent an image, use `IplImage` is discouraged.", since = "0.9")
-  def scaleTo01(image: IplImage): IplImage = {
+  /**
+   * Convert `Mat` to one where pixels are represented as 8 bit unsigned integers (`CV_8U`).
+   * It creates a copy of the input image.
+   *
+   * @param src input image.
+   * @return copy of the input with pixels values represented as 8 bit unsigned integers.
+   */
+  def toMat8U(src: Mat, doScaling: Boolean = true): Mat = {
     val min = Array(Double.MaxValue)
     val max = Array(Double.MinValue)
-    cvMinMaxLoc(image, min, max)
-    val scale = 1 / (max(0) - min(0))
-    val imageScaled = cvCreateImage(cvGetSize(image), IPL_DEPTH_32F, image.nChannels)
-    cvConvertScale(image, imageScaled, scale, 0)
-    imageScaled
-  }
+    minMaxLoc(src, min, max, null, null, new Mat())
+    val (scale, offset) = if (doScaling) {
+      val s = 255d / (max(0) - min(0))
+      (s, -min(0) * s)
+    } else (1d, 0d)
 
-  /** Convert native vector to JVM array.
-    *
-    * @param matches pointer to a native vector containing DMatches.
-    * @return
-    */
-  def toArray(matches: DMatch): Array[DMatch] = {
-    val oldPosition = matches.position()
-    val result = new Array[DMatch](matches.capacity())
-    for (i <- result.indices) {
-      val src = matches.position(i)
-      val dest = new DMatch()
-      copy(src, dest)
-      result(i) = dest
-    }
-    // Reset position explicitly to avoid issues from other uses of this position-based container.
-    matches.position(oldPosition)
-
-    result
-  }
-
-  /** Convert between two OpenCV representations of points.
-    *
-    * This representation is needed, for instance, by `cvFindFundamentalMat` function.
-    *
-    * @param points input points
-    * @return matrix containing points. First index is the point index.
-    *         Second index is always 0. Third index corresponds to `x` and `y` coordinates.
-    */
-  def toCvMat(points: CvPoint2D32f): CvMat = {
-    val oldPosition = points.position()
-    val m = cvCreateMat(points.capacity(), 1, CV_32FC(2))
-    for (i <- 0 until points.capacity) {
-      m.put(i, 0, 0, points.position(i).x)
-      m.put(i, 0, 1, points.position(i).y)
-    }
-    points.position(oldPosition)
-    m
-  }
-
-  /** Convert between two OpenCV representations of points.
-    *
-    * This representation is needed, for instance, by `cvFindFundamentalMat` function.
-    *
-    * @param points input points
-    * @return matrix containing points. First index is the point index.
-    *         Second index is always 0. Third index corresponds to `x` and `y` coordinates.
-    */
-  def toCvMat(points: Point2f): CvMat = {
-    val oldPosition = points.position()
-    val m = cvCreateMat(points.capacity(), 1, CV_32FC(2))
-    for (i <- 0 until points.capacity) {
-      m.put(i, 0, 0, points.position(i).x)
-      m.put(i, 0, 1, points.position(i).y)
-    }
-    points.position(oldPosition)
-    m
-  }
-
-  /** Convert `IplImage` to one where pixels are represented as 32 floating point numbers (`IPL_DEPTH_32F`).
-    *
-    * It creates a copy of the input image.
-    * @param src input image.
-    * @return copy of the input with pixels values represented as 32 floating point numbers
-    */
-  @deprecated(message = "`Mat` is preferred way to represent an image, use `IplImage` is discouraged.", since = "0.9")
-  def toIplImage32F(src: IplImage): IplImage = {
-    val dest = cvCreateImage(cvGetSize(src), IPL_DEPTH_32F, src.nChannels)
-    cvConvertScale(src, dest, 1, 0)
+    val dest = new Mat()
+    src.convertTo(dest, CV_8U, scale, offset)
     dest
   }
 
-
-  /** Convert `IplImage` to one where pixels are represented as 8 bit unsigned integers (`IPL_DEPTH_8U`).
-    *
-    * It creates a copy of the input image.
-    * @param src input image.
-    * @return copy of the input with pixels values represented as 32 floating point numbers
-    */
-  @deprecated(message = "`Mat` is preferred way to represent an image, use `IplImage` is discouraged.", since = "0.9")
-  def toIplImage8U(src: IplImage, doScaling: Boolean = true): IplImage = {
-    val min = Array(Double.MaxValue)
-    val max = Array(Double.MinValue)
-    cvMinMaxLoc(src, min, max)
-    val (scale, offset) =
-      if (doScaling) {
-        (255 / (max(0) - min(0)), -min(0))
-      } else {
-        (1d, 0d)
-      }
-
-
-    val dest = cvCreateImage(cvGetSize(src), IPL_DEPTH_8U, src.nChannels)
-    cvConvertScale(src, dest, scale, offset)
-    dest
-  }
-
-
-  /** Create an `IplROI`.
-    *
-    * @param x top left corner of the ROI
-    * @param y top left corner of the ROI
-    * @param width width of the ROI
-    * @param height height of the ROI
-    * @return new IplROI object.
-    */
-  def toIplROI(x: Int, y: Int, width: Int, height: Int): IplROI = {
-    toIplROI(new Rectangle(x, y, width, height))
-  }
-
-
-  /** Convert a rectangle to `IplROI`.
-    *
-    * @param r rectangle defining location of an ROI.
-    * @return new IplROI object.
-    */
-  def toIplROI(r: Rectangle): IplROI = {
-    val roi = new IplROI()
-    roi.xOffset(r.x)
-    roi.yOffset(r.y)
-    roi.width(r.width)
-    roi.height(r.height)
-    roi
-  }
-
-
-  /** Convert a Scala collection to a JavaCV "vector".
-    *
-    * @param src Scala collection
-    * @return JavaCV/native collection
-    */
-  def toNativeVector(src: Array[DMatch]): DMatch = {
-    val dest = new DMatch(src.length)
-    for (i <- src.indices) {
-      // Since there is no way to `put` objects into a vector DMatch,
-      // We have to reassign all values individually, and hope that API will not any new ones.
-      copy(src(i), dest.position(i))
+  def toMatPoint2f(points: Seq[Point2f]): Mat = {
+    // Create Mat representing a vector of Points3f
+    val dest = new Mat(1, points.size, CV_32FC2)
+    val indx = dest.createIndexer().asInstanceOf[FloatIndexer]
+    for (i <- points.indices) {
+      val p = points(i)
+      indx.put(0, i, 0, p.x)
+      indx.put(0, i, 1, p.y)
     }
-    // Set position to 0 explicitly to avoid issues from other uses of this position-based container.
-    dest.position(0)
-
+    require(dest.checkVector(2) >= 0)
     dest
-  }
-
-  /** Copy content of a single object referred to by a pointer.
-    *
-    * If `src` is an "array", only the first element is copied.
-    *
-    * @param src source.
-    * @param dest destination.
-    */
-  def copy[T <: Pointer](src: T, dest: T) {
-    dest.put(src.limit(src.position() + 1))
   }
 
   /**
-   * Convert one (or collection) of `Point2f` to one (or collection) of `CvPoint2D32f`.
+   * Convert a sequence of Point3D to a Mat representing a vector of Points3f.
+   * Calling  `checkVector(3)` on the return value will return non-negative value indicating that it is a vector with 3 channels.
    */
-  def toCvPoint2D32f(p: Point2f): CvPoint2D32f = {
-    val ref = p.position()
-    val p1 = for (i <- 0 until p.capacity()) yield p.position(i).asCvPoint2D32f()
-    p.position(ref)
-    toNativeVector(p1.toArray)
+  def toMatPoint3f(points: Seq[Point3f]): Mat = {
+    // Create Mat representing a vector of Points3f
+    val dest = new Mat(1, points.size, CV_32FC3)
+    val indx = dest.createIndexer().asInstanceOf[FloatIndexer]
+    for (i <- points.indices) {
+      val p = points(i)
+      indx.put(0, i, 0, p.x)
+      indx.put(0, i, 1, p.y)
+      indx.put(0, i, 2, p.z)
+    }
+    dest
   }
+
+  def toPoint2fArray(mat: Mat): Array[Point2f] = {
+    require(mat.checkVector(2) >= 0, "Expecting a vector Mat")
+
+    val indexer = mat.createIndexer().asInstanceOf[FloatIndexer]
+    val size = mat.total.toInt
+    val dest = new Array[Point2f](size)
+
+    for (i <- 0 until size) dest(i) = new Point2f(indexer.get(0, i, 0), indexer.get(0, i, 1))
+    dest
+  }
+  /**
+   * Convert a vector of Point2f to a Mat representing a vector of Points2f.
+   */
+  def toMat(points: Point2fVector): Mat = {
+    // Create Mat representing a vector of Points3f
+    val size: Int = points.size.toInt
+    // Argument to Mat constructor must be `Int` to mean sizes, otherwise it may be interpreted as content.
+    val dest = new Mat(1, size, CV_32FC2)
+    val indx = dest.createIndexer().asInstanceOf[FloatIndexer]
+    for (i <- 0 until size) {
+      val p = points.get(i)
+      indx.put(0, i, 0, p.x)
+      indx.put(0, i, 1, p.y)
+    }
+    dest
+  }
+
 
   /** Convert a Scala collection to a JavaCV "vector".
     *
     * @param src Scala collection
     * @return JavaCV/native collection
     */
-  def toNativeVector(src: Array[CvPoint2D32f]): CvPoint2D32f = {
-    val dest = new CvPoint2D32f(src.length)
-    for (i <- src.indices) {
-      // Since there is no way to `put` objects into a vector CvPoint2D32f,
-      // We have to reassign all values individually, and hope that API will not any new ones.
-      copy(src(i), dest.position(i))
-    }
-    // Set position to 0 explicitly to avoid issues from other uses of this position-based container.
-    dest.position(0)
-
+  def toVector(src: Array[DMatch]): DMatchVector = {
+    val dest = new DMatchVector(src.length)
+    for (i <- src.indices) dest.put(i, src(i))
     dest
   }
 
-  /** Convert `CvRect` to AWT `Rectangle`. */
-  def toRectangle(rect: CvRect): Rectangle = {
-    new Rectangle(rect.x, rect.y, rect.width, rect.height)
+  /**
+   * Print info about the `mat`
+   */
+  def printInfo(mat: Mat, caption: String = ""): Unit = {
+    println(
+      caption + "\n" +
+        s"  cols:     ${mat.cols}\n" +
+        s"  rows:     ${mat.rows}\n" +
+        s"  depth:    ${mat.depth}\n" +
+        s"  channels: ${mat.channels}\n" +
+        s"  type:     ${mat.`type`}\n" +
+        s"  dims:     ${mat.dims}\n" +
+        s"  total:    ${mat.total}\n"
+    )
   }
 }

@@ -10,7 +10,7 @@ import java.io.File
 
 import opencv2_cookbook.OpenCVUtils._
 import org.bytedeco.javacpp.opencv_core._
-import org.bytedeco.javacpp.opencv_highgui._
+import org.bytedeco.javacpp.opencv_imgcodecs._
 import org.bytedeco.javacpp.opencv_imgproc._
 
 
@@ -20,14 +20,14 @@ import org.bytedeco.javacpp.opencv_imgproc._
 object Ex1CannyOperator extends App {
 
   // Read input image
-  val src = loadIplAndShowOrExit(new File("data/road.jpg"), CV_LOAD_IMAGE_GRAYSCALE)
+  val src = loadAndShowOrExit(new File("data/road.jpg"), IMREAD_GRAYSCALE)
 
   // Canny contours
-  val contours = cvCreateImage(cvGetSize(src), src.depth(), 1)
+  val contours = new Mat()
   val threshold1 = 125
   val threshold2 = 350
   val apertureSize = 3
-  cvCanny(src, contours, threshold1, threshold2, apertureSize)
+  Canny(src, contours, threshold1, threshold2, apertureSize, true /*L2 gradient*/)
 
   show(contours, "Canny Contours")
 }

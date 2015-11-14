@@ -11,7 +11,7 @@ import java.io.File
 import opencv2_cookbook.OpenCVUtils._
 import org.bytedeco.javacpp.indexer.FloatIndexer
 import org.bytedeco.javacpp.opencv_core._
-import org.bytedeco.javacpp.opencv_highgui._
+import org.bytedeco.javacpp.opencv_imgcodecs._
 import org.bytedeco.javacpp.opencv_imgproc._
 
 
@@ -21,7 +21,7 @@ import org.bytedeco.javacpp.opencv_imgproc._
 object Ex3Sharpen extends App {
 
   // Read input image
-  val image = loadAndShowOrExit(new File("data/boldt.jpg"), CV_LOAD_IMAGE_COLOR)
+  val image = loadAndShowOrExit(new File("data/boldt.jpg"), IMREAD_COLOR)
 
   // Define output image
   val dest = new Mat()

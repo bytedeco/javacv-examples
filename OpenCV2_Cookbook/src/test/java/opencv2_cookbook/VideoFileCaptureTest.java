@@ -6,12 +6,12 @@
 
 package opencv2_cookbook;
 
+import org.bytedeco.javacpp.opencv_core.Mat;
 import org.junit.Test;
 
 import java.io.File;
 
-import static org.bytedeco.javacpp.opencv_core.IplImage;
-import static org.bytedeco.javacpp.opencv_highgui.*;
+import static org.bytedeco.javacpp.opencv_videoio.*;
 import static org.junit.Assert.*;
 
 /**
@@ -23,28 +23,29 @@ public final class VideoFileCaptureTest {
     public void captureFromFile() throws Exception {
 
         final File file = new File("data/bike.avi");
-        assertTrue("Input video file exists: "+file.getAbsolutePath(), file.exists());
+        assertTrue("Input video file exists: " + file.getAbsolutePath(), file.exists());
 
-        final CvCapture capture = cvCreateFileCapture(file.getPath());
-        assertNotNull(capture);
+        final VideoCapture capture = new VideoCapture("data/bike.avi");
+        assertNotNull("'capture' cannot be null.", capture);
+        assertTrue("`capture` must be opened", capture.isOpened());
         try {
-            final long nbFrames = (long) cvGetCaptureProperty(capture, CV_CAP_PROP_FRAME_COUNT);
+            final long nbFrames = (long) capture.get(CAP_PROP_FRAME_COUNT);
             assertEquals(119, nbFrames);
 
-            final double fps = (long) cvGetCaptureProperty(capture, CV_CAP_PROP_FPS);
+            final double fps = (long) capture.get(CV_CAP_PROP_FPS);
             assertEquals(15, fps, 0.0001);
 
-            IplImage frame;
+            final Mat frame = new Mat();
             long count = 0;
-            while (cvGrabFrame(capture) != 0 && (frame = cvRetrieveFrame(capture)) != null) {
-                assertEquals(320, frame.width());
-                assertEquals(240, frame.height());
+            while (capture.read(frame)) {
+                assertEquals(320, frame.cols());
+                assertEquals(240, frame.rows());
                 count++;
             }
 
             assertEquals(nbFrames, count);
         } finally {
-            cvReleaseCapture(capture);
+            capture.release();
         }
     }
 }

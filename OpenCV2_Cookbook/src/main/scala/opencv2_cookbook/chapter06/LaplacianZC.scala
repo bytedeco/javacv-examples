@@ -18,56 +18,44 @@ import org.bytedeco.javacpp.opencv_imgproc._
  */
 class LaplacianZC {
 
-    /**
-     * Aperture size of the Laplacian kernel
-     */
-    var aperture = 5
+  /**
+   * Aperture size of the Laplacian kernel
+   */
+  var aperture = 5
 
-    private var laplace: CvMat = null
+  /**
+   * Compute floating point Laplacian.
+   */
+  def computeLaplacian(src: Mat): Mat = {
+    val laplace = new Mat()
+    Laplacian(src, laplace, CV_32F, aperture, 1 /*scale*/ , 0 /*delta*/ , BORDER_DEFAULT)
+    laplace
+  }
 
-    /**
-     * Compute floating point Laplacian.
-     */
-    def computeLaplacian(src: IplImage): IplImage = {
+  /**
+   * Get binary image of the zero-crossings
+   * if the product of the two adjustment pixels is
+   * less than threshold then this is a zero crossing
+   * will be ignored.
+   */
+  def getZeroCrossings(laplace: Mat): Mat = {
 
-      val dest = cvCreateImage(cvGetSize(src), IPL_DEPTH_32F, src.nChannels())
-        cvLaplace(src, dest, aperture)
+    // Threshold at 0
+    val signImage = new Mat()
+    threshold(laplace, signImage, 0, 255, THRESH_BINARY)
 
-        laplace = dest.asCvMat()
+    // Convert the +/- image into CV_8U
+    val binary = new Mat()
+    signImage.convertTo(binary, CV_8U)
 
-        dest
-    }
+    // Dilate the binary image +/- regions
+    val dilated = new Mat()
+    dilate(binary, dilated, new Mat())
 
-    /**
-     * Get binary image of the zero-crossings
-     * if the product of the two adjustment pixels is
-     * less than threshold then this is a zero crossing
-     * will be ignored.
-     */
-    def getZeroCrossings(threshold: Double = 1): IplImage = {
-
-        val cols = laplace.cols()
-        val rows = laplace.rows()
-
-        // Binary image initialize to white (255)
-        val dest = cvCreateMat(rows, cols, CV_8U)
-        for (i <- 0 until rows * cols) dest.put(i, 255)
-
-        // Negate the input threshold value
-        val t = threshold * -1
-
-        // If a product of two adjacent pixel values is negative then there is a zero-crossing.
-        // Do vertical and horizontal tests.
-        for (c <- 1 until cols; r <- 1 until rows) {
-            val v = laplace.get(r, c)
-            if ((v * laplace.get(r, c - 1) < t) || (v * laplace.get(r - 1, c) < t)) {
-                // There is a zero-crossing and its straight is above the threshold
-                // Set it to black (0)
-                dest.put(r, c, 0)
-            }
-        }
-
-        dest.asIplImage()
-    }
+    // Return the zero-crossing contours
+    val dest = new Mat()
+    subtract(dilated, binary, dest)
+    dest
+  }
 
 }
