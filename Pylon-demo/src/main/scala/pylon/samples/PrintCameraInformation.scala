@@ -1,7 +1,7 @@
 package pylon.samples
 
-import org.bytedeco.javacpp.Pylon4.{CTlFactory, DeviceInfoList}
-import org.bytedeco.javacpp.{GenICam2, Pylon4}
+import org.bytedeco.javacpp.Pylon5.{CTlFactory, DeviceInfoList}
+import org.bytedeco.javacpp.{GenICam3, Pylon5}
 
 /**
   * Prints camera model and other general information about connected cameras.
@@ -11,7 +11,7 @@ object PrintCameraInformation extends App {
   // Call PylonInitialize  to ensure the pylon runtime system
   // is initialized during the lifetime of this object.
   println("PylonInitialize()")
-  Pylon4.PylonInitialize()
+  Pylon5.PylonInitialize()
 
   try {
 
@@ -42,10 +42,10 @@ object PrintCameraInformation extends App {
 
   } finally {
     println("PylonTerminate()")
-    Pylon4.PylonTerminate()
+    Pylon5.PylonTerminate()
   }
 
-  def asString(gcs: GenICam2.gcstring): String = {
+  def asString(gcs: GenICam3.gcstring): String = {
     gcs.c_str().getString
   }
 }

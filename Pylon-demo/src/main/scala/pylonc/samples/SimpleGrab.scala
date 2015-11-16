@@ -1,6 +1,6 @@
 package pylonc.samples
 
-import org.bytedeco.javacpp.Pylon4_C._
+import org.bytedeco.javacpp.Pylon5_C._
 import org.bytedeco.javacpp.{BoolPointer, BytePointer, IntPointer}
 
 /**

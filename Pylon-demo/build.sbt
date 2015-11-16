@@ -7,7 +7,7 @@ version := "0.1"
 // Version of Scala used by the project
 scalaVersion := "2.11.7"
 
-val javacppVersion = "1.0"
+val javacppVersion = "1.2-SNAPSHOT"
 
 scalacOptions ++= Seq("-unchecked", "-deprecation", "-Xlint")
 
@@ -20,8 +20,8 @@ lazy val platform = org.bytedeco.javacpp.Loader.getPlatform
 libraryDependencies ++= Seq(
   "org.bytedeco" % "javacpp" % javacppVersion,
   // "org.bytedeco" % "javacv" % javacppVersion,
-  "org.bytedeco.javacpp-presets" % "pylon" % ("4.2.2-" + javacppVersion) classifier "",
-  "org.bytedeco.javacpp-presets" % "pylon" % ("4.2.2-" + javacppVersion) classifier platform
+  "org.bytedeco.javacpp-presets" % "pylon" % ("5.0.0-" + javacppVersion) classifier "",
+  "org.bytedeco.javacpp-presets" % "pylon" % ("5.0.0-" + javacppVersion) classifier platform
 )
 
 // Used for testing local builds and snapshots of JavaCPP/JavaCV

@@ -3,20 +3,19 @@ package pylon.samples
 
 import java.io.File
 
-import org.bytedeco.javacpp.Pylon4._
-import org.bytedeco.javacpp.{GenICam2, Pylon4}
+import org.bytedeco.javacpp.Pylon5._
 
 /**
- * This sample illustrates how to grab and process images using the CInstantCamera class.
- * The images are grabbed and processed asynchronously, i.e.,
- * while the application is processing a buffer, the acquisition of the next buffer is done
- * in parallel.
- *
- * The CInstantCamera class uses a pool of buffers to retrieve image data
- * from the camera device. Once a buffer is filled and ready,
- * the buffer can be retrieved from the camera object for processing. The buffer
- * and additional image data are collected in a grab result.
- */
+  * This sample illustrates how to grab and process images using the CInstantCamera class.
+  * The images are grabbed and processed asynchronously, i.e.,
+  * while the application is processing a buffer, the acquisition of the next buffer is done
+  * in parallel.
+  *
+  * The CInstantCamera class uses a pool of buffers to retrieve image data
+  * from the camera device. Once a buffer is filled and ready,
+  * the buffer can be retrieved from the camera object for processing. The buffer
+  * and additional image data are collected in a grab result.
+  */
 object Grab extends App {
 
   println("Dir: " + new File(".").getCanonicalPath)
@@ -30,13 +29,21 @@ object Grab extends App {
   // Call PylonInitialize  to ensure the pylon runtime system
   // is initialized during the lifetime of this object.
   println("PylonInitialize()")
-  Pylon4.PylonInitialize()
+  PylonInitialize()
 
   try {
 
-    val version = Pylon4.GetPylonVersionString()
+    val version = GetPylonVersionString()
 
     println("Pylon version: " + version.getString)
+
+    // Get all attached devices and exit application if no device is found.
+    // Get the transport layer factory.
+    val tlFactory = CTlFactory.GetInstance()
+    val devices = new DeviceInfoList()
+    if (tlFactory.EnumerateDevices(devices) == 0) {
+      throw new RuntimeException("No camera present.")
+    }
 
     println("Create device handle for the first available camera.")
     val device = CTlFactory.GetInstance().CreateFirstDevice()
@@ -50,8 +57,9 @@ object Grab extends App {
     //          // The parameter MaxNumBuffer can be used to control the count of buffers
     //        // allocated for grabbing. The default value of this parameter is 10.
     //        camera.MaxNumBuffer = 5;
-    val v = new GenICam2.IInteger()
-    camera.MaxNumBuffer()
+    //    val v = new GenICam3.IInteger()
+    //    val v = camera.MaxNumBuffer()
+    //    println("MaxNumBuffer: " + v.GetValue())
 
     // Start the grabbing of c_countOfImagesToGrab images.
     // The camera device is parameterized with a default configuration which
@@ -94,6 +102,6 @@ object Grab extends App {
 
 
   println("PylonTerminate()")
-  Pylon4.PylonTerminate()
+  PylonTerminate()
 
 }
