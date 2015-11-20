@@ -21,7 +21,10 @@ libraryDependencies ++= Seq(
   "org.bytedeco" % "javacpp" % javacppVersion,
   // "org.bytedeco" % "javacv" % javacppVersion,
   "org.bytedeco.javacpp-presets" % "pylon" % ("5.0.0-" + javacppVersion) classifier "",
-  "org.bytedeco.javacpp-presets" % "pylon" % ("5.0.0-" + javacppVersion) classifier platform
+  "org.bytedeco.javacpp-presets" % "pylon" % ("5.0.0-" + javacppVersion) classifier platform,
+  // Tests
+  "junit"                        % "junit"           % "4.12" % "test",
+  "com.novocode"                 % "junit-interface" % "0.11" % "test"
 )
 
 // Used for testing local builds and snapshots of JavaCPP/JavaCV
