@@ -1,5 +1,5 @@
-import org.bytedeco.javacpp.GenICam3;
-import org.bytedeco.javacpp.Pylon5;
+import org.bytedeco.javacpp.GenICam3.IFloat;
+import org.bytedeco.javacpp.Pylon5.CImageFormatConverter;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -13,8 +13,8 @@ public final class IFloatAccessTest {
     @Test
     public void testIFloatAccess() throws Exception {
 
-        Pylon5.CImageFormatConverter converter = new Pylon5.CImageFormatConverter();
-        GenICam3.IFloat gamma = converter.Gamma();
+        CImageFormatConverter converter = new CImageFormatConverter();
+        IFloat gamma = converter.Gamma();
 
         // This should execute without crashing JVM
         double gammaValue = gamma.GetValue();
