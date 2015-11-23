@@ -2,7 +2,6 @@ package pylon.samples
 
 import java.io.File
 
-import org.bytedeco.javacpp.GenICam3._
 import org.bytedeco.javacpp.Pylon5._
 
 /**
@@ -15,7 +14,7 @@ object ImageConversion extends App {
 
   val srcImage = new CPylonImage()
 
-  srcImage.Load(toGCString(imageFile.getCanonicalPath))
+  srcImage.Load(asGCString(imageFile.getCanonicalPath))
   println("width: " + srcImage.GetWidth())
   println("height: " + srcImage.GetHeight())
 
@@ -34,13 +33,5 @@ object ImageConversion extends App {
   converter.Convert(targetImage, srcImage)
 
   // Save converted image
-  targetImage.Save(ImageFileFormat_Png, toGCString("converted-sample-m8.png"))
-
-  //--------------------------------------------------------------------------
-
-  def toGCString(s: String): gcstring = {
-    val res = new gcstring()
-    res.assign(s)
-    res
-  }
+  targetImage.Save(ImageFileFormat_Png, asGCString("converted-sample-m8.png"))
 }

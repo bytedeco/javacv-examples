@@ -52,7 +52,7 @@ object Grab extends App {
     // Creating camera handle
     val camera = new CInstantCamera(device)
 
-    println("Using device " + camera.GetDeviceInfo().GetModelName())
+    println("Using device " + camera.GetDeviceInfo().GetModelName().c_str().getString)
 
     //          // The parameter MaxNumBuffer can be used to control the count of buffers
     //        // allocated for grabbing. The default value of this parameter is 10.
@@ -90,7 +90,8 @@ object Grab extends App {
         //#endif
       }
       else {
-        println("Error: " + ptrGrabResult.access().GetErrorCode() + " " + ptrGrabResult.access().GetErrorDescription())
+        println("Error: " + ptrGrabResult.access().GetErrorCode() + " " +
+          ptrGrabResult.access().GetErrorDescription().c_str().getString)
       }
     }
   } catch {
