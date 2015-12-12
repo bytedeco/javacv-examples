@@ -4,7 +4,7 @@ import org.bytedeco.javacpp.BytePointer
 import org.bytedeco.javacpp.Pylon5.{CConfigurationEventHandler, CInstantCamera}
 
 /**
-  * @author Jarek Sacha 
+  * Custom configuration event handler that prints message when an event is received.
   */
 class ConfigurationEventPrinter extends CConfigurationEventHandler {
 

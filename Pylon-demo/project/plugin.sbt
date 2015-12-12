@@ -5,6 +5,12 @@ classpathTypes += "maven-plugin"
 
 // javacpp `Loader` is used to determine `platform` classifier in the project`s `build.sbt`
 // We define dependency here (in folder `project`) since it is used by the build itself.
-libraryDependencies += "org.bytedeco" % "javacpp" % "1.0"
+libraryDependencies += "org.bytedeco" % "javacpp" % "1.2-SNAPSHOT"
+
+resolvers ++= Seq(
+  Resolver.sonatypeRepo("snapshots"),
+  // Use local maven repo for local javacv builds
+  "Local Maven Repository" at "file:///" + Path.userHome.absolutePath + "/.m2/repository"
+)
 
 

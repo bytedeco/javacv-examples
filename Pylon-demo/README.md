@@ -1,7 +1,10 @@
 Pylon Demo
 ==========
 
-Demos illustrating use of Basler Pylon 5 library
+The Pylon-demo project illustrates use of Basler Pylon 5 library on JVM using JavaCPP generated wrappers.
+Most of the examples are based on the C++ examples provided with the Basler Pylon 5 SDK.
+
+It as also used for interactive testing of the JavaCPP generated wrappers.
 
 Requirements
 ------------

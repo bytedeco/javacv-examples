@@ -305,7 +305,7 @@ object ParametrizeCamera extends App {
      This function illustrates how to access boolean features. */
   def demonstrateBooleanFeature(hDev: IntPointer): Unit = {
     /* The name of the feature */
-    val featureName = "GammaEnable"
+    val featureName = new BytePointer("GammaEnable")
     /* The value of the feature */
     val value = new BoolPointer(1)
 
@@ -319,7 +319,7 @@ object ParametrizeCamera extends App {
       printf("The %s features is %s\n", featureName, if (value.get) "on" else "off")
 
       /* Set a new value. */
-      value.put(value.get) /* New value */
+      value.put(!value.get) /* New value */
       printf("Switching the %s feature %s\n", featureName, if (value.get) "on" else "off")
       check(PylonDeviceSetBooleanFeature(hDev, featureName, value.get))
     } else
