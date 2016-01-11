@@ -54,12 +54,9 @@ object Grab extends App {
 
     println("Using device " + camera.GetDeviceInfo().GetModelName().c_str().getString)
 
-    //          // The parameter MaxNumBuffer can be used to control the count of buffers
-    //        // allocated for grabbing. The default value of this parameter is 10.
-    //        camera.MaxNumBuffer = 5;
-    //    val v = new GenICam3.IInteger()
-    //    val v = camera.MaxNumBuffer()
-    //    println("MaxNumBuffer: " + v.GetValue())
+    // The parameter MaxNumBuffer can be used to control the count of buffers
+    // allocated for grabbing. The default value of this parameter is 10.
+    camera.MaxNumBuffer().SetValue(5)
 
     // Start the grabbing of c_countOfImagesToGrab images.
     // The camera device is parameterized with a default configuration which
@@ -99,7 +96,6 @@ object Grab extends App {
       println("An exception occurred: " + t.getMessage)
     //      t.printStackTrace()
   }
-
 
 
   println("PylonTerminate()")
