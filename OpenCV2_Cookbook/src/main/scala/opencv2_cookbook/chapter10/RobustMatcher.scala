@@ -24,21 +24,20 @@ object RobustMatcher {
   case object CrossCheck extends CrossCheckType
   case object RatioCheck extends CrossCheckType
   case object BothCheck extends CrossCheckType
-
   sealed trait CrossCheckType
 }
 
 
-/** Robust matcher used by examples Ex3ComputeFundamentalMatrix and Ex5Homography.
+/** Robust matcher used by examples Ex4MatchingUsingSampleConsensus.
   *
-  * See Chapter 9 page 233.
+  * See  Chapter 10, p. 299  (2nd edition) or Chapter 9, page 233 (1st edition).
   *
-  * @param feature2D Feature point detector/extractor
-  * @param ratio Max ratio between 1st and 2nd NN
-  * @param refineF If `true` will refine the F matrix
-  * @param refineM if `true` will refine the matches (will refine F also)
+  * @param feature2D             Feature point detector/extractor
+  * @param ratio                 Max ratio between 1st and 2nd NN
+  * @param refineF               If `true` will refine the F matrix
+  * @param refineM               if `true` will refine the matches (will refine F also)
   * @param minDistanceToEpipolar Min distance to epipolar
-  * @param confidenceLevel Confidence level (probability)
+  * @param confidenceLevel       Confidence level (probability)
   */
 class RobustMatcher(feature2D: Feature2D = SURF.create(),
                     ratio: Float = 0.65f,
@@ -54,21 +53,20 @@ class RobustMatcher(feature2D: Feature2D = SURF.create(),
                     keyPoints1: KeyPointVector,
                     keyPoints2: KeyPointVector,
                     fundamentalMatrix: Mat)
-  //
-  //
+
   /** Match feature points using symmetry test and RANSAC
     *
     * @return fundamental matrix.
     */
   def matchImages(image1: Mat, image2: Mat, crossCheckType: CrossCheckType = CrossCheck): Result = {
-    //
-    // 1. Detection of the SURF features
+
+    // 1. Detection of the feature points
     val keyPoints1 = new KeyPointVector()
     val keyPoints2 = new KeyPointVector()
     feature2D.detect(image1, keyPoints1, new Mat())
     feature2D.detect(image2, keyPoints2, new Mat())
-    println("Number of SURF points (1): " + keyPoints1.size())
-    println("Number of SURF points (2): " + keyPoints2.size())
+    println("Number of feature points (1): " + keyPoints1.size())
+    println("Number of feature points (2): " + keyPoints2.size())
 
     // 2. Extraction of the feature descriptors
     val descriptors1 = new Mat()
@@ -119,11 +117,11 @@ class RobustMatcher(feature2D: Feature2D = SURF.create(),
         val r = ratioTest(matches1)
         println("Number of matched points 1->2 (after ratio test): " + r.length)
         toDMatchVector(r)
-      case BothCheck  =>
+      case BothCheck =>
         val r = ratioAndSymmetryTest(matches1, matches2)
         println("Number of matched points 1->2 (after ratio and cross-check): " + r.length)
         toDMatchVector(r)
-      case NoCheck    =>
+      case NoCheck =>
         val r = new DMatchVector()
         matcher.`match`(descriptors1, descriptors2, r)
         println("Number of matched points 1->2: " + r.size)
@@ -139,11 +137,11 @@ class RobustMatcher(feature2D: Feature2D = SURF.create(),
 
 
   /**
-   * Filter matches for which NN ratio is > than threshold, also remove non-matches, if present in the input.
-   *
-   * @param matches collection of matches that will be filtered.
-   * @return the number of removed points (corresponding entries being cleared, i.e. size will be 0)
-   */
+    * Filter matches for which NN ratio is > than threshold, also remove non-matches, if present in the input.
+    *
+    * @param matches collection of matches that will be filtered.
+    * @return the number of removed points (corresponding entries being cleared, i.e. size will be 0)
+    */
   private def ratioTest(matches: DMatchVectorVector): Array[DMatch] = {
 
     // Find matches that need to be removed
@@ -207,13 +205,13 @@ class RobustMatcher(feature2D: Feature2D = SURF.create(),
 
   /** Identify good matches using RANSAC
     *
-    * @param srcMatches  input matches
-    * @return  surviving matches and the fundamental matrix
+    * @param srcMatches input matches
+    * @return surviving matches and the fundamental matrix
     */
   def ransacTest(srcMatches: DMatchVector, keyPoints1: KeyPointVector, keyPoints2: KeyPointVector): (Array[DMatch], Mat) = {
 
-
     val (refinedMatches1, fundamentalMatrix) = {
+
       // Convert keypoints into Point2f
       val (points1, points2) = toPoint2fVectorPair(srcMatches, keyPoints1, keyPoints2)
 
@@ -222,7 +220,7 @@ class RobustMatcher(feature2D: Feature2D = SURF.create(),
       val fundamentalMatrix = findFundamentalMat(
         toMat(points1) /*  points in first image */ ,
         toMat(points2) /*  points in second image */ ,
-        pointStatus /* match status (inlier ou outlier) */ ,
+        pointStatus /* match status (inlier or outlier) */ ,
         FM_RANSAC /* RANSAC method */ ,
         minDistanceToEpipolar, /* distance to epipolar plane */
         confidenceLevel /* confidence probability */

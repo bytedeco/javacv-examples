@@ -21,7 +21,7 @@ import org.bytedeco.javacpp.opencv_xfeatures2d.SURF
   * The example first loads two images, one is considered "right" view, the other "left" view.
   * SURF features are computed for each image.
   * Features are matched to find corresponding points.
-  * The fundamental matrix is computed from corresponding points using two approaches: "7 Point" and RANSAC
+  * The fundamental matrix is computed using the "7 Point" approaches.
   * (using half of the corresponding points, that is about 130).
   * For each the fundamental matrix the epilines are computed and visualized on the input images.
   */
@@ -73,9 +73,6 @@ object Ex3ComputeFundamentalMatrix extends App {
   // Use 7-Point method
   fundamentalMatrix7Point()
 
-  // Use RANSAC method
-  //  fundamentalMatrix7RANSAC()
-
   //----------------------------------------------------------------------------------------------------------------
 
 
@@ -84,14 +81,6 @@ object Ex3ComputeFundamentalMatrix extends App {
     // Select 7 points that match well and are spread around the image. This is done by manually inspecting the points.
     //    val selected7Matches = new DMatchVector(7)
     val selected7Matches = selectedMatches
-
-    //    selected7Matches.put(0, selectedMatches.get(0))
-    //    selected7Matches.put(1, selectedMatches.get(1))
-    //    selected7Matches.put(2, selectedMatches.get(2))
-    //    selected7Matches.put(3, selectedMatches.get(5))
-    //    selected7Matches.put(4, selectedMatches.get(6))
-    //    selected7Matches.put(5, selectedMatches.get(7))
-    //    selected7Matches.put(6, selectedMatches.get(8))
 
     // Draw selected matches
     val blue = new Scalar(0, 0, 255, 0)
@@ -133,7 +122,6 @@ object Ex3ComputeFundamentalMatrix extends App {
       FM_7POINT /* 7-point method */ ,
       3, 0.99, null /* additional parameters with default values, not used by the 7-point method */)
     println("F-Matrix size= " + fundamentalMatrix.rows + "," + fundamentalMatrix.cols)
-
 
     // Select the first solution
     val fundamentalMatrix1 = new Mat(fundamentalMatrix, new Rect(0, 0, 3, 3))

@@ -107,7 +107,7 @@ object Ex5Homography extends App {
   warpPerspective(image1, // input image
     result, // output image
     homography, // homography
-    new Size(2 * image1.cols, image1.rows) // size of output image
+    new Size(2 * math.max(image1.cols, image2.cols), math.max(image1.rows, image2.rows())) // size of output image
   )
 
 
