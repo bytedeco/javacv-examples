@@ -33,6 +33,9 @@ libraryDependencies ++= Seq(
 //  "Local Maven Repository" at "file:///" + Path.userHome.absolutePath + "/.m2/repository"
 //)
 
+// set the main class for 'sbt run'
+mainClass in (Compile, run) := Some("flandmark.Example1")
+
 // Fork a new JVM for 'run' and 'test:run', to avoid JavaFX double initialization problems
 fork := true
 

@@ -16,7 +16,8 @@ import org.bytedeco.javacpp.opencv_features2d._
 import org.bytedeco.javacpp.opencv_xfeatures2d.SURF
 
 
-/** The example for section "Matching images using random sample consensus" in Chapter 9, page 233.
+/** The example for section "Matching images using random sample consensus" in Chapter 10, p. 299  (2nd edition)
+  * and Chapter 9, page 233 (1st edition).
   *
   * Most of the computations are done by `RobustMatcher` helper class.
   */

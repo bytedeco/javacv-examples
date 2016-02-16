@@ -37,12 +37,12 @@ val commonSettings = Seq(
 val uiSettings = commonSettings ++ Seq(
   libraryDependencies ++= Seq(
     "org.clapper"   %% "grizzled-slf4j" % "1.0.2",
-    "org.slf4j"      % "slf4j-api"      % "1.7.13",
-    "org.slf4j"      % "slf4j-log4j12"  % "1.7.13",
+    "org.slf4j"      % "slf4j-api"      % "1.7.16",
+    "org.slf4j"      % "slf4j-log4j12"  % "1.7.16",
     "org.scalafx"   %% "scalafx"        % "8.0.60-R9",
     "org.scalafx"   %% "scalafxml-core" % "0.2.1"
   ),
-  addCompilerPlugin("org.scalamacros" % "paradise" % "2.0.1" cross CrossVersion.full)
+  addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full)
 )
 
 lazy val check_macro = project.in(file("check_macro")).settings(commonSettings: _*)

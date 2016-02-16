@@ -21,7 +21,7 @@ import org.bytedeco.javacv.CanvasFrame
   * @param displayOutput name for the window displaying output image,
   *                      If empty, output image will not be displayed.
   */
-class VideoProcessor(var frameProcessor: ((Mat, Mat) => Unit) = { (src, dest) => dest.copyTo(dest) },
+class VideoProcessor(var frameProcessor: ((Mat, Mat) => Unit) = { (src, dest) => src.copyTo(dest) },
                      var displayInput: String = "Input",
                      var displayOutput: String = "Output") {
 
