@@ -8,7 +8,7 @@ Please address queries and questions to [JavaCV discussion group](https://groups
 
 How to test
 ------------------------------
-**This assumes you have a complete working setup for Android Studio and Javacv. If not, refer to [Android dev](http://developer.android.com/sdk/index.html) and [JavaCV](https://github.com/bytedeco/javacv)** . Sample tested with Android studio. Configuration is in [build.gradle](videoStablizaton/app/build.gradle)
+**This assumes you have a complete working setup for Android Studio and Javacv. If not, refer to [Android dev](http://developer.android.com/sdk/index.html) and [JavaCV](https://github.com/bytedeco/javacv)** . Sample tested with Android studio. Configuration is in [build.gradle](app/build.gradle)
 
 * Obtain the `videoStabilization` code
 * Import project into Android studio(File->New->Import Project)
