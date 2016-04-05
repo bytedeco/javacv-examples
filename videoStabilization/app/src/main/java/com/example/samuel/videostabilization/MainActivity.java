@@ -51,6 +51,8 @@ import static org.bytedeco.javacpp.opencv_video.calcOpticalFlowPyrLK;
 public class MainActivity extends AppCompatActivity {
 
     public static final String debugTag = "gDebug";
+    private final String inputVideo = "/storage/emulated/0/video/testVid_2.avi";
+    private final String outputVideo = "/storage/emulated/0/video/stabVideo.avi";
 
     OpenCVFrameConverter.ToMat matConverter = new OpenCVFrameConverter.ToMat();
 
@@ -62,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         //grab video frame
-        FFmpegFrameGrabber grabFrame = new FFmpegFrameGrabber("/storage/emulated/0/video/testVid_2.avi"); //change this to your own video location
+        FFmpegFrameGrabber grabFrame = new FFmpegFrameGrabber(inputVideo); //change this to your own video location
 
         try {
             grabFrame.start();
@@ -221,7 +223,7 @@ public class MainActivity extends AppCompatActivity {
 
             //extract individual homographies for warping...
 
-            FFmpegFrameRecorder stableVideoRecorder = FFmpegFrameRecorder.createDefault("/storage/emulated/0/video/stabVideo.avi", outImagePrev.cols(), outImagePrev.rows());//again, use your video
+            FFmpegFrameRecorder stableVideoRecorder = FFmpegFrameRecorder.createDefault(outputVideo, outImagePrev.cols(), outImagePrev.rows());//again, use your video
 
             //start recording frames into the video
             stableVideoRecorder.start();
@@ -314,7 +316,6 @@ public class MainActivity extends AppCompatActivity {
 
                     urlConnection.disconnect();
 
-                    Log.d(debugTag, new String(buffer) + "------");
 
                 } catch (Exception e) {
                     Log.d(debugTag, " " + e.getMessage());
