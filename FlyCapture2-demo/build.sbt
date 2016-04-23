@@ -39,7 +39,7 @@ val uiSettings = commonSettings ++ Seq(
     "org.clapper"   %% "grizzled-slf4j" % "1.0.4",
     "org.slf4j"      % "slf4j-api"      % "1.7.21",
     "org.slf4j"      % "slf4j-log4j12"  % "1.7.21",
-    "org.scalafx"   %% "scalafx"        % "8.0.60-R9",
+    "org.scalafx"   %% "scalafx"        % "8.0.92-R10",
     "org.scalafx"   %% "scalafxml-core" % "0.2.1"
   ),
   addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full)
