@@ -9,7 +9,7 @@ package opencv2_cookbook.chapter10
 import opencv2_cookbook.OpenCVUtils._
 import opencv2_cookbook.chapter10.MatcherUtils._
 import opencv2_cookbook.chapter10.RobustMatcher._
-import org.bytedeco.javacpp.indexer.{FloatIndexer, UByteBufferIndexer}
+import org.bytedeco.javacpp.indexer.{FloatIndexer, UByteRawIndexer}
 import org.bytedeco.javacpp.opencv_calib3d._
 import org.bytedeco.javacpp.opencv_core._
 import org.bytedeco.javacpp.opencv_features2d._
@@ -228,7 +228,7 @@ class RobustMatcher(feature2D: Feature2D = SURF.create(),
 
       // extract the surviving (inliers) matches
       val outMatches = new ListBuffer[DMatch]()
-      val pointStatusIndexer = pointStatus.createIndexer().asInstanceOf[UByteBufferIndexer]
+      val pointStatusIndexer = pointStatus.createIndexer().asInstanceOf[UByteRawIndexer]
       for (i <- 0 until pointStatus.rows()) {
         val inlier = pointStatusIndexer.get(i) != 0
         if (inlier) {

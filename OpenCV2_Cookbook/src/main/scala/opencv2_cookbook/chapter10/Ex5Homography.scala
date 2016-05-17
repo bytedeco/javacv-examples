@@ -10,7 +10,7 @@ import java.io.File
 
 import opencv2_cookbook.OpenCVUtils._
 import opencv2_cookbook.chapter10.MatcherUtils._
-import org.bytedeco.javacpp.indexer.UByteBufferIndexer
+import org.bytedeco.javacpp.indexer.UByteRawIndexer
 import org.bytedeco.javacpp.opencv_calib3d._
 import org.bytedeco.javacpp.opencv_core._
 import org.bytedeco.javacpp.opencv_features2d._
@@ -90,7 +90,7 @@ object Ex5Homography extends App {
 
 
   // Draw the inlier points
-  val inlinerIndexer = inliers.createIndexer().asInstanceOf[UByteBufferIndexer]
+  val inlinerIndexer = inliers.createIndexer().asInstanceOf[UByteRawIndexer]
   for (i <- 0 until points1.size.toInt if inlinerIndexer.get(i) != 0) {
     val p = points1.get(i)
     circle(image1, new Point(round(p.x), round(p.y)), 3, new Scalar(255, 255, 255, 0))

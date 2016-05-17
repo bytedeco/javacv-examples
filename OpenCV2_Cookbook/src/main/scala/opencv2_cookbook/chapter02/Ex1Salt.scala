@@ -16,10 +16,10 @@ import org.bytedeco.javacpp.opencv_imgcodecs._
 import scala.util.Random
 
 /**
- * Demonstrates use of `ByteIndexer` to set individual, randomly selected, pixels to a fixed value.
- *
- * Illustrates access to pixel values using absolute indexing.
- */
+  * Demonstrates use of `ByteIndexer` to set individual, randomly selected, pixels to a fixed value.
+  *
+  * Illustrates access to pixel values using absolute indexing.
+  */
 object Ex1Salt extends App {
 
   // Read input image
@@ -33,10 +33,11 @@ object Ex1Salt extends App {
 
 
   /**
-   * Add 'salt' noise.
-   * @param image input image.
-   * @param n number of 'salt' grains.
-   */
+    * Add 'salt' noise.
+    *
+    * @param image input image.
+    * @param n     number of 'salt' grains.
+    */
   def salt(image: Mat, n: Int): Mat = {
 
     // Random number generator
@@ -49,11 +50,11 @@ object Ex1Salt extends App {
     val nbChannels = image.channels
     for (i <- 1 to n) {
       // Create random index of a pixel
-      val row = random.nextInt(image.rows)
-      val col = random.nextInt(image.cols)
+      val row: Long = random.nextInt(image.rows)
+      val col: Long = random.nextInt(image.cols)
       // Set it to white by setting each of the channels to max (255)
       for (i <- 0 until nbChannels) {
-        indexer.put(row, col, i, 255.toByte)
+        indexer.put(row, col, i.toLong, 255.toByte)
       }
     }
 

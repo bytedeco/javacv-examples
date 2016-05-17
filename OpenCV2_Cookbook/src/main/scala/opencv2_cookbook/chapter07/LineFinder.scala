@@ -7,7 +7,7 @@
 package opencv2_cookbook.chapter07
 
 
-import org.bytedeco.javacpp.indexer.IntBufferIndexer
+import org.bytedeco.javacpp.indexer.IntRawIndexer
 import org.bytedeco.javacpp.opencv_core._
 import org.bytedeco.javacpp.opencv_imgproc._
 
@@ -18,8 +18,7 @@ import scala.math._
  * The example for section "Detecting lines in image with the Hough transform" in Chapter 7, page 170.
  *
  * @see JavaCV sample [https://code.google.com/p/javacv/source/browse/javacv/samples/HoughLines.java]
- *
- * @param deltaRho Accumulator resolution distance.
+  * @param deltaRho Accumulator resolution distance.
  * @param deltaTheta  Accumulator resolution angle.
  * @param minVotes Minimum number of votes that a line must receive before being considered.
  * @param minLength  Minimum number of votes that a line must receive before being considered.
@@ -49,7 +48,7 @@ class LineFinder(val deltaRho: Double = 1,
    */
   def drawDetectedLines(image: Mat) {
 
-    val indexer = lines.createIndexer().asInstanceOf[IntBufferIndexer]
+    val indexer = lines.createIndexer().asInstanceOf[IntRawIndexer]
 
     for (i <- 0 until lines.rows()) {
       val pt1 = new Point(indexer.get(i, 0, 0), indexer.get(i, 0, 1))

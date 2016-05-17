@@ -9,7 +9,7 @@ package opencv2_cookbook.chapter07
 import java.io.File
 
 import opencv2_cookbook.OpenCVUtils._
-import org.bytedeco.javacpp.indexer.FloatBufferIndexer
+import org.bytedeco.javacpp.indexer.FloatRawIndexer
 import org.bytedeco.javacpp.opencv_core._
 import org.bytedeco.javacpp.opencv_imgcodecs._
 import org.bytedeco.javacpp.opencv_imgproc._
@@ -51,7 +51,7 @@ object Ex2HoughLines extends App {
     minimumVotes)
 
   // Draw lines on the canny contour image
-  val indexer = lines.createIndexer().asInstanceOf[FloatBufferIndexer]
+  val indexer = lines.createIndexer().asInstanceOf[FloatRawIndexer]
   val result  = new Mat()
   src.copyTo(result)
   cvtColor(src, result, COLOR_GRAY2BGR)

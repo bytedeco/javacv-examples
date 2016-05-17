@@ -131,7 +131,7 @@ object OpenCVUtils {
   def toArray(keyPoints: KeyPoint): Array[KeyPoint] = {
     val oldPosition = keyPoints.position()
     // Convert keyPoints to Scala sequence
-    val points = for (i <- Array.range(0, keyPoints.capacity)) yield new KeyPoint(keyPoints.position(i))
+    val points = for (i <- Array.range(0, keyPoints.capacity.toInt)) yield new KeyPoint(keyPoints.position(i))
     // Reset position explicitly to avoid issues from other uses of this position-based container.
     keyPoints.position(oldPosition)
 

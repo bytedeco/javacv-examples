@@ -1,9 +1,11 @@
-name := "opencv2-cookbook"
+// @formatter:off
+
+name         := "opencv2-cookbook"
 organization := "javacv.examples"
 
-val javacppVersion = "1.1"
-version := javacppVersion
-scalaVersion := "2.11.7"
+val javacppVersion = "1.2"
+version       := javacppVersion
+scalaVersion  := "2.11.8"
 scalacOptions ++= Seq("-unchecked", "-deprecation", "-Xlint")
 
 // Some dependencies like `javacpp` are packaged with maven-plugin packaging
@@ -12,7 +14,7 @@ classpathTypes += "maven-plugin"
 // Platform classifier for native library dependencies
 val platform = org.bytedeco.javacpp.Loader.getPlatform
 // Libraries with native dependencies
-val bytedecoPresetLibs = Seq("opencv" -> s"3.0.0-$javacppVersion").flatMap {
+val bytedecoPresetLibs = Seq("opencv" -> s"3.1.0-$javacppVersion").flatMap {
   case (lib, ver) => Seq(
     // Add both: dependency and its native binaries for the current `platform`
     "org.bytedeco.javacpp-presets" % lib % ver,
