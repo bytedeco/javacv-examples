@@ -111,7 +111,7 @@ class SnapModel {
       }
     }
   }
-  private val callbackHandle = new CallbackHandle(new IntPointer(8))
+  private val callbackHandle = new CallbackHandle(new IntPointer(8L))
 
   private var busManager: Option[BusManager] = None
 
@@ -141,7 +141,7 @@ class SnapModel {
       logger.debug("Initializing FlyCapture camera connections")
 
       def asIntPointer(v: Int) = {
-        val r = new IntPointer(1)
+        val r = new IntPointer(1L)
         r.put(v)
         r
       }
@@ -151,7 +151,7 @@ class SnapModel {
       fc2Version() = s"${version.major}.${version.minor}.${version.`type`}.${version.build}"
       logger.trace(s"FlyCapture2 library version: ${fc2Version()}")
 
-      val id1 = new IntPointer(1)
+      val id1 = new IntPointer(1L)
       id1.put(1)
       busManager = Some(new BusManager())
       busManager.foreach { bm =>
@@ -223,7 +223,7 @@ class SnapModel {
         selectedCameraID = Some(id)
 
         // Determine camera type
-        val interfaceType = new IntPointer(1)
+        val interfaceType = new IntPointer(1L)
         check(busManager.get.GetInterfaceTypeFromGuid(id.guid, interfaceType))
         val cam = interfaceType.get match {
           case INTERFACE_GIGE => new GigECamera()
@@ -338,14 +338,14 @@ class SnapModel {
       logger.debug("onStopLiveCapture()")
       logger.debug("Current state: " + imageCaptureScheduledService.state())
       imageCaptureScheduledService.state() match {
-        case Worker.State.RUNNING.delegate | Worker.State.READY.delegate | Worker.State.SCHEDULED.delegate =>
+        case Worker.State.Running.delegate | Worker.State.Ready.delegate | Worker.State.Scheduled.delegate =>
           logger.debug("Cancelling capture service. Current state: " + imageCaptureScheduledService.state())
           imageCaptureScheduledService.cancel()
           logger.debug("Current state: " + imageCaptureScheduledService.state())
           val timeout = 1000
           val sleepTime = 100
           var waitTime = 0
-          while (Worker.State.CANCELLED.delegate != imageCaptureScheduledService.state() && waitTime < timeout) {
+          while (Worker.State.Cancelled.delegate != imageCaptureScheduledService.state() && waitTime < timeout) {
             logger.debug("Waiting for CANCEL to complete, Current state: " + imageCaptureScheduledService.state())
             Thread.sleep(sleepTime)
             waitTime += sleepTime

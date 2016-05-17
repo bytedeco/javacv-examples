@@ -48,7 +48,7 @@ object CheckOverheadBenchmark extends App {
   def testCheck(): Double = {
     val busMgr = new BusManager()
     //        val numCameras = new Array[Int](1)
-    val numCameras = new IntPointer(1)
+    val numCameras = new IntPointer(1L)
 
     val t0 = System.nanoTime()
     for (i <- 0 until nbIterations) {
@@ -63,7 +63,7 @@ object CheckOverheadBenchmark extends App {
   def testIf(): Double = {
     val busMgr = new BusManager()
     //    val numCameras = new Array[Int](1)
-    val numCameras = new IntPointer(1)
+    val numCameras = new IntPointer(1L)
 
     val t0 = System.nanoTime()
     for (i <- 0 until nbIterations) {

@@ -24,7 +24,7 @@ object SoftwareTriggerEx extends App {
   val cameraPowerRegister = 0x610
 
   def checkSoftwareTriggerPresence(cam: Camera): Boolean = {
-    val regValPtr = new IntPointer(1)
+    val regValPtr = new IntPointer(1L)
 
     check(cam.ReadRegister(triggerInquiryRegister, regValPtr))
 
@@ -35,7 +35,7 @@ object SoftwareTriggerEx extends App {
     var regVal = 0
     var ok = true
     do {
-      val regVarPtr = new IntPointer(1)
+      val regVarPtr = new IntPointer(1L)
       val error = cam.ReadRegister(softwareTriggerRegister, regVarPtr)
       if (error.GetType() != PGRERROR_OK) {
         println(error.GetDescription().getString)
@@ -60,7 +60,7 @@ object SoftwareTriggerEx extends App {
 
   val busMgr = new BusManager()
   val numCameras = {
-    val numCamerasPtr = new IntPointer(1)
+    val numCamerasPtr = new IntPointer(1L)
     check(busMgr.GetNumOfCameras(numCamerasPtr))
     numCamerasPtr.get()
   }
@@ -85,7 +85,7 @@ object SoftwareTriggerEx extends App {
     check(cam.WriteRegister(cameraPowerRegister, cameraPowerVal))
 
     // Wait for camera to complete power-up
-    val regVal = new IntPointer(1)
+    val regVal = new IntPointer(1L)
     var retries = 10
     do {
       Thread.sleep(100)

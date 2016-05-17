@@ -7,8 +7,7 @@
 package flycapture.examples.cpp
 
 import flycapture.CheckMacro
-import CheckMacro.check
-import flycapture.CheckMacro
+import flycapture.CheckMacro.check
 import org.bytedeco.javacpp.FlyCapture2._
 import org.bytedeco.javacpp.IntPointer
 
@@ -35,8 +34,8 @@ import org.bytedeco.javacpp.IntPointer
  * the extended shutter is working.
  *
  * Example of using FlyCapture2 C++ API. Based on ExtendedShutterEx.cpp example from FlyCapture SDK.
-
- * @author Jarek Sacha
+  *
+  * @author Jarek Sacha
  */
 object ExtendedShutterEx extends App {
 
@@ -50,7 +49,7 @@ object ExtendedShutterEx extends App {
 
   val busMgr = new BusManager()
   val numCameras = {
-    val numCamerasPtr = new IntPointer(1)
+    val numCamerasPtr = new IntPointer(1L)
     check(busMgr.GetNumOfCameras(numCamerasPtr))
     numCamerasPtr.get()
   }

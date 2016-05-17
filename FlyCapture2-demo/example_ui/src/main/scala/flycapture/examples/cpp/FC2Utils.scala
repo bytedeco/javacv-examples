@@ -41,14 +41,14 @@ object FC2Utils {
         pixelFormat = gigeImageSettings.pixelFormat)
     } else {
       val cam = camera.asInstanceOf[Camera]
-      val videoMode = new javacpp.IntPointer(1)
-      val frameRate = new javacpp.IntPointer(1)
+      val videoMode = new javacpp.IntPointer(1L)
+      val frameRate = new javacpp.IntPointer(1L)
       cam.GetVideoModeAndFrameRate(videoMode, frameRate)
 
       if (videoMode.get == VIDEOMODE_FORMAT7) {
         val f7ImageSettings = new Format7ImageSettings()
-        val packetSize = new IntPointer(1)
-        val percentage = new FloatPointer(1)
+        val packetSize = new IntPointer(1L)
+        val percentage = new FloatPointer(1L)
 
         check(cam.GetFormat7Configuration(f7ImageSettings, packetSize, percentage))
 
