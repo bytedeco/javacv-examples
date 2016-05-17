@@ -2,12 +2,12 @@
 name := "flandmark-demo"
 
 // Project version
-version := "1.1"
+version := "1.2"
 
 // Version of Scala used by the project
-scalaVersion := "2.11.7"
+scalaVersion := "2.11.8"
 
-val javacppVersion = "1.1"
+val javacppVersion = "1.2"
 
 scalacOptions ++= Seq("-unchecked", "-deprecation", "-optimize", "-Xlint")
 
@@ -22,8 +22,8 @@ libraryDependencies ++= Seq(
   "org.bytedeco" % "javacv" % javacppVersion,
   "org.bytedeco.javacpp-presets" % "flandmark" % ("1.07-" + javacppVersion) classifier "",
   "org.bytedeco.javacpp-presets" % "flandmark" % ("1.07-" + javacppVersion) classifier platform,
-  "org.bytedeco.javacpp-presets" % "opencv" % ("3.0.0-" + javacppVersion) classifier "",
-  "org.bytedeco.javacpp-presets" % "opencv" % ("3.0.0-" + javacppVersion) classifier platform
+  "org.bytedeco.javacpp-presets" % "opencv" % ("3.1.0-" + javacppVersion) classifier "",
+  "org.bytedeco.javacpp-presets" % "opencv" % ("3.1.0-" + javacppVersion) classifier platform
 )
 
 // Used for testing local builds and snapshots of JavaCPP/JavaCV
