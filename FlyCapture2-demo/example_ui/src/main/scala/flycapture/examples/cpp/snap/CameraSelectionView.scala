@@ -36,7 +36,7 @@ class CameraSelectionView(private val fc2VersionLabel: Label,
       jfxbb.Bindings.format("(%s cameras detected)", model.numberOfDetectedCameras.delegate)
     )
   model.cameraItemsSelectionModel <== cameraListView.selectionModel
-  cameraListView.selectionModel().selectionMode = SelectionMode.SINGLE
+  cameraListView.selectionModel().selectionMode = SelectionMode.Single
 
   serialNumberLabel.text <== model.serialNumber
   modelLabel.text <== model.cameraModel

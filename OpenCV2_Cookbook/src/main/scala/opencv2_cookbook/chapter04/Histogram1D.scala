@@ -10,7 +10,7 @@ import java.awt.Color
 import java.awt.image.BufferedImage
 
 import org.bytedeco.javacpp.helper.{opencv_imgproc => imgproc}
-import org.bytedeco.javacpp.indexer.FloatBufferIndexer
+import org.bytedeco.javacpp.indexer.FloatRawIndexer
 import org.bytedeco.javacpp.opencv_core._
 import org.bytedeco.javacpp.opencv_imgproc._
 
@@ -24,7 +24,8 @@ object Histogram1D {
   /**
    * Apply a look-up table to an image.
    * It is a wrapper for OpenCV function `LUT`.
-   * @param image input image
+    *
+    * @param image input image
    * @param lookup look-up table
    * @return new image
    */
@@ -37,7 +38,8 @@ object Histogram1D {
   /**
    * Equalize histogram of an image. The algorithm normalizes the brightness and increases the contrast of the image.
    * It is a wrapper for OpenCV function `equalizeHist`.
-   * @param src input image
+    *
+    * @param src input image
    * @return new image
    */
   def equalize(src: Mat): Mat = {
@@ -96,7 +98,8 @@ class Histogram1D {
   }
   /**
    * Computes histogram of an image.
-   * @param image input image
+    *
+    * @param image input image
    * @return histogram represented as an array
    */
   def getHistogramAsArray(image: Mat): Array[Float] = {
@@ -105,7 +108,7 @@ class Histogram1D {
 
     // Extract values to an array
     val dest = new Array[Float](numberOfBins)
-    val histI = hist.createIndexer().asInstanceOf[FloatBufferIndexer]
+    val histI = hist.createIndexer().asInstanceOf[FloatRawIndexer]
     for (bin <- 0 until numberOfBins) {
       dest(bin) = histI.get(bin)
     }

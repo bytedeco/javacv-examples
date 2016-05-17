@@ -243,7 +243,7 @@ class CameraConfigurationModel(camera: CameraBase, parent: Stage) extends ShowMe
   }
 
   def readTestPatternRegister(): TestPattern = {
-    val valuePtr = new IntPointer(1)
+    val valuePtr = new IntPointer(1L)
     check(camera.ReadRegister(testPatternReg, valuePtr))
     val v = valuePtr.get & 0x00
 

@@ -9,7 +9,7 @@ package opencv2_cookbook.chapter07
 import java.io.File
 
 import opencv2_cookbook.OpenCVUtils._
-import org.bytedeco.javacpp.indexer.FloatBufferIndexer
+import org.bytedeco.javacpp.indexer.FloatRawIndexer
 import org.bytedeco.javacpp.opencv_core._
 import org.bytedeco.javacpp.opencv_imgcodecs._
 import org.bytedeco.javacpp.opencv_imgproc._
@@ -51,7 +51,7 @@ object Ex4HoughCircles extends App {
   // Draw lines on the canny contour image
   val colorDst = new Mat()
   cvtColor(src, colorDst, COLOR_GRAY2BGR)
-  val indexer = circles.createIndexer().asInstanceOf[FloatBufferIndexer]
+  val indexer = circles.createIndexer().asInstanceOf[FloatRawIndexer]
   for (i <- 0 until circles.cols) {
     val center = new Point(cvRound(indexer.get(0, i, 0)), cvRound(indexer.get(0, i, 1)))
     val radius = cvRound(indexer.get(0, i, 2))

@@ -9,7 +9,7 @@ package opencv2_cookbook.chapter10
 import java.io.File
 
 import opencv2_cookbook.OpenCVUtils._
-import org.bytedeco.javacpp.indexer.DoubleBufferIndexer
+import org.bytedeco.javacpp.indexer.DoubleRawIndexer
 import org.bytedeco.javacpp.opencv_core.Size
 
 
@@ -42,7 +42,7 @@ object Ex2CalibrateCamera extends App {
 
   // Display camera matrix
   val m     = cameraCalibrator.cameraMatrix
-  val mIndx = m.createIndexer().asInstanceOf[DoubleBufferIndexer]
+  val mIndx = m.createIndexer().asInstanceOf[DoubleRawIndexer]
   println("Camera intrinsic: " + m.rows + "x" + m.cols)
   for (i <- 0 until 3) {
     for (j <- 0 until 3) {

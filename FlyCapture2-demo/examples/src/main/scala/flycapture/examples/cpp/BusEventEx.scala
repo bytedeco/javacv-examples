@@ -26,7 +26,7 @@ object BusEventEx extends App {
   def now = new Date().toString
 
   def id(v: Int) = {
-    val r = new IntPointer(1)
+    val r = new IntPointer(1L)
     r.put(v)
     r
   }

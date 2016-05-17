@@ -61,7 +61,8 @@ class ColorDetector(private var _minDist: Int = 100,
         srcI.get(y, x, brg)
         val c = ColorRGB.fromBGR(brg)
         val t = if (distance(c) < colorDistanceThreshold) (255 & 0xFF).toByte else 0.toByte
-        destI.put(y, x, t)
+        // Convert indexes to Long to avoid API ambiguity
+        destI.put(y.toLong, x.toLong, t)
       }
     }
 
