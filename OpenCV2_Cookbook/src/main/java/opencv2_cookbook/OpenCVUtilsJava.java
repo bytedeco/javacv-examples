@@ -10,6 +10,7 @@ import java.io.File;
 
 import static org.bytedeco.javacpp.opencv_imgcodecs.IMREAD_COLOR;
 import static org.bytedeco.javacpp.opencv_imgcodecs.imread;
+import static org.bytedeco.javacpp.opencv_imgcodecs.imwrite;
 
 /**
  * Helper methods that simplify use of OpenCV API.
@@ -87,5 +88,19 @@ public class OpenCVUtilsJava {
         CanvasFrame canvas = new CanvasFrame(title, 1);
         canvas.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         canvas.showImage(image);
+    }
+
+    /** Save the image to the specified file.
+     *
+     * The image format is chosen based on the filename extension (see `imread()` in OpenCV documentation for the list of extensions).
+     * Only 8-bit (or 16-bit in case of PNG, JPEG 2000, and TIFF) single-channel or
+     * 3-channel (with ‘BGR’ channel order) images can be saved using this function.
+     * If the format, depth or channel order is different, use Mat::convertTo() , and cvtColor() to convert it before saving.
+     *
+     * @param file file to save to. File name extension decides output image format.
+     * @param image image to save.
+     */
+    public void save(File file, opencv_core.Mat image) {
+        imwrite(file.getAbsolutePath(), image);
     }
 }
