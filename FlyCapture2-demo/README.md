@@ -10,7 +10,13 @@ Please address queries and questions to [JavaCPP discussion group](http://groups
 Content
 -------
 
-Demo files:
+There are two example projects
+* `examples` contains command line examples
+* `example_ui` an example of GUI application using [ScalaFX](http://www.scalafx.org/) toolkit.
+
+### `examples`
+
+Command line examples illustrate use of the C++ and C API:
 
 * C++ API examples in `src/main/scala/flycapture/examples/cpp`:
     * `BusEventEx` - register for Bus Events such as Camera Arrival/Removal and Bus Resets.
@@ -21,11 +27,18 @@ Demo files:
     * `SoftwareTriggerEx` - demonstrates use of basic asynchronous trigger capabilities. 
 * C API examples in `src/main/scala/flycapture/examples/c` :
     * `FlyCapture2Test_C` - for each attached cameras, print info and capture a couple of images.
-* Simple GUI application for showing live view and controlling camera settings is in directory `src/main/scala/flycapture/examples/cpp/snap`
+    
+### `example_ui`
+
+The `example_ui` project is a simple GUI application for showing live view and controlling camera settings is in directory `src/main/scala/flycapture/examples/cpp/snap`
 
 ![Sample GUI application](http://bytedeco.org/javacv-examples/images/FlyCapture_SnapApp.png)
     
-Build script:
+### `check_macro`
+
+Project `check_macro` contains some convenience scala macros for handling produced by FlyCapture SDK. Error codes are converted to exceptions. 
+
+### Build script
 
 * `build.sbt` - the main SBT configuration file.
 * `project/build.properties` - version of SBT to use.
@@ -40,12 +53,15 @@ How to build and run using SBT
 
 2. Install [SBT](http://www.scala-sbt.org/)
 
-3. Run the example: change o directory containing this example and use SBT to
-   build and run the examples:
-
+3. To run examples, change to directory containing `flycapture-demo`. You can run UI example by typing on the command line:
+ 
    ```
-    %> sbt run
+    %> sbt example_ui/run
+   ```
+   
+   To run command line examples type on the command line:
+   ```
+    %> sbt examples/run
    ```
 
-   It will download needed dependencies, including OpenCV and flycapture, and run 
-   the example code. 
+   SBT will download all needed dependencies, including OpenCV and flycapture, and run the selected example code. 
