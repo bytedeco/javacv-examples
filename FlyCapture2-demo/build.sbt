@@ -37,7 +37,7 @@ val commonSettings = Seq(
 
 val uiSettings = commonSettings ++ Seq(
   libraryDependencies ++= Seq(
-    "org.clapper"   %% "grizzled-slf4j"      % "1.0.4",
+    "org.clapper"   %% "grizzled-slf4j"      % "1.1.0",
     "org.slf4j"      % "slf4j-api"           % "1.7.21",
     "org.slf4j"      % "slf4j-log4j12"       % "1.7.21",
     "org.scalafx"   %% "scalafx"             % "8.0.92-R10",
