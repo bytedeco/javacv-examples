@@ -7,6 +7,7 @@
 package opencv2_cookbook.chapter10
 
 import java.io.File
+import java.nio.ByteBuffer
 
 import opencv2_cookbook.OpenCVUtils._
 import opencv2_cookbook.chapter10.MatcherUtils._
@@ -85,7 +86,7 @@ object Ex3ComputeFundamentalMatrix extends App {
     // Draw selected matches
     val blue = new Scalar(0, 0, 255, 0)
     val red = new Scalar(255, 0, 0, 0)
-    val matchMask: Array[Byte] = null
+    val matchMask: ByteBuffer = null
     val imageMatches = new Mat()
     drawMatches(imageRight, keypointsRight, imageLeft, keypointsLeft,
       selected7Matches, imageMatches, blue, red, matchMask, DrawMatchesFlags.DEFAULT)

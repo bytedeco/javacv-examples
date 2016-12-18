@@ -6,6 +6,7 @@
 
 package opencv2_cookbook.chapter08
 
+import org.bytedeco.javacpp.DoublePointer
 import org.bytedeco.javacpp.indexer.UByteIndexer
 import org.bytedeco.javacpp.opencv_core._
 import org.bytedeco.javacpp.opencv_imgproc._
@@ -51,13 +52,13 @@ class HarrisDetector {
     // Call to cvMinMaxLoc finds min and max values in the image and assigns them to output parameters.
     // Passing back values through function parameter pointers works in C bout not on JVM.
     // We need to pass them as 1 element array, as a work around for pointers in C API.
-    val maxStrengthA = Array(maxStrength)
+    val maxStrengthA = new DoublePointer(maxStrength)
     minMaxLoc(
       cornerStrength.get,
-      Array(0.0) /* not used here, but required by API */ ,
+      new DoublePointer(0.0) /* not used here, but required by API */ ,
       maxStrengthA, null, null, new Mat())
     // Read back the computed maxStrength
-    maxStrength = maxStrengthA(0)
+    maxStrength = maxStrengthA.get(0)
 
     // Local maxima detection.
     //

@@ -7,6 +7,7 @@
 package opencv2_cookbook.chapter09
 
 import java.io.File
+import java.nio.ByteBuffer
 
 import opencv2_cookbook.OpenCVUtils._
 import org.bytedeco.javacpp.opencv_core._
@@ -61,7 +62,7 @@ object Ex7DescribingSURF extends App {
   // Draw best matches
   //  val imageMatches = cvCreateImage(new CvSize(images(0).width + images(1).width, images(0).height), images(0).depth, 3)
   val imageMatches = new Mat()
-  val mask: Array[Byte] = null
+  val mask: ByteBuffer = null
   drawMatches(
     images(0), keyPoints(0), images(1), keyPoints(1),
     bestMatches, imageMatches, new Scalar(0, 0, 255, 0), new Scalar(255, 0, 0, 0), mask, DrawMatchesFlags.DEFAULT)

@@ -9,6 +9,7 @@ package opencv2_cookbook.chapter09
 import java.io.File
 
 import opencv2_cookbook.OpenCVUtils._
+import org.bytedeco.javacpp.DoublePointer
 import org.bytedeco.javacpp.opencv_core._
 import org.bytedeco.javacpp.opencv_imgcodecs._
 import org.bytedeco.javacpp.opencv_imgproc._
@@ -42,8 +43,8 @@ object Ex2TemplateMatching extends App {
   // similarity measure
 
   // find most similar location
-  val minVal = new Array[Double](1)
-  val maxVal = new Array[Double](1)
+  val minVal = new DoublePointer(1)
+  val maxVal = new DoublePointer(1)
   val minPt  = new Point()
   val maxPt  = new Point()
   minMaxLoc(result, minVal, maxVal, minPt, maxPt, null)

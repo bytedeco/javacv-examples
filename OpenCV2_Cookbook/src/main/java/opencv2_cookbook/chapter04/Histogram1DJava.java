@@ -1,27 +1,30 @@
 package opencv2_cookbook.chapter04;
 
+import org.bytedeco.javacpp.FloatPointer;
+import org.bytedeco.javacpp.IntPointer;
 import org.bytedeco.javacpp.indexer.Indexer;
 import org.bytedeco.javacpp.opencv_core.Mat;
-import org.bytedeco.javacpp.opencv_imgproc;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+
+import static org.bytedeco.javacpp.opencv_imgproc.calcHist;
 
 /**
  * Created by john on 16/08/16.
  */
 public class Histogram1DJava {
     private int numberOfBins = 256;
-    private int[] channels= {0};
+    private IntPointer channels = new IntPointer(1);
     private Float _minRange = 0.0f;
     private Float _maxRange = 255.0f;
 
-    public void setRanges(Float minRange, Float maxRange){
+    public void setRanges(Float minRange, Float maxRange) {
         _minRange = minRange;
         _maxRange = maxRange;
     }
 
-    public BufferedImage getHistogramImage(Mat image){
+    public BufferedImage getHistogramImage(Mat image) {
         int width = this.numberOfBins;
         int height = this.numberOfBins;
         double[] hist = getHistogramAsArray(image);
@@ -46,36 +49,37 @@ public class Histogram1DJava {
         return canvas;
     }
 
-    public double[] getHistogramAsArray(Mat image){
+    public double[] getHistogramAsArray(Mat image) {
         Mat hist = getHistogram(image);
         double[] dest = new double[numberOfBins];
         Indexer indexer = hist.createIndexer();
         for (int i = 0; i < numberOfBins; i++) {
-            dest[i]=indexer.getDouble(i);
+            dest[i] = indexer.getDouble(i);
         }
         return dest;
     }
 
 
     private Mat getHistogram(Mat image) {
-        return getHistogram(image,new Mat());
+        return getHistogram(image, new Mat());
     }
 
     private Mat getHistogram(Mat image, Mat mask) {
-        int [] histSize = {numberOfBins};
-        float [] ranges = {_minRange, _maxRange};
+        IntPointer histSize = new IntPointer(1);
+        histSize.put(0, numberOfBins);
+        FloatPointer ranges = new FloatPointer(_minRange, _maxRange);
 
         Mat hist = new Mat();
-        opencv_imgproc.calcHist(image,1,channels, mask,hist,1,histSize,ranges);
+        calcHist(image, 1, channels, mask, hist, 1, histSize, ranges);
         return hist;
     }
 
 
     private double max(double[] dest) {
         double max = 0.0;
-        for (double value:dest){
-            if(value>max){
-                max=value;
+        for (double value : dest) {
+            if (value > max) {
+                max = value;
             }
         }
         return max;

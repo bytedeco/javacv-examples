@@ -10,6 +10,7 @@ import java.io.File
 
 import opencv2_cookbook.OpenCVUtils._
 import opencv2_cookbook.chapter10.MatcherUtils._
+import org.bytedeco.javacpp.BytePointer
 import org.bytedeco.javacpp.opencv_calib3d._
 import org.bytedeco.javacpp.opencv_core._
 import org.bytedeco.javacpp.opencv_features2d._
@@ -45,7 +46,7 @@ object Ex4MatchingUsingSampleConsensus extends App {
     imageMatches, // the image produced
     new Scalar(255, 255, 255, 0), // color of the lines
     new Scalar(255, 255, 255, 0), // color of the keypoints
-    new Array[Byte](0),
+    new BytePointer(0),
     2)
 
   show(imageMatches, "Matches")

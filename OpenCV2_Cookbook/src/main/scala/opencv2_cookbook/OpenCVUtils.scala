@@ -10,8 +10,10 @@ package opencv2_cookbook
 import java.awt._
 import java.awt.image.BufferedImage
 import java.io.File
+import java.nio.IntBuffer
 import javax.swing.JFrame
 
+import org.bytedeco.javacpp.DoublePointer
 import org.bytedeco.javacpp.indexer.FloatIndexer
 import org.bytedeco.javacpp.opencv_core.{Point, _}
 import org.bytedeco.javacpp.opencv_imgcodecs._
@@ -184,12 +186,14 @@ object OpenCVUtils {
    * @return copy of the input with pixels values represented as 8 bit unsigned integers.
    */
   def toMat8U(src: Mat, doScaling: Boolean = true): Mat = {
-    val min = Array(Double.MaxValue)
-    val max = Array(Double.MinValue)
-    minMaxLoc(src, min, max, null, null, new Mat())
+    val minVal = new DoublePointer(Double.MaxValue)
+    val maxVal = new DoublePointer(Double.MinValue)
+    minMaxLoc(src, minVal, maxVal, null, null, new Mat())
+    val min = minVal.get(0)
+    val max = maxVal.get(0)
     val (scale, offset) = if (doScaling) {
-      val s = 255d / (max(0) - min(0))
-      (s, -min(0) * s)
+      val s = 255d / (max - min)
+      (s, -min * s)
     } else (1d, 0d)
 
     val dest = new Mat()
@@ -265,6 +269,25 @@ object OpenCVUtils {
     for (i <- src.indices) dest.put(i, src(i))
     dest
   }
+
+  /**
+    * Creates a `MatVector` and put `mat` as its only element.
+    *
+    * @return
+    */
+  def wrapInMatVector(mat: Mat): MatVector = {
+    new MatVector(Array(mat): _*)
+  }
+
+  /**
+    * Creates a `IntBuffer` and put `v` as its only element.
+    *
+    * @return
+    */
+  def wrapInIntBuffer(v: Int): IntBuffer = {
+    IntBuffer.wrap(Array(v))
+  }
+
 
   /**
    * Print info about the `mat`

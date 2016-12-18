@@ -9,6 +9,7 @@ package opencv2_cookbook.chapter04
 import java.awt.Color
 import java.awt.image.BufferedImage
 
+import opencv2_cookbook.OpenCVUtils.wrapInMatVector
 import org.bytedeco.javacpp.helper.{opencv_imgproc => imgproc}
 import org.bytedeco.javacpp.indexer.FloatRawIndexer
 import org.bytedeco.javacpp.opencv_core._
@@ -127,7 +128,7 @@ class Histogram1D {
     val ranges = Array(_minRange, _maxRange)
     // Compute histogram
     val hist = new Mat()
-    calcHist(image, 1, channels, mask, hist, 1, histSize, ranges)
+    calcHist(wrapInMatVector(image), channels, mask, hist, histSize, ranges)
     hist
   }
 }
