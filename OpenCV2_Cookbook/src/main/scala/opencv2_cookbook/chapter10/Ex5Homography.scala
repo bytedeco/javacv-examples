@@ -7,6 +7,7 @@
 package opencv2_cookbook.chapter10
 
 import java.io.File
+import java.nio.ByteBuffer
 
 import opencv2_cookbook.OpenCVUtils._
 import opencv2_cookbook.chapter10.MatcherUtils._
@@ -70,7 +71,7 @@ object Ex5Homography extends App {
     imageMatches, // the image produced
     new Scalar(255, 255, 255, 0), // color of the lines
     new Scalar(255, 255, 255, 0), // color of the keypoints
-    new Array[Byte](0), // empty mask
+    null.asInstanceOf[ByteBuffer], // empty mask
     2)
   show(imageMatches, "Matches")
 

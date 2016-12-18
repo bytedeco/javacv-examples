@@ -10,6 +10,7 @@ package opencv2_cookbook.chapter07
 import java.io.File
 
 import opencv2_cookbook.OpenCVUtils._
+import org.bytedeco.javacpp.FloatPointer
 import org.bytedeco.javacpp.opencv_core._
 import org.bytedeco.javacpp.opencv_imgcodecs._
 import org.bytedeco.javacpp.opencv_imgproc._
@@ -66,10 +67,10 @@ object Ex6ShapeDescriptors extends App {
 
   // Testing the enclosing circle
   val center1 = new Point2f()
-  val radius1 = Array(1f)
+  val radius1 = new FloatPointer(1f)
   minEnclosingCircle(filteredContours(1), center1, radius1)
   // Draw circle
-  circle(colorDest2, new Point(cvRound(center1.x), cvRound(center1.y)), radius1(0).toInt, Yellow, 2, LINE_AA, 0)
+  circle(colorDest2, new Point(cvRound(center1.x), cvRound(center1.y)), radius1.get(0).toInt, Yellow, 2, LINE_AA, 0)
 
   // Testing the approximate polygon
   val poly2 = new Mat()

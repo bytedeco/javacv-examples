@@ -7,27 +7,30 @@
 package opencv2_cookbook.chapter04
 
 
+import java.nio.{FloatBuffer, IntBuffer}
+
+import opencv2_cookbook.OpenCVUtils.wrapInIntBuffer
 import org.bytedeco.javacpp.opencv_core._
 import org.bytedeco.javacpp.opencv_imgproc._
 import org.bytedeco.javacpp.{FloatPointer, IntPointer, PointerPointer}
 
 /**
- * Helper class that simplifies usage of OpenCV `calcHist` function for color images.
- *
- * See OpenCV [[http://opencv.itseez.com/modules/imgproc/doc/histograms.html?highlight=histogram]]
- * documentation to learn backend details.
- */
+  * Helper class that simplifies usage of OpenCV `calcHist` function for color images.
+  *
+  * See OpenCV [[http://opencv.itseez.com/modules/imgproc/doc/histograms.html?highlight=histogram]]
+  * documentation to learn backend details.
+  */
 class ColorHistogram(var numberOfBins: Int = 256) {
 
   private val _minRange = 0.0f
   private val _maxRange = 255.0f
 
   /**
-   * Computes histogram of an image.
-   *
-   * @param image input image
-   * @return OpenCV histogram object
-   */
+    * Computes histogram of an image.
+    *
+    * @param image input image
+    * @return OpenCV histogram object
+    */
   def getHistogram(image: Mat): Mat = {
 
     require(image != null)
@@ -56,12 +59,13 @@ class ColorHistogram(var numberOfBins: Int = 256) {
   }
 
   /**
-   * Convert input image from RGB ro HSV color space and compute histogram of the hue channel.
-   * @param image RGB image
-   * @param minSaturation minimum saturation of pixels that are used for histogram calculations.
-   *                      Pixels with saturation larger than minimum will be used in histogram computation
-   * @return histogram of the hue channel, its range is from 0 to 180.
-   */
+    * Convert input image from RGB ro HSV color space and compute histogram of the hue channel.
+    *
+    * @param image         RGB image
+    * @param minSaturation minimum saturation of pixels that are used for histogram calculations.
+    *                      Pixels with saturation larger than minimum will be used in histogram computation
+    * @return histogram of the hue channel, its range is from 0 to 180.
+    */
   def getHueHistogram(image: Mat, minSaturation: Int = 0): Mat = {
     require(image != null)
     require(image.channels == 3, "Expecting 3 channel (color) image")
@@ -82,9 +86,9 @@ class ColorHistogram(var numberOfBins: Int = 256) {
     // Prepare arguments for a 1D hue histogram
     val hist = new Mat()
     // range is from 0 to 180
-    val histRanges = Array(0f, 180f)
+    val histRanges = FloatBuffer.wrap(Array(0f, 180f))
     // the hue channel
-    val channels = Array(0)
+    val channels = IntBuffer.wrap(Array(0))
 
     // Compute histogram
     calcHist(hsvImage,
@@ -93,7 +97,7 @@ class ColorHistogram(var numberOfBins: Int = 256) {
       saturationMask, // binary mask
       hist, // the resulting histogram
       1, // it is a 1D histogram
-      Array(numberOfBins), // number of bins
+      wrapInIntBuffer(numberOfBins), // number of bins
       histRanges // pixel value range
     )
 
@@ -101,8 +105,8 @@ class ColorHistogram(var numberOfBins: Int = 256) {
   }
 
   /**
-   * Computes the 2D ab histogram. BGR source image is converted to Lab
-   */
+    * Computes the 2D ab histogram. BGR source image is converted to Lab
+    */
   def getabHistogram(image: Mat): Mat = {
 
     val hist = new Mat()
