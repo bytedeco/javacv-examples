@@ -8,9 +8,6 @@ version       := javacppVersion
 scalaVersion := "2.12.1"
 scalacOptions ++= Seq("-unchecked", "-deprecation", "-Xlint")
 
-//// Some dependencies like `javacpp` are packaged with maven-plugin packaging
-//classpathTypes += "maven-plugin"
-
 // Platform classifier for native library dependencies
 val platform = org.bytedeco.javacpp.Loader.getPlatform
 // Libraries with native dependencies
@@ -29,13 +26,6 @@ libraryDependencies ++= Seq(
   "junit"                   % "junit"           % "4.12" % "test",
   "com.novocode"            % "junit-interface" % "0.11" % "test"
 ) ++ bytedecoPresetLibs
-
-// Used for testing local builds and snapshots of JavaCPP/JavaCV
-resolvers ++= Seq(
-  Resolver.sonatypeRepo("snapshots"),
-  // Use local maven repo for local javacv builds
-  "Local Maven Repository" at "file:///" + Path.userHome.absolutePath + "/.m2/repository"
-)
 
 autoCompilerPlugins := true
 
