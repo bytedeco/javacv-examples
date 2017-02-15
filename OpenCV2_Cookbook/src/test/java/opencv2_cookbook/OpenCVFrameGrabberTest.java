@@ -24,7 +24,7 @@ public final class OpenCVFrameGrabberTest {
      * @throws Exception
      */
     @Test
-    @Ignore("Fails with JavCV 0.3")
+    @Ignore("Fails with JavCV 0.3 and after")
     public void whileFrameNotNull() throws Exception {
 
         final OpenCVFrameGrabber grabber = new OpenCVFrameGrabber("data/bike.avi");

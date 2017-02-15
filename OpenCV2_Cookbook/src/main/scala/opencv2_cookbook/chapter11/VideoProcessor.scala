@@ -11,15 +11,15 @@ import javax.swing.JFrame
 import opencv2_cookbook.OpenCVUtils._
 import org.bytedeco.javacpp.opencv_core._
 import org.bytedeco.javacpp.opencv_videoio._
-import org.bytedeco.javacv.CanvasFrame
+import org.bytedeco.javacv.{CanvasFrame, FFmpegFrameGrabber, OpenCVFrameConverter}
 
 /** Video processor.
   *
   * @param frameProcessor frame processing method, by default simply copies the input
-  * @param displayInput name for the window displaying input image.
-  *                     If empty, input image will not be displayed.
-  * @param displayOutput name for the window displaying output image,
-  *                      If empty, output image will not be displayed.
+  * @param displayInput   name for the window displaying input image.
+  *                       If empty, input image will not be displayed.
+  * @param displayOutput  name for the window displaying output image,
+  *                       If empty, output image will not be displayed.
   */
 class VideoProcessor(var frameProcessor: ((Mat, Mat) => Unit) = { (src, dest) => src.copyTo(dest) },
                      var displayInput: String = "Input",
@@ -42,35 +42,34 @@ class VideoProcessor(var frameProcessor: ((Mat, Mat) => Unit) = { (src, dest) =>
   /** If set to `false` input frames will not be processed, just copied to output. */
   var processFrames: Boolean = true
 
-  private var _input  : Option[String]       = None
-  private var _capture: Option[VideoCapture] = None
+  private var _input: Option[String] = None
+  private var _grabber: Option[FFmpegFrameGrabber] = None
 
   def input: String = _input.orNull
-  def input_=(v: String) = {
-    _capture.foreach(_.release())
-    _input = Option(v)
-    _capture = Option(new VideoCapture(v))
+  def input_=(filename: String): Unit = {
+    _grabber.foreach(_.release())
+    _input = Option(filename)
+    _grabber = Option(new FFmpegFrameGrabber(filename))
+    grabber.start()
   }
 
 
   /** Frame rate property of the video input, */
-  def frameRate: Double = _capture.get.get(CAP_PROP_FPS)
+  def frameRate: Double = grabber.getFrameRate
 
 
   /** Size of the video frame */
   def frameSize: Size = {
 
-    // get size of from the capture device
-    val w = _capture.get.get(CAP_PROP_FRAME_WIDTH).toInt
-    val h = _capture.get.get(CAP_PROP_FRAME_HEIGHT).toInt
+    // get size of from the grabber device
+    val w = grabber.getImageWidth
+    val h = grabber.getImageHeight
 
     new Size(w, h)
   }
 
-
   /** The codec of input video */
-  def codec: Int = _capture.get.get(CAP_PROP_FOURCC).toInt
-
+  def codec: Int = _grabber.get.getVideoCodec
 
   private var writerParam: Option[WriterParams] = None
 
@@ -83,15 +82,11 @@ class VideoProcessor(var frameProcessor: ((Mat, Mat) => Unit) = { (src, dest) =>
     writerParam = Some(WriterParams(fileName, codec, frameRate, isColor))
   }
 
-  def isOpened: Boolean = _capture.forall(_.isOpened)
-
   private var _stop: Boolean = false
   def isStopped: Boolean = _stop
 
   /** to grab (and process) the frames of the sequence */
   def run() {
-
-    if (!isOpened) return
 
     val writer = createWriter()
 
@@ -99,10 +94,14 @@ class VideoProcessor(var frameProcessor: ((Mat, Mat) => Unit) = { (src, dest) =>
     val outputCanvas = createCanvas(displayOutput)
 
     // Capture, process, and display frames
-    val inputFrame = new Mat()
+    //    val inputFrame = new Mat()
     val outputFrame = new Mat()
     var frameNumber: Long = 0
-    while (!isStopped && readNextFrame(inputFrame)) {
+    val frameConverter = new OpenCVFrameConverter.ToMat()
+    for (frame <- Iterator.continually(grabber.grab()).takeWhile(_ != null)
+         if !isStopped) {
+
+      val inputFrame = frameConverter.convert(frame)
 
       // Display input frame, if canvas was created
       inputCanvas.foreach(_.showImage(toBufferedImage(inputFrame)))
@@ -131,6 +130,11 @@ class VideoProcessor(var frameProcessor: ((Mat, Mat) => Unit) = { (src, dest) =>
     writer.foreach(_.release())
   }
 
+  private def grabber: FFmpegFrameGrabber =
+    _grabber.getOrElse(
+      throw new Exception("Grabber not initialized. Did you set the input?")
+    )
+
   /* Create canvas if its name is not empty */
   private def createCanvas(title: String): Option[CanvasFrame] =
     if (title != null && !title.isEmpty) {
@@ -154,9 +158,6 @@ class VideoProcessor(var frameProcessor: ((Mat, Mat) => Unit) = { (src, dest) =>
     }
   }
 
-
-  /** Get the next frame */
-  private def readNextFrame(frame: Mat): Boolean = _capture.get.read(frame)
 
   /** Write the output frame. */
   private def writeNextFrame(writer: Option[VideoWriter], frame: Mat) {

@@ -8,7 +8,6 @@ package opencv2_cookbook.chapter11
 
 import org.bytedeco.javacpp.opencv_core._
 import org.bytedeco.javacpp.opencv_imgproc._
-import org.bytedeco.javacpp.opencv_videoio._
 
 
 /** The example for section "Processing the video frames" in Chapter 10, page 251.
@@ -28,14 +27,6 @@ object Ex2ProcessVideoFrames extends App {
     // Invert the image
     threshold(dest, dest, 128, 255, THRESH_BINARY_INV)
   }
-
-
-  // Open video file
-  val capture = new VideoCapture("data/bike.avi")
-
-  // check if video successfully opened
-  if (!capture.isOpened)
-    System.exit(1)
 
   // Create video processor instance
   val processor = new VideoProcessor()
