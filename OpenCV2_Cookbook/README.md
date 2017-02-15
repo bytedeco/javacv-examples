@@ -238,8 +238,7 @@ List of Examples
   * *`CameraCalibrator`* - Helper class implementing camera calibration algorithm.
   * *`RobustMatcher`* - Implements RANSAC based algorithm used by examples `Ex4MatchingUsingSampleConsensus` and `Ex5Homography`.
 * [Chapter 10: Processing Video Sequences](src/main/scala/opencv2_cookbook/chapter10)
-  * *`Ex1ReadVideoSequenceC`* - Reads and displays a video using `C` API.
-  * *`Ex1ReadVideoSequenceJavaCV`* - Reads and displays a video using JavaCV's `OpenCVFrameGrabber` class.
+  * *`Ex1ReadVideoSequence`* - Reads and displays a video.
   * *`Ex2ProcessVideoFrames`* - Processed frames in a video file using Canny edge detector; shows the output video on the screen. Uses helper class `VideoProcessor`.
   * *`Ex3WriteVideoSequence`* - Processed frames in a video file using Canny edge detector; writes output to a video file. Uses helper class `VideoProcessor`.
   * *`Ex4TrackingFeatures`* - Tracks moving objects in a video, marks tracked points in the video shown on the screen. Most of the implementation is in `FeatureTracker` helper class.

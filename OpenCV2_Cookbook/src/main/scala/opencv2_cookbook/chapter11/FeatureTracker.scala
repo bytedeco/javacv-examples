@@ -7,7 +7,7 @@
 package opencv2_cookbook.chapter11
 
 import opencv2_cookbook.OpenCVUtils._
-import org.bytedeco.javacpp.indexer.UByteBufferIndexer
+import org.bytedeco.javacpp.indexer.UByteRawIndexer
 import org.bytedeco.javacpp.opencv_core._
 import org.bytedeco.javacpp.opencv_imgproc._
 import org.bytedeco.javacpp.opencv_video._
@@ -37,7 +37,7 @@ class FeatureTracker(maxCount: Int = 500,
   private var trackedPoints = new ArrayBuffer[Point2f]()
 
   /** previous gray-level image */
-  private var grayPrevious: Mat = null
+  private var grayPrevious: Mat = _
 
   private var grayCurrent = new Mat()
 
@@ -80,7 +80,7 @@ class FeatureTracker(maxCount: Int = 500,
     val trackedPointsNewUnfiltered = toPoint2fArray(trackedPointsNewUnfilteredMat)
     val initialPositionsNew = new ArrayBuffer[Point2f]()
     val trackedPointsNew = new ArrayBuffer[Point2f]()
-    val trackingStatusIndexer = trackingStatus.createIndexer().asInstanceOf[UByteBufferIndexer]
+    val trackingStatusIndexer = trackingStatus.createIndexer().asInstanceOf[UByteRawIndexer]
     for (i <- trackedPointsNewUnfiltered.indices) {
       if (acceptTrackedPoint(trackingStatusIndexer.get(i), trackedPoints(i), trackedPointsNewUnfiltered(i))) {
         initialPositionsNew += initialPositions(i)

@@ -13,8 +13,7 @@ import opencv2_cookbook.OpenCVUtils._
 import org.bytedeco.javacpp.opencv_core._
 import org.bytedeco.javacpp.opencv_imgproc._
 import org.bytedeco.javacpp.opencv_video._
-import org.bytedeco.javacpp.opencv_videoio._
-import org.bytedeco.javacv.CanvasFrame
+import org.bytedeco.javacv.{CanvasFrame, FFmpegFrameGrabber, OpenCVFrameConverter}
 
 
 /** The second example example for section "Extracting the foreground objects in video" in Chapter 10, page 272.
@@ -24,40 +23,39 @@ import org.bytedeco.javacv.CanvasFrame
   *
   * This version of the example is implemented using OpenCV C API.
   *
-  * @see opencv2_cookbook.chapter11.Ex1ReadVideoSequenceJavaCV
+  * @see opencv2_cookbook.chapter11.Ex1ReadVideoSequence
   */
 object Ex6MOGMotionDetector extends App {
 
   // Open video video file
-  val capture = new VideoCapture("data/bike.avi")
-  require(capture.isOpened, "Failed to open input video")
+  val grabber = new FFmpegFrameGrabber("data/bike.avi")
+  // Open video video file
+  grabber.start()
 
   // Prepare window to display frames
   val canvasFrame = new CanvasFrame("Extracted Foreground")
-  val width       = capture.get(CAP_PROP_FRAME_WIDTH).toInt
-  val height      = capture.get(CAP_PROP_FRAME_HEIGHT).toInt
-  canvasFrame.setCanvasSize(width, height)
+  canvasFrame.setCanvasSize(grabber.getImageWidth, grabber.getImageHeight)
+  // Exit the example when the canvas frame is closed
   canvasFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE)
 
   // Time between frames in the video
-  val delay = math.round(1000d / capture.get(CAP_PROP_FPS))
+  val delay = math.round(1000d / grabber.getFrameRate)
 
-  // current video frame
-  var frame      = new Mat()
   // foreground binary image
-  var foreground = new Mat()
-  // background image
-  var background = new Mat()
+  val foreground = new Mat()
+
+  val frameConverter = new OpenCVFrameConverter.ToMat()
 
   // Mixture of Gaussians approach
-  //  val mog = new BackgroundSubtractorMOG2()
   val mog = createBackgroundSubtractorMOG2()
 
-  var stop = false
-  while (capture.read(frame)) {
+  for (frame <- Iterator.continually(grabber.grab()).takeWhile(_ != null)) {
+
+    val inputFrame = frameConverter.convert(frame)
+
     // update the background
     // and return the foreground
-    mog(frame, foreground, 0.01)
+    mog(inputFrame, foreground, 0.01)
 
     // Complement the image
     threshold(foreground, foreground, 128, 255, THRESH_BINARY_INV)
@@ -68,5 +66,5 @@ object Ex6MOGMotionDetector extends App {
     Thread.sleep(delay)
   }
 
-  capture.release()
+  grabber.release()
 }

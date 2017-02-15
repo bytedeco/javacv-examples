@@ -49,7 +49,7 @@ object Ex3WriteVideoSequence extends App {
   processor.frameProcessor = canny
 
   // Decide which codec to use for output video
-  val codec      = if (System.getProperty("os.name").toLowerCase.startsWith("windows")) {
+  val codec = if (System.getProperty("os.name").toLowerCase.startsWith("windows")) {
     CV_FOURCC_PROMPT // prompt used with list of available codecs
   } else {
     0 // Use the same is input
