@@ -220,16 +220,18 @@ List of Examples
   * *`Ex5ExtractContours`* - Extract contours from a binary image using connected components.
   * *`Ex6ShapeDescriptors`* - Compute various shape descriptors: bounding box, enclosing circle, approximate polygon, convex hull, center of mass.
   * *`LineFinder`* - Helper class to detect lines segments using probabilistic Hough transform approach, used in `Ex3HoughLineSegments`.
-* [Chapter 8: Detecting and Matching Interest Points](src/main/scala/opencv2_cookbook/chapter08)
+* [Chapter 8: Detecting Interest Points](src/main/scala/opencv2_cookbook/chapter08)
   * *`Ex1HarrisCornerMap`* - Computes Harris corners strength image.
   * *`Ex2HarrisCornerDetector`* - Uses Harris Corner strength image to detect well localized corners, replacing several closely located detections (blurred) by a single one. Uses `HarrisDetector` helper class.
   * *`Ex3GoodFeaturesToTrack`* - Example of using the Good Features to Track detector.
   * *`Ex4FAST`* - Example of using the FAST detector.
   * *`Ex5SURF`* - Example of using the SURF detector.
   * *`Ex6SIFT`* - Example of using the SIFT detector.
-  * *`Ex7DescribingSURF`* - Computes SURF features,  extracts their descriptors, and finds best matching descriptors between two images of the same object. 
   * *`HarrisDetector`* - Helper class for Harris Corner strength image to detection and localization. Closely located detections (blurred) are replaced by a single one.
-* [Chapter 9: Estimating Projective Relations in Images](src/main/scala/opencv2_cookbook/chapter09)
+* [Chapter 9: Detecting Interest Points](src/main/scala/opencv2_cookbook/chapter09)
+  * *`Ex2TemplateMatching`* - Finds best match between a small patch from first image (template) and a second image.. 
+  * *`Ex7DescribingSURF`* - Computes SURF features,  extracts their descriptors, and finds best matching descriptors between two images of the same object. 
+* [Chapter 10: Estimating Projective Relations in Images](src/main/scala/opencv2_cookbook/chapter10)
   * *`Ex1FindChessboardCorners`* - Illustrates one of a camera calibration steps, detection of a chessboard pattern in a calibration board.
   * *`Ex2CalibrateCamera`* - Camera calibration example, shows how to correct geometric deformation that may be introduced by the optics. Uses the `CameraCalibrator` helper class.
   * *`Ex3ComputeFundamentalMatrix`* - Using features detected and matched between two images, compute fundamental matrix that describes projective relation between those two images.
@@ -237,7 +239,7 @@ List of Examples
   * *`Ex5Homography`* - Another way of describing relationship between points in two images, using homography. Shows an example how two images of partial views on an object can be stitched together. Most of the computations are done by `RobustMatcher` helper class.
   * *`CameraCalibrator`* - Helper class implementing camera calibration algorithm.
   * *`RobustMatcher`* - Implements RANSAC based algorithm used by examples `Ex4MatchingUsingSampleConsensus` and `Ex5Homography`.
-* [Chapter 10: Processing Video Sequences](src/main/scala/opencv2_cookbook/chapter10)
+* [Chapter 11: Processing Video Sequences](src/main/scala/opencv2_cookbook/chapter11)
   * *`Ex1ReadVideoSequence`* - Reads and displays a video.
   * *`Ex2ProcessVideoFrames`* - Processed frames in a video file using Canny edge detector; shows the output video on the screen. Uses helper class `VideoProcessor`.
   * *`Ex3WriteVideoSequence`* - Processed frames in a video file using Canny edge detector; writes output to a video file. Uses helper class `VideoProcessor`.
