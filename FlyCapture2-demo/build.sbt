@@ -5,23 +5,23 @@ import sbt.Keys._
 name    := "FlyCapture2-demo"
 version := "1.3.3-SNAPSHOT"
 
-scalaVersion := "2.12.1"
+scalaVersion := "2.12.2"
 
 // Platform classifier for native library dependencies
 lazy val platform = org.bytedeco.javacpp.Loader.getPlatform
 
 // @formatter:off
 val commonSettings = Seq(
-  scalaVersion := "2.12.1",
+  scalaVersion := "2.12.2",
   scalacOptions ++= Seq("-unchecked", "-deprecation", "-Xlint", "-explaintypes"),
   // Some dependencies like `javacpp` are packaged with maven-plugin packaging
   classpathTypes += "maven-plugin",
   libraryDependencies ++= Seq(
-    "org.bytedeco.javacpp-presets" % "flycapture"               % "2.10.3.266-1.3.3-SNAPSHOT" classifier "",
-    "org.bytedeco.javacpp-presets" % "flycapture"               % "2.10.3.266-1.3.3-SNAPSHOT" classifier platform,
+    "org.bytedeco.javacpp-presets" % "flycapture"               % "2.11.3.121-1.3.3-SNAPSHOT" classifier "",
+    "org.bytedeco.javacpp-presets" % "flycapture"               % "2.11.3.121-1.3.3-SNAPSHOT" classifier platform,
     "log4j"                        % "log4j"                    % "1.2.17",
     "org.scala-lang"               % "scala-reflect"            % scalaVersion.value,
-    "org.scala-lang.modules"      %% "scala-parser-combinators" % "1.0.5"
+    "org.scala-lang.modules"      %% "scala-parser-combinators" % "1.0.6"
   ),
   resolvers ++= Seq(
     // Resolver.sonatypeRepo("snapshots"),
@@ -37,7 +37,7 @@ val commonSettings = Seq(
 
 val uiSettings = commonSettings ++ Seq(
   libraryDependencies ++= Seq(
-    "org.clapper"   %% "grizzled-slf4j"      % "1.3.0",
+    "org.clapper"   %% "grizzled-slf4j"      % "1.3.1",
     "org.slf4j"      % "slf4j-api"           % "1.7.25",
     "org.slf4j"      % "slf4j-log4j12"       % "1.7.25",
     "org.scalafx"   %% "scalafx"             % "8.0.102-R11",
