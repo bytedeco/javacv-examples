@@ -27,9 +27,9 @@ class CameraConfigurationView(private val absoluteModeCheckBox: CheckBox,
                               private val displayTestPatternGroup: ToggleGroup,
                               private val model: CameraConfigurationModel) {
 
-  val pattern1ID = displayTestPattern1RadioButton.id
-  val pattern2ID = displayTestPattern2RadioButton.id
-  val patternNoneID = displayTestPatternNoneRadioButton.id
+  private val pattern1ID = displayTestPattern1RadioButton.id
+  private val pattern2ID = displayTestPattern2RadioButton.id
+  private val patternNoneID = displayTestPatternNoneRadioButton.id
 
   require(propertyGridPane != null)
   require(model != null)
@@ -50,7 +50,7 @@ class CameraConfigurationView(private val absoluteModeCheckBox: CheckBox,
       ex.printStackTrace()
   }
 
-  displayTestPatternGroup.selectedToggle.onChange { (ov, oldToggle, newToggle) =>
+  displayTestPatternGroup.selectedToggle.onChange { (_, _, newToggle) =>
     if (displayTestPatternGroup.selectedToggle() != null) {
       newToggle.getProperties
       val id = newToggle.asInstanceOf[javafx.scene.control.RadioButton].id

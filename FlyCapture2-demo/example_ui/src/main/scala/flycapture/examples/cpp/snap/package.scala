@@ -40,23 +40,19 @@ package object snap {
 
   def setupUncaughtExceptionHandling(logger: Logger, title: String): Unit = {
     Thread.setDefaultUncaughtExceptionHandler(
-      new Thread.UncaughtExceptionHandler {
-        override def uncaughtException(t: Thread, e: Throwable): Unit = {
-          logger.error("Default handler caught exception: " + e.getMessage, e)
-          showException(null, title, "Unhandled exception.", e)
-        }
+      (_: Thread, e: Throwable) => {
+        logger.error("Default handler caught exception: " + e.getMessage, e)
+        showException(null, title, "Unhandled exception.", e)
       }
     )
 
     // start is called on the FX Application Thread,
     // so Thread.currentThread() is the FX application thread:
     Thread.currentThread().setUncaughtExceptionHandler(
-      new Thread.UncaughtExceptionHandler {
-        override def uncaughtException(t: Thread, e: Throwable): Unit = {
-          logger.error("FX handler caught exception: " + e.getMessage, e)
-          e.printStackTrace()
-          showException(null, title, "Unhandled FX exception.", e)
-        }
+      (_: Thread, e: Throwable) => {
+        logger.error("FX handler caught exception: " + e.getMessage, e)
+        e.printStackTrace()
+        showException(null, title, "Unhandled FX exception.", e)
       }
     )
   }

@@ -54,7 +54,7 @@ object CameraConfigurationViewDemo extends JFXApp {
 
       Platform.exit()
   }
-  override def stopApp() = {
+  override def stopApp(): Unit = {
     super.stopApp()
 
     cam.Disconnect()

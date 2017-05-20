@@ -19,7 +19,7 @@ import org.bytedeco.javacpp.opencv_core.Size
 object Ex2CalibrateCamera extends App {
 
   // Generate file list
-  val fileList = for (i <- (1 to 20).toSeq) yield new File("data/chessboards/chessboard%02d.jpg".format(i))
+  val fileList = for (i <- 1 to 20) yield new File("data/chessboards/chessboard%02d.jpg".format(i))
 
   // Create calibrator object
   val cameraCalibrator = new CameraCalibrator()

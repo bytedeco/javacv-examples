@@ -17,7 +17,7 @@ import org.bytedeco.javacpp.{FloatPointer, IntPointer, PointerPointer, opencv_im
 class ContentFinder {
   private val _histogram = new Mat()
   private var _threshold = -1f
-  private var _isSparse = false
+
   /**
    * Find content back projecting a histogram.
    * @param image input used for back projection.
@@ -29,6 +29,7 @@ class ContentFinder {
 
     find(image, 0.0f, 255.0f, channels)
   }
+
   def find(image: Mat, minValue: Float, maxValue: Float, channels: Array[Int]): Mat = {
     val result = new Mat()
 
@@ -45,18 +46,19 @@ class ContentFinder {
 
     result
   }
+
   def threshold: Float = _threshold
   /**
    * Set threshold for converting the back-projected image to a binary.
    * If value is negative no thresholding will be done.
    */
   def threshold_=(t: Float) { _threshold = t }
+
   def histogram: Mat = _histogram
   /**
    * Set reference histogram, it will be normalized.
    */
-  def histogram_=(h: Mat) {
-    _isSparse = false
+  def histogram_=(h: Mat): Unit = {
     normalize(h, _histogram)
   }
 }

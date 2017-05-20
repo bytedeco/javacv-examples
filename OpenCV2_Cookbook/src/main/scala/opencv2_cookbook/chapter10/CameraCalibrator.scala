@@ -40,11 +40,11 @@ class CameraCalibrator {
 
 
   /** Return a copy of the camera matrix. */
-  def cameraMatrix = _cameraMatrix.clone()
+  def cameraMatrix: Mat = _cameraMatrix.clone()
 
 
   /** Return a copy of the distortion coefficients. */
-  def distortionCoeffs = _distortionCoeffs.clone()
+  def distortionCoeffs: Mat = _distortionCoeffs.clone()
 
 
   /** Set the calibration options.

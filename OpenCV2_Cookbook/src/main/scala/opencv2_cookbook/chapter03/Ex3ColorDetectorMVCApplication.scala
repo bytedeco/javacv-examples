@@ -162,7 +162,7 @@ object Ex3ColorDetectorMVCApplication extends SimpleSwingApplication {
         waitCursor {
           // Process and update image display if image is loaded
           colorDetectorController.inputImage match {
-            case Some(image) =>
+            case Some(_) =>
               colorDetectorController.process()
               imageView.icon = new ImageIcon(toBufferedImage(colorDetectorController.result.get))
             case None => Dialog.showMessage(buttonsPanel, "Image not opened", title, Error)

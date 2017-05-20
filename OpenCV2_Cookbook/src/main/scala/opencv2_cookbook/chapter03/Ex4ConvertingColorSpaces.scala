@@ -28,7 +28,7 @@ object Ex4ConvertingColorSpaces extends App {
   // 3. Set the input parameters
   colorDetector.colorDistanceThreshold = 30
   // here blue sky, RGB=(130, 190, 230) <=> L*a*b*=(74.3705, -9.0003, -25.9781)
-  colorDetector.targetColor = new ColorLab(74.3705, -9.0003, -25.9781)
+  colorDetector.targetColor = ColorLab(74.3705, -9.0003, -25.9781)
 
   // 4. Process that input image and display the result
   val dest = colorDetector.process(src)

@@ -10,7 +10,6 @@ import java.awt.Color
 import java.awt.image.BufferedImage
 
 import opencv2_cookbook.OpenCVUtils.wrapInMatVector
-import org.bytedeco.javacpp.helper.{opencv_imgproc => imgproc}
 import org.bytedeco.javacpp.indexer.FloatRawIndexer
 import org.bytedeco.javacpp.opencv_core._
 import org.bytedeco.javacpp.opencv_imgproc._
@@ -63,10 +62,12 @@ class Histogram1D {
   private val channels: Array[Int] = Array(0)
   private var _minRange = 0.0f
   private var _maxRange = 255.0f
+
   def setRanges(minRange: Float, maxRange: Float) {
     _minRange = minRange
     _maxRange = maxRange
   }
+
   def getHistogramImage(image: Mat): BufferedImage = {
 
     // Output image size
@@ -97,6 +98,7 @@ class Histogram1D {
 
     canvas
   }
+
   /**
    * Computes histogram of an image.
     *
@@ -116,6 +118,7 @@ class Histogram1D {
 
     dest
   }
+
   /**
    * Computes histogram of an image.
    *

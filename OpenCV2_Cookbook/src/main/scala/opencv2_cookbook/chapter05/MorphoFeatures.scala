@@ -22,7 +22,7 @@ import org.bytedeco.javacpp.opencv_imgproc._
 class MorphoFeatures {
 
   // Threshold to produce binary image
-  var thresholdValue = -1
+  var thresholdValue: Int = -1
 
   // Structural elements used in corner detection
   private val cross   = new Mat(5, 5, CV_8U,

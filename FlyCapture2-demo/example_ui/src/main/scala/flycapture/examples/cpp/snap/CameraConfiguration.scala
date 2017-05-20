@@ -9,6 +9,7 @@ package flycapture.examples.cpp.snap
 import org.bytedeco.javacpp.FlyCapture2.CameraBase
 
 import scala.reflect.runtime.universe.typeOf
+import scalafx.scene.Parent
 import scalafx.stage.Stage
 
 /**
@@ -20,9 +21,9 @@ class CameraConfiguration(camera: CameraBase, parent:Stage) {
 
   require(camera != null)
 
-  val model = new CameraConfigurationModel(camera, parent)
+  val model: CameraConfigurationModel = new CameraConfigurationModel(camera, parent)
 
-  val view = onFXAndWait {
+  val view: Parent = onFXAndWait {
     createFXMLView(model, typeOf[CameraConfigurationModel], "CameraConfigurationView.fxml")
   }
 

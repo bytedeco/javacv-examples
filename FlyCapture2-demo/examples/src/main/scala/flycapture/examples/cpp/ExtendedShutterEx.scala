@@ -6,7 +6,6 @@
 
 package flycapture.examples.cpp
 
-import flycapture.CheckMacro
 import flycapture.CheckMacro.check
 import org.bytedeco.javacpp.FlyCapture2._
 import org.bytedeco.javacpp.IntPointer
@@ -152,7 +151,7 @@ object ExtendedShutterEx extends App {
     check(cam.StartCapture())
 
     val k_numImages = 5
-    for (i <- 0 until k_numImages) {
+    for (_ <- 0 until k_numImages) {
       val image = new Image()
       check(cam.RetrieveBuffer(image))
 

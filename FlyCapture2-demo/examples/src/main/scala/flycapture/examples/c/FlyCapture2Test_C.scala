@@ -70,7 +70,7 @@ object FlyCapture2Test_C extends App {
     // assuming that the memory has already been allocated.
 
     var prevTimestamp = new fc2TimeStamp()
-    for (i <- 0 until numImagesToGrab) {
+    for (_ <- 0 until numImagesToGrab) {
       // Retrieve the image
       check(fc2RetrieveBuffer(context, rawImage), " - in retrieveBuffer")
       // Get and print out the time stamp

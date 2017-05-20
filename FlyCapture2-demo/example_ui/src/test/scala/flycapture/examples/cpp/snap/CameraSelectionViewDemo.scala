@@ -42,7 +42,7 @@ object CameraSelectionViewDemo extends JFXApp {
 
       override def call(): Unit = model.initialize()
 
-      override def failed() = {
+      override def failed(): Unit = {
         super.failed()
         showException(stage, title, "Unexpected error when initializing UI. Application will terminate.", getException)
         Platform.exit()

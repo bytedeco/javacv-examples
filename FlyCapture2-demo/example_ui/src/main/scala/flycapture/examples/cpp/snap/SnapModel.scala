@@ -52,7 +52,7 @@ class SnapModel {
 
   val fc2Version = new StringProperty("?.?.?.?")
   val cameraInfo = new StringProperty("No camera connected")
-  val selectedCamera = ObjectProperty[Option[CameraBase]](None)
+  val selectedCamera: ObjectProperty[Option[CameraBase]] = ObjectProperty[Option[CameraBase]](None)
   private var selectedCameraID: Option[CameraID] = None
   val snappedImage = new ObjectProperty[javafx.scene.image.Image]()
   val canSnap = BooleanProperty(value = false)
@@ -86,7 +86,7 @@ class SnapModel {
 
 
   private val busCallback = new BusEventCallback() {
-    def eventName(id: Int) = id match {
+    def eventName(id: Int): String = id match {
       case 1 => "BUS_RESET"
       case 2 => "ARRIVAL"
       case 3 => "REMOVAL"
@@ -101,7 +101,7 @@ class SnapModel {
         "  Event ID    : " + id + " " + eventName(id) + "\n" +
         "  serialNumber: " + serialNumber)
 
-      selectedCamera().foreach { camera =>
+      selectedCamera().foreach { _ =>
         if ("REMOVAL".equals(eventName(id))) {
           if (selectedCameraID.get.cameraInfo.serialNumber == serialNumber) {
             logger.info("Disconnecting camera")
@@ -271,7 +271,7 @@ class SnapModel {
 
       override def call(): Unit = selectedCamera().foreach(snap)
 
-      override def failed() = {
+      override def failed(): Unit = {
         super.failed()
         showException(parent, "Snap", "Error while snapping an image.", getException)
       }
@@ -317,7 +317,7 @@ class SnapModel {
   }
 
 
-  def onStartLiveCapture() = {
+  def onStartLiveCapture(): Unit = {
     offFXAndWait {
       logger.debug("onStartLiveCapture()")
       // Start capturing images
@@ -333,7 +333,7 @@ class SnapModel {
     }
   }
 
-  def onStopLiveCapture() = {
+  def onStopLiveCapture(): Unit = {
     onFXAndWait {
       logger.debug("onStopLiveCapture()")
       logger.debug("Current state: " + imageCaptureScheduledService.state())
@@ -368,7 +368,7 @@ class SnapModel {
     }
   }
 
-  def onSaveImage() = {
+  def onSaveImage(): Unit = {
     logger.debug("onSaveImage()")
 
     // Do minimal blocking by creating a copy of the snapped image.
@@ -426,7 +426,7 @@ class SnapModel {
     }
   }
 
-  def onSettings() = {
+  def onSettings(): Unit = {
     logger.debug("onSettings()")
 
     selectedCamera() match {
@@ -462,7 +462,7 @@ class SnapModel {
     setPeriod(Duration(33))
 
 
-    override def scheduled() = {
+    override def scheduled(): Unit = {
       logger.trace("ImageCaptureScheduledService::scheduled()")
       require(selectedCamera().isDefined, "Camera must be defined.")
       selectedCamera().foreach { camera =>
@@ -552,7 +552,7 @@ class SnapModel {
           counter.toString
         }
 
-        override def failed() = {
+        override def failed(): Unit = {
           super.failed()
           showException(parent, "Live View", "Error while upodating live view.", getException)
         }

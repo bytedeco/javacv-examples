@@ -4,9 +4,8 @@
  */
 package flycapture.examples.cpp
 
-import flycapture.CheckMacro
+import flycapture.CheckMacro.check
 import org.bytedeco.javacpp.FlyCapture2._
-import CheckMacro.check
 
 /**
  * The CameraPropertyInfoEx prints out property information from attached cameras.
@@ -14,7 +13,6 @@ import CheckMacro.check
 object CameraPropertyInfoEx extends App {
 
   def runSingleCamera(guid: PGRGuid) {
-    val numImages = 10
 
     // Connect to a camera
     val cam = new Camera()

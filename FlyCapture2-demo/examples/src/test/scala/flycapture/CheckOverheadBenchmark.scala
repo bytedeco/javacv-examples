@@ -36,7 +36,7 @@ object CheckOverheadBenchmark extends App {
   println("Run")
   var minCheck = Double.PositiveInfinity
   var minIf = Double.PositiveInfinity
-  for (i <- 0 until 10) {
+  for (_ <- 0 until 10) {
     minCheck = min(testCheck(), minCheck)
     minIf = min(testIf(), minIf)
   }
@@ -51,7 +51,7 @@ object CheckOverheadBenchmark extends App {
     val numCameras = new IntPointer(1L)
 
     val t0 = System.nanoTime()
-    for (i <- 0 until nbIterations) {
+    for (_ <- 0 until nbIterations) {
       check(busMgr.GetNumOfCameras(numCameras))
     }
     val t1 = System.nanoTime()
@@ -66,7 +66,7 @@ object CheckOverheadBenchmark extends App {
     val numCameras = new IntPointer(1L)
 
     val t0 = System.nanoTime()
-    for (i <- 0 until nbIterations) {
+    for (_ <- 0 until nbIterations) {
       if (busMgr.GetNumOfCameras(numCameras).GetType() != FlyCapture2.PGRERROR_OK) {
         throw new Exception("Error in ...")
       }

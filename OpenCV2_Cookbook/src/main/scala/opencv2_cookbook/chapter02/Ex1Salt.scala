@@ -48,7 +48,7 @@ object Ex1Salt extends App {
 
     // Place `n` grains at random locations
     val nbChannels = image.channels
-    for (i <- 1 to n) {
+    for (_ <- 1 to n) {
       // Create random index of a pixel
       val row: Long = random.nextInt(image.rows)
       val col: Long = random.nextInt(image.cols)

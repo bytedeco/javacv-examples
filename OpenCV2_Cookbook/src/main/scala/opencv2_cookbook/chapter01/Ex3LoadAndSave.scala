@@ -19,7 +19,7 @@ import org.bytedeco.javacv.{CanvasFrame, OpenCVFrameConverter}
 object Ex3LoadAndSave extends App {
 
   // read the input image as a gray-scale image
-  var image = imread("data/puppy.bmp", IMREAD_COLOR)
+  val image = imread("data/puppy.bmp", IMREAD_COLOR)
 
   if (image.empty()) {
     // error handling

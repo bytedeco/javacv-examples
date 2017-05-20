@@ -30,7 +30,7 @@ class LineFinder(val deltaRho: Double = 1,
                  val minLength: Double = 0,
                  val minGap: Double = 0d) {
 
-  private var lines: Mat = null
+  private var lines: Mat = _
 
 
   /**

@@ -43,7 +43,7 @@ object ColorDetectorController {
   /**
    * Get the color distance threshold.
    */
-  def colorDistanceThreshold = colorDetector.colorDistanceThreshold
+  def colorDistanceThreshold: Int = colorDetector.colorDistanceThreshold
 
 
   /**
@@ -57,7 +57,7 @@ object ColorDetectorController {
   /**
    * Get the color to be detected
    */
-  def targetColor = colorDetector.targetColor
+  def targetColor: ColorRGB = colorDetector.targetColor
 
 
   /**
