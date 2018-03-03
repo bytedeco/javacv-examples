@@ -2,7 +2,7 @@ FlyCapture2-demo
 ================
 
 Example of using [JVM wrapper](https://github.com/bytedeco/javacpp-presets/tree/master/flycapture) for 
-Point Grey [FlyCapture SDK](http://ww2.ptgrey.com/sdk/flycap).
+Point Grey [FlyCapture SDK](https://www.ptgrey.com/flycapture-sdk).
 
 Please address queries and questions to [JavaCPP discussion group](http://groups.google.com/group/javacpp-project).
 
