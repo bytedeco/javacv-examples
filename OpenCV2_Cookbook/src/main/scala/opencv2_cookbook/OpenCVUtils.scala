@@ -11,13 +11,13 @@ import java.awt._
 import java.awt.image.BufferedImage
 import java.io.File
 import java.nio.IntBuffer
-import javax.swing.JFrame
 
-import org.bytedeco.javacpp.DoublePointer
+import javax.swing.JFrame
 import org.bytedeco.javacpp.indexer.FloatIndexer
 import org.bytedeco.javacpp.opencv_core.{Point, _}
 import org.bytedeco.javacpp.opencv_imgcodecs._
 import org.bytedeco.javacpp.opencv_imgproc._
+import org.bytedeco.javacpp.{DoublePointer, IntPointer}
 import org.bytedeco.javacv.OpenCVFrameConverter.ToMat
 import org.bytedeco.javacv.{CanvasFrame, Java2DFrameConverter}
 
@@ -101,9 +101,9 @@ object OpenCVUtils {
 
   /** Draw a shape on an image.
     *
-    * @param image input image
+    * @param image   input image
     * @param overlay shape to draw
-    * @param color color to use
+    * @param color   color to use
     * @return new image with drawn overlay
     */
   def drawOnImage(image: Mat, overlay: Rect, color: Scalar): Mat = {
@@ -119,7 +119,7 @@ object OpenCVUtils {
     * 3-channel (with ‘BGR’ channel order) images can be saved using this function.
     * If the format, depth or channel order is different, use Mat::convertTo() , and cvtColor() to convert it before saving.
     *
-    * @param file file to save to. File name extension decides output image format.
+    * @param file  file to save to. File name extension decides output image format.
     * @param image image to save.
     */
   def save(file: File, image: Mat) {
@@ -177,14 +177,13 @@ object OpenCVUtils {
   def toPoint(p: Point2f): Point = new Point(round(p.x), round(p.y))
 
 
-
   /**
-   * Convert `Mat` to one where pixels are represented as 8 bit unsigned integers (`CV_8U`).
-   * It creates a copy of the input image.
-   *
-   * @param src input image.
-   * @return copy of the input with pixels values represented as 8 bit unsigned integers.
-   */
+    * Convert `Mat` to one where pixels are represented as 8 bit unsigned integers (`CV_8U`).
+    * It creates a copy of the input image.
+    *
+    * @param src input image.
+    * @return copy of the input with pixels values represented as 8 bit unsigned integers.
+    */
   def toMat8U(src: Mat, doScaling: Boolean = true): Mat = {
     val minVal = new DoublePointer(Double.MaxValue)
     val maxVal = new DoublePointer(Double.MinValue)
@@ -215,9 +214,9 @@ object OpenCVUtils {
   }
 
   /**
-   * Convert a sequence of Point3D to a Mat representing a vector of Points3f.
-   * Calling  `checkVector(3)` on the return value will return non-negative value indicating that it is a vector with 3 channels.
-   */
+    * Convert a sequence of Point3D to a Mat representing a vector of Points3f.
+    * Calling  `checkVector(3)` on the return value will return non-negative value indicating that it is a vector with 3 channels.
+    */
   def toMatPoint3f(points: Seq[Point3f]): Mat = {
     // Create Mat representing a vector of Points3f
     val dest = new Mat(1, points.size, CV_32FC3)
@@ -242,8 +241,8 @@ object OpenCVUtils {
     dest
   }
   /**
-   * Convert a vector of Point2f to a Mat representing a vector of Points2f.
-   */
+    * Convert a vector of Point2f to a Mat representing a vector of Points2f.
+    */
   def toMat(points: Point2fVector): Mat = {
     // Create Mat representing a vector of Points3f
     val size: Int = points.size.toInt
@@ -288,10 +287,19 @@ object OpenCVUtils {
     IntBuffer.wrap(Array(v))
   }
 
+  /**
+    * Creates a `IntPointer` and put `v` as its only element.
+    *
+    * @return
+    */
+  def wrapInIntPointer(v: Int): IntPointer = {
+    new IntPointer(1L).put(v)
+  }
+
 
   /**
-   * Print info about the `mat`
-   */
+    * Print info about the `mat`.
+    */
   def printInfo(mat: Mat, caption: String = ""): Unit = {
     println(
       caption + "\n" +

@@ -9,26 +9,27 @@ package opencv2_cookbook.chapter04
 import java.awt.Color
 import java.awt.image.BufferedImage
 
-import opencv2_cookbook.OpenCVUtils.wrapInMatVector
+import opencv2_cookbook.OpenCVUtils.{wrapInIntPointer, wrapInMatVector}
 import org.bytedeco.javacpp.indexer.FloatRawIndexer
 import org.bytedeco.javacpp.opencv_core._
 import org.bytedeco.javacpp.opencv_imgproc._
+import org.bytedeco.javacpp.{FloatPointer, IntPointer}
 
 
 /**
- * Helper methods for performing histogram and look-up table operations, correspond to part of C++ class
- * Histogram1D in the OpenCV2 Cookbook sample code.
- */
+  * Helper methods for performing histogram and look-up table operations, correspond to part of C++ class
+  * Histogram1D in the OpenCV2 Cookbook sample code.
+  */
 object Histogram1D {
 
   /**
-   * Apply a look-up table to an image.
-   * It is a wrapper for OpenCV function `LUT`.
+    * Apply a look-up table to an image.
+    * It is a wrapper for OpenCV function `LUT`.
     *
-    * @param image input image
-   * @param lookup look-up table
-   * @return new image
-   */
+    * @param image  input image
+    * @param lookup look-up table
+    * @return new image
+    */
   def applyLookUp(image: Mat, lookup: Mat): Mat = {
     val dest = new Mat()
     LUT(image, lookup, dest)
@@ -36,12 +37,12 @@ object Histogram1D {
   }
 
   /**
-   * Equalize histogram of an image. The algorithm normalizes the brightness and increases the contrast of the image.
-   * It is a wrapper for OpenCV function `equalizeHist`.
+    * Equalize histogram of an image. The algorithm normalizes the brightness and increases the contrast of the image.
+    * It is a wrapper for OpenCV function `equalizeHist`.
     *
     * @param src input image
-   * @return new image
-   */
+    * @return new image
+    */
   def equalize(src: Mat): Mat = {
     val dest = new Mat()
     equalizeHist(src, dest)
@@ -51,15 +52,15 @@ object Histogram1D {
 }
 
 /**
- * Helper class that simplifies usage of OpenCV `calcHist` function for single channel images.
- *
- * See OpenCV [[http://opencv.itseez.com/modules/imgproc/doc/histograms.html?highlight=histogram]]
- * documentation to learn backend details.
- */
+  * Helper class that simplifies usage of OpenCV `calcHist` function for single channel images.
+  *
+  * See OpenCV [[http://opencv.itseez.com/modules/imgproc/doc/histograms.html?highlight=histogram]]
+  * documentation to learn backend details.
+  */
 class Histogram1D {
 
   private val numberOfBins = 256
-  private val channels: Array[Int] = Array(0)
+  private val channels: IntPointer = wrapInIntPointer(0)
   private var _minRange = 0.0f
   private var _maxRange = 255.0f
 
@@ -100,11 +101,11 @@ class Histogram1D {
   }
 
   /**
-   * Computes histogram of an image.
+    * Computes histogram of an image.
     *
     * @param image input image
-   * @return histogram represented as an array
-   */
+    * @return histogram represented as an array
+    */
   def getHistogramAsArray(image: Mat): Array[Float] = {
     // Create and calculate histogram object
     val hist = getHistogram(image)
@@ -120,15 +121,15 @@ class Histogram1D {
   }
 
   /**
-   * Computes histogram of an image.
-   *
-   * @param image input image
-   * @param mask optional mask
-   * @return OpenCV histogram object
-   */
+    * Computes histogram of an image.
+    *
+    * @param image input image
+    * @param mask  optional mask
+    * @return OpenCV histogram object
+    */
   def getHistogram(image: Mat, mask: Mat = new Mat()): Mat = {
-    val histSize = Array(numberOfBins)
-    val ranges = Array(_minRange, _maxRange)
+    val histSize = wrapInIntPointer(numberOfBins)
+    val ranges = new FloatPointer(_minRange, _maxRange)
     // Compute histogram
     val hist = new Mat()
     calcHist(wrapInMatVector(image), channels, mask, hist, histSize, ranges)
