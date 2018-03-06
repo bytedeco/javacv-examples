@@ -23,9 +23,9 @@ import scala.io.StdIn.readLine
  */
 object BusEventEx extends App {
 
-  def now = new Date().toString
+  def now: String = new Date().toString
 
-  def id(v: Int) = {
+  def id(v: Int): IntPointer = {
     val r = new IntPointer(1L)
     r.put(v)
     r

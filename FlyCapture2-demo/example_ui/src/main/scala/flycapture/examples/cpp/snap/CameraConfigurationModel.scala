@@ -98,11 +98,11 @@ class CameraConfigurationModel(camera: CameraBase, parent: Stage) extends ShowMe
 
   private val updateViewScheduledService = new UpdateViewScheduledService()
 
-  testPattern.onChange { (_, _, newTestPattern) =>
+  testPattern.onChange { (_, _, _) =>
 
   }
 
-  override def parentWindow = parent
+  override def parentWindow: Stage = parent
 
   def initialize(): Unit = {
 
@@ -130,7 +130,7 @@ class CameraConfigurationModel(camera: CameraBase, parent: Stage) extends ShowMe
         propertyGridPane.add(pc.unitLabel, 3, row)
 
         // Slider
-        pc.slider.value.onChange { (_, oldValue, newValue) =>
+        pc.slider.value.onChange { (_, _, newValue) =>
           if (pc.isUpdating.compareAndSet(false, true)) {
             try {
               val property = new Property(pc.propType)
@@ -280,11 +280,11 @@ class CameraConfigurationModel(camera: CameraBase, parent: Stage) extends ShowMe
     def createTask(): jfxc.Task[Unit] = new jfxc.Task[Unit]() {
       override def call(): Unit = {
         onFXAndWait {
-          properties.zipWithIndex.foreach { case (p, i) => updatePropertyControl(camera, p)}
+          properties.zipWithIndex.foreach { case (p, _) => updatePropertyControl(camera, p) }
         }
       }
 
-      override def failed() = {
+      override def failed(): Unit = {
         super.failed()
         getException.printStackTrace()
       }

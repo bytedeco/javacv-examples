@@ -43,10 +43,10 @@ class SnapView(private val selectCameraButton: Button,
   saveImageButton.disable <== !model.canSave
   settingsButton.disable <== model.selectedCamera === None
 
-  selectCameraButton.onAction = (event: ActionEvent) => model.selectCamera()
-  snapButton.onAction = (event: ActionEvent) => model.onSnap()
-  startButton.onAction = (event: ActionEvent) => model.onStartLiveCapture()
-  stopButton.onAction = (event: ActionEvent) => model.onStopLiveCapture()
-  saveImageButton.onAction = (event: ActionEvent) => model.onSaveImage()
-  settingsButton.onAction = (event: ActionEvent) => model.onSettings()
+  selectCameraButton.onAction = (_: ActionEvent) => model.selectCamera()
+  snapButton.onAction = (_: ActionEvent) => model.onSnap()
+  startButton.onAction = (_: ActionEvent) => model.onStartLiveCapture()
+  stopButton.onAction = (_: ActionEvent) => model.onStopLiveCapture()
+  saveImageButton.onAction = (_: ActionEvent) => model.onSaveImage()
+  settingsButton.onAction = (_: ActionEvent) => model.onSettings()
 }

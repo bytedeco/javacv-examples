@@ -62,7 +62,7 @@ object FlyCaptureSnapApp extends JFXApp {
     new Thread(new javafx.concurrent.Task[Unit] {
 
       override def call(): Unit = snapModel.initialize()
-      override def failed() = {
+      override def failed(): Unit = {
         showException(stage, title, "Unexpected error while initializing UI. Application will terminate.", getException)
         Platform.exit()
       }
@@ -74,7 +74,7 @@ object FlyCaptureSnapApp extends JFXApp {
       Platform.exit()
   }
 
-  override def stopApp() = {
+  override def stopApp(): Unit = {
     snapModel.shutDown()
     super.stopApp()
   }

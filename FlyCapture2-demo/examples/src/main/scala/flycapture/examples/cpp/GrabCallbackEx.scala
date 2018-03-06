@@ -5,8 +5,7 @@
 package flycapture.examples.cpp
 
 import flycapture.CheckMacro
-import CheckMacro.check
-import flycapture.CheckMacro
+import flycapture.CheckMacro.check
 import org.bytedeco.javacpp.FlyCapture2._
 import org.bytedeco.javacpp.Pointer
 

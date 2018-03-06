@@ -22,7 +22,7 @@ import static org.bytedeco.javacpp.opencv_objdetect.*;
  */
 public final class Example1 {
 
-    public static CvHaarClassifierCascade loadFaceCascade(final File file) throws IOException {
+    private static CvHaarClassifierCascade loadFaceCascade(final File file) throws IOException {
         if (!file.exists()) {
             throw new FileNotFoundException("Face cascade file does not exist: " + file.getAbsolutePath());
         }
@@ -37,7 +37,7 @@ public final class Example1 {
         return faceCascade;
     }
 
-    public static FLANDMARK_Model loadFLandmarkModel(final File file) throws IOException {
+    private static FLANDMARK_Model loadFLandmarkModel(final File file) throws IOException {
         if (!file.exists()) {
             throw new FileNotFoundException("FLandmark model file does not exist: " + file.getAbsolutePath());
         }
@@ -50,7 +50,7 @@ public final class Example1 {
         return model;
     }
 
-    public static IplImage loadImage(File file) throws IOException {
+    private static IplImage loadImage(File file) throws IOException {
         // Verify file
         if (!file.exists()) {
             throw new FileNotFoundException("Image file does not exist: " + file.getAbsolutePath());
@@ -63,7 +63,7 @@ public final class Example1 {
         return image;
     }
 
-    public static void show(final IplImage image, final String title) {
+    private static void show(final IplImage image, final String title) {
         final IplImage image1 = cvCreateImage(cvGetSize(image), IPL_DEPTH_8U, image.nChannels());
         cvCopy(image, image1);
         CanvasFrame canvas = new CanvasFrame(title, 1);
@@ -73,12 +73,12 @@ public final class Example1 {
         canvas.showImage(converter.convert(image1));
     }
 
-    public static void detectFaceInImage(final IplImage orig,
-                                         final IplImage input,
-                                         final CvHaarClassifierCascade cascade,
-                                         final FLANDMARK_Model model,
-                                         final int[] bbox,
-                                         final double[] landmarks) throws Exception {
+    private static void detectFaceInImage(final IplImage orig,
+                                          final IplImage input,
+                                          final CvHaarClassifierCascade cascade,
+                                          final FLANDMARK_Model model,
+                                          final int[] bbox,
+                                          final double[] landmarks) throws Exception {
 
         CvMemStorage storage = cvCreateMemStorage(0);
         cvClearMemStorage(storage);
