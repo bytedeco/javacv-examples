@@ -7,11 +7,9 @@
 package opencv_cookbook.chapter11
 
 import javax.swing.JFrame
-
 import opencv_cookbook.OpenCVUtils._
 import org.bytedeco.javacpp.opencv_core._
-import org.bytedeco.javacpp.opencv_videoio._
-import org.bytedeco.javacv.{CanvasFrame, FFmpegFrameGrabber, OpenCVFrameConverter}
+import org.bytedeco.javacv._
 
 /** Video processor.
   *
@@ -88,7 +86,7 @@ class VideoProcessor(var frameProcessor: ((Mat, Mat) => Unit) = { (src, dest) =>
   /** to grab (and process) the frames of the sequence */
   def run() {
 
-    val writer = createWriter()
+    val recorder = createRecorder()
 
     val inputCanvas = createCanvas(displayInput)
     val outputCanvas = createCanvas(displayOutput)
@@ -114,7 +112,7 @@ class VideoProcessor(var frameProcessor: ((Mat, Mat) => Unit) = { (src, dest) =>
       }
 
       // write output sequence
-      writeNextFrame(writer, outputFrame)
+      writeNextFrame(recorder, outputFrame)
 
       // Display output frame, if canvas was created
       outputCanvas.foreach(_.showImage(toBufferedImage(outputFrame)))
@@ -127,7 +125,7 @@ class VideoProcessor(var frameProcessor: ((Mat, Mat) => Unit) = { (src, dest) =>
     }
 
     // Release writer (if created) to make sure that data is flushed to the output file, and file is closed.
-    writer.foreach(_.release())
+    recorder.foreach(_.stop())
   }
 
   private def grabber: FFmpegFrameGrabber =
@@ -144,23 +142,19 @@ class VideoProcessor(var frameProcessor: ((Mat, Mat) => Unit) = { (src, dest) =>
     } else None
 
 
-  private def createWriter(): Option[VideoWriter] = if (writerParam.isEmpty) {
-    None
-  } else {
-    val writer = new VideoWriter()
-    val wp = writerParam.get
-    val actualFrameRate = if (writerParam.get.frameRate == 0.0) frameRate else writerParam.get.frameRate
-    val actualCodec = if (writerParam.get.codec == 0) codec else writerParam.get.codec
-    if (writer.open(wp.fileName, actualCodec, actualFrameRate, frameSize, writerParam.get.isColor)) {
-      Some(writer)
-    } else {
-      None
-    }
+  private def createRecorder(): Option[FrameRecorder] = writerParam.map { wp =>
+    val recorder = new FFmpegFrameRecorder(wp.fileName, frameSize.width(), frameSize.height())
+    val actualFrameRate = if (wp.frameRate == 0.0) frameRate else wp.frameRate
+    recorder.setFrameRate(actualFrameRate)
+    recorder.setVideoCodec(wp.codec)
+    recorder.start()
+    recorder
   }
 
-
   /** Write the output frame. */
-  private def writeNextFrame(writer: Option[VideoWriter], frame: Mat) {
-    if (writer.isDefined) writer.foreach(_.write(frame))
+  private def writeNextFrame(writer: Option[FrameRecorder], frame: Mat) {
+    val converter = new OpenCVFrameConverter.ToIplImage()
+    val f = converter.convert(frame)
+    if (writer.isDefined) writer.foreach(_.record(f))
   }
 }

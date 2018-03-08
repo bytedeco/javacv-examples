@@ -10,7 +10,6 @@ import java.io.File
 
 import org.bytedeco.javacpp.opencv_core.Mat
 import org.bytedeco.javacpp.opencv_imgproc._
-import org.bytedeco.javacpp.opencv_videoio._
 
 
 /** The example for section "Writing video sequences" in Chapter 10, page 261.
@@ -49,11 +48,8 @@ object Ex3WriteVideoSequence extends App {
   processor.frameProcessor = canny
 
   // Decide which codec to use for output video
-  val codec = if (System.getProperty("os.name").toLowerCase.startsWith("windows")) {
-    CV_FOURCC_PROMPT // prompt used with list of available codecs
-  } else {
-    0 // Use the same is input
-  }
+  val codec = 13 // XVID MPEG-4
+
   // Indicate file name and coded to use to write video
   val outputFile = new File("bikeOut.avi")
   println("Processing video file: " + outputFile.getCanonicalPath)
