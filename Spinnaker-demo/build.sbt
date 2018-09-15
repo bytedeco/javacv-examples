@@ -3,16 +3,16 @@
 name         := "Spinnaker-demo"
 organization := "javacv.examples"
 
-val javacppVersion = "1.4.1"
+val javacppVersion = "1.4.3-SNAPSHOT"
 version      := javacppVersion
-scalaVersion := "2.12.5"
+scalaVersion := "2.12.6"
 scalacOptions ++= Seq("-unchecked", "-deprecation", "-Xlint")
 
 // Platform classifier for native library dependencies
 val platform = org.bytedeco.javacpp.Loader.getPlatform
 // Libraries with native dependencies
 val bytedecoPresetLibs = Seq(
-  "spinnaker" -> s"1.10.0.31-1.4.2-SNAPSHOT").flatMap {
+  "spinnaker" -> s"1.15.0.63-1.4.3-SNAPSHOT").flatMap {
   case (lib, ver) => Seq(
     // Add both: dependency and its native binaries for the current `platform`
     "org.bytedeco.javacpp-presets" % lib % ver withSources() withJavadoc(),
@@ -26,7 +26,7 @@ libraryDependencies ++= Seq(
 ) ++ bytedecoPresetLibs
 
 resolvers ++= Seq(
-    // Resolver.sonatypeRepo("snapshots"),
+     Resolver.sonatypeRepo("snapshots"),
     // Use local maven repo for local javacv builds
     Resolver.mavenLocal
 )
