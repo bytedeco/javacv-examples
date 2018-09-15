@@ -1,3 +1,20 @@
+//=============================================================================
+// Copyright © 2018 FLIR Integrated Imaging Solutions, Inc. All Rights Reserved.
+//
+// This software is the confidential and proprietary information of FLIR
+// Integrated Imaging Solutions, Inc. ("Confidential Information"). You
+// shall not disclose such Confidential Information and shall use it only in
+// accordance with the terms of the license agreement you entered into
+// with FLIR Integrated Imaging Solutions, Inc. (FLIR).
+//
+// FLIR MAKES NO REPRESENTATIONS OR WARRANTIES ABOUT THE SUITABILITY OF THE
+// SOFTWARE, EITHER EXPRESSED OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, THE
+// IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
+// PURPOSE, OR NON-INFRINGEMENT. FLIR SHALL NOT BE LIABLE FOR ANY DAMAGES
+// SUFFERED BY LICENSEE AS A RESULT OF USING, MODIFYING OR DISTRIBUTING
+// THIS SOFTWARE OR ITS DERIVATIVES.
+//=============================================================================*/
+
 package spinnaker_c;
 
 import org.bytedeco.javacpp.*;
@@ -8,9 +25,23 @@ import java.io.File;
 import static org.bytedeco.javacpp.Spinnaker_C.*;
 
 /**
- * Example how to enumerate cameras, start acquisition, and grab images.
+ * Acquisition_C shows how to acquire images. It relies on
+ * information provided in the Enumeration_C example. Following this, check
+ * out the NodeMapInfo_C example if you haven't already. It explores
+ * retrieving information from various node types.
  * <p>
- * Please see Enumeration_C example for more in-depth comments on preparing and cleaning up the system.
+ * This example touches on the preparation and cleanup of a camera just
+ * before and just after the acquisition of images. Image retrieval and
+ * conversion, grabbing image data, and saving images are all covered.
+ * <p>
+ * Once comfortable with Acquisition_C and NodeMapInfo_C, we suggest checking
+ * out AcquisitionMultipleCamera_C, NodeMapCallback_C, or SaveToAvi_C.
+ * AcquisitionMultipleCamera_C demonstrates simultaneously acquiring images
+ * from a number of cameras, NodeMapCallback_C acts as a good introduction to
+ * programming with callbacks and events, and SaveToAvi_C exhibits video
+ * creation.
+ * <p>
+ * This Java version of the example is based on the Spinnaker C API example: Acquisition_C.
  */
 public class Acquisition_C {
     private final static int MAX_BUFF_LEN = 256;
