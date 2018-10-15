@@ -1,19 +1,18 @@
 // @formatter:off
 
-name         := "opencv-cookbook"
+name         := "Spinnaker-demo"
 organization := "javacv.examples"
 
-val javacppVersion = "1.4.1"
+val javacppVersion = "1.4.3-SNAPSHOT"
 version      := javacppVersion
-scalaVersion := "2.12.5"
+scalaVersion := "2.12.6"
 scalacOptions ++= Seq("-unchecked", "-deprecation", "-Xlint")
 
 // Platform classifier for native library dependencies
 val platform = org.bytedeco.javacpp.Loader.getPlatform
 // Libraries with native dependencies
 val bytedecoPresetLibs = Seq(
-  "opencv" -> s"3.4.1-$javacppVersion",
-  "ffmpeg" -> s"3.4.2-$javacppVersion").flatMap {
+  "spinnaker" -> s"1.15.0.63-1.4.3-SNAPSHOT").flatMap {
   case (lib, ver) => Seq(
     // Add both: dependency and its native binaries for the current `platform`
     "org.bytedeco.javacpp-presets" % lib % ver withSources() withJavadoc(),
@@ -23,11 +22,14 @@ val bytedecoPresetLibs = Seq(
 
 libraryDependencies ++= Seq(
   "org.bytedeco"            % "javacpp"         % javacppVersion withSources() withJavadoc(),
-  "org.bytedeco"            % "javacv"          % javacppVersion withSources() withJavadoc(),
-  "org.scala-lang.modules" %% "scala-swing"     % "2.0.3",
-  "junit"                   % "junit"           % "4.12" % "test",
-  "com.novocode"            % "junit-interface" % "0.11" % "test"
+  "org.bytedeco"            % "javacv"          % javacppVersion withSources() withJavadoc()
 ) ++ bytedecoPresetLibs
+
+resolvers ++= Seq(
+     Resolver.sonatypeRepo("snapshots"),
+    // Use local maven repo for local javacv builds
+    Resolver.mavenLocal
+)
 
 autoCompilerPlugins := true
 
