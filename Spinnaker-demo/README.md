@@ -11,7 +11,8 @@ Examples
 -------
 
 * C API examples in [`src/main/java/spinnaker_c`](src/main/java/spinnaker_c) :
-    * `Acquisition_C` - Example how to enumerate cameras, start acquisition, and grab images.
+    * `Acquisition_C` is an example how to enumerate cameras, start acquisition, and grab images.
+    * `Sequencer_C` shows how to use the sequencer to grab images with various settings.
 
 
 Build script
