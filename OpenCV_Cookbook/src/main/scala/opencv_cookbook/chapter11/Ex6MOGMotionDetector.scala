@@ -7,8 +7,7 @@
 package opencv_cookbook.chapter11
 
 
-import javax.swing.JFrame
-
+import javax.swing.WindowConstants
 import opencv_cookbook.OpenCVUtils._
 import org.bytedeco.javacpp.opencv_core._
 import org.bytedeco.javacpp.opencv_imgproc._
@@ -36,7 +35,7 @@ object Ex6MOGMotionDetector extends App {
   val canvasFrame = new CanvasFrame("Extracted Foreground")
   canvasFrame.setCanvasSize(grabber.getImageWidth, grabber.getImageHeight)
   // Exit the example when the canvas frame is closed
-  canvasFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE)
+  canvasFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE)
 
   // Time between frames in the video
   val delay = math.round(1000d / grabber.getFrameRate)

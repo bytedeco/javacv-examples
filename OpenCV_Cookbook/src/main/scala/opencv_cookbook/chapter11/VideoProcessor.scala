@@ -6,7 +6,7 @@
 
 package opencv_cookbook.chapter11
 
-import javax.swing.JFrame
+import javax.swing.WindowConstants
 import opencv_cookbook.OpenCVUtils._
 import org.bytedeco.javacpp.opencv_core._
 import org.bytedeco.javacv._
@@ -19,7 +19,7 @@ import org.bytedeco.javacv._
   * @param displayOutput  name for the window displaying output image,
   *                       If empty, output image will not be displayed.
   */
-class VideoProcessor(var frameProcessor: ((Mat, Mat) => Unit) = { (src, dest) => src.copyTo(dest) },
+class VideoProcessor(var frameProcessor: (Mat, Mat) => Unit = { (src, dest) => src.copyTo(dest) },
                      var displayInput: String = "Input",
                      var displayOutput: String = "Output") {
 
@@ -137,7 +137,7 @@ class VideoProcessor(var frameProcessor: ((Mat, Mat) => Unit) = { (src, dest) =>
   private def createCanvas(title: String): Option[CanvasFrame] =
     if (title != null && !title.isEmpty) {
       val canvas = new CanvasFrame(title, 1)
-      canvas.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE)
+      canvas.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE)
       Some(canvas)
     } else None
 
