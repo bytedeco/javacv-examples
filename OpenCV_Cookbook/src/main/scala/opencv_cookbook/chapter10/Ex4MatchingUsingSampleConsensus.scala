@@ -44,8 +44,8 @@ object Ex4MatchingUsingSampleConsensus extends App {
     image2, matches.keyPoints2, // 2nd image and its keypoints
     toDMatchVector(matches.matches), // the matches
     imageMatches, // the image produced
-    new Scalar(255, 255, 255, 0), // color of the lines
-    new Scalar(255, 255, 255, 0), // color of the keypoints
+    new Scalar(0, 0, 255, 0), // color of the lines
+    new Scalar(255, 0, 0, 0), // color of the keypoints
     new BytePointer(0),
     2)
 
