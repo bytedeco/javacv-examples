@@ -12,7 +12,7 @@ import java.awt.image.BufferedImage
 import java.io.File
 import java.nio.IntBuffer
 
-import javax.swing.JFrame
+import javax.swing.WindowConstants
 import org.bytedeco.javacpp.indexer.FloatIndexer
 import org.bytedeco.javacpp.opencv_core.{Point, _}
 import org.bytedeco.javacpp.opencv_imgcodecs._
@@ -74,14 +74,14 @@ object OpenCVUtils {
   def show(mat: Mat, title: String) {
     val converter = new ToMat()
     val canvas = new CanvasFrame(title, 1)
-    canvas.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE)
+    canvas.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE)
     canvas.showImage(converter.convert(mat))
   }
 
   /** Show image in a window. Closing the window will exit the application. */
   def show(image: Image, title: String) {
     val canvas = new CanvasFrame(title, 1)
-    canvas.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE)
+    canvas.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE)
     canvas.showImage(image)
   }
 

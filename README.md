@@ -10,6 +10,10 @@ The original examples in the Cookbook are in C++, here they are translated to us
 * [flandmark-demo](flandmark-demo) - example of using [flandmark](https://github.com/uricamic/flandmark) library.
 * [FlyCapture2-demo](FlyCapture2-demo) - examples of using 
 [JVM wrapper](https://github.com/bytedeco/javacpp-presets/tree/master/flycapture) for 
-Point Grey [FlyCapture SDK](http://ww2.ptgrey.com/sdk/flycap).
+Flir/Point Grey [FlyCapture SDK](https://www.ptgrey.com/flycapture-sdk).
+* [Spinnaker-demo](Spinnaker-demo) - examples of using 
+[JVM wrapper](https://github.com/bytedeco/javacpp-presets/tree/master/spinnaker) for 
+Flir/Point Grey [Spinnaker SDK](https://www.ptgrey.com/spinnaker-sdk).
+
 
 

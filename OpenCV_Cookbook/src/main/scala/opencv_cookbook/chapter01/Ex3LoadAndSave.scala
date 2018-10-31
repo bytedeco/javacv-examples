@@ -6,8 +6,7 @@
 
 package opencv_cookbook.chapter01
 
-import javax.swing.JFrame._
-
+import javax.swing.WindowConstants
 import org.bytedeco.javacpp.opencv_core._
 import org.bytedeco.javacpp.opencv_imgcodecs._
 import org.bytedeco.javacpp.opencv_imgproc._
@@ -36,7 +35,7 @@ object Ex3LoadAndSave extends App {
   val canvas = new CanvasFrame("My Image", 1)
 
   // Request closing of the application when the image window is closed
-  canvas.setDefaultCloseOperation(EXIT_ON_CLOSE)
+  canvas.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE)
 
   // Show image on window
   val converter = new OpenCVFrameConverter.ToMat()
@@ -54,7 +53,7 @@ object Ex3LoadAndSave extends App {
   val canvas2 = new CanvasFrame("Output Image", 1)
 
   // Request closing of the application when the image window is closed
-  canvas.setDefaultCloseOperation(EXIT_ON_CLOSE)
+  canvas.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE)
 
   // Show image on window
   canvas2.showImage(converter.convert(result))
@@ -85,6 +84,6 @@ object Ex3LoadAndSave extends App {
     8, // Line type.
     false) //When true, the image data origin is at the bottom-left corner. Otherwise, it is at the top-left corner.
 
-  canvas3.setDefaultCloseOperation(EXIT_ON_CLOSE)
+  canvas3.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE)
   canvas3.showImage(converter.convert(image3))
 }

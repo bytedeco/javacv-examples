@@ -6,8 +6,7 @@
 
 package opencv_cookbook.chapter01
 
-import javax.swing.JFrame
-
+import javax.swing.WindowConstants
 import org.bytedeco.javacpp.opencv_imgcodecs._
 import org.bytedeco.javacv.{CanvasFrame, OpenCVFrameConverter}
 
@@ -37,7 +36,7 @@ object Ex1MyFirstOpenCVApp extends App {
   val canvas = new CanvasFrame("My Image", 1)
 
   // Request closing of the application when the image window is closed
-  canvas.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE)
+  canvas.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE)
 
   // Convert from OpenCV Mat to Java Buffered image for display
   val converter = new OpenCVFrameConverter.ToMat()
