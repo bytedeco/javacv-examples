@@ -159,7 +159,7 @@ It is not an intention of this module to describe how to create GUI applications
 The example is using Scala Swing framework, which may be interesting in its own right.
 The framework enables writing a more concise Swing code, in this particular example Java core requires about 30% more characters to achieve the same result.
 
-**Note:** The new GUI framework for building UIs is JavaFX. Working in scale you may consider [ScalaFX](http://scalafx.org) over Scala Swing. 
+**Note:** The new GUI framework for building UIs is JavaFX. Working in Scala you may consider [ScalaFX](http://scalafx.org) over Scala Swing. 
 
 You can find code for the `Ex2MyFirstGUIApp` example [here](/OpenCV_Cookbook/src/main/scala/opencv_cookbook/chapter01/Ex2MyFirstGUIApp.scala).
 For the sake of comparison an equivalent Java code is also [Ex2MyFirstGUIAppJava.java](/OpenCV_Cookbook/src/main/java/opencv_cookbook/chapter01/Ex2MyFirstGUIAppJava.java).
