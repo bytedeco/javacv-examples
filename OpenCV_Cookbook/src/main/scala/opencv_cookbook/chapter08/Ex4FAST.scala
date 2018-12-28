@@ -30,6 +30,6 @@ object Ex4FAST extends App {
 
   // Draw keyPoints
   val canvas = new Mat()
-  drawKeypoints(image, keyPoints, canvas, new Scalar(255, 255, 255, 0), DrawMatchesFlags.DEFAULT)
+  drawKeypoints(image, keyPoints, canvas, new Scalar(255, 255, 255, 0), DEFAULT)
   show(canvas, "FAST Features")
 }

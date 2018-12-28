@@ -7,8 +7,8 @@
 package opencv_cookbook.chapter10
 
 import java.io.{File, IOException}
-import javax.swing.WindowConstants
 
+import javax.swing.WindowConstants
 import opencv_cookbook.OpenCVUtils._
 import org.bytedeco.javacpp.opencv_calib3d._
 import org.bytedeco.javacpp.opencv_core._
@@ -150,7 +150,7 @@ class CameraCalibrator {
     val map2 = new Mat()
     if (mustInitUndistort) {
       // Called once per calibration
-      opencv_imgproc.initUndistortRectifyMap(
+      initUndistortRectifyMap(
         _cameraMatrix, // computed camera matrix
         _distortionCoeffs, // computed distortion matrix
         new Mat(), // optional rectification (none)
@@ -168,17 +168,17 @@ class CameraCalibrator {
   }
 
   /** Prepare object points, image points, and point counts in format required by `cvCalibrateCamera2`. */
-  private def convertPoints(): (MatVector, MatVector) = {
+  private def convertPoints(): (Point3fVectorVector, Point2fVectorVector) = {
 
     require(objectPoints.size == imagePoints.size, "Number of object and image points must match.")
 
-    val objectPointsMatVect = new MatVector(objectPoints.size)
-    val imagePointsMatVect = new MatVector(objectPoints.size)
+    val objectPointsVV = new Point3fVectorVector(objectPoints.size)
+    val imagePointsVV = new Point2fVectorVector(objectPoints.size)
     for (((objectP, imageP), i) <- objectPoints zip imagePoints zipWithIndex) {
-      objectPointsMatVect.put(i, toMatPoint3f(objectP))
-      imagePointsMatVect.put(i, imageP)
+      objectPointsVV.put(i, new Point3fVector(objectP: _ *))
+      imagePointsVV.put(i, new Point2fVector(toPoint2fArray(imageP): _ *))
     }
 
-    (objectPointsMatVect, imagePointsMatVect)
+    (objectPointsVV, imagePointsVV)
   }
 }

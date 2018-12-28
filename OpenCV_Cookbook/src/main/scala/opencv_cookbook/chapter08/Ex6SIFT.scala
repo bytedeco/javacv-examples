@@ -34,6 +34,6 @@ object Ex6SIFT extends App {
 
   // Draw keyPoints
   val featureImage = new Mat()
-  drawKeypoints(image, keyPoints, featureImage, new Scalar(255, 255, 255, 0), DrawMatchesFlags.DRAW_RICH_KEYPOINTS)
+  drawKeypoints(image, keyPoints, featureImage, new Scalar(255, 255, 255, 0), DRAW_RICH_KEYPOINTS)
   show(featureImage, "SIFT Features")
 }

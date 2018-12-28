@@ -34,7 +34,7 @@ public final class VideoFileCaptureTest {
             final long nbFrames = (long) capture.get(CAP_PROP_FRAME_COUNT);
             assertEquals(119, nbFrames);
 
-            final double fps = (long) capture.get(CV_CAP_PROP_FPS);
+            final double fps = (long) capture.get(CAP_PROP_FPS);
             assertEquals(15, fps, 0.0001);
 
             final Mat frame = new Mat();

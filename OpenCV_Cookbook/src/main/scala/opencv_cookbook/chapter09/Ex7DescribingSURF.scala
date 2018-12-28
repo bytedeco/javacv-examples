@@ -65,7 +65,7 @@ object Ex7DescribingSURF extends App {
   val mask: ByteBuffer = null
   drawMatches(
     images(0), keyPoints(0), images(1), keyPoints(1),
-    bestMatches, imageMatches, new Scalar(0, 0, 255, 0), new Scalar(255, 0, 0, 0), mask, DrawMatchesFlags.DEFAULT)
+    bestMatches, imageMatches, new Scalar(0, 0, 255, 0), new Scalar(255, 0, 0, 0), mask, DEFAULT)
   show(imageMatches, "Best SURF Feature Matches")
 
 

@@ -89,7 +89,7 @@ object Ex3ComputeFundamentalMatrix extends App {
     val matchMask: ByteBuffer = null
     val imageMatches = new Mat()
     drawMatches(imageRight, keypointsRight, imageLeft, keypointsLeft,
-      selected7Matches, imageMatches, blue, red, matchMask, DrawMatchesFlags.DEFAULT)
+      selected7Matches, imageMatches, blue, red, matchMask, DEFAULT)
     show(imageMatches, "Matches 7-point")
 
 
@@ -147,7 +147,7 @@ object Ex3ComputeFundamentalMatrix extends App {
     //        val canvas = cvCreateImage(cvGetSize(image), image.depth(), 3)
     val canvas = new Mat()
     val white = new Scalar(255, 255, 255, 0)
-    drawKeypoints(image, keypoints, canvas, white, DrawMatchesFlags.DRAW_RICH_KEYPOINTS)
+    drawKeypoints(image, keypoints, canvas, white, DRAW_RICH_KEYPOINTS)
     show(canvas, title)
   }
 
