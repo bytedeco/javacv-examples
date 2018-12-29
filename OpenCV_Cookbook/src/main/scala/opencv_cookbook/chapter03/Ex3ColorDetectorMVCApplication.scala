@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2015 Jarek Sacha. All Rights Reserved.
+ * Copyright (c) 2011-2018 Jarek Sacha. All Rights Reserved.
  *
  * Author's e-mail: jpsacha at gmail.com
  */
@@ -8,8 +8,8 @@ package opencv_cookbook.chapter03
 
 import java.awt.Cursor._
 import java.io.File
-import javax.swing.{ImageIcon, JColorChooser}
 
+import javax.swing.{ImageIcon, JColorChooser}
 import opencv_cookbook.OpenCVUtils._
 import org.bytedeco.javacpp.opencv_core.Mat
 
@@ -148,7 +148,7 @@ object Ex3ColorDetectorMVCApplication extends SimpleSwingApplication {
        */
       def onSelectColor() {
         waitCursor {
-          val color = JColorChooser.showDialog(buttonsPanel.self, "Select Target Color", colorDetectorController.targetColor.toColor)
+          val color = JColorChooser.showDialog(buttonsPanel.peer, "Select Target Color", colorDetectorController.targetColor.toColor)
           if (color != null) {
             colorDetectorController.targetColor = new ColorRGB(color)
           }

@@ -24,7 +24,7 @@ val bytedecoPresetLibs = Seq(
 libraryDependencies ++= Seq(
   "org.bytedeco"            % "javacpp"         % javacppVersion withSources() withJavadoc(),
   "org.bytedeco"            % "javacv"          % javacppVersion withSources() withJavadoc(),
-  "org.scala-lang.modules" %% "scala-swing"     % "2.0.3",
+  "org.scala-lang.modules" %% "scala-swing" % "2.1.0",
   "junit"                   % "junit"           % "4.12" % "test",
   "com.novocode"            % "junit-interface" % "0.11" % "test"
 ) ++ bytedecoPresetLibs
