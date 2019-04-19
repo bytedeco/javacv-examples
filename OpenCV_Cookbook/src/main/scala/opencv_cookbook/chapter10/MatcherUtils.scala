@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2014 Jarek Sacha. All Rights Reserved.
+ * Copyright (c) 2011-2019 Jarek Sacha. All Rights Reserved.
  *
  * Author's e-mail: jpsacha at gmail.com
  */
@@ -7,8 +7,8 @@
 package opencv_cookbook.chapter10
 
 import org.bytedeco.javacpp.indexer.FloatIndexer
-import org.bytedeco.javacpp.opencv_core._
-import org.bytedeco.javacpp.opencv_imgproc._
+import org.bytedeco.opencv.global.opencv_imgproc._
+import org.bytedeco.opencv.opencv_core._
 
 object MatcherUtils {
 

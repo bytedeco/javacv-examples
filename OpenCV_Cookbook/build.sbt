@@ -3,7 +3,7 @@
 name         := "opencv-cookbook"
 organization := "javacv.examples"
 
-val javacppVersion = "1.4.4-SNAPSHOT"
+val javacppVersion = "1.5"
 version      := javacppVersion
 scalaVersion := "2.12.8"
 scalacOptions ++= Seq("-unchecked", "-deprecation", "-Xlint")
@@ -12,19 +12,19 @@ scalacOptions ++= Seq("-unchecked", "-deprecation", "-Xlint")
 val platform = org.bytedeco.javacpp.Loader.getPlatform
 // Libraries with native dependencies
 val bytedecoPresetLibs = Seq(
-  "opencv" -> s"4.0.0-$javacppVersion",
-  "ffmpeg" -> s"4.0.3-$javacppVersion").flatMap {
+  "opencv" -> s"4.0.1-$javacppVersion",
+  "ffmpeg" -> s"4.1.3-$javacppVersion").flatMap {
   case (lib, ver) => Seq(
     // Add both: dependency and its native binaries for the current `platform`
-    "org.bytedeco.javacpp-presets" % lib % ver withSources() withJavadoc(),
-    "org.bytedeco.javacpp-presets" % lib % ver classifier platform
+    "org.bytedeco" % lib % ver withSources() withJavadoc(),
+    "org.bytedeco" % lib % ver classifier platform
   )
 }
 
 libraryDependencies ++= Seq(
   "org.bytedeco"            % "javacpp"         % javacppVersion withSources() withJavadoc(),
   "org.bytedeco"            % "javacv"          % javacppVersion withSources() withJavadoc(),
-  "org.scala-lang.modules" %% "scala-swing" % "2.1.0",
+  "org.scala-lang.modules" %% "scala-swing"     % "2.1.1",
   "junit"                   % "junit"           % "4.12" % "test",
   "com.novocode"            % "junit-interface" % "0.11" % "test"
 ) ++ bytedecoPresetLibs

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2014 Jarek Sacha. All Rights Reserved.
+ * Copyright (c) 2011-2019 Jarek Sacha. All Rights Reserved.
  *
  * Author's e-mail: jpsacha at gmail.com
  */
@@ -7,9 +7,9 @@
 package opencv_cookbook.chapter07
 
 
-import org.bytedeco.javacpp.indexer.IntRawIndexer
-import org.bytedeco.javacpp.opencv_core._
-import org.bytedeco.javacpp.opencv_imgproc._
+import org.bytedeco.opencv.global.opencv_imgproc._
+import org.bytedeco.opencv.opencv_core._
+import org.bytedeco.opencv.opencv_imgproc._
 
 import scala.math._
 
@@ -30,7 +30,7 @@ class LineFinder(val deltaRho: Double = 1,
                  val minLength: Double = 0,
                  val minGap: Double = 0d) {
 
-  private var lines: Mat = _
+  private var lines: Vec4iVector = _
 
 
   /**
@@ -38,7 +38,7 @@ class LineFinder(val deltaRho: Double = 1,
    */
   def findLines(binary: Mat) {
     // Hough transform for line detection
-    lines = new Mat()
+    lines = new Vec4iVector()
     HoughLinesP(binary, lines, deltaRho, deltaTheta, minVotes, minLength, minGap)
   }
 
@@ -47,16 +47,16 @@ class LineFinder(val deltaRho: Double = 1,
    * Draws detected lines on an image
    */
   def drawDetectedLines(image: Mat) {
-
-    val indexer = lines.createIndexer().asInstanceOf[IntRawIndexer]
-
-    for (i <- 0 until lines.rows()) {
-      val pt1 = new Point(indexer.get(i, 0, 0), indexer.get(i, 0, 1))
-      val pt2 = new Point(indexer.get(i, 0, 2), indexer.get(i, 0, 3))
-
-      // draw the segment on the image
-      line(image, pt1, pt2, new Scalar(0, 0, 255, 128), 1, LINE_AA, 0)
-    }
+    ???
+    //    val indexer = lines.createIndexer().asInstanceOf[IntRawIndexer]
+    //
+    //    for (i <- 0 until lines.rows()) {
+    //      val pt1 = new Point(indexer.get(i, 0, 0), indexer.get(i, 0, 1))
+    //      val pt2 = new Point(indexer.get(i, 0, 2), indexer.get(i, 0, 3))
+    //
+    //      // draw the segment on the image
+    //      line(image, pt1, pt2, new Scalar(0, 0, 255, 128), 1, LINE_AA, 0)
+    //    }
   }
 
 }

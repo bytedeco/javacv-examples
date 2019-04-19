@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2018 Jarek Sacha. All Rights Reserved.
+ * Copyright (c) 2011-2019 Jarek Sacha. All Rights Reserved.
  *
  * Author's e-mail: jpsacha at gmail.com
  */
@@ -11,7 +11,7 @@ import java.io.File
 
 import javax.swing.{ImageIcon, JColorChooser}
 import opencv_cookbook.OpenCVUtils._
-import org.bytedeco.javacpp.opencv_core.Mat
+import org.bytedeco.opencv.opencv_core._
 
 import scala.swing.Dialog.Message.Error
 import scala.swing.FileChooser.Result.Approve

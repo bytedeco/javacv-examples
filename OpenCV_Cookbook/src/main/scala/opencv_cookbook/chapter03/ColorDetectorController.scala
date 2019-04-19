@@ -1,13 +1,13 @@
 /*
- * Copyright (c) 2011-2015 Jarek Sacha. All Rights Reserved.
+ * Copyright (c) 2011-2019 Jarek Sacha. All Rights Reserved.
  *
  * Author's e-mail: jpsacha at gmail.com
  */
 
 package opencv_cookbook.chapter03
 
-import org.bytedeco.javacpp.opencv_core.Mat
-import org.bytedeco.javacpp.opencv_imgcodecs._
+import org.bytedeco.opencv.global.opencv_imgcodecs._
+import org.bytedeco.opencv.opencv_core._
 
 
 /**

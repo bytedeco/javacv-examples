@@ -1,17 +1,17 @@
 /*
- * Copyright (c) 2011-2014 Jarek Sacha. All Rights Reserved.
+ * Copyright (c) 2011-2019 Jarek Sacha. All Rights Reserved.
  *
  * Author's e-mail: jpsacha at gmail.com
  */
 
 package opencv_cookbook;
 
+import org.bytedeco.opencv.opencv_core.KeyPointVector;
+import org.bytedeco.opencv.opencv_core.Mat;
+import org.bytedeco.opencv.opencv_xfeatures2d.SURF;
 import org.junit.Test;
 
-import static org.bytedeco.javacpp.opencv_core.KeyPointVector;
-import static org.bytedeco.javacpp.opencv_core.Mat;
-import static org.bytedeco.javacpp.opencv_imgcodecs.imread;
-import static org.bytedeco.javacpp.opencv_xfeatures2d.SURF;
+import static org.bytedeco.opencv.global.opencv_imgcodecs.imread;
 import static org.junit.Assert.assertEquals;
 
 public class SURFDetectorTest {

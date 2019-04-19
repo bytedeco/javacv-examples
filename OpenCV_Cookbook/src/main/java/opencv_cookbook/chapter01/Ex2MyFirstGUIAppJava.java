@@ -1,10 +1,13 @@
 /*
- * Copyright (c) 2011-2015 Jarek Sacha. All Rights Reserved.
+ * Copyright (c) 2011-2019 Jarek Sacha. All Rights Reserved.
  *
  * Author's e-mail: jpsacha at gmail.com
  */
 
 package opencv_cookbook.chapter01;
+
+
+import org.bytedeco.opencv.opencv_core.Mat;
 
 import javax.swing.*;
 import java.awt.*;
@@ -14,11 +17,10 @@ import java.io.File;
 import static javax.swing.JOptionPane.ERROR_MESSAGE;
 import static javax.swing.JOptionPane.showMessageDialog;
 import static opencv_cookbook.OpenCVUtils.toBufferedImage;
-import static org.bytedeco.javacpp.opencv_core.Mat;
-import static org.bytedeco.javacpp.opencv_core.flip;
-import static org.bytedeco.javacpp.opencv_imgcodecs.imread;
-import static org.bytedeco.javacpp.opencv_imgproc.COLOR_BGR2RGB;
-import static org.bytedeco.javacpp.opencv_imgproc.cvtColor;
+import static org.bytedeco.opencv.global.opencv_core.flip;
+import static org.bytedeco.opencv.global.opencv_imgcodecs.imread;
+import static org.bytedeco.opencv.global.opencv_imgproc.COLOR_BGR2RGB;
+import static org.bytedeco.opencv.global.opencv_imgproc.cvtColor;
 
 
 /**

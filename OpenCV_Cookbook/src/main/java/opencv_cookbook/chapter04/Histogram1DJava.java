@@ -1,14 +1,20 @@
+/*
+ * Copyright (c) 2011-2019 Jarek Sacha. All Rights Reserved.
+ *
+ * Author's e-mail: jpsacha at gmail.com
+ */
+
 package opencv_cookbook.chapter04;
 
 import org.bytedeco.javacpp.FloatPointer;
 import org.bytedeco.javacpp.IntPointer;
 import org.bytedeco.javacpp.indexer.Indexer;
-import org.bytedeco.javacpp.opencv_core.Mat;
+import org.bytedeco.opencv.opencv_core.Mat;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
-import static org.bytedeco.javacpp.opencv_imgproc.calcHist;
+import static org.bytedeco.opencv.global.opencv_imgproc.calcHist;
 
 /**
  * Created by john on 16/08/16.

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2015 Jarek Sacha. All Rights Reserved.
+ * Copyright (c) 2011-2019 Jarek Sacha. All Rights Reserved.
  *
  * Author's e-mail: jpsacha at gmail.com
  */
@@ -10,12 +10,13 @@ import java.io.{File, IOException}
 
 import javax.swing.WindowConstants
 import opencv_cookbook.OpenCVUtils._
-import org.bytedeco.javacpp.opencv_calib3d._
-import org.bytedeco.javacpp.opencv_core._
-import org.bytedeco.javacpp.opencv_imgcodecs._
-import org.bytedeco.javacpp.opencv_imgproc
-import org.bytedeco.javacpp.opencv_imgproc._
 import org.bytedeco.javacv.CanvasFrame
+import org.bytedeco.opencv.global.opencv_calib3d._
+import org.bytedeco.opencv.global.opencv_core._
+import org.bytedeco.opencv.global.opencv_imgcodecs._
+import org.bytedeco.opencv.global.opencv_imgproc
+import org.bytedeco.opencv.global.opencv_imgproc._
+import org.bytedeco.opencv.opencv_core._
 
 import scala.collection.mutable.ArrayBuffer
 import scala.language.postfixOps

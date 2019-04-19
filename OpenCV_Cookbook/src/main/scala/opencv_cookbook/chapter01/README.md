@@ -68,7 +68,7 @@ A simple example of loading and displaying an image using JavaCV is in class `op
 ``` scala
 import javax.swing.JFrame
 
-import org.bytedeco.javacpp.opencv_imgcodecs._
+import org.bytedeco.opencv.opencv_imgcodecs._
 import org.bytedeco.javacv.{CanvasFrame, OpenCVFrameConverter}
 
 object Ex1MyFirstOpenCVApp extends App {
@@ -107,7 +107,7 @@ Here are some examples.
 
 ``` scala
 import org.bytedeco.javacpp.opencv_core.Mat
-import org.bytedeco.javacpp.opencv_imgcodecs._
+import org.bytedeco.opencv.opencv_imgcodecs._
 
 val image1: Mat = imread("data/boldt.jpg")
 val image2: Mat = imread("data/boldt.jpg", IMREAD_COLOR)

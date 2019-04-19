@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2014 Jarek Sacha. All Rights Reserved.
+ * Copyright (c) 2011-2019 Jarek Sacha. All Rights Reserved.
  *
  * Author's e-mail: jpsacha at gmail.com
  */
@@ -11,10 +11,10 @@ import java.io.File
 import opencv_cookbook.OpenCVUtils._
 import opencv_cookbook.chapter10.MatcherUtils._
 import org.bytedeco.javacpp.BytePointer
-import org.bytedeco.javacpp.opencv_calib3d._
-import org.bytedeco.javacpp.opencv_core._
-import org.bytedeco.javacpp.opencv_features2d._
-import org.bytedeco.javacpp.opencv_xfeatures2d.SURF
+import org.bytedeco.opencv.global.opencv_calib3d._
+import org.bytedeco.opencv.global.opencv_features2d._
+import org.bytedeco.opencv.opencv_core._
+import org.bytedeco.opencv.opencv_xfeatures2d._
 
 
 /** The example for section "Matching images using random sample consensus" in Chapter 10, p. 299  (2nd edition)
