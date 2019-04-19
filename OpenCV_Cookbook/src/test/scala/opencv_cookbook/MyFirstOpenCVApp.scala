@@ -24,7 +24,6 @@ object MyFirstOpenCVApp extends App {
   Laplacian(src, dest, src.depth(), 1, 3, 0, BORDER_DEFAULT)
   display(dest, "Laplacian")
 
-
   //---------------------------------------------------------------------------
 
   /** Display `image` with given `caption`. */
@@ -40,5 +39,4 @@ object MyFirstOpenCVApp extends App {
     // Show image on window
     canvas.showImage(converter.convert(image))
   }
-
 }

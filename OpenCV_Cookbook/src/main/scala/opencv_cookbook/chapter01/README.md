@@ -63,28 +63,40 @@ Make sure that you have Scala plugin installed, it provides support for SBT too.
 Loading, Displaying, and Saving Images with JavaCV
 --------------------------------------------------
 
-A simple example of loading and displaying an image using JavaCV is in class `opencv_cookbook.chapter01.Ex1MyFirstOpenCVApp`:
+A simple example of loading and displaying an image using JavaCV is in class [`opencv_cookbook.chapter01.Ex1MyFirstOpenCVApp`:
 
-``` scala
-import javax.swing.JFrame
-
-import org.bytedeco.opencv.opencv_imgcodecs._
+```scala
+import javax.swing.WindowConstants
 import org.bytedeco.javacv.{CanvasFrame, OpenCVFrameConverter}
+import org.bytedeco.opencv.global.opencv_imgcodecs._
 
+
+/**
+ * Example of loading and displaying and image  using JavaCV API,
+ * corresponds to C++ example in Chapter 1 page 18.
+ * Please note how in the Scala example code CanvasFrame from JavaCV API is used to display the image.
+ */
 object Ex1MyFirstOpenCVApp extends App {
 
   // Read an image
   val image = imread("data/boldt.jpg")
   if (image.empty()) {
+    // error handling
+    // no image has been created...
+    // possibly display an error message
+    // and quit the application
     println("Error reading image...")
     System.exit(0)
   }
 
   // Create image window named "My Image".
+  //
+  // Note that you need to indicate to CanvasFrame not to apply gamma correction,
+  // by setting gamma to 1, otherwise the image will not look correct.
   val canvas = new CanvasFrame("My Image", 1)
 
   // Request closing of the application when the image window is closed
-  canvas.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE)
+  canvas.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE)
 
   // Convert from OpenCV Mat to Java Buffered image for display
   val converter = new OpenCVFrameConverter.ToMat()
@@ -102,12 +114,12 @@ JavaCV methods for loading images and saving images are based on based on OpenCV
 
 OpenCV has a couple of classes to represent images. Some are ore obsolete, like `IplImage` and `CvMat`. We will use the currently recommended `Mat`.
 
-`Mat` images are loaded using method [`imread`](http://docs.opencv.org/modules/highgui/doc/reading_and_writing_images_and_video.html?highlight=imread#Mat%20imread%28const%20string&%20filename,%20int%20flags%29), it takes one or two parameters. The first one is a file name, the second is a conversion parameter, frequently used to load color images area gray scale.
+`Mat` images are loaded using method `imread`, it takes one or two parameters. The first one is a file name, the second is a conversion parameter, frequently used to load color images area gray scale.
 Here are some examples.
 
-``` scala
-import org.bytedeco.javacpp.opencv_core.Mat
-import org.bytedeco.opencv.opencv_imgcodecs._
+```scala
+import org.bytedeco.opencv.opencv_core.Mat
+import org.bytedeco.opencv.global.opencv_imgcodecs._
 
 val image1: Mat = imread("data/boldt.jpg")
 val image2: Mat = imread("data/boldt.jpg", IMREAD_COLOR)
@@ -117,7 +129,7 @@ The default value for the conversion parameter is `IMREAD_COLOR`.
 
 If image cannot be loaded both `imread` will return `null`. You may want to wrap a call to `imread` in a method that throws an exception if an image cannot be loaded.
 
-``` scala
+```scala
 def load(file: File, flags: Int = IMREAD_GRAYSCALE): Mat = {
     // Verify file
     if (!file.exists()) {
@@ -139,7 +151,7 @@ Saving Images
 The method `imwrite(filename, image)` saves the image to the specified file.
 The image format is chosen based on the filename extension.
 
-``` scala
+```scala
  imwrite("my_image.png", image1)
 ```
 

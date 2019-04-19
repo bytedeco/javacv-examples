@@ -26,7 +26,7 @@ grabber.release()
 ```
 
 Similarly in Java:
- ```java
+ ``` java
 FFmpegFrameGrabber grabber = new FFmpegFrameGrabber("my_video.avi");
 // Open video video file
 grabber.start();
