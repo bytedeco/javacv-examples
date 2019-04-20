@@ -1,41 +1,27 @@
 package flandmark;
 
-import org.bytedeco.javacpp.BytePointer;
+import org.bytedeco.flandmark.FLANDMARK_Model;
 import org.bytedeco.javacv.CanvasFrame;
 import org.bytedeco.javacv.OpenCVFrameConverter;
+import org.bytedeco.opencv.opencv_core.*;
+import org.bytedeco.opencv.opencv_objdetect.CascadeClassifier;
 
-import javax.naming.OperationNotSupportedException;
 import javax.swing.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-import static org.bytedeco.javacpp.flandmark.*;
-import static org.bytedeco.javacpp.opencv_core.*;
-import static org.bytedeco.javacpp.opencv_imgcodecs.cvLoadImage;
-import static org.bytedeco.javacpp.opencv_imgproc.*;
-import static org.bytedeco.javacpp.opencv_objdetect.*;
+import static org.bytedeco.flandmark.global.flandmark.flandmark_detect;
+import static org.bytedeco.flandmark.global.flandmark.flandmark_init;
+import static org.bytedeco.opencv.global.opencv_imgcodecs.imread;
+import static org.bytedeco.opencv.global.opencv_imgproc.*;
+
 
 /**
  * JVM version of flandmark example 1:
  * https://github.com/uricamic/flandmark/blob/master/examples/example1.cpp
  */
 public final class Example1 {
-
-    private static CvHaarClassifierCascade loadFaceCascade(final File file) throws IOException {
-        if (!file.exists()) {
-            throw new FileNotFoundException("Face cascade file does not exist: " + file.getAbsolutePath());
-        }
-
-        final CvHaarClassifierCascade faceCascade =
-                cvLoadHaarClassifierCascade(file.getCanonicalPath(), cvSize(0, 0));
-
-        if (faceCascade == null) {
-            throw new IOException("Failed to load face cascade from file: " + file.getAbsolutePath());
-        }
-
-        return faceCascade;
-    }
 
     private static FLANDMARK_Model loadFLandmarkModel(final File file) throws IOException {
         if (!file.exists()) {
@@ -50,99 +36,74 @@ public final class Example1 {
         return model;
     }
 
-    private static IplImage loadImage(File file) throws IOException {
-        // Verify file
-        if (!file.exists()) {
-            throw new FileNotFoundException("Image file does not exist: " + file.getAbsolutePath());
-        }
-        // Read input image
-        IplImage image = cvLoadImage(file.getAbsolutePath());
-        if (image == null) {
-            throw new IOException("Couldn't load image: " + file.getAbsolutePath());
-        }
-        return image;
-    }
-
-    private static void show(final IplImage image, final String title) {
-        final IplImage image1 = cvCreateImage(cvGetSize(image), IPL_DEPTH_8U, image.nChannels());
-        cvCopy(image, image1);
+    private static void show(final Mat image, final String title) {
         CanvasFrame canvas = new CanvasFrame(title, 1);
         canvas.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         final OpenCVFrameConverter.ToIplImage converter = new OpenCVFrameConverter.ToIplImage();
 
-        canvas.showImage(converter.convert(image1));
+        canvas.showImage(converter.convert(image));
     }
 
-    private static void detectFaceInImage(final IplImage orig,
-                                          final IplImage input,
-                                          final CvHaarClassifierCascade cascade,
+    private static void detectFaceInImage(final Mat orig,
+                                          final Mat input,
+                                          final CascadeClassifier faceCascade,
                                           final FLANDMARK_Model model,
                                           final int[] bbox,
                                           final double[] landmarks) throws Exception {
 
-        CvMemStorage storage = cvCreateMemStorage(0);
-        cvClearMemStorage(storage);
-        try {
-            double search_scale_factor = 1.1;
-            int flags = CV_HAAR_DO_CANNY_PRUNING;
-            CvSize minFeatureSize = cvSize(40, 40);
-            CvSeq rects = cvHaarDetectObjects(input, cascade, storage, search_scale_factor, 2, flags, minFeatureSize, cvSize(0, 0));
-            int nFaces = rects.total();
-            if (nFaces == 0) {
-                throw new Exception("No faces detected");
+        RectVector faces = new RectVector();
+        faceCascade.detectMultiScale(input, faces);
+
+        long nFaces = faces.size();
+        System.out.println("Faces detected: " + nFaces);
+        if (nFaces == 0) {
+            throw new Exception("No faces detected");
+        }
+
+        for (int iface = 0; iface < nFaces; ++iface) {
+            Rect rect = faces.get(iface);
+
+            bbox[0] = rect.x();
+            bbox[1] = rect.y();
+            bbox[2] = rect.x() + rect.width();
+            bbox[3] = rect.y() + rect.height();
+
+            flandmark_detect(new IplImage(input), bbox, model, landmarks);
+
+            // display landmarks
+            rectangle(orig, new Point(bbox[0], bbox[1]), new Point(bbox[2], bbox[3]), new Scalar(255, 0, 0, 128));
+            rectangle(orig,
+                    new Point((int) model.bb().get(0), (int) model.bb().get(1)),
+                    new Point((int) model.bb().get(2), (int) model.bb().get(3)), new Scalar(0, 0, 255, 128));
+            circle(orig,
+                    new Point((int) landmarks[0], (int) landmarks[1]), 3,
+                    new Scalar(0, 0, 255, 128), CV_FILLED, 8, 0);
+            for (int i = 2; i < 2 * model.data().options().M(); i += 2) {
+                circle(orig, new Point((int) (landmarks[i]), (int) (landmarks[i + 1])), 3,
+                        new Scalar(255, 0, 0, 128), CV_FILLED, 8, 0);
             }
-
-
-            for (int iface = 0; iface < nFaces; ++iface) {
-                BytePointer elem = cvGetSeqElem(rects, iface);
-                CvRect rect = new CvRect(elem);
-
-                bbox[0] = rect.x();
-                bbox[1] = rect.y();
-                bbox[2] = rect.x() + rect.width();
-                bbox[3] = rect.y() + rect.height();
-
-                flandmark_detect(input, bbox, model, landmarks);
-
-                // display landmarks
-                cvRectangle(orig, cvPoint(bbox[0], bbox[1]), cvPoint(bbox[2], bbox[3]), CV_RGB(255, 0, 0));
-                cvRectangle(orig,
-                        cvPoint((int) model.bb().get(0), (int) model.bb().get(1)),
-                        cvPoint((int) model.bb().get(2), (int) model.bb().get(3)), CV_RGB(0, 0, 255));
-                cvCircle(orig,
-                        cvPoint((int) landmarks[0], (int) landmarks[1]), 3, CV_RGB(0, 0, 255), CV_FILLED, 8, 0);
-                for (int i = 2; i < 2 * model.data().options().M(); i += 2) {
-                    cvCircle(orig, cvPoint((int) (landmarks[i]), (int) (landmarks[i + 1])), 3, CV_RGB(255, 0, 0), CV_FILLED, 8, 0);
-
-                }
-
-            }
-
-        } finally {
-            cvReleaseMemStorage(storage);
         }
     }
 
 
-    public static void main(String[] args) throws OperationNotSupportedException {
+    public static void main(String[] args) {
 
         final File inputImage = new File("face.jpg");
         final File faceCascadeFile = new File("haarcascade_frontalface_alt.xml");
         final File flandmarkModelFile = new File("flandmark_model.dat");
 
         try {
-            final CvHaarClassifierCascade faceCascade = loadFaceCascade(faceCascadeFile);
-            System.out.println("Count: " + faceCascade.count());
+            CascadeClassifier faceCascade = new CascadeClassifier(faceCascadeFile.getCanonicalPath());
 
             final FLANDMARK_Model model = loadFLandmarkModel(flandmarkModelFile);
             System.out.println("Model w_cols: " + model.W_COLS());
             System.out.println("Model w_rows: " + model.W_ROWS());
 
-            final IplImage image = loadImage(inputImage);
+            Mat image = imread(inputImage.getCanonicalPath());
             show(image, "Example 1 - original");
 
-            final IplImage imageBW = cvCreateImage(cvGetSize(image), IPL_DEPTH_8U, 1);
-            cvCvtColor(image, imageBW, CV_BGR2GRAY);
+            Mat imageBW = new Mat();
+            cvtColor(image, imageBW, CV_BGR2GRAY);
             show(imageBW, "Example 1 - BW input");
 
             final int[] bbox = new int[4];
