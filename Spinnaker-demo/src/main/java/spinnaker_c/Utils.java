@@ -2,9 +2,10 @@ package spinnaker_c;
 
 import org.bytedeco.javacpp.BytePointer;
 import org.bytedeco.javacpp.SizeTPointer;
-import org.bytedeco.javacpp.Spinnaker_C;
+import org.bytedeco.spinnaker.Spinnaker_C.spinNodeHandle;
+import org.bytedeco.spinnaker.Spinnaker_C.spinNodeMapHandle;
 
-import static org.bytedeco.javacpp.Spinnaker_C.*;
+import static org.bytedeco.spinnaker.global.Spinnaker_C.*;
 
 /**
  * Created by Jarek Sacha on 10/29/2018.
@@ -20,7 +21,7 @@ class Utils {
      * @param err     error value.
      * @param message additional message to print.
      */
-    static void exitOnError(Spinnaker_C._spinError err, String message) {
+    static void exitOnError(_spinError err, String message) {
         if (Utils.printOnError(err, message)) {
             System.out.println("Aborting.");
             System.exit(err.value);
@@ -35,8 +36,8 @@ class Utils {
      * @param message additional message to print.
      * @return 'false' if err is not SPINNAKER_ERR_SUCCESS, or 'true' for any other 'err' value.
      */
-    static boolean printOnError(Spinnaker_C._spinError err, String message) {
-        if (err.value != Spinnaker_C._spinError.SPINNAKER_ERR_SUCCESS.value) {
+    static boolean printOnError(_spinError err, String message) {
+        if (err.value != _spinError.SPINNAKER_ERR_SUCCESS.value) {
             System.out.println(message);
             System.out.println("Error " + err.value + " " + findErrorNameByValue(err.value) + "\n");
             return true;
@@ -50,11 +51,11 @@ class Utils {
      * layer; please see NodeMapInfo_C example for more in-depth comments on
      * printing device information from the nodemap.
      */
-    static _spinError printDeviceInfo(Spinnaker_C.spinNodeMapHandle hNodeMap) {
-        Spinnaker_C._spinError err;
+    static _spinError printDeviceInfo(spinNodeMapHandle hNodeMap) {
+        _spinError err;
         System.out.println("\n*** DEVICE INFORMATION ***\n\n");
         // Retrieve device information category node
-        Spinnaker_C.spinNodeHandle hDeviceInformation = new Spinnaker_C.spinNodeHandle();
+        spinNodeHandle hDeviceInformation = new spinNodeHandle();
         err = spinNodeMapGetNode(hNodeMap, new BytePointer("DeviceInformation"), hDeviceInformation);
         Utils.printOnError(err, "Unable to retrieve node.");
 
@@ -65,12 +66,12 @@ class Utils {
             Utils.printOnError(err, "Unable to retrieve number of nodes.");
         } else {
             printRetrieveNodeFailure("node", "DeviceInformation");
-            return Spinnaker_C._spinError.SPINNAKER_ERR_ACCESS_DENIED;
+            return _spinError.SPINNAKER_ERR_ACCESS_DENIED;
         }
 
         // Iterate through nodes and print information
         for (int i = 0; i < numFeatures.get(); i++) {
-            Spinnaker_C.spinNodeHandle hFeatureNode = new Spinnaker_C.spinNodeHandle();
+            spinNodeHandle hFeatureNode = new spinNodeHandle();
             err = spinCategoryGetFeatureByIndex(hDeviceInformation, i, hFeatureNode);
             Utils.printOnError(err, "Unable to retrieve node.");
 
@@ -187,7 +188,7 @@ class Utils {
     }
 
     private static String findErrorNameByValue(int value) {
-        for (Spinnaker_C._spinError v : Spinnaker_C._spinError.values()) {
+        for (_spinError v : _spinError.values()) {
             if (v.value == value) {
                 return v.name();
             }
@@ -196,7 +197,7 @@ class Utils {
     }
 
     static String findImageStatusNameByValue(int value) {
-        for (Spinnaker_C._spinImageStatus v : Spinnaker_C._spinImageStatus.values()) {
+        for (_spinImageStatus v : _spinImageStatus.values()) {
             if (v.value == value) {
                 return v.name();
             }
