@@ -7,6 +7,7 @@
 package opencv_cookbook.chapter07
 
 
+import org.bytedeco.javacpp.IntPointer
 import org.bytedeco.opencv.global.opencv_imgproc._
 import org.bytedeco.opencv.opencv_core._
 import org.bytedeco.opencv.opencv_imgproc._
@@ -50,15 +51,12 @@ class LineFinder(val deltaRho: Double = 1,
     */
   def drawDetectedLines(image: Mat) {
     for (i <- 0 until lines.size().toInt) {
-      // Due to bug #712 in OpenCV wrapper in v.1.5 for Vec4iVector, line segment coordinates cannot be extracted correctly.
-      // Here we just set it up to compile, fix was submitted in PR #718
-      val l = lines.get(i)
-      val x1 = round(l.get(0))
-      val y1 = round(l.get(1))
-      val x2 = round(l.get(2))
-      val y2 = round(l.get(3))
-      val pt1 = new Point(x1, y1)
-      val pt2 = new Point(x2, y2)
+      // Due to bug #717 in OpenCV wrapper in v.1.5 for Vec4iVector, line segment coordinates cannot be extracted directly.
+      // A workaround is to wrap `FloatPointer` returned from `lines.get` in `IntPointer`,
+      // based on suggestion [[https://github.com/bytedeco/javacpp-presets/issues/717#issuecomment-485057141]]
+      val l = new IntPointer(lines.get(i))
+      val pt1 = new Point(l.get(0), l.get(1))
+      val pt2 = new Point(l.get(2), l.get(3))
 
       // draw the segment on the image
       line(image, pt1, pt2, new Scalar(0, 0, 255, 128), 1, LINE_AA, 0)
