@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 Jarek Sacha. All Rights Reserved.
+ * Copyright (c) 2011-2019 Jarek Sacha. All Rights Reserved.
  *
  * Author's e-mail: jpsacha at gmail.com
  */
@@ -10,14 +10,14 @@ import java.io.IOException
 
 import grizzled.slf4j.Logger
 import org.apache.log4j.Level
-
-import scala.reflect.runtime.universe.typeOf
 import scalafx.Includes._
 import scalafx.application.JFXApp.PrimaryStage
 import scalafx.application.{JFXApp, Platform}
 import scalafx.scene.Scene
 import scalafx.scene.image.Image
 import scalafxml.core.{DependenciesByType, FXMLView}
+
+import scala.reflect.runtime.universe.typeOf
 
 /**
  * `FlyCaptureSnapApp` starts the FlyCaptureSnap application.

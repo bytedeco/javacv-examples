@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2014 Jarek Sacha. All Rights Reserved.
+ * Copyright (c) 2011-2019 Jarek Sacha. All Rights Reserved.
  *
  * Author's e-mail: jpsacha at gmail.com
  */
@@ -7,8 +7,9 @@
 package flycapture
 
 import flycapture.CheckMacro._
-import org.bytedeco.javacpp.FlyCapture2.BusManager
-import org.bytedeco.javacpp.{FlyCapture2, IntPointer}
+import org.bytedeco.flycapture.FlyCapture2._
+import org.bytedeco.flycapture.global.FlyCapture2._
+import org.bytedeco.javacpp.IntPointer
 
 import scala.math.min
 
@@ -67,7 +68,7 @@ object CheckOverheadBenchmark extends App {
 
     val t0 = System.nanoTime()
     for (_ <- 0 until nbIterations) {
-      if (busMgr.GetNumOfCameras(numCameras).GetType() != FlyCapture2.PGRERROR_OK) {
+      if (busMgr.GetNumOfCameras(numCameras).GetType() != PGRERROR_OK) {
         throw new Exception("Error in ...")
       }
     }

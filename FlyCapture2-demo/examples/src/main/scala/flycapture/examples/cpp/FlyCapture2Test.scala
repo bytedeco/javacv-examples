@@ -1,12 +1,13 @@
 /*
- * Copyright (c) 2014 Jarek Sacha. All Rights Reserved.
- * Author's e-mail: jpsacha at gmail dot com
+ * Copyright (c) 2011-2019 Jarek Sacha. All Rights Reserved.
+ *
+ * Author's e-mail: jpsacha at gmail.com
  */
 package flycapture.examples.cpp
 
-import flycapture.CheckMacro
-import org.bytedeco.javacpp.FlyCapture2._
-import CheckMacro.check
+import flycapture.CheckMacro.check
+import org.bytedeco.flycapture.FlyCapture2._
+import org.bytedeco.flycapture.global.FlyCapture2._
 
 /**
  * The FlyCapture2Test sample program is a simple program designed to report information related to all compatible

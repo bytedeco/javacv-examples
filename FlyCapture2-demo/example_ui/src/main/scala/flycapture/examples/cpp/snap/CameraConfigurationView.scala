@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 Jarek Sacha. All Rights Reserved.
+ * Copyright (c) 2011-2019 Jarek Sacha. All Rights Reserved.
  *
  * Author's e-mail: jpsacha at gmail.com
  */
@@ -7,7 +7,6 @@
 package flycapture.examples.cpp.snap
 
 import flycapture.examples.cpp.snap.CameraConfigurationModel.TestPattern
-
 import scalafx.Includes._
 import scalafx.scene.control.{CheckBox, RadioButton, ToggleGroup}
 import scalafx.scene.layout.GridPane

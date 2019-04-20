@@ -1,12 +1,12 @@
 /*
- * Copyright (c) 2011-2014 Jarek Sacha. All Rights Reserved.
+ * Copyright (c) 2011-2019 Jarek Sacha. All Rights Reserved.
  *
  * Author's e-mail: jpsacha at gmail.com
  */
 
 package flycapture
 
-import org.bytedeco.javacpp.FlyCapture2.Error
+import org.bytedeco.flycapture.FlyCapture2.Error
 
 import scala.collection.mutable
 import scala.language.experimental.macros
@@ -139,7 +139,7 @@ class CheckMacro(val c: blackbox.Context) {
     val result =
       q"""
       ..${tempVars.map(_.decl)}
-      if( $transformed.GetType() != org.bytedeco.javacpp.FlyCapture2.PGRERROR_OK ) {
+      if( $transformed.GetType() != org.bytedeco.flycapture.global.FlyCapture2.PGRERROR_OK ) {
         val errorDesc = $transformed.GetDescription().getString
         val printedCode = ${show(expr)}
         val printedValues = List(..${tempVars.map(_.debug)})

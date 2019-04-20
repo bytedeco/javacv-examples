@@ -1,12 +1,13 @@
 /*
- * Copyright (c) 2011-2014 Jarek Sacha. All Rights Reserved.
+ * Copyright (c) 2011-2019 Jarek Sacha. All Rights Reserved.
  *
  * Author's e-mail: jpsacha at gmail.com
  */
 package flycapture.examples
 
 import flycapture.CheckMacro.check
-import org.bytedeco.javacpp.FlyCapture2._
+import org.bytedeco.flycapture.FlyCapture2._
+import org.bytedeco.flycapture.global.FlyCapture2._
 
 /**
  * Helper functions for C++ API examples.

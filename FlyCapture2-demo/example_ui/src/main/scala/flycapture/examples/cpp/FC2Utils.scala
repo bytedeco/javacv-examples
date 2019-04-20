@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 Jarek Sacha. All Rights Reserved.
+ * Copyright (c) 2011-2019 Jarek Sacha. All Rights Reserved.
  *
  * Author's e-mail: jpsacha at gmail.com
  */
@@ -7,22 +7,19 @@
 package flycapture.examples.cpp
 
 import flycapture.CheckMacro._
+import org.bytedeco.flycapture.FlyCapture2._
+import org.bytedeco.flycapture.global.FlyCapture2._
 import org.bytedeco.javacpp
-import org.bytedeco.javacpp.FlyCapture2._
 import org.bytedeco.javacpp.{FloatPointer, IntPointer}
 
 /**
- * Some helper methods extracted from FlyCapture2 SDK sample application.
- * Arguments and return values and input arguments are modified to fit Scala style.
- * Method names correspond to the original names
- *
- * @author Jarek Sacha 
- */
+  * Some helper methods extracted from FlyCapture2 SDK sample application.
+  * Arguments and return values and input arguments are modified to fit Scala style.
+  * Method names correspond to the original names
+  *
+  * @author Jarek Sacha
+  */
 object FC2Utils {
-
-  case class Dimension(rows: Int, columns: Int)
-
-  case class ResolutionAndPixelFormat(rows: Int, columns: Int, pixelFormat: Int)
 
   def getCamResolutionAndPixelFormat(camera: CameraBase): ResolutionAndPixelFormat = {
 
@@ -100,7 +97,6 @@ object FC2Utils {
       case _ => None
     }
 
-
   private def getDimensionsFromVideoMode(videoMode: Int): Option[Dimension] = videoMode match {
     case VIDEOMODE_160x120YUV444 =>
       Some(Dimension(columns = 160, rows = 120))
@@ -120,4 +116,8 @@ object FC2Utils {
     case _ =>
       None
   }
+
+  case class Dimension(rows: Int, columns: Int)
+
+  case class ResolutionAndPixelFormat(rows: Int, columns: Int, pixelFormat: Int)
 }
