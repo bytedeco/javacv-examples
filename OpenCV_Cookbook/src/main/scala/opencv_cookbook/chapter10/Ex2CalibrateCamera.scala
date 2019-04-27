@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2014 Jarek Sacha. All Rights Reserved.
+ * Copyright (c) 2011-2019 Jarek Sacha. All Rights Reserved.
  *
  * Author's e-mail: jpsacha at gmail.com
  */
@@ -10,7 +10,7 @@ import java.io.File
 
 import opencv_cookbook.OpenCVUtils._
 import org.bytedeco.javacpp.indexer.DoubleRawIndexer
-import org.bytedeco.javacpp.opencv_core.Size
+import org.bytedeco.opencv.opencv_core.Size
 
 
 /**

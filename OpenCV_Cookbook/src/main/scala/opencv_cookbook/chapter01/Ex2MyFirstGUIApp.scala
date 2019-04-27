@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2015 Jarek Sacha. All Rights Reserved.
+ * Copyright (c) 2011-2019 Jarek Sacha. All Rights Reserved.
  *
  * Author's e-mail: jpsacha at gmail.com
  */
@@ -8,12 +8,13 @@ package opencv_cookbook.chapter01
 
 import java.awt.Cursor._
 import java.io.File
-import javax.swing.ImageIcon
 
-import org.bytedeco.javacpp.opencv_core._
-import org.bytedeco.javacpp.opencv_imgcodecs._
-import org.bytedeco.javacpp.opencv_imgproc._
+import javax.swing.ImageIcon
 import org.bytedeco.javacv.{Java2DFrameConverter, OpenCVFrameConverter}
+import org.bytedeco.opencv.global.opencv_core._
+import org.bytedeco.opencv.global.opencv_imgcodecs._
+import org.bytedeco.opencv.global.opencv_imgproc._
+import org.bytedeco.opencv.opencv_core._
 
 import scala.swing.Dialog.Message.Error
 import scala.swing.FileChooser.Result.Approve

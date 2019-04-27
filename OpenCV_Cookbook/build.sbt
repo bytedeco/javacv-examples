@@ -3,31 +3,34 @@
 name         := "opencv-cookbook"
 organization := "javacv.examples"
 
-val javacppVersion = "1.4.3"
+val javacppVersion = "1.5"
 version      := javacppVersion
-scalaVersion := "2.12.7"
+scalaVersion := "2.12.8"
 scalacOptions ++= Seq("-unchecked", "-deprecation", "-Xlint")
 
 // Platform classifier for native library dependencies
 val platform = org.bytedeco.javacpp.Loader.getPlatform
 // Libraries with native dependencies
 val bytedecoPresetLibs = Seq(
-  "opencv" -> s"3.4.3-$javacppVersion",
-  "ffmpeg" -> s"4.0.2-$javacppVersion").flatMap {
+  "opencv" -> s"4.0.1-$javacppVersion",
+  "ffmpeg" -> s"4.1.3-$javacppVersion").flatMap {
   case (lib, ver) => Seq(
     // Add both: dependency and its native binaries for the current `platform`
-    "org.bytedeco.javacpp-presets" % lib % ver withSources() withJavadoc(),
-    "org.bytedeco.javacpp-presets" % lib % ver classifier platform
+    "org.bytedeco" % lib % ver withSources() withJavadoc(),
+    "org.bytedeco" % lib % ver classifier platform
   )
 }
 
 libraryDependencies ++= Seq(
   "org.bytedeco"            % "javacpp"         % javacppVersion withSources() withJavadoc(),
   "org.bytedeco"            % "javacv"          % javacppVersion withSources() withJavadoc(),
-  "org.scala-lang.modules" %% "scala-swing"     % "2.0.3",
+  "org.scala-lang.modules" %% "scala-swing"     % "2.1.1",
   "junit"                   % "junit"           % "4.12" % "test",
   "com.novocode"            % "junit-interface" % "0.11" % "test"
 ) ++ bytedecoPresetLibs
+
+resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
+resolvers += Resolver.mavenLocal
 
 autoCompilerPlugins := true
 

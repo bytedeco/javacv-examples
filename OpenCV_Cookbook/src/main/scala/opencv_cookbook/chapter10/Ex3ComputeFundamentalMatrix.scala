@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2014 Jarek Sacha. All Rights Reserved.
+ * Copyright (c) 2011-2019 Jarek Sacha. All Rights Reserved.
  *
  * Author's e-mail: jpsacha at gmail.com
  */
@@ -11,10 +11,12 @@ import java.nio.ByteBuffer
 
 import opencv_cookbook.OpenCVUtils._
 import opencv_cookbook.chapter10.MatcherUtils._
-import org.bytedeco.javacpp.opencv_calib3d._
-import org.bytedeco.javacpp.opencv_core._
-import org.bytedeco.javacpp.opencv_features2d._
-import org.bytedeco.javacpp.opencv_xfeatures2d.SURF
+import org.bytedeco.opencv.global.opencv_calib3d._
+import org.bytedeco.opencv.global.opencv_core._
+import org.bytedeco.opencv.global.opencv_features2d._
+import org.bytedeco.opencv.opencv_core._
+import org.bytedeco.opencv.opencv_features2d._
+import org.bytedeco.opencv.opencv_xfeatures2d._
 
 
 /** The example for section "Computing the fundamental matrix of an image pair" in Chapter 9, page 228.
@@ -89,7 +91,7 @@ object Ex3ComputeFundamentalMatrix extends App {
     val matchMask: ByteBuffer = null
     val imageMatches = new Mat()
     drawMatches(imageRight, keypointsRight, imageLeft, keypointsLeft,
-      selected7Matches, imageMatches, blue, red, matchMask, DrawMatchesFlags.DEFAULT)
+      selected7Matches, imageMatches, blue, red, matchMask, DEFAULT)
     show(imageMatches, "Matches 7-point")
 
 
@@ -147,7 +149,7 @@ object Ex3ComputeFundamentalMatrix extends App {
     //        val canvas = cvCreateImage(cvGetSize(image), image.depth(), 3)
     val canvas = new Mat()
     val white = new Scalar(255, 255, 255, 0)
-    drawKeypoints(image, keypoints, canvas, white, DrawMatchesFlags.DRAW_RICH_KEYPOINTS)
+    drawKeypoints(image, keypoints, canvas, white, DRAW_RICH_KEYPOINTS)
     show(canvas, title)
   }
 

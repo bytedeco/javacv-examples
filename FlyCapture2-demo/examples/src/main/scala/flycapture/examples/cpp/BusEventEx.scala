@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2014 Jarek Sacha. All Rights Reserved.
+ * Copyright (c) 2011-2019 Jarek Sacha. All Rights Reserved.
  *
  * Author's e-mail: jpsacha at gmail.com
  */
@@ -8,7 +8,8 @@ package flycapture.examples.cpp
 
 import java.util.Date
 
-import org.bytedeco.javacpp.FlyCapture2._
+import org.bytedeco.flycapture.FlyCapture2._
+import org.bytedeco.flycapture.global.FlyCapture2._
 import org.bytedeco.javacpp.{IntPointer, Pointer}
 
 import scala.io.StdIn.readLine

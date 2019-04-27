@@ -17,12 +17,15 @@
 
 package spinnaker_c;
 
-import org.bytedeco.javacpp.*;
-import org.bytedeco.javacpp.Spinnaker_C.*;
+import org.bytedeco.javacpp.BytePointer;
+import org.bytedeco.javacpp.IntPointer;
+import org.bytedeco.javacpp.LongPointer;
+import org.bytedeco.javacpp.SizeTPointer;
+import org.bytedeco.spinnaker.Spinnaker_C.*;
 
 import java.io.File;
 
-import static org.bytedeco.javacpp.Spinnaker_C.*;
+import static org.bytedeco.spinnaker.global.Spinnaker_C.*;
 import static spinnaker_c.Utils.*;
 
 /**
@@ -405,7 +408,7 @@ public class Acquisition_C {
         exitOnError(err, "Unable to retrieve system instance.");
 
         // Retrieve list of cameras from the system
-        Spinnaker_C.spinCameraList hCameraList = new Spinnaker_C.spinCameraList();
+        spinCameraList hCameraList = new spinCameraList();
         err = spinCameraListCreateEmpty(hCameraList);
         exitOnError(err, "Unable to create camera list.");
 
@@ -414,7 +417,7 @@ public class Acquisition_C {
 
         // Retrieve number of cameras
         SizeTPointer numCameras = new SizeTPointer(1);
-        err = Spinnaker_C.spinCameraListGetSize(hCameraList, numCameras);
+        err = spinCameraListGetSize(hCameraList, numCameras);
         exitOnError(err, "Unable to retrieve number of cameras.");
         System.out.println("Number of cameras detected: " + numCameras.get() + "\n");
 

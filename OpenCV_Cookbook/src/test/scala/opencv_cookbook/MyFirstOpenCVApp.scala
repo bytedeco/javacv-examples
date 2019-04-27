@@ -1,11 +1,17 @@
+/*
+ * Copyright (c) 2011-2019 Jarek Sacha. All Rights Reserved.
+ *
+ * Author's e-mail: jpsacha at gmail.com
+ */
+
 package opencv_cookbook
 
 import javax.swing._
-
-import org.bytedeco.javacpp.opencv_core._
-import org.bytedeco.javacpp.opencv_imgcodecs._
-import org.bytedeco.javacpp.opencv_imgproc._
 import org.bytedeco.javacv._
+import org.bytedeco.opencv.global.opencv_core._
+import org.bytedeco.opencv.global.opencv_imgcodecs._
+import org.bytedeco.opencv.global.opencv_imgproc._
+import org.bytedeco.opencv.opencv_core._
 
 object MyFirstOpenCVApp extends App {
 
@@ -17,7 +23,6 @@ object MyFirstOpenCVApp extends App {
   val dest = new Mat()
   Laplacian(src, dest, src.depth(), 1, 3, 0, BORDER_DEFAULT)
   display(dest, "Laplacian")
-
 
   //---------------------------------------------------------------------------
 
@@ -34,5 +39,4 @@ object MyFirstOpenCVApp extends App {
     // Show image on window
     canvas.showImage(converter.convert(image))
   }
-
 }

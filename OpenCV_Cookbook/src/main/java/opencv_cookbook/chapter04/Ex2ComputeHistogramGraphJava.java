@@ -1,13 +1,21 @@
+/*
+ * Copyright (c) 2011-2019 Jarek Sacha. All Rights Reserved.
+ *
+ * Author's e-mail: jpsacha at gmail.com
+ */
+
 package opencv_cookbook.chapter04;
 
-import org.bytedeco.javacpp.opencv_core.Mat;
+
+import org.bytedeco.opencv.opencv_core.Mat;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
 
-import static opencv_cookbook.OpenCVUtils.loadAndShowOrExit;
-import static opencv_cookbook.OpenCVUtils.show;
-import static org.bytedeco.javacpp.opencv_imgcodecs.IMREAD_GRAYSCALE;
+import static opencv_cookbook.OpenCVUtilsJava.loadAndShowOrExit;
+import static opencv_cookbook.OpenCVUtilsJava.show;
+import static org.opencv.imgcodecs.Imgcodecs.IMREAD_GRAYSCALE;
+
 
 /**
  * The second example for section "Computing the image histogram" in Chapter 4, page 92.

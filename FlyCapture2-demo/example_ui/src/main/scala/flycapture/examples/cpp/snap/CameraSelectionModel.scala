@@ -1,27 +1,25 @@
 /*
- * Copyright (c) 2014 Jarek Sacha. All Rights Reserved.
+ * Copyright (c) 2011-2019 Jarek Sacha. All Rights Reserved.
  *
  * Author's e-mail: jpsacha at gmail.com
  */
 
 package flycapture.examples.cpp.snap
 
-import javafx.scene.control.MultipleSelectionModel
-
 import flycapture.CheckMacro.check
 import grizzled.slf4j.Logger
-import org.bytedeco.javacpp.FlyCapture2._
-
+import javafx.scene.control.MultipleSelectionModel
+import org.bytedeco.flycapture.FlyCapture2._
 import scalafx.Includes._
 import scalafx.beans.property.{IntegerProperty, ObjectProperty, StringProperty}
 import scalafx.collections.ObservableBuffer
 import scalafx.event.subscriptions.Subscription
 
 /**
- * Model for camera selection UI.
- *
- * @author Jarek Sacha 
- */
+  * Model for camera selection UI.
+  *
+  * @author Jarek Sacha
+  */
 class CameraSelectionModel(busManager: BusManager) {
 
   // TODO automatically update list of cameras when cameras are connected/disconnected

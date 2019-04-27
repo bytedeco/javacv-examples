@@ -1,16 +1,21 @@
+/*
+ * Copyright (c) 2011-2019 Jarek Sacha. All Rights Reserved.
+ *
+ * Author's e-mail: jpsacha at gmail.com
+ */
+
 package opencv_cookbook;
 
-import org.bytedeco.javacpp.opencv_core;
+
 import org.bytedeco.javacv.CanvasFrame;
 import org.bytedeco.javacv.OpenCVFrameConverter;
+import org.bytedeco.opencv.opencv_core.Mat;
 
 import javax.swing.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 
-import static org.bytedeco.javacpp.opencv_imgcodecs.IMREAD_COLOR;
-import static org.bytedeco.javacpp.opencv_imgcodecs.imread;
-import static org.bytedeco.javacpp.opencv_imgcodecs.imwrite;
+import static org.bytedeco.opencv.global.opencv_imgcodecs.*;
 
 /**
  * Helper methods that simplify use of OpenCV API.
@@ -21,7 +26,7 @@ public class OpenCVUtilsJava {
      *
      * @return loaded image
      */
-    public opencv_core.Mat loadAndShowOrExit(File file){
+    public Mat loadAndShowOrExit(File file) {
         return loadAndShowOrExit(file,IMREAD_COLOR);
     }
 
@@ -38,8 +43,8 @@ public class OpenCVUtilsJava {
      *              Default is gray scale.
      * @return loaded image
      */
-    public static opencv_core.Mat loadAndShowOrExit(File file, Integer flags){
-        opencv_core.Mat image = loadOrExit(file, flags);
+    public static Mat loadAndShowOrExit(File file, Integer flags) {
+        Mat image = loadOrExit(file, flags);
         show(image,file.getName());
         return image;
     }
@@ -49,7 +54,7 @@ public class OpenCVUtilsJava {
      *
      * @return loaded image
      */
-    public static opencv_core.Mat loadOrExit(File file) {
+    public static Mat loadOrExit(File file) {
         return loadOrExit(file,IMREAD_COLOR);
     }
 
@@ -66,8 +71,8 @@ public class OpenCVUtilsJava {
      *              Default is gray scale.
      * @return loaded image
      */
-    public static opencv_core.Mat loadOrExit(File file, Integer flags) {
-        opencv_core.Mat image = imread(file.getAbsolutePath(), flags);
+    public static Mat loadOrExit(File file, Integer flags) {
+        Mat image = imread(file.getAbsolutePath(), flags);
         if(image.empty()){
             System.out.println("Couldn't load image: " + file.getAbsolutePath());
             System.exit(1);
@@ -76,7 +81,7 @@ public class OpenCVUtilsJava {
     }
 
     /** Show image in a window. Closing the window will exit the application. */
-    public static void show(opencv_core.Mat mat, String title) {
+    public static void show(Mat mat, String title) {
         OpenCVFrameConverter.ToMat converter = new OpenCVFrameConverter.ToMat();
         CanvasFrame canvas = new CanvasFrame(title, 1);
         canvas.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -100,7 +105,7 @@ public class OpenCVUtilsJava {
      * @param file file to save to. File name extension decides output image format.
      * @param image image to save.
      */
-    public void save(File file, opencv_core.Mat image) {
+    public void save(File file, Mat image) {
         imwrite(file.getAbsolutePath(), image);
     }
 }

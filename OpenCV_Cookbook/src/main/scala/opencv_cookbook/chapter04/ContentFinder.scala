@@ -1,28 +1,31 @@
 /*
- * Copyright (c) 2011-2015 Jarek Sacha. All Rights Reserved.
+ * Copyright (c) 2011-2019 Jarek Sacha. All Rights Reserved.
  *
  * Author's e-mail: jpsacha at gmail.com
  */
 
 package opencv_cookbook.chapter04
 
-import org.bytedeco.javacpp.opencv_core._
-import org.bytedeco.javacpp.opencv_imgproc._
-import org.bytedeco.javacpp.{FloatPointer, IntPointer, PointerPointer, opencv_imgproc => imgproc}
+import org.bytedeco.javacpp.{FloatPointer, IntPointer, PointerPointer}
+import org.bytedeco.opencv.global.opencv_core._
+import org.bytedeco.opencv.global.opencv_imgproc._
+import org.bytedeco.opencv.global.{opencv_imgproc => imgproc}
+import org.bytedeco.opencv.opencv_core._
 
 
 /**
- * Used by examples from section "Backprojecting a histogram to detect specific image content" in chapter 4.
- */
+  * Used by examples from section "Backprojecting a histogram to detect specific image content" in chapter 4.
+  */
 class ContentFinder {
   private val _histogram = new Mat()
   private var _threshold = -1f
 
   /**
-   * Find content back projecting a histogram.
-   * @param image input used for back projection.
-   * @return Result of the back-projection of the histogram. Image is binary (0,255) if threshold is larger than 0.
-   */
+    * Find content back projecting a histogram.
+    *
+    * @param image input used for back projection.
+    * @return Result of the back-projection of the histogram. Image is binary (0,255) if threshold is larger than 0.
+    */
   def find(image: Mat): Mat = {
 
     val channels = Array(0, 1, 2)
@@ -48,16 +51,20 @@ class ContentFinder {
   }
 
   def threshold: Float = _threshold
+
   /**
-   * Set threshold for converting the back-projected image to a binary.
-   * If value is negative no thresholding will be done.
-   */
-  def threshold_=(t: Float) { _threshold = t }
+    * Set threshold for converting the back-projected image to a binary.
+    * If value is negative no thresholding will be done.
+    */
+  def threshold_=(t: Float) {
+    _threshold = t
+  }
 
   def histogram: Mat = _histogram
+
   /**
-   * Set reference histogram, it will be normalized.
-   */
+    * Set reference histogram, it will be normalized.
+    */
   def histogram_=(h: Mat): Unit = {
     normalize(h, _histogram)
   }

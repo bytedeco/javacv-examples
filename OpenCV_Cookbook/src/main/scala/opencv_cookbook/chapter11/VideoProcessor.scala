@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2015 Jarek Sacha. All Rights Reserved.
+ * Copyright (c) 2011-2019 Jarek Sacha. All Rights Reserved.
  *
  * Author's e-mail: jpsacha at gmail.com
  */
@@ -8,8 +8,8 @@ package opencv_cookbook.chapter11
 
 import javax.swing.WindowConstants
 import opencv_cookbook.OpenCVUtils._
-import org.bytedeco.javacpp.opencv_core._
 import org.bytedeco.javacv._
+import org.bytedeco.opencv.opencv_core._
 
 /** Video processor.
   *
@@ -44,6 +44,7 @@ class VideoProcessor(var frameProcessor: (Mat, Mat) => Unit = { (src, dest) => s
   private var _grabber: Option[FFmpegFrameGrabber] = None
 
   def input: String = _input.orNull
+
   def input_=(filename: String): Unit = {
     _grabber.foreach(_.release())
     _input = Option(filename)
@@ -81,6 +82,7 @@ class VideoProcessor(var frameProcessor: (Mat, Mat) => Unit = { (src, dest) => s
   }
 
   private var _stop: Boolean = false
+
   def isStopped: Boolean = _stop
 
   /** to grab (and process) the frames of the sequence */

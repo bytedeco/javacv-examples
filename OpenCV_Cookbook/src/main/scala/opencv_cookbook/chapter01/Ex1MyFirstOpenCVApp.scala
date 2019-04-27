@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2015 Jarek Sacha. All Rights Reserved.
+ * Copyright (c) 2011-2019 Jarek Sacha. All Rights Reserved.
  *
  * Author's e-mail: jpsacha at gmail.com
  */
@@ -7,8 +7,8 @@
 package opencv_cookbook.chapter01
 
 import javax.swing.WindowConstants
-import org.bytedeco.javacpp.opencv_imgcodecs._
 import org.bytedeco.javacv.{CanvasFrame, OpenCVFrameConverter}
+import org.bytedeco.opencv.global.opencv_imgcodecs._
 
 
 /**

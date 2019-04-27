@@ -1,16 +1,20 @@
+/*
+ * Copyright (c) 2011-2019 Jarek Sacha. All Rights Reserved.
+ *
+ * Author's e-mail: jpsacha at gmail.com
+ */
+
 package opencv_cookbook;
 
-
-import org.bytedeco.javacpp.opencv_core.Mat;
 import org.bytedeco.javacv.CanvasFrame;
 import org.bytedeco.javacv.OpenCVFrameConverter;
+import org.bytedeco.opencv.opencv_core.Mat;
 
 import javax.swing.*;
 
-import static org.bytedeco.javacpp.opencv_core.BORDER_DEFAULT;
-import static org.bytedeco.javacpp.opencv_imgcodecs.imread;
-import static org.bytedeco.javacpp.opencv_imgproc.Laplacian;
-
+import static org.bytedeco.opencv.global.opencv_core.BORDER_DEFAULT;
+import static org.bytedeco.opencv.global.opencv_imgcodecs.imread;
+import static org.bytedeco.opencv.global.opencv_imgproc.Laplacian;
 
 public class MyFirstOpenCVAppInJava {
 
@@ -26,7 +30,7 @@ public class MyFirstOpenCVAppInJava {
         display(dest, "Laplacian");
     }
 
-//---------------------------------------------------------------------------
+    //---------------------------------------------------------------------------
 
     static void display(Mat image, String caption) {
         // Create image window named "My Image".

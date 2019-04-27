@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2015 Jarek Sacha. All Rights Reserved.
+ * Copyright (c) 2011-2019 Jarek Sacha. All Rights Reserved.
  *
  * Author's e-mail: jpsacha at gmail.com
  */
@@ -7,9 +7,10 @@
 package opencv_cookbook.chapter03
 
 import org.bytedeco.javacpp.indexer.UByteIndexer
-import org.bytedeco.javacpp.opencv_core.Mat
+import org.bytedeco.opencv.global.opencv_core._
+import org.bytedeco.opencv.opencv_core._
 
-import scala.math._
+import scala.math.abs
 
 
 /** Example of using a strategy pattern in algorithm design.
@@ -35,7 +36,7 @@ class ColorDetector(private var _minDist: Int = 100,
   def colorDistanceThreshold: Int = _minDist
 
   def colorDistanceThreshold_=(dist: Int) {
-    _minDist = max(0, dist)
+    _minDist = scala.math.max(0, dist)
   }
 
   def targetColor: ColorRGB = _target
@@ -50,7 +51,7 @@ class ColorDetector(private var _minDist: Int = 100,
     val srcI = image.createIndexer().asInstanceOf[UByteIndexer]
 
     // Create output image and itx indexer
-    val dest = new Mat(image.rows, image.cols, org.bytedeco.javacpp.opencv_core.CV_8U)
+    val dest = new Mat(image.rows, image.cols, CV_8U)
     val destI = dest.createIndexer().asInstanceOf[UByteIndexer]
 
     // Iterate through pixels and check if their distance from the target color is

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2014 Jarek Sacha. All Rights Reserved.
+ * Copyright (c) 2011-2019 Jarek Sacha. All Rights Reserved.
  *
  * Author's e-mail: jpsacha at gmail.com
  */
@@ -9,19 +9,20 @@ package flycapture.examples.cpp.snap
 import flycapture.CheckMacro.check
 import grizzled.slf4j.Logger
 import org.apache.log4j.Level
-import org.bytedeco.javacpp.FlyCapture2.{BusManager, Camera, PGRGuid}
-
+import org.bytedeco.flycapture.FlyCapture2._
 import scalafx.application.JFXApp.PrimaryStage
 import scalafx.application.{JFXApp, Platform}
 import scalafx.scene.Scene
 
 /**
- * @author Jarek Sacha 
- */
+  * @author Jarek Sacha
+  */
 object CameraConfigurationViewDemo extends JFXApp {
 
-  private val logger = Logger(this.getClass)
+  lazy val title = "Fly Capture CameraConfiguration Demo"
   initializeLogging(Level.INFO)
+
+  private val logger = Logger(this.getClass)
   setupUncaughtExceptionHandling(logger, title)
 
   private val busMgr = new BusManager()
@@ -35,9 +36,6 @@ object CameraConfigurationViewDemo extends JFXApp {
   // Connect to a camera
   private val cam = new Camera()
   check(cam.Connect(guid))
-
-
-  lazy val title = "Fly Capture CameraConfiguration Demo"
 
   try {
     val cameraConfiguration = new CameraConfiguration(cam, null)
@@ -54,6 +52,7 @@ object CameraConfigurationViewDemo extends JFXApp {
 
       Platform.exit()
   }
+
   override def stopApp(): Unit = {
     super.stopApp()
 

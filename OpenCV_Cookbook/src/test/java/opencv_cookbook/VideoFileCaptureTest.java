@@ -1,18 +1,20 @@
 /*
- * Copyright (c) 2011-2014 Jarek Sacha. All Rights Reserved.
+ * Copyright (c) 2011-2019 Jarek Sacha. All Rights Reserved.
  *
  * Author's e-mail: jpsacha at gmail.com
  */
 
 package opencv_cookbook;
 
-import org.bytedeco.javacpp.opencv_core.Mat;
+import org.bytedeco.opencv.opencv_core.Mat;
+import org.bytedeco.opencv.opencv_videoio.VideoCapture;
 import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.File;
 
-import static org.bytedeco.javacpp.opencv_videoio.*;
+import static org.bytedeco.opencv.global.opencv_videoio.CAP_PROP_FPS;
+import static org.bytedeco.opencv.global.opencv_videoio.CAP_PROP_FRAME_COUNT;
 import static org.junit.Assert.*;
 
 /**
@@ -34,7 +36,7 @@ public final class VideoFileCaptureTest {
             final long nbFrames = (long) capture.get(CAP_PROP_FRAME_COUNT);
             assertEquals(119, nbFrames);
 
-            final double fps = (long) capture.get(CV_CAP_PROP_FPS);
+            final double fps = (long) capture.get(CAP_PROP_FPS);
             assertEquals(15, fps, 0.0001);
 
             final Mat frame = new Mat();

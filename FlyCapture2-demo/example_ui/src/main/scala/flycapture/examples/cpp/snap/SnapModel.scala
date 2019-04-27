@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 Jarek Sacha. All Rights Reserved.
+ * Copyright (c) 2011-2019 Jarek Sacha. All Rights Reserved.
  *
  * Author's e-mail: jpsacha at gmail.com
  */
@@ -8,16 +8,15 @@ package flycapture.examples.cpp.snap
 
 import java.io.{File, IOException}
 import java.util.concurrent.locks.ReentrantReadWriteLock
-import javafx.{concurrent => jfxc}
 
 import flycapture.CheckMacro.check
 import flycapture.examples.cpp.FC2Exception
 import flycapture.examples.cpp.FC2Utils._
 import grizzled.slf4j.Logger
-import org.bytedeco.javacpp.FlyCapture2._
+import javafx.{concurrent => jfxc}
+import org.bytedeco.flycapture.FlyCapture2._
+import org.bytedeco.flycapture.global.FlyCapture2._
 import org.bytedeco.javacpp.{IntPointer, Pointer}
-
-import scala.reflect.runtime.universe.typeOf
 import scalafx.Includes._
 import scalafx.application.Platform
 import scalafx.beans.property.{BooleanProperty, ObjectProperty, StringProperty}
@@ -31,6 +30,8 @@ import scalafx.stage.FileChooser.ExtensionFilter
 import scalafx.stage.{FileChooser, Stage}
 import scalafx.util.Duration
 import scalafxml.core.{DependenciesByType, FXMLView}
+
+import scala.reflect.runtime.universe.typeOf
 
 object SnapModel {
 

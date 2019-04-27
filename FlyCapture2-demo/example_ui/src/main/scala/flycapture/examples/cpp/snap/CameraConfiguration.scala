@@ -1,16 +1,16 @@
 /*
- * Copyright (c) 2014 Jarek Sacha. All Rights Reserved.
+ * Copyright (c) 2011-2019 Jarek Sacha. All Rights Reserved.
  *
  * Author's e-mail: jpsacha at gmail.com
  */
 
 package flycapture.examples.cpp.snap
 
-import org.bytedeco.javacpp.FlyCapture2.CameraBase
-
-import scala.reflect.runtime.universe.typeOf
+import org.bytedeco.flycapture.FlyCapture2._
 import scalafx.scene.Parent
 import scalafx.stage.Stage
+
+import scala.reflect.runtime.universe.typeOf
 
 /**
  * Create camera configuration UI.

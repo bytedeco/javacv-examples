@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2014 Jarek Sacha. All Rights Reserved.
+ * Copyright (c) 2011-2019 Jarek Sacha. All Rights Reserved.
  *
  * Author's e-mail: jpsacha at gmail.com
  */
@@ -10,9 +10,11 @@ import java.io.File
 import java.nio.ByteBuffer
 
 import opencv_cookbook.OpenCVUtils._
-import org.bytedeco.javacpp.opencv_core._
-import org.bytedeco.javacpp.opencv_features2d._
-import org.bytedeco.javacpp.opencv_xfeatures2d.SURF
+import org.bytedeco.opencv.global.opencv_core._
+import org.bytedeco.opencv.global.opencv_features2d._
+import org.bytedeco.opencv.opencv_core._
+import org.bytedeco.opencv.opencv_features2d._
+import org.bytedeco.opencv.opencv_xfeatures2d._
 
 /** Example for section "Describing SURF features" in chapter 8, page 212.
   *
@@ -65,7 +67,7 @@ object Ex7DescribingSURF extends App {
   val mask: ByteBuffer = null
   drawMatches(
     images(0), keyPoints(0), images(1), keyPoints(1),
-    bestMatches, imageMatches, new Scalar(0, 0, 255, 0), new Scalar(255, 0, 0, 0), mask, DrawMatchesFlags.DEFAULT)
+    bestMatches, imageMatches, new Scalar(0, 0, 255, 0), new Scalar(255, 0, 0, 0), mask, DEFAULT)
   show(imageMatches, "Best SURF Feature Matches")
 
 

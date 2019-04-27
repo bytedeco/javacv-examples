@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2014 Jarek Sacha. All Rights Reserved.
+ * Copyright (c) 2011-2019 Jarek Sacha. All Rights Reserved.
  *
  * Author's e-mail: jpsacha at gmail.com
  */
@@ -8,16 +8,16 @@ package flycapture.examples.cpp.snap
 
 import grizzled.slf4j.Logger
 import org.apache.log4j.Level
-import org.bytedeco.javacpp.FlyCapture2.BusManager
-
-import scala.reflect.runtime.universe.typeOf
+import org.bytedeco.flycapture.FlyCapture2._
 import scalafx.application.JFXApp.PrimaryStage
 import scalafx.application.{JFXApp, Platform}
 import scalafx.scene.Scene
 
+import scala.reflect.runtime.universe.typeOf
+
 /**
- * @author Jarek Sacha 
- */
+  * @author Jarek Sacha
+  */
 object CameraSelectionViewDemo extends JFXApp {
 
   lazy val title = "Fly Capture CameraSelectionView Demo"

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 Jarek Sacha. All Rights Reserved.
+ * Copyright (c) 2011-2019 Jarek Sacha. All Rights Reserved.
  *
  * Author's e-mail: jpsacha at gmail.com
  */
@@ -11,8 +11,6 @@ import java.util.concurrent
 
 import grizzled.slf4j.Logger
 import org.apache.log4j.{BasicConfigurator, Level}
-
-import scala.reflect.runtime.universe._
 import scalafx.Includes._
 import scalafx.application.Platform
 import scalafx.scene.Parent
@@ -21,6 +19,8 @@ import scalafx.scene.control.{Alert, Label, TextArea}
 import scalafx.scene.layout.{GridPane, Priority}
 import scalafx.stage.Window
 import scalafxml.core.{DependenciesByType, FXMLView}
+
+import scala.reflect.runtime.universe._
 
 /**
  * @author Jarek Sacha 

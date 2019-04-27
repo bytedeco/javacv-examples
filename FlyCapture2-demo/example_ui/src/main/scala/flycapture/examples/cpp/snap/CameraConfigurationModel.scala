@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 Jarek Sacha. All Rights Reserved.
+ * Copyright (c) 2011-2019 Jarek Sacha. All Rights Reserved.
  *
  * Author's e-mail: jpsacha at gmail.com
  */
@@ -7,13 +7,13 @@
 package flycapture.examples.cpp.snap
 
 import java.util.concurrent.atomic.AtomicBoolean
-import javafx.{concurrent => jfxc}
 
 import flycapture.CheckMacro.check
 import flycapture.examples.cpp.FC2Exception
-import org.bytedeco.javacpp.FlyCapture2._
+import javafx.{concurrent => jfxc}
+import org.bytedeco.flycapture.FlyCapture2._
+import org.bytedeco.flycapture.global.FlyCapture2._
 import org.bytedeco.javacpp.IntPointer
-
 import scalafx.Includes._
 import scalafx.beans.property.{BooleanProperty, ObjectProperty}
 import scalafx.geometry.Pos

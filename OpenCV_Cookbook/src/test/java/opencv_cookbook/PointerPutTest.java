@@ -1,12 +1,12 @@
 /*
- * Copyright (c) 2011-2014 Jarek Sacha. All Rights Reserved.
+ * Copyright (c) 2011-2019 Jarek Sacha. All Rights Reserved.
  *
  * Author's e-mail: jpsacha at gmail.com
  */
 
 package opencv_cookbook;
 
-import org.bytedeco.javacpp.opencv_core.DMatch;
+import org.bytedeco.opencv.opencv_core.DMatch;
 import org.junit.Assert;
 import org.junit.Test;
 

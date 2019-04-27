@@ -1,11 +1,14 @@
 /*
- * Copyright (c) 2014 Jarek Sacha. All Rights Reserved.
- * Author's e-mail: jpsacha at gmail dot com
+ * Copyright (c) 2011-2019 Jarek Sacha. All Rights Reserved.
+ *
+ * Author's e-mail: jpsacha at gmail.com
  */
 package flycapture.examples.cpp
 
 import flycapture.CheckMacro.check
-import org.bytedeco.javacpp.FlyCapture2._
+import org.bytedeco.flycapture.FlyCapture2.{BusManager, Camera, CameraInfo, PGRGuid}
+//import org.bytedeco.flycapture.FlyCapture2._
+//import org.bytedeco.flycapture.global.FlyCapture2._
 
 /**
  * The CameraPropertyInfoEx prints out property information from attached cameras.

@@ -6,13 +6,13 @@ OpenCV Cookbook Examples
 Overview
 --------
 
-**OpenCV Cookbook Examples** are JavaCV versions of the examples presented in the Robert Laganière's book "[OpenCV 2 Computer Vision Application Programming Cookbook](https://www.packtpub.com/application-development/opencv-3-computer-vision-application-programming-cookbook)". The examples in the book use [OpenCV](http://opencv.org/) C++ API. Here they are translated to use [JavaCV](https://github.com/bytedeco/javacv) and [JavaCPP-Presets](https://github.com/bytedeco/javacpp-presets) APIs.
+**OpenCV Cookbook Examples** illustrate use of OpenCV with [JavaCV][javacv]. The Examples started as a port of C++ code from Robert Laganière's book "[OpenCV 2 Computer Vision Application Programming Cookbook](https://www.packtpub.com/application-development/opencv-2-computer-vision-application-programming-cookbook)". Later updated for the ssecond edition of the book "[OpenCV Computer Vision Application Programming Cookbook Second Edition](https://www.packtpub.com/application-development/opencv-3-computer-vision-application-programming-cookbook)". The examples in the book use [OpenCV](http://opencv.org/) C++ API. Here they are translated to use [JavaCV][javacv](https://github.com/bytedeco/javacv) and [JavaCPP-Presets](https://github.com/bytedeco/javacpp-presets) APIs.
 
 [OpenCV](http://opencv.org/) (Open Source Computer Vision) is a library of several hundred algorithms for computer vision and video analysis. OpenCV can be us on JVM using two approaches. First are Java [wrappers provided by OpenCV](http://docs.opencv.org/doc/tutorials/introduction/desktop_java/java_dev_intro.html). Second are are wrappers based on [JavaCPP](https://github.com/bytedeco/javacpp) (C++ wrapper engine for JVM) called [OpenCV JavaCPP Presets](https://github.com/bytedeco/javacpp-presets). There are also JavaCPP presets for other computer vision related libraries like: [FFmpeg](http://ffmpeg.org/), [libdc1394](http://damien.douxchamps.net/ieee1394/libdc1394/), [PGR FlyCapture](http://www.ptgrey.com/products/pgrflycapture/), [OpenKinect](http://openkinect.org/), [videoInput](http://muonics.net/school/spring05/videoInput/), [ARToolKitPlus](http://studierstube.icg.tugraz.at/handheld_ar/artoolkitplus.php), [flandmark](http://cmp.felk.cvut.cz/~uricamic/flandmark/), and [others](https://github.com/bytedeco/javacpp-presets). JavaCV combines libraries in JavaCPP Presets and add some additional functionality that makes them easier use on JVM.
 
-The *OpenCV Cookbook Examples* project illustrates use of OpenCV through JavaCV and OpenCV JavaCPP Presets. Current version is updated to match the second edition of the Robert Laganière's book "[OpenCV 2 Computer Vision Application Programming Cookbook](https://www.packtpub.com/application-development/opencv-3-computer-vision-application-programming-cookbook)". It is intended for use with OpenCV v.3 (JavaCV v.1). 
+The *OpenCV Cookbook Examples* project illustrates use of OpenCV through JavaCV and OpenCV JavaCPP Presets. Current version is updated to match the second edition of the Robert Laganière's book "[OpenCV Computer Vision Application Programming Cookbook Second Edition](https://www.packtpub.com/application-development/opencv-3-computer-vision-application-programming-cookbook)". It is intended for use with OpenCV v.4 (JavaCV v.1). 
 
-While code in the examples is primarily written in [Scala](http://www.scala-lang.org), one of the leading JVM languages. It can be easily converted to Java and other languages running on JVM, for instance, [Groovy](http://groovy.codehaus.org/). The use of the JavaCV API is very similar in most HVM languages.
+While code in the examples is primarily written in [Scala](http://www.scala-lang.org), one of the leading JVM languages. It can be easily converted to Java and other languages running on JVM, for instance, [Groovy](http://groovy.codehaus.org/). The use of the JavaCV API is very similar in most JVM languages. Some examples are provided in Java version.
 
 
 Quick Sample
@@ -23,7 +23,8 @@ Here is a quick preview that compares an original C++ example with code in Scala
 Here is the original C++ example that opens an image (without error checking), creates a window,
 displays image in the window, and waits for 5 seconds before exiting.
 
-``` c
+
+```cpp
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgcodecs/imgcodecs.hpp>
@@ -57,12 +58,13 @@ void display(Mat image, char* caption) {
 
 The above C++ example translated to Scala using JavaCV wrapper:
 
-``` scala
+```scala
 import javax.swing._
-import org.bytedeco.javacpp.opencv_core._
-import org.bytedeco.javacpp.opencv_imgcodecs._
-import org.bytedeco.javacpp.opencv_imgproc._
 import org.bytedeco.javacv._
+import org.bytedeco.opencv.global.opencv_core._
+import org.bytedeco.opencv.global.opencv_imgcodecs._
+import org.bytedeco.opencv.global.opencv_imgproc._
+import org.bytedeco.opencv.opencv_core._
 
 object MyFirstOpenCVApp extends App {
 
@@ -75,8 +77,9 @@ object MyFirstOpenCVApp extends App {
   Laplacian(src, dest, src.depth(), 1, 3, 0, BORDER_DEFAULT)
   display(dest, "Laplacian")
 
-//---------------------------------------------------------------------------
+  //---------------------------------------------------------------------------
 
+  /** Display `image` with given `caption`. */
   def display(image: Mat, caption: String): Unit = {
     // Create image window named "My Image."
     val canvas = new CanvasFrame(caption, 1)
@@ -94,17 +97,16 @@ object MyFirstOpenCVApp extends App {
 
 Now the same example expressed in a Java. Note that use of JavaCV API is exactly the same in Scala and Java code. The only practical difference is that in Java code is more verbose, you have to explicitly provide type for each variable, in Scala it is optional. 
 
-``` java
-import org.bytedeco.javacpp.opencv_core.Mat;
+```java
 import org.bytedeco.javacv.CanvasFrame;
 import org.bytedeco.javacv.OpenCVFrameConverter;
+import org.bytedeco.opencv.opencv_core.Mat;
 
 import javax.swing.*;
 
-import static org.bytedeco.javacpp.opencv_core.BORDER_DEFAULT;
-import static org.bytedeco.javacpp.opencv_imgcodecs.imread;
-import static org.bytedeco.javacpp.opencv_imgproc.Laplacian;
-
+import static org.bytedeco.opencv.global.opencv_core.BORDER_DEFAULT;
+import static org.bytedeco.opencv.global.opencv_imgcodecs.imread;
+import static org.bytedeco.opencv.global.opencv_imgproc.Laplacian;
 
 public class MyFirstOpenCVAppInJava {
 
@@ -120,7 +122,7 @@ public class MyFirstOpenCVAppInJava {
         display(dest, "Laplacian");
     }
 
-//---------------------------------------------------------------------------
+    //---------------------------------------------------------------------------
 
     static void display(Mat image, String caption) {
         // Create image window named "My Image".
@@ -145,7 +147,7 @@ If you are looking for a particular OpenCV operation, use the [OpenCV documentat
 How to use JavaCV Examples
 --------------------------
 
-The *OpenCV Cookbook Examples* project is intended as a companion to the Robert Laganière's book "[OpenCV 2 Computer Vision Application Programming Cookbook](https://www.packtpub.com/application-development/opencv-3-computer-vision-application-programming-cookbook)". The recommended way is to read the Cookbook and refer to JavaCV examples when in doubt how to translate the Cookbook's C++ code to JavaCV. The Cookbook provides explanation how the algorithms work. The JavaCV examples provide only very brief comments related to specifics of JavaCV API.
+The *OpenCV Cookbook Examples* project is intended as a companion to the Robert Laganière's book "[OpenCV Computer Vision Application Programming Cookbook Second Edition](https://www.packtpub.com/application-development/opencv-3-computer-vision-application-programming-cookbook)". The recommended way is to read the Cookbook and refer to JavaCV examples when in doubt how to translate the Cookbook's C++ code to JavaCV. The Cookbook provides explanation how the algorithms work. The JavaCV examples provide only very brief comments related to specifics of JavaCV API.
 
 Simplest way to use the JavaCV examples is to browse the code located in [src/main] online. 
 You can also download it to you computer either use Git or as a ZIP file.
@@ -261,3 +263,5 @@ Unlike Java or C++, Scala supports writing of scripts - code that can be execute
 works very well. There is also Scala support for [Eclipse](http://scala-ide.org/index.html) and [NetBeans](https://github.com/dcaoyuan/nbscala).
 
 | [Next: Chapter 1>](src/main/scala/opencv_cookbook/chapter01) |
+
+[javacv]: https://github.com/bytedeco/javacv

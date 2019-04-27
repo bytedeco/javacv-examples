@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2015 Jarek Sacha. All Rights Reserved.
+ * Copyright (c) 2011-2019 Jarek Sacha. All Rights Reserved.
  *
  * Author's e-mail: jpsacha at gmail.com
  */
@@ -14,12 +14,13 @@ import java.nio.IntBuffer
 
 import javax.swing.WindowConstants
 import org.bytedeco.javacpp.indexer.FloatIndexer
-import org.bytedeco.javacpp.opencv_core.{Point, _}
-import org.bytedeco.javacpp.opencv_imgcodecs._
-import org.bytedeco.javacpp.opencv_imgproc._
 import org.bytedeco.javacpp.{DoublePointer, IntPointer}
 import org.bytedeco.javacv.OpenCVFrameConverter.ToMat
 import org.bytedeco.javacv.{CanvasFrame, Java2DFrameConverter}
+import org.bytedeco.opencv.global.opencv_core._
+import org.bytedeco.opencv.global.opencv_imgcodecs._
+import org.bytedeco.opencv.global.opencv_imgproc._
+import org.bytedeco.opencv.opencv_core.{Point, _}
 
 import scala.math.round
 
@@ -240,6 +241,7 @@ object OpenCVUtils {
     for (i <- 0 until size) dest(i) = new Point2f(indexer.get(0, i, 0), indexer.get(0, i, 1))
     dest
   }
+
   /**
     * Convert a vector of Point2f to a Mat representing a vector of Points2f.
     */

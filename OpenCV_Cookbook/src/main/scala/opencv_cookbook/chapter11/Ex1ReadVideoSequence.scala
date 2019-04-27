@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2014 Jarek Sacha. All Rights Reserved.
+ * Copyright (c) 2011-2019 Jarek Sacha. All Rights Reserved.
  *
  * Author's e-mail: jpsacha at gmail.com
  */
@@ -7,7 +7,6 @@
 package opencv_cookbook.chapter11
 
 import javax.swing.WindowConstants
-
 import org.bytedeco.javacv.{CanvasFrame, FFmpegFrameGrabber}
 
 import scala.collection.Iterator.continually
