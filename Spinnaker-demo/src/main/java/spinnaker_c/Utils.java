@@ -34,7 +34,7 @@ class Utils {
      *
      * @param err     error value.
      * @param message additional message to print.
-     * @return 'false' if err is not SPINNAKER_ERR_SUCCESS, or 'true' for any other 'err' value.
+     * @return 'false' if err is SPINNAKER_ERR_SUCCESS, or 'true' for any other 'err' value.
      */
     static boolean printOnError(_spinError err, String message) {
         if (err.value != _spinError.SPINNAKER_ERR_SUCCESS.value) {
