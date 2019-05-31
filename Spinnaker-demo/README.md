@@ -10,8 +10,9 @@ Please address queries and questions to [JavaCPP discussion group](http://groups
 Examples
 -------
 
-* C API examples in [`src/main/java/spinnaker_c`](src/main/java/spinnaker_c) :
+* C API examples:
     * `Acquisition_C` is an example how to enumerate cameras, start acquisition, and grab images.
+    * `EnumerationEvents_C` example of handling system and interface events, like camera disconnect. 
     * `Sequencer_C` shows how to use the sequencer to grab images with various settings.
 
 
