@@ -270,6 +270,10 @@ object EnumerationEvents_C {
     }
     println("Event handlers unregistered from interfaces...")
 
+    // Destroy interface list
+    err = spinInterfaceListDestroy(hInterfaceList)
+    exitOnError(err, "Unable to destroy interface list.")
+
     // Destroy arrival and removal events and release interfaces
     // Events must be destroyed in order to avoid memory leaks.
     for (i <- 0 until numInterfaces.get.toInt) {
