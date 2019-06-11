@@ -203,10 +203,7 @@ object EnumerationEvents_C {
     println("Interface event registered to system...")
 
     // Prepare user data
-    val hInterface = new Array[spinInterface](numInterfaces.get.toInt)
-    for (i <- 0 until numInterfaces.get.toInt) {
-      hInterface(i) = new spinInterface()
-    }
+    val hInterface = Array.fill(numInterfaces.get.toInt)(new spinInterface())
 
     // Create and register arrival and removal events to each interface
     // Separate arrival and event objects have been created for each interface.
@@ -229,14 +226,14 @@ object EnumerationEvents_C {
       exitOnError(err, "Unable to retrieve interface" + i + ".")
 
       // Create arrival event for selected interface
-      arrivalEvents(i) = new spinArrivalEvent
+      arrivalEvents(i) = new spinArrivalEvent()
 
       // We will use just the `interfaceNum` as user data, to simplify implementation
       err = spinArrivalEventCreate(arrivalEvents(i), onDeviceArrival, interfaceData(interfaceNum))
       exitOnError(err, "Unable to create arrival event for interface " + i + ".")
 
       // Create removal event for selected interface
-      removalEvents(i) = new spinRemovalEvent
+      removalEvents(i) = new spinRemovalEvent()
       err = spinRemovalEventCreate(removalEvents(i), onDeviceRemoval, interfaceData(interfaceNum))
       exitOnError(err, "Unable to create removal event for interface " + i + ".")
 
