@@ -87,7 +87,7 @@ object Ex3ColorDetectorMVCApplication extends SimpleSwingApplication {
       /**
        * Add component below previous one
        */
-      private def add(component: Component) {
+      private def add(component: Component): Unit = {
         c.gridy += 1
         layout(component) = c
       }
@@ -120,7 +120,7 @@ object Ex3ColorDetectorMVCApplication extends SimpleSwingApplication {
       /**
        * Ask user for location and open new image.
        */
-      def onOpenImage() {
+      def onOpenImage(): Unit = {
         waitCursor {
           // Ask user for the location of the image file
           if (fileChooser.showOpenDialog(buttonsPanel) != Approve) {
@@ -146,7 +146,7 @@ object Ex3ColorDetectorMVCApplication extends SimpleSwingApplication {
       /**
        * Select target color.
        */
-      def onSelectColor() {
+      def onSelectColor(): Unit = {
         waitCursor {
           val color = JColorChooser.showDialog(buttonsPanel.peer, "Select Target Color", colorDetectorController.targetColor.toColor)
           if (color != null) {
@@ -158,7 +158,7 @@ object Ex3ColorDetectorMVCApplication extends SimpleSwingApplication {
       /**
        * Process input image.
        */
-      def onProcessImage() {
+      def onProcessImage(): Unit = {
         waitCursor {
           // Process and update image display if image is loaded
           colorDetectorController.inputImage match {
@@ -173,7 +173,7 @@ object Ex3ColorDetectorMVCApplication extends SimpleSwingApplication {
       /**
        * Set color distance threshold to current value of the `colorDistanceSlider`.
        */
-      def onColorDistanceSliderChange() {
+      def onColorDistanceSliderChange(): Unit = {
         val value = colorDistanceSlider.value
         colorDetectorController.colorDistanceThreshold = value
         colorDistanceLabel.text = "Color Distance Threshold: " + value
@@ -182,7 +182,7 @@ object Ex3ColorDetectorMVCApplication extends SimpleSwingApplication {
       /**
        * Show the wit cursor while given code `op` is executing.
        */
-      private def waitCursor(op: => Unit) {
+      private def waitCursor(op: => Unit): Unit = {
         val previous = cursor
         cursor = getPredefinedCursor(WAIT_CURSOR)
         try {
@@ -192,7 +192,7 @@ object Ex3ColorDetectorMVCApplication extends SimpleSwingApplication {
         }
       }
 
-      private def display(image: Option[Mat]) {
+      private def display(image: Option[Mat]): Unit = {
         image match {
           case Some(x) =>
             imageView.icon = new ImageIcon(toBufferedImage(x))

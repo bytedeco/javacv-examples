@@ -65,7 +65,7 @@ class Histogram1D {
   private var _minRange = 0.0f
   private var _maxRange = 255.0f
 
-  def setRanges(minRange: Float, maxRange: Float) {
+  def setRanges(minRange: Float, maxRange: Float): Unit = {
     _minRange = minRange
     _maxRange = maxRange
   }

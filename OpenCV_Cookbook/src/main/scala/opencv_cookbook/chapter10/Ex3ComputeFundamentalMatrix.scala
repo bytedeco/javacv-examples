@@ -80,7 +80,7 @@ object Ex3ComputeFundamentalMatrix extends App {
 
 
   /** Compute fundamental matrix using 7-Point method. */
-  def fundamentalMatrix7Point() {
+  def fundamentalMatrix7Point(): Unit = {
     // Select 7 points that match well and are spread around the image. This is done by manually inspecting the points.
     //    val selected7Matches = new DMatchVector(7)
     val selected7Matches = selectedMatches
@@ -145,7 +145,7 @@ object Ex3ComputeFundamentalMatrix extends App {
   }
 
 
-  private def drawKeyPoints(image: Mat, keypoints: KeyPointVector, title: String) {
+  private def drawKeyPoints(image: Mat, keypoints: KeyPointVector, title: String): Unit = {
     //        val canvas = cvCreateImage(cvGetSize(image), image.depth(), 3)
     val canvas = new Mat()
     val white = new Scalar(255, 255, 255, 0)

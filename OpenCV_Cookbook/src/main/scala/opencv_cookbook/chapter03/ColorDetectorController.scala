@@ -49,7 +49,7 @@ object ColorDetectorController {
   /**
    * Set the color distance threshold.
    */
-  def colorDistanceThreshold_=(dist: Int) {
+  def colorDistanceThreshold_=(dist: Int): Unit = {
     colorDetector.colorDistanceThreshold = dist
   }
 
@@ -63,7 +63,7 @@ object ColorDetectorController {
   /**
    * Set the color to be detected
    */
-  def targetColor_=(color: ColorRGB) {
+  def targetColor_=(color: ColorRGB): Unit = {
     colorDetector.targetColor = color
   }
 
@@ -95,7 +95,7 @@ object ColorDetectorController {
   /**
    * Perform image processing.
    */
-  def process() {
+  def process(): Unit = {
     require(_inputImage != null, "Input image not set yet.")
     _result = Some(colorDetector.process(_inputImage.get))
   }

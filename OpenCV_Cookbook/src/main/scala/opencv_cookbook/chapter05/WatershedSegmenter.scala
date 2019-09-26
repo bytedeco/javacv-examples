@@ -18,7 +18,7 @@ class WatershedSegmenter {
   private var _markers: Mat = _
 
 
-  def setMarkers(markerImage: Mat) {
+  def setMarkers(markerImage: Mat): Unit = {
     _markers = new Mat()
     markerImage.convertTo(_markers, CV_32SC1)
   }

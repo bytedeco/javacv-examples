@@ -139,7 +139,7 @@ object Ex2MyFirstGUIApp extends SimpleSwingApplication {
 
 
   /** Process image in place.  */
-  private def processImage(src: Mat) {
+  private def processImage(src: Mat): Unit = {
     // Flip upside down
     flip(src, src, 0)
     // Swap red and blue channels

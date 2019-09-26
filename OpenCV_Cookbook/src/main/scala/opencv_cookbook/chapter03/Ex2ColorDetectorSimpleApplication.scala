@@ -84,7 +84,7 @@ object Ex2ColorDetectorSimpleApplication extends SimpleSwingApplication {
   /**
    * Display image in a window with given caption.
    */
-  private def showImage(caption: String, image: Mat) {
+  private def showImage(caption: String, image: Mat): Unit = {
     // Note that you need to indicate to CanvasFrame not to apply gamma correction,
     // by setting gamma to 1, otherwise the image will not look correct.
     val canvas = new CanvasFrame(caption, 1)

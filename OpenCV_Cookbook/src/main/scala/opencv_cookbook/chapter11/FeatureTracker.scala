@@ -133,7 +133,7 @@ class FeatureTracker(maxCount: Int = 500,
   def handleTrackedPoints(startPoints: Seq[Point2f],
                           endPoints: Seq[Point2f],
                           frame: Mat,
-                          output: Mat) {
+                          output: Mat): Unit = {
 
     // for all tracked points
     for (i <- startPoints.indices) {

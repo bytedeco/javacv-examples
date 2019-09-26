@@ -42,7 +42,7 @@ class HarrisDetector {
     *
     * Results of computation can be retrieved using `getCornerMap` and `getCorners`.
     */
-  def detect(image: Mat) {
+  def detect(image: Mat): Unit = {
     // Harris computations
     cornerStrength = Some(new Mat())
     cornerHarris(image, cornerStrength.get, neighborhood, aperture, k)

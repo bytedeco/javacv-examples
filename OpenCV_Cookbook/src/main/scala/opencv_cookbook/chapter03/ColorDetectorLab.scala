@@ -39,13 +39,13 @@ class ColorDetectorLab(private var _minDist: Int = 30,
 
   def colorDistanceThreshold: Int = _minDist
 
-  def colorDistanceThreshold_=(dist: Int) {
+  def colorDistanceThreshold_=(dist: Int): Unit = {
     _minDist = math.max(0, dist)
   }
 
   def targetColor: ColorLab = _targetLab
 
-  def targetColor_=(color: ColorLab) {
+  def targetColor_=(color: ColorLab): Unit = {
     _targetLab = color
   }
 

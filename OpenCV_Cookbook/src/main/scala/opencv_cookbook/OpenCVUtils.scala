@@ -72,7 +72,7 @@ object OpenCVUtils {
   }
 
   /** Show image in a window. Closing the window will exit the application. */
-  def show(mat: Mat, title: String) {
+  def show(mat: Mat, title: String): Unit = {
     val converter = new ToMat()
     val canvas = new CanvasFrame(title, 1)
     canvas.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE)
@@ -80,7 +80,7 @@ object OpenCVUtils {
   }
 
   /** Show image in a window. Closing the window will exit the application. */
-  def show(image: Image, title: String) {
+  def show(image: Image, title: String): Unit = {
     val canvas = new CanvasFrame(title, 1)
     canvas.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE)
     canvas.showImage(image)
@@ -123,7 +123,7 @@ object OpenCVUtils {
     * @param file  file to save to. File name extension decides output image format.
     * @param image image to save.
     */
-  def save(file: File, image: Mat) {
+  def save(file: File, image: Mat): Unit = {
     imwrite(file.getAbsolutePath, image)
   }
 

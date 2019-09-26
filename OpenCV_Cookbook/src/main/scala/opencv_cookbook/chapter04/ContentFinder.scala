@@ -56,7 +56,7 @@ class ContentFinder {
     * Set threshold for converting the back-projected image to a binary.
     * If value is negative no thresholding will be done.
     */
-  def threshold_=(t: Float) {
+  def threshold_=(t: Float): Unit = {
     _threshold = t
   }
 

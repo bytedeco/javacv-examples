@@ -39,7 +39,7 @@ class LineFinder(val deltaRho: Double = 1,
   /**
     * Apply probabilistic Hough transform.
     */
-  def findLines(binary: Mat) {
+  def findLines(binary: Mat): Unit = {
     // Hough transform for line detection
     lines = new Vec4iVector()
     HoughLinesP(binary, lines, deltaRho, deltaTheta, minVotes, minLength, minGap)
@@ -49,7 +49,7 @@ class LineFinder(val deltaRho: Double = 1,
   /**
     * Draws detected lines on an image
     */
-  def drawDetectedLines(image: Mat) {
+  def drawDetectedLines(image: Mat): Unit = {
     for (i <- 0 until lines.size().toInt) {
       // Due to bug #717 in OpenCV wrapper in v.1.5 for Vec4iVector, line segment coordinates cannot be extracted directly.
       // A workaround is to wrap `FloatPointer` returned from `lines.get` in `IntPointer`,

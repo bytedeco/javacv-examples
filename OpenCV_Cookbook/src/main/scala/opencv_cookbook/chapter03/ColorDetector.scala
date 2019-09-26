@@ -35,13 +35,13 @@ class ColorDetector(private var _minDist: Int = 100,
 
   def colorDistanceThreshold: Int = _minDist
 
-  def colorDistanceThreshold_=(dist: Int) {
+  def colorDistanceThreshold_=(dist: Int): Unit = {
     _minDist = scala.math.max(0, dist)
   }
 
   def targetColor: ColorRGB = _target
 
-  def targetColor_=(color: ColorRGB) {
+  def targetColor_=(color: ColorRGB): Unit = {
     _target = color
   }
 

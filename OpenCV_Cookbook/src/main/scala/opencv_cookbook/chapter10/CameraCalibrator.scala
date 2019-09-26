@@ -53,7 +53,7 @@ class CameraCalibrator {
     * @param radial8CoeffEnabled should be true if 8 radial coefficients are required (5 is default).
     * @param tangentialParamEnabled should be true if tangential distortion is present.
     */
-  def setCalibrationFlag(radial8CoeffEnabled: Boolean, tangentialParamEnabled: Boolean) {
+  def setCalibrationFlag(radial8CoeffEnabled: Boolean, tangentialParamEnabled: Boolean): Unit = {
     // Set the flag used in cv::calibrateCamera()
     flag = 0
     if (!tangentialParamEnabled) flag += CALIB_ZERO_TANGENT_DIST

@@ -77,7 +77,7 @@ class VideoProcessor(var frameProcessor: (Mat, Mat) => Unit = { (src, dest) => s
     *
     * By default the same parameters as input video will be used.
     */
-  def setOutput(fileName: String, codec: Int = 0, frameRate: Double = 0.0, isColor: Boolean = true) {
+  def setOutput(fileName: String, codec: Int = 0, frameRate: Double = 0.0, isColor: Boolean = true): Unit = {
     writerParam = Some(WriterParams(fileName, codec, frameRate, isColor))
   }
 
@@ -86,7 +86,7 @@ class VideoProcessor(var frameProcessor: (Mat, Mat) => Unit = { (src, dest) => s
   def isStopped: Boolean = _stop
 
   /** to grab (and process) the frames of the sequence */
-  def run() {
+  def run(): Unit = {
 
     val recorder = createRecorder()
 
@@ -154,7 +154,7 @@ class VideoProcessor(var frameProcessor: (Mat, Mat) => Unit = { (src, dest) => s
   }
 
   /** Write the output frame. */
-  private def writeNextFrame(writer: Option[FrameRecorder], frame: Mat) {
+  private def writeNextFrame(writer: Option[FrameRecorder], frame: Mat): Unit = {
     val converter = new OpenCVFrameConverter.ToIplImage()
     val f = converter.convert(frame)
     if (writer.isDefined) writer.foreach(_.record(f))
