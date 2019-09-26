@@ -117,11 +117,11 @@ class RobustMatcher(feature2D: Feature2D = SURF.create(),
       case RatioCheck =>
         val r = ratioTest(matches1)
         println("Number of matched points 1->2 (after ratio test): " + r.length)
-        toDMatchVector(r)
+        toDMatchVector(r.toIndexedSeq)
       case BothCheck =>
         val r = ratioAndSymmetryTest(matches1, matches2)
         println("Number of matched points 1->2 (after ratio and cross-check): " + r.length)
-        toDMatchVector(r)
+        toDMatchVector(r.toIndexedSeq)
       case NoCheck =>
         val r = new DMatchVector()
         matcher.`match`(descriptors1, descriptors2, r)

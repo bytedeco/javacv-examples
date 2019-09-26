@@ -42,7 +42,7 @@ object Ex4MatchingUsingSampleConsensus extends App {
   val imageMatches = new Mat()
   drawMatches(image1, matches.keyPoints1, // 1st image and its keypoints
     image2, matches.keyPoints2, // 2nd image and its keypoints
-    toDMatchVector(matches.matches), // the matches
+    toDMatchVector(matches.matches.toIndexedSeq), // the matches
     imageMatches, // the image produced
     new Scalar(0, 0, 255, 0), // color of the lines
     new Scalar(255, 0, 0, 0), // color of the keypoints
@@ -53,7 +53,8 @@ object Ex4MatchingUsingSampleConsensus extends App {
 
 
   // Draw the epipolar lines
-  val (points1, points2) = toPoint2fVectorPair(toDMatchVector(matches.matches), matches.keyPoints1, matches.keyPoints2)
+  val (points1, points2) = toPoint2fVectorPair(
+    toDMatchVector(matches.matches.toIndexedSeq), matches.keyPoints1, matches.keyPoints2)
 
   val lines1 = new Mat()
   computeCorrespondEpilines(toMat(points1), 1, matches.fundamentalMatrix, lines1)
