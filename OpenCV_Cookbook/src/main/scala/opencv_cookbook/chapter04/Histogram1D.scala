@@ -16,6 +16,8 @@ import org.bytedeco.opencv.global.opencv_core._
 import org.bytedeco.opencv.global.opencv_imgproc._
 import org.bytedeco.opencv.opencv_core._
 
+import scala.Ordering.Float.IeeeOrdering
+
 
 /**
   * Helper methods for performing histogram and look-up table operations, correspond to part of C++ class
