@@ -80,7 +80,7 @@ object Ex5Homography extends App {
   // Convert keypoints into Point2f
   val (points1, points2) = toPoint2fVectorPair(matches, keypoints1, keypoints2)
 
-  println(points1.size() + " " + points2.size())
+  println(s"${points1.size()} ${points2.size()}")
 
   // Find the homography between image 1 and image 2
   val inliers    = new Mat()
