@@ -243,7 +243,7 @@ class RobustMatcher(feature2D: Feature2D = SURF.create(),
 
     if (refineF || refineM) {
       // The F matrix will be recomputed with all accepted matches
-      val (points1, points2) = toPoint2fVectorPair(toDMatchVector(refinedMatches1), keyPoints1, keyPoints2)
+      val (points1, points2) = toPoint2fVectorPair(toDMatchVector(refinedMatches1.toSeq), keyPoints1, keyPoints2)
 
       // Compute 8-point F from all accepted matches
       val fundamentalMatrix = findFundamentalMat(

@@ -70,7 +70,7 @@ class FeatureTracker(maxCount: Int = 500,
     val err = new Mat()
     calcOpticalFlowPyrLK(
       grayPrevious, grayCurrent, // 2 consecutive images
-      toMatPoint2f(trackedPoints), // input point position in first image
+      toMatPoint2f(trackedPoints.toSeq), // input point position in first image
       trackedPointsNewUnfilteredMat, // output point position in the second image
       trackingStatus, // tracking success
       err // tracking error
@@ -89,7 +89,7 @@ class FeatureTracker(maxCount: Int = 500,
     }
 
     // 4. handle the accepted tracked points
-    handleTrackedPoints(initialPositionsNew, trackedPointsNew, inputFrame, outputFrame)
+    handleTrackedPoints(initialPositionsNew.toSeq, trackedPointsNew.toSeq, inputFrame, outputFrame)
 
     // 5. current points and image become previous ones
     trackedPoints = trackedPointsNew
