@@ -84,6 +84,5 @@ object Ex2HoughLines extends App {
     line(result, pt1, pt2, new Scalar(0, 0, 255, 0), 1, LINE_8, 0)
   }
 
-  save(new File("result.tif"), result)
   show(toMat8U(result), "Hough Lines")
 }
