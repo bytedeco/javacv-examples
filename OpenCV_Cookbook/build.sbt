@@ -3,7 +3,7 @@
 name         := "opencv-cookbook"
 organization := "javacv.examples"
 
-val javacppVersion = "1.5.1"
+val javacppVersion = "1.5.2"
 version      := javacppVersion
 scalaVersion := "2.13.1"
 scalacOptions ++= Seq("-unchecked", "-deprecation", "-Xlint")
@@ -12,9 +12,9 @@ scalacOptions ++= Seq("-unchecked", "-deprecation", "-Xlint")
 val platform = org.bytedeco.javacpp.Loader.getPlatform
 // Libraries with native dependencies
 val bytedecoPresetLibs = Seq(
-  "opencv" -> s"4.1.0-$javacppVersion",
-  "ffmpeg" -> s"4.1.3-$javacppVersion",
-  "openblas" -> s"0.3.6-$javacppVersion"
+  "opencv" -> s"4.1.2-$javacppVersion",
+  "ffmpeg" -> s"4.2.1-$javacppVersion",
+  "openblas" -> s"0.3.7-$javacppVersion"
 ).flatMap {
   case (lib, ver) => Seq(
     // Add both: dependency and its native binaries for the current `platform`

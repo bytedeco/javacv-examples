@@ -2,10 +2,10 @@
 name := "flandmark-demo"
 
 // Project version
-version := "1.5"
+version := "1.5.2"
 
 // Version of Scala used by the project
-scalaVersion := "2.12.8"
+scalaVersion := "2.13.1"
 
 scalacOptions ++= Seq("-unchecked", "-deprecation", "-optimize", "-Xlint")
 
@@ -17,11 +17,13 @@ lazy val platform = org.bytedeco.javacpp.Loader.getPlatform
 
 // @formatter:off
 libraryDependencies ++= Seq(
-  "org.bytedeco" % "javacv"    % "1.5",
-  "org.bytedeco" % "flandmark" % "1.07-1.5" classifier "",
-  "org.bytedeco" % "flandmark" % "1.07-1.5" classifier platform,
-  "org.bytedeco" % "opencv"    % "4.0.1-1.5" classifier "",
-  "org.bytedeco" % "opencv"    % "4.0.1-1.5" classifier platform
+  "org.bytedeco" % "javacv"    % "1.5.2",
+  "org.bytedeco" % "flandmark" % "1.07-1.5.2" classifier "",
+  "org.bytedeco" % "flandmark" % "1.07-1.5.2" classifier platform,
+  "org.bytedeco" % "openblas" % "0.3.7-1.5.2" classifier "",
+  "org.bytedeco" % "openblas" % "0.3.7-1.5.2" classifier platform,
+  "org.bytedeco" % "opencv"    % "4.1.2-1.5.2" classifier "",
+  "org.bytedeco" % "opencv"    % "4.1.2-1.5.2" classifier platform
 )
 // @formatter:on
 
