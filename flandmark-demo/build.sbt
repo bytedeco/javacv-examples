@@ -17,11 +17,12 @@ lazy val platform = org.bytedeco.javacpp.Loader.getPlatform
 
 // @formatter:off
 libraryDependencies ++= Seq(
+  "org.bytedeco" % "javacpp"   % "1.5.3"       classifier platform,
   "org.bytedeco" % "javacv"    % "1.5.3",
-  "org.bytedeco" % "flandmark" % "1.07-1.5.3" classifier "",
-  "org.bytedeco" % "flandmark" % "1.07-1.5.3" classifier platform,
-  "org.bytedeco" % "openblas" % "0.3.9-1.5.3" classifier "",
-  "org.bytedeco" % "openblas" % "0.3.9-1.5.3" classifier platform,
+  "org.bytedeco" % "flandmark" % "1.07-1.5.3"  classifier "",
+  "org.bytedeco" % "flandmark" % "1.07-1.5.3"  classifier platform,
+  "org.bytedeco" % "openblas"  % "0.3.9-1.5.3" classifier "",
+  "org.bytedeco" % "openblas"  % "0.3.9-1.5.3" classifier platform,
   "org.bytedeco" % "opencv"    % "4.3.0-1.5.3" classifier "",
   "org.bytedeco" % "opencv"    % "4.3.0-1.5.3" classifier platform
 )
