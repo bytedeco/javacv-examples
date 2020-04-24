@@ -13,7 +13,7 @@ scalacOptions ++= Seq("-unchecked", "-deprecation", "-optimize", "-Xlint")
 classpathTypes += "maven-plugin"
 
 // Platform classifier for native library dependencies
-lazy val platform = org.bytedeco.javacpp.Loader.getPlatform
+lazy val platform = org.bytedeco.javacpp.Loader.Detector.getPlatform
 
 // @formatter:off
 libraryDependencies ++= Seq(
