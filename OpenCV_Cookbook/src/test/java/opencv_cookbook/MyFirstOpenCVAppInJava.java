@@ -40,7 +40,7 @@ public class MyFirstOpenCVAppInJava {
         canvas.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
         // Convert from OpenCV Mat to Java Buffered image for display
-        final OpenCVFrameConverter converter = new OpenCVFrameConverter.ToMat();
+        final OpenCVFrameConverter<Mat> converter = new OpenCVFrameConverter.ToMat();
         // Show image on window.
         canvas.showImage(converter.convert(image));
     }
