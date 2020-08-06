@@ -2,7 +2,7 @@
 Chapter 11: Processing Video Sequences
 ======================================
 
-| [<Previous: Chapter 10][chapter10] |   |
+| [<Previous: Chapter 10][chapter10] |  [Next: Chapter 15>][chapter15] |
 
 To process a video sequence you need access to individual frames. In JavaCV frames are accessed using a [FrameGrabber][FrameGrabber]. There are several concrete frame grabber classes for dealing with different devices and video files. Examples here read video sequences from files using [FFmpegFrameGrabber][FFmpegFrameGrabber].
 
@@ -42,8 +42,9 @@ grabber.release();
 ```
 
 
-| [<Previous: Chapter 10][chapter10] | **Chapter 11: Processing Video Sequences** |  |
+| [<Previous: Chapter 10][chapter10] | **Chapter 11: Processing Video Sequences** | [Next: Chapter 15>][chapter15] |
 
 [chapter10]: /OpenCV_Cookbook/src/main/scala/opencv_cookbook/chapter10
+[chapter15]: /OpenCV_Cookbook/src/main/scala/opencv_cookbook/chapter15
 [FrameGrabber]: http://bytedeco.org/javacv/apidocs/org/bytedeco/javacv/FrameGrabber.html
 [FFmpegFrameGrabber]: http://bytedeco.org/javacv/apidocs/org/bytedeco/javacv/FFmpegFrameGrabber.html

@@ -251,6 +251,10 @@ List of Examples
   * *`BGFBSEgmenter`* - Separates "static" background from "moving" foreground by modeling background using a moving average. Used by example 'Ex5ForegroundSegmenter'.
   * *`FeatureTracker`* - Track moving features using an optical flow algorithm, used by example `Ex4TrackingFeatures`.
   * *`VideoProcessor`* - Helper class for dealing with video files, loading and applying processing to individual frames, used by examples: `Ex2ProcessVideoFrames`, `Ex3WriteVideoSequence`, `Ex4TrackingFeatures`, and `Ex5ForegroundSegmenter`.
+
+* [Chapter 15: OpenCV Advanced Features](src/main/scala/opencv_cookbook/chapter15)  
+  * *`Ex1FaceDetection`* - detect faces in an image using a pre-trained deep learning neural network model.
+  
 * [Utilities](src/main/scala/opencv_cookbook)
   * *`OpenCVUtils`* - reading and writing of image files, display of images, drawing of features on images, conversions between OpenCV image and data representations.
 
