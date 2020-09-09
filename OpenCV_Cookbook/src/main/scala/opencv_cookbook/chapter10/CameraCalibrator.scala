@@ -69,7 +69,8 @@ class CameraCalibrator {
     // Initialize the chessboard corners
     // in the chessboard reference frame
     // The corners are at 3D location (X,Y,Z)= (i,j,0)
-    val objectCorners = for (i <- 0 until boardSize.height; j <- 0 until boardSize.width) yield new Point3f(i, j, 0)
+    val objectCorners = for (i <- 0 until boardSize.height;
+                             j <- 0 until boardSize.width) yield new Point3f(i.toFloat, j.toFloat, 0F)
 
     // 2D Image points:
     var successes = 0
