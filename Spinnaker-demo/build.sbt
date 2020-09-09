@@ -3,13 +3,13 @@
 name         := "Spinnaker-demo"
 organization := "javacv.examples"
 
-val javacppVersion = "1.5.3"
+val javacppVersion = "1.5.4"
 version      := javacppVersion
-scalaVersion := "2.13.1"
+scalaVersion := "2.13.3"
 scalacOptions ++= Seq("-unchecked", "-deprecation", "-Xlint")
 
 // Platform classifier for native library dependencies
-val platform = org.bytedeco.javacpp.Loader.getPlatform
+val platform = org.bytedeco.javacpp.Loader.Detector.getPlatform
 // Libraries with native dependencies
 val bytedecoPresetLibs = Seq(
   "spinnaker" -> s"1.27.0.48-$javacppVersion").flatMap {
