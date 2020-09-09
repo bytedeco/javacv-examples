@@ -9,7 +9,7 @@ scalaVersion := "2.13.3"
 scalacOptions ++= Seq("-unchecked", "-deprecation", "-Xlint")
 
 // Platform classifier for native library dependencies
-val platform = org.bytedeco.javacpp.Loader.getPlatform
+val platform = org.bytedeco.javacpp.Loader.Detector.getPlatform
 // Libraries with native dependencies
 val bytedecoPresetLibs = Seq(
   "javacpp" -> javacppVersion,
