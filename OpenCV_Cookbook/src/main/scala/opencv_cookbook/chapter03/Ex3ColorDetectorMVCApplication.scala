@@ -21,16 +21,16 @@ import scala.swing.event.{ButtonClicked, ValueChanged}
 
 
 /**
- * Example for section "Using a Model-View-Controller architecture to design an application" in Chapter 3.
- * This object corresponds to the MainWindow class in the C++ code.
- */
+  * Example for section "Using a Model-View-Controller architecture to design an application" in Chapter 3.
+  * This object corresponds to the MainWindow class in the C++ code.
+  */
 object Ex3ColorDetectorMVCApplication extends SimpleSwingApplication {
 
-  def top = new MainFrame {
+  def top: MainFrame = new MainFrame {
     title = "Color Detector MVC"
 
-    val openImageButton = new Button("Open Image")
-    val processImageButton = new Button("Process Image") {
+    private val openImageButton = new Button("Open Image")
+    private val processImageButton = new Button("Process Image") {
       enabled = false
     }
     val selectColorButton = new Button("Select Color")
@@ -39,10 +39,10 @@ object Ex3ColorDetectorMVCApplication extends SimpleSwingApplication {
     val imageView = new Label
 
     // Color Distance Threshold components
-    val colorDistanceLabel = new Label("Color Distance Threshold: ???") {
+    private val colorDistanceLabel = new Label("Color Distance Threshold: ???") {
       horizontalAlignment = Alignment.Leading
     }
-    val colorDistanceSlider = new Slider() {
+    private val colorDistanceSlider = new Slider() {
       min = 0
       max = 3 * 255
     }
@@ -62,7 +62,7 @@ object Ex3ColorDetectorMVCApplication extends SimpleSwingApplication {
     }
 
     // Create vertical buttons panel
-    val buttonsPanel = new GridBagPanel {
+    val buttonsPanel: GridBagPanel = new GridBagPanel {
       private val c = new Constraints {
         fill = Fill.Horizontal
         gridx = 0
@@ -85,8 +85,8 @@ object Ex3ColorDetectorMVCApplication extends SimpleSwingApplication {
       add(processImageButton)
 
       /**
-       * Add component below previous one
-       */
+        * Add component below previous one
+        */
       private def add(component: Component): Unit = {
         c.gridy += 1
         layout(component) = c
@@ -98,7 +98,7 @@ object Ex3ColorDetectorMVCApplication extends SimpleSwingApplication {
       // Action buttons on the left
       add(new FlowPanel(buttonsPanel), BorderPanel.Position.West)
       // Image display in the center
-      val imageScrollPane = new ScrollPane(imageView) {
+      private val imageScrollPane = new ScrollPane(imageView) {
         preferredSize = new Dimension(640, 480)
       }
       add(imageScrollPane, BorderPanel.Position.Center)
@@ -111,41 +111,37 @@ object Ex3ColorDetectorMVCApplication extends SimpleSwingApplication {
     Controller.onColorDistanceSliderChange()
 
     /**
-     * Controller for the MainForm
-     */
+      * Controller for the MainForm
+      */
     object Controller {
       private lazy val fileChooser = new FileChooser(new File("./data"))
       private val colorDetectorController = ColorDetectorController
 
       /**
-       * Ask user for location and open new image.
-       */
+        * Ask user for location and open new image.
+        */
       def onOpenImage(): Unit = {
         waitCursor {
           // Ask user for the location of the image file
-          if (fileChooser.showOpenDialog(buttonsPanel) != Approve) {
-            return
-          }
-
-          // Load the image
-          val path = fileChooser.selectedFile.getAbsoluteFile
-          if (path == null) {
-            return
-          }
-
-          // Load image and update display.
-          if (colorDetectorController.setInputImage(path.getAbsolutePath)) {
-            display(colorDetectorController.inputImage)
-            processImageButton.enabled = true
-          } else {
-            Dialog.showMessage(buttonsPanel, "Cannot open image file: " + path, top.title, Error)
+          if (fileChooser.showOpenDialog(buttonsPanel) == Approve) {
+            // Load the image
+            val path = fileChooser.selectedFile.getAbsoluteFile
+            if (path != null) {
+              // Load image and update display.
+              if (colorDetectorController.setInputImage(path.getAbsolutePath)) {
+                display(colorDetectorController.inputImage)
+                processImageButton.enabled = true
+              } else {
+                Dialog.showMessage(buttonsPanel, "Cannot open image file: " + path, top.title, Error)
+              }
+            }
           }
         }
       }
 
       /**
-       * Select target color.
-       */
+        * Select target color.
+        */
       def onSelectColor(): Unit = {
         waitCursor {
           val color = JColorChooser.showDialog(buttonsPanel.peer, "Select Target Color", colorDetectorController.targetColor.toColor)
@@ -156,8 +152,8 @@ object Ex3ColorDetectorMVCApplication extends SimpleSwingApplication {
       }
 
       /**
-       * Process input image.
-       */
+        * Process input image.
+        */
       def onProcessImage(): Unit = {
         waitCursor {
           // Process and update image display if image is loaded
@@ -171,8 +167,8 @@ object Ex3ColorDetectorMVCApplication extends SimpleSwingApplication {
       }
 
       /**
-       * Set color distance threshold to current value of the `colorDistanceSlider`.
-       */
+        * Set color distance threshold to current value of the `colorDistanceSlider`.
+        */
       def onColorDistanceSliderChange(): Unit = {
         val value = colorDistanceSlider.value
         colorDetectorController.colorDistanceThreshold = value
@@ -180,8 +176,8 @@ object Ex3ColorDetectorMVCApplication extends SimpleSwingApplication {
       }
 
       /**
-       * Show the wit cursor while given code `op` is executing.
-       */
+        * Show the wit cursor while given code `op` is executing.
+        */
       private def waitCursor(op: => Unit): Unit = {
         val previous = cursor
         cursor = getPredefinedCursor(WAIT_CURSOR)
