@@ -11,12 +11,12 @@ import java.io.File
 import opencv_cookbook.OpenCVUtils._
 import org.bytedeco.opencv.global.opencv_features2d._
 import org.bytedeco.opencv.opencv_core._
-import org.bytedeco.opencv.opencv_xfeatures2d._
+import org.bytedeco.opencv.opencv_features2d.SIFT
 
 
 /**
- * Example of extracting SIFT features from section "Detecting the scale-invariant SURF features" in chapter 8.
- */
+  * Example of extracting SIFT features from section "Detecting the scale-invariant SURF features" in chapter 8.
+  */
 object Ex6SIFT extends App {
 
   // Read input image
