@@ -5,7 +5,7 @@ organization := "javacv.examples"
 
 val javacppVersion = "1.5.4"
 version      := javacppVersion
-scalaVersion := "2.13.3"
+scalaVersion := "2.13.5"
 
 scalacOptions ++= Seq("-unchecked", "-deprecation", "-Xlint")
 
@@ -28,8 +28,8 @@ libraryDependencies ++= Seq(
   "org.bytedeco"            % "javacpp"         % javacppVersion,
   "org.bytedeco"            % "javacpp"         % javacppVersion classifier platform,
   "org.bytedeco"            % "javacv"          % javacppVersion,
-  "org.scala-lang.modules" %% "scala-swing"     % "2.1.1",
-  "junit"                   % "junit"           % "4.13" % "test",
+  "org.scala-lang.modules" %% "scala-swing"     % "3.0.0",
+  "junit"                   % "junit"           % "4.13.2" % "test",
   "com.novocode"            % "junit-interface" % "0.11" % "test"
 ) ++ presetLibs
 
