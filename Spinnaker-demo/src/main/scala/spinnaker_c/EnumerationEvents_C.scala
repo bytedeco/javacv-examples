@@ -3,7 +3,7 @@ package spinnaker_c
 import org.bytedeco.javacpp._
 import org.bytedeco.spinnaker.Spinnaker_C._
 import org.bytedeco.spinnaker.global.Spinnaker_C._
-import spinnaker_c.Utils._
+import spinnaker_c.helpers.{exitOnError, printOnError}
 
 /**
   * Code based on C version, EnumerationEvents_C4J.cpp, from Spinnaker SDK by FLIR.
