@@ -32,6 +32,8 @@ object EnumerationEvents_C {
     * Helper trait to implement event handler, avoid code duplication.
     */
   trait OnDeviceEvent {
+    def eventName: String
+
     protected def onInterface(deviceSerialNumber: Int, interfaceNum: Int): Unit
 
     protected def onSystem(deviceSerialNumber: Int, hSystem: spinSystem): Unit = {
@@ -40,17 +42,18 @@ object EnumerationEvents_C {
       // Retrieve count
       val hCameraList = new spinCameraList
       err = spinCameraListCreateEmpty(hCameraList)
-      if (printOnError(err, "Unable to create camera list (system arrival).")) return
+      if (printOnError(err, s"Unable to create camera list (System $eventName).")) return
 
       err = spinSystemGetCameras(hSystem, hCameraList)
-      if (printOnError(err, "Unable to retrieve cameras (system arrival).")) return
+      if (printOnError(err, s"Unable to retrieve cameras (System $eventName).")) return
 
       val numCameras = new SizeTPointer(1)
       err = spinCameraListGetSize(hCameraList, numCameras)
-      if (printOnError(err, "Unable to retrieve camera list size (system arrival).")) return
+      if (printOnError(err, s"Unable to retrieve camera list size (System $eventName).")) return
 
       // Print count
       println("System event handler:\n")
+      println(s"\tDevice $deviceSerialNumber System $eventName.\n");
       println("\tThere " + (if (numCameras.get == 1) "is" else "are") + " "
         + numCameras.get + " " + (if (numCameras.get == 1) "device" else "devices") + " on the system.\n")
 
@@ -77,6 +80,8 @@ object EnumerationEvents_C {
   }
 
   class OnDeviceArrival extends spinArrivalEventFunction with OnDeviceEvent {
+    val eventName: String = "Arrival"
+
     override def onInterface(deviceSerialNumber: Int, interfaceNum: Int): Unit = { // Cast user data to expected type
       // Print arrival information
       println("Interface event handler:")
@@ -87,6 +92,8 @@ object EnumerationEvents_C {
   }
 
   class OnDeviceRemoval extends spinRemovalEventFunction with OnDeviceEvent {
+    val eventName: String = "Removal"
+
     override def onInterface(deviceSerialNumber: Int, interfaceNum: Int): Unit = {
       // Print removal information
       println("Interface event handler:\n")
@@ -130,14 +137,15 @@ object EnumerationEvents_C {
     err = spinSystemGetInstance(hSystem)
     exitOnError(err, "Unable to retrieve system instance.")
 
-    //        // Print out current library version
-    //        spinLibraryVersion hLibraryVersion;
-    //        spinSystemGetLibraryVersion(hSystem, &hLibraryVersion);
-    //        printf("Spinnaker library version: %d.%d.%d.%d\n\n",
-    //                hLibraryVersion.major,
-    //                hLibraryVersion.minor,
-    //                hLibraryVersion.type,
-    //                hLibraryVersion.build);
+    // Print out current library version
+    val hLibraryVersion: spinLibraryVersion = new spinLibraryVersion()
+
+    spinSystemGetLibraryVersion(hSystem, hLibraryVersion)
+    System.out.printf("Spinnaker library version: %d.%d.%d.%d\n\n%n",
+      hLibraryVersion.major(),
+      hLibraryVersion.minor(),
+      hLibraryVersion.`type`(),
+      hLibraryVersion.build())
 
     // Retrieve list of cameras from the system
     val hCameraList = new spinCameraList()
@@ -153,98 +161,53 @@ object EnumerationEvents_C {
     exitOnError(err, "Unable to retrieve number of cameras.")
     println("Number of cameras detected: " + numCameras.get + "\n")
 
-    // Retrieve list of interfaces from the system
-    // *** NOTES ***
-    // MacOS interfaces are only registered if they are active.
-    // For this example to have the desired outcome all devices must be connected
-    // at the beginning and end of this example in order to register and deregister
-    // an event handler on each respective interface.
-    val hInterfaceList = new spinInterfaceList()
-    val numInterfaces = new SizeTPointer(1)
-    err = spinInterfaceListCreateEmpty(hInterfaceList)
-    exitOnError(err, "Unable to create interface list.")
-
-    err = spinSystemGetInterfaces(hSystem, hInterfaceList)
-    exitOnError(err, "Unable to retrieve interface list.")
-
-    err = spinInterfaceListGetSize(hInterfaceList, numInterfaces)
-    exitOnError(err, "Unable to retrieve number of interfaces.")
-
-    println("Number of interfaces detected: " + numInterfaces.get + "\n")
     println("\n*** CONFIGURE ENUMERATION EVENTS ***\n")
 
-    // Create interface event for the system
+    //
+    // Create interface event handler for the system
+    //
+    // *** NOTES ***
     // The function for the system has been constructed to accept a system in
     // order to print the number of cameras on the system. Notice that there
-    // are 3 types of events that can be created: arrival events, removal events,
-    // and interface events, which are a combination of arrival and removal
-    // events. Here, the an interface event is created, which requires both
-    // an arrival event and a removal event object.
+    // are 3 types of event handlers that can be created: arrival event handlers, removal event handlers,
+    // and interface event handlers, which are a combination of arrival and removal
+    // event handlers. Here, the an interface event handler is created, which requires both
+    // an arrival event handler and a removal event handler object.
+    //
     // *** LATER ***
-    // In Spinnaker C, every event that is created must be destroyed to avoid
+    // In Spinnaker C, every event handler that is created must be destroyed to avoid
     // memory leaks.
-    val interfaceEventSystem = new spinInterfaceEvent()
+    //
+    val interfaceEventSystem = new spinInterfaceEventHandler()
 
     val onDeviceArrival = new OnDeviceArrival()
     val onDeviceRemoval = new OnDeviceRemoval()
-    err = spinInterfaceEventCreate(interfaceEventSystem, onDeviceArrival, onDeviceRemoval, systemData(hSystem))
+    err = spinInterfaceEventHandlerCreate(interfaceEventSystem, onDeviceArrival, onDeviceRemoval, systemData(hSystem))
     exitOnError(err, "Unable to create interface event for system.")
     println("Interface event for system created...")
 
-    // Register interface event for the system
-    // Arrival, removal, and interface events can all be registered to
-    // interfaces or the system. Do not think that interface events can only be
+    //
+    // Register interface event handler for the system
+    //
+    // *** NOTES ***
+    // Arrival, removal, and interface event handlers can all be registered to
+    // interfaces or the system. Do not think that interface event handlers can only be
     // registered to an interface.
-    // Arrival, removal, and interface events must all be unregistered manually.
+    // Registering an interface event handler to the system is basically the same thing
+    // as registering that event handler to all interfaces, with the added benefit of
+    // not having to manage newly arrived or newly removed interfaces.
+    // In order to manually manage newly arrived or removed interfaces, one would need
+    // to implement interface arrival/removal event handlers, which are not yet supported
+    // in the Spinnaker C API.
+    //
+    // *** LATER ***
+    // Arrival, removal, and interface event handlers must all be unregistered manually.
     // This must be done prior to releasing the system and while they are still
     // in scope.
-    err = spinSystemRegisterInterfaceEvent(hSystem, interfaceEventSystem)
+    //
+    err = spinSystemRegisterInterfaceEventHandler(hSystem, interfaceEventSystem)
     exitOnError(err, "Unable to register interface event on system.")
     println("Interface event registered to system...")
-
-    // Prepare user data
-    val hInterface = Array.fill(numInterfaces.get.toInt)(new spinInterface())
-
-    // Create and register arrival and removal events to each interface
-    // Separate arrival and event objects have been created for each interface.
-    // This is for demonstration purposes as an interface event object (which is
-    // simply a combination of an arrival and removal event object) is more
-    // appropriate in this instance.
-    // in scope. Also, every event that is created must be destroyed to avoid
-    // memory leaks.
-    val arrivalEvents = new Array[spinArrivalEvent](numInterfaces.get.toInt)
-    val removalEvents = new Array[spinRemovalEvent](numInterfaces.get.toInt)
-
-    for (i <- 0 until numInterfaces.get.toInt) {
-      println("Setting up interface: " + i)
-
-      // Initialize user data for selected interface
-      val interfaceNum = new IntPointer(1L)
-      interfaceNum.put(i)
-
-      err = spinInterfaceListGet(hInterfaceList, i, hInterface(i))
-      exitOnError(err, "Unable to retrieve interface" + i + ".")
-
-      // Create arrival event for selected interface
-      arrivalEvents(i) = new spinArrivalEvent()
-
-      // We will use just the `interfaceNum` as user data, to simplify implementation
-      err = spinArrivalEventCreate(arrivalEvents(i), onDeviceArrival, interfaceData(interfaceNum))
-      exitOnError(err, "Unable to create arrival event for interface " + i + ".")
-
-      // Create removal event for selected interface
-      removalEvents(i) = new spinRemovalEvent()
-      err = spinRemovalEventCreate(removalEvents(i), onDeviceRemoval, interfaceData(interfaceNum))
-      exitOnError(err, "Unable to create removal event for interface " + i + ".")
-
-      // Register arrival event to selected interface
-      err = spinInterfaceRegisterArrivalEvent(hInterface(i), arrivalEvents(i))
-      exitOnError(err, "Unable to register arrival event for interface " + i + ".")
-
-      // Register removal event to selected interface
-      err = spinInterfaceRegisterRemovalEvent(hInterface(i), removalEvents(i))
-      exitOnError(err, "Unable to register removal event for interface " + i + ".")
-    }
 
     println("Arrival and removal events created and registered to all interfaces...\n")
 
@@ -252,48 +215,18 @@ object EnumerationEvents_C {
     println("Ready! Remove/Plug in cameras to test or press Enter to exit...")
     System.in.read()
 
-    //
-    // Unregister arrival and removal events from each interface
-    // *** NOTES ***
-    // It is important to unregister all arrival, removal, and interface events
-    // from all interfaces that they may be registered to.
-    for (i <- 0 until numInterfaces.get.toInt) {
-      err = spinInterfaceUnregisterArrivalEvent(hInterface(i), arrivalEvents(i))
-      exitOnError(err, "Unable to unregister arrival event from interface " + i + ".")
-
-      err = spinInterfaceUnregisterRemovalEvent(hInterface(i), removalEvents(i))
-      exitOnError(err, "Unable to unregister removal event from interface " + i + ".")
-
-      // Release interface
-      err = spinInterfaceRelease(hInterface(i))
-      exitOnError(err, "Unable to release interface " + i + ".")
-    }
-    println("Event handlers unregistered from interfaces...")
-
-    // Destroy interface list
-    err = spinInterfaceListDestroy(hInterfaceList)
-    exitOnError(err, "Unable to destroy interface list.")
-
-    // Destroy arrival and removal events and release interfaces
-    // Events must be destroyed in order to avoid memory leaks.
-    for (i <- 0 until numInterfaces.get.toInt) {
-      err = spinArrivalEventDestroy(arrivalEvents(i))
-      exitOnError(err, "Unable to destroy arrival event " + i + ".")
-
-      err = spinRemovalEventDestroy(removalEvents(i))
-      exitOnError(err, "Unable to destroy removal event " + i + ".")
-    }
-
-    println("Interface event handlers destroyed...")
-
     // Unregister system event from system object
     // registered to the system.
-    err = spinSystemUnregisterInterfaceEvent(hSystem, interfaceEventSystem)
+    err = spinSystemUnregisterInterfaceEventHandler(hSystem, interfaceEventSystem)
     exitOnError(err, "Unable to unregister interface event from system.")
     println("Event handlers unregistered from system...")
 
     // Destroy interface events
-    err = spinInterfaceEventDestroy(interfaceEventSystem)
+    //
+    // *** NOTES ***
+    // Event handlers must be destroyed in order to avoid memory leaks.
+    //
+    err = spinInterfaceEventHandlerDestroy(interfaceEventSystem)
     exitOnError(err, "Unable to destroy interface event.")
     println("System event handler destroyed...")
 
