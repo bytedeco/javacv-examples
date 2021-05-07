@@ -53,7 +53,7 @@ object EnumerationEvents_C {
 
       // Print count
       println("System event handler:\n")
-      println(s"\tDevice $deviceSerialNumber System $eventName.\n");
+      println(s"\tDevice $deviceSerialNumber System $eventName.\n")
       println("\tThere " + (if (numCameras.get == 1) "is" else "are") + " "
         + numCameras.get + " " + (if (numCameras.get == 1) "device" else "devices") + " on the system.\n")
 
