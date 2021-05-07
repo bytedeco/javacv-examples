@@ -195,7 +195,7 @@ public class Acquisition_C {
             // image must be released in orer to keep the buffer from filling up.
             //
             spinImage hResultImage = new spinImage(); //NULL;
-            err = spinCameraGetNextImage(hCam, hResultImage);
+            err = spinCameraGetNextImageEx(hCam, 1000, hResultImage);
             if (Utils.printOnError(err, "Unable to get next image. Non-fatal error.")) {
                 continue;
             }
@@ -390,7 +390,6 @@ public class Acquisition_C {
      * comments on preparing and cleaning up the system.
      */
     public static void main(String[] args) {
-
 
         _spinError err;
 

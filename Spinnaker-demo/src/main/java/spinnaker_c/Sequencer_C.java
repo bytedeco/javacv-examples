@@ -979,7 +979,10 @@ public class Sequencer_C {
     // This function acquires and saves 10 images from a device; please see
 // Acquisition_C example for more in-depth comments on the acquisition of
 // images.
-    private static _spinError acquireImages(spinCamera hCam, spinNodeMapHandle hNodeMap, spinNodeMapHandle hNodeMapTLDevice) {
+    private static _spinError acquireImages(spinCamera hCam,
+                                            spinNodeMapHandle hNodeMap,
+                                            spinNodeMapHandle hNodeMapTLDevice,
+                                            int timeout) {
         _spinError err;
 
         printf("\n*** IMAGE ACQUISITION ***\n\n");
@@ -1069,7 +1072,7 @@ public class Sequencer_C {
             // Retrieve next received image
             spinImage hResultImage = new spinImage();
 
-            err = spinCameraGetNextImage(hCam, hResultImage);
+            err = spinCameraGetNextImageEx(hCam, timeout, hResultImage);
             if (printOnError(err, "Unable to get next image. Non-fatal error.")) {
                 continue;
             }
@@ -1264,7 +1267,7 @@ public class Sequencer_C {
 
         // Retrieve maximum exposure time; exposure time recorded in microseconds
         spinNodeHandle hExposureTime = new spinNodeHandle();
-        final double exposureTimeMaxToSet = 5000000.0;
+        final double exposureTimeMaxToSet = 2000000.0;
         DoublePointer exposureTimeMax = new DoublePointer(1);
         exposureTimeMax.put(0);
         DoublePointer exposureTimeMin = new DoublePointer(1);
@@ -1344,6 +1347,9 @@ public class Sequencer_C {
             gainToSet += gainMax.get() / 50.0;
         }
 
+        // Calculate appropriate acquisition grab timeout window based on exposure time
+        // Note: exposureTimeToSet is in microseconds and needs to be converted to milliseconds
+        int timeout = (int) ((exposureTimeToSet / 1000) + 1000);
 
         // Configure sequencer to acquire images
         if (ConfigureSequencerPartTwo(hNodeMap).value != SPINNAKER_ERR_SUCCESS.value) {
@@ -1351,7 +1357,7 @@ public class Sequencer_C {
         }
 
         // Acquire images
-        if (acquireImages(hCam, hNodeMap, hNodeMapTLDevice).value != SPINNAKER_ERR_SUCCESS.value) {
+        if (acquireImages(hCam, hNodeMap, hNodeMapTLDevice, timeout).value != SPINNAKER_ERR_SUCCESS.value) {
             return SPINNAKER_ERR_ACCESS_DENIED;
         }
 
@@ -1391,15 +1397,15 @@ public class Sequencer_C {
         err = spinSystemGetInstance(hSystem);
         exitOnError(err, "Unable to retrieve system instance.");
 
-//        // Print out current library version
-//        spinLibraryVersion hLibraryVersion;
-//
-//        spinSystemGetLibraryVersion(hSystem, &hLibraryVersion);
-//        printf("Spinnaker library version: %d.%d.%d.%d\n\n",
-//                hLibraryVersion.major,
-//                hLibraryVersion.minor,
-//                hLibraryVersion.type,
-//                hLibraryVersion.build);
+        // Print out current library version
+        spinLibraryVersion hLibraryVersion = new spinLibraryVersion();
+
+        spinSystemGetLibraryVersion(hSystem, hLibraryVersion);
+        System.out.printf("Spinnaker library version: %d.%d.%d.%d\n\n%n",
+                hLibraryVersion.major(),
+                hLibraryVersion.minor(),
+                hLibraryVersion.type(),
+                hLibraryVersion.build());
 
         // Retrieve list of cameras from the system
         spinCameraList hCameraList = new spinCameraList();
