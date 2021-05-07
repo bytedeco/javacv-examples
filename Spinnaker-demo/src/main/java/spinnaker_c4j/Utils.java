@@ -1,4 +1,4 @@
-package spinnaker_c;
+package spinnaker_c4j;
 
 import org.bytedeco.javacpp.BytePointer;
 import org.bytedeco.javacpp.SizeTPointer;

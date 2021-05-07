@@ -14,15 +14,15 @@
 // SUFFERED BY LICENSEE AS A RESULT OF USING, MODIFYING OR DISTRIBUTING
 // THIS SOFTWARE OR ITS DERIVATIVES.
 //=============================================================================
-package spinnaker_c;
+package spinnaker_c4j;
 
 import org.bytedeco.javacpp.BytePointer;
 import org.bytedeco.javacpp.SizeTPointer;
 import org.bytedeco.spinnaker.Spinnaker_C.*;
 
 import static org.bytedeco.spinnaker.global.Spinnaker_C.*;
-import static spinnaker_c.Utils.exitOnError;
-import static spinnaker_c.Utils.printOnError;
+import static spinnaker_c4j.Utils.exitOnError;
+import static spinnaker_c4j.Utils.printOnError;
 
 /**
  * Code based on C version, Enumeration_C.c, from Spinnaker SDK by FLIR.
@@ -41,7 +41,7 @@ import static spinnaker_c.Utils.printOnError;
  * camera to acquire images while NodeMapInfo_C explores retrieving
  * information from various node types.
  */
-public class Enumeration_C_Java {
+public class Enumeration_C {
     private final static int MAX_BUFF_LEN = 256;
 
     /* This function queries an interface for its cameras and then prints out

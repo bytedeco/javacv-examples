@@ -15,7 +15,7 @@
 // THIS SOFTWARE OR ITS DERIVATIVES.
 //=============================================================================*/
 
-package spinnaker_c;
+package spinnaker_c4j;
 
 import org.bytedeco.javacpp.BytePointer;
 import org.bytedeco.javacpp.IntPointer;
@@ -26,7 +26,7 @@ import org.bytedeco.spinnaker.Spinnaker_C.*;
 import java.io.File;
 
 import static org.bytedeco.spinnaker.global.Spinnaker_C.*;
-import static spinnaker_c.Utils.*;
+import static spinnaker_c4j.Utils.*;
 
 /**
  * Code based on C version, Acquisition_C.cpp, from Spinnaker SDK by FLIR.
