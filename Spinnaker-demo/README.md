@@ -10,14 +10,20 @@ Please address queries and questions to [JavaCPP discussion group](http://groups
 Examples
 -------
 
-* C API examples in Java:
+#### C API examples in Java
+
     * `Acquisition_C` - how to enumerate cameras, start acquisition, and grab images.
     * `Enumeration_C` - how to enumerate interfaces and cameras.
     * `Sequencer_C` shows how to use the sequencer to grab images with various settings.
 
-* C API examples in Scala:
+To reduce verbosity of the original C examples some repeating code was moved to `spinnaker_c4j.Utils`
+
+####  * C API examples in Scala
+
+    * `Enumeration_C` - how to enumerate interfaces and cameras.
     * `EnumerationEvents_C` - handling system and interface events, like camera disconnect.
 
+To reduce verbosity of the original C examples some repeating code was moved to `spinnaker_c.helpers`
 
 Build script
 ------------
