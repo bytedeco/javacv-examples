@@ -6,16 +6,18 @@
 
 package opencv_cookbook.chapter01
 
-import javax.swing.WindowConstants
-import org.bytedeco.javacv.{CanvasFrame, OpenCVFrameConverter}
+import opencv_cookbook.OpenCVUtils.toBufferedImage
+import org.bytedeco.javacv.CanvasFrame
 import org.bytedeco.opencv.global.opencv_core._
 import org.bytedeco.opencv.global.opencv_imgcodecs._
 import org.bytedeco.opencv.global.opencv_imgproc._
 import org.bytedeco.opencv.opencv_core._
 
+import javax.swing.WindowConstants
+
 /**
- * Example of reading, saving, displaying, and drawing on an image.
- */
+  * Example of reading, saving, displaying, and drawing on an image.
+  */
 object Ex3LoadAndSave extends App {
 
   // read the input image as a gray-scale image
@@ -39,8 +41,7 @@ object Ex3LoadAndSave extends App {
   canvas.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE)
 
   // Show image on window
-  val converter = new OpenCVFrameConverter.ToMat()
-  canvas.showImage(converter.convert(image))
+  canvas.showImage(toBufferedImage(image))
 
 
   // we create another empty image
@@ -57,7 +58,7 @@ object Ex3LoadAndSave extends App {
   canvas.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE)
 
   // Show image on window
-  canvas2.showImage(converter.convert(result))
+  canvas2.showImage(toBufferedImage(result))
 
   // save result
   imwrite("output.bmp", result)
@@ -86,5 +87,5 @@ object Ex3LoadAndSave extends App {
     false) //When true, the image data origin is at the bottom-left corner. Otherwise, it is at the top-left corner.
 
   canvas3.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE)
-  canvas3.showImage(converter.convert(image3))
+  canvas3.showImage(toBufferedImage(image3))
 }

@@ -7,22 +7,21 @@
 package opencv_cookbook
 
 
-import java.awt._
-import java.awt.image.BufferedImage
-import java.io.File
-import java.nio.IntBuffer
-
-import javax.swing.WindowConstants
 import org.bytedeco.javacpp.indexer.FloatIndexer
 import org.bytedeco.javacpp.{DoublePointer, IntPointer}
-import org.bytedeco.javacv.OpenCVFrameConverter.ToMat
-import org.bytedeco.javacv.{CanvasFrame, Java2DFrameConverter}
+import org.bytedeco.javacv.{CanvasFrame, Java2DFrameConverter, OpenCVFrameConverter}
 import org.bytedeco.opencv.global.opencv_core._
 import org.bytedeco.opencv.global.opencv_imgcodecs._
 import org.bytedeco.opencv.global.opencv_imgproc._
 import org.bytedeco.opencv.opencv_core.{Point, _}
 
+import java.awt._
+import java.awt.image.BufferedImage
+import java.io.File
+import java.nio.IntBuffer
+import javax.swing.WindowConstants
 import scala.math.round
+import scala.util.Using
 
 
 /** Helper methods that simplify use of OpenCV API. */
@@ -73,10 +72,8 @@ object OpenCVUtils {
 
   /** Show image in a window. Closing the window will exit the application. */
   def show(mat: Mat, title: String): Unit = {
-    val converter = new ToMat()
-    val canvas = new CanvasFrame(title, 1)
-    canvas.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE)
-    canvas.showImage(converter.convert(mat))
+    val bi = toBufferedImage(mat)
+    show(bi, title)
   }
 
   /** Show image in a window. Closing the window will exit the application. */
@@ -169,9 +166,13 @@ object OpenCVUtils {
   }
 
   def toBufferedImage(mat: Mat): BufferedImage = {
-    val openCVConverter = new ToMat()
-    val java2DConverter = new Java2DFrameConverter()
-    java2DConverter.convert(openCVConverter.convert(mat))
+    Using.resource(new OpenCVFrameConverter.ToMat()) { openCVConverter =>
+      Using.resource(openCVConverter.convert(mat)) { frame =>
+        Using.resource(new Java2DFrameConverter()) { java2DConverter =>
+          java2DConverter.convert(frame)
+        }
+      }
+    }
   }
 
 

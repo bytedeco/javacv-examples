@@ -7,11 +7,12 @@
 package opencv_cookbook;
 
 import org.bytedeco.javacv.CanvasFrame;
-import org.bytedeco.javacv.OpenCVFrameConverter;
 import org.bytedeco.opencv.opencv_core.Mat;
 
 import javax.swing.*;
+import java.awt.image.BufferedImage;
 
+import static opencv_cookbook.OpenCVUtilsJava.toBufferedImage;
 import static org.bytedeco.opencv.global.opencv_core.BORDER_DEFAULT;
 import static org.bytedeco.opencv.global.opencv_imgcodecs.imread;
 import static org.bytedeco.opencv.global.opencv_imgproc.Laplacian;
@@ -40,9 +41,10 @@ public class MyFirstOpenCVAppInJava {
         canvas.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
         // Convert from OpenCV Mat to Java Buffered image for display
-        final OpenCVFrameConverter<Mat> converter = new OpenCVFrameConverter.ToMat();
+        final BufferedImage bi = toBufferedImage(image);
+
         // Show image on window.
-        canvas.showImage(converter.convert(image));
+        canvas.showImage(bi);
     }
 }
 
