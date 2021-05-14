@@ -7,12 +7,14 @@
 package opencv_cookbook.chapter11
 
 
-import javax.swing.WindowConstants
 import opencv_cookbook.OpenCVUtils._
 import org.bytedeco.javacv.{CanvasFrame, FFmpegFrameGrabber, OpenCVFrameConverter}
 import org.bytedeco.opencv.global.opencv_imgproc._
 import org.bytedeco.opencv.global.opencv_video._
 import org.bytedeco.opencv.opencv_core._
+
+import javax.swing.WindowConstants
+import scala.util.Using
 
 
 /** The second example example for section "Extracting the foreground objects in video" in Chapter 10, page 272.
@@ -43,26 +45,27 @@ object Ex6MOGMotionDetector extends App {
   // foreground binary image
   val foreground = new Mat()
 
-  val frameConverter = new OpenCVFrameConverter.ToMat()
+  Using.resource(new OpenCVFrameConverter.ToMat()) { frameConverter =>
 
-  // Mixture of Gaussians approach
-  val mog = createBackgroundSubtractorMOG2()
+    // Mixture of Gaussians approach
+    val mog = createBackgroundSubtractorMOG2()
 
-  for (frame <- Iterator.continually(grabber.grab()).takeWhile(_ != null)) {
+    for (frame <- Iterator.continually(grabber.grab()).takeWhile(_ != null)) {
 
-    val inputFrame = frameConverter.convert(frame)
+      val inputMat = frameConverter.convert(frame)
 
-    // update the background
-    // and return the foreground
-    mog(inputFrame, foreground, 0.01)
+      // update the background
+      // and return the foreground
+      mog(inputMat, foreground, 0.01)
 
-    // Complement the image
-    threshold(foreground, foreground, 128, 255, THRESH_BINARY_INV)
+      // Complement the image
+      threshold(foreground, foreground, 128, 255, THRESH_BINARY_INV)
 
-    canvasFrame.showImage(toBufferedImage(foreground))
+      canvasFrame.showImage(toBufferedImage(foreground))
 
-    // Delay
-    Thread.sleep(delay)
+      // Delay
+      Thread.sleep(delay)
+    }
   }
 
   grabber.release()

@@ -6,10 +6,12 @@
 
 package opencv_cookbook.chapter11
 
-import javax.swing.WindowConstants
 import opencv_cookbook.OpenCVUtils._
 import org.bytedeco.javacv._
 import org.bytedeco.opencv.opencv_core._
+
+import javax.swing.WindowConstants
+import scala.util.Using
 
 /** Video processor.
   *
@@ -95,39 +97,44 @@ class VideoProcessor(var frameProcessor: (Mat, Mat) => Unit = { (src, dest) => s
 
     // Capture, process, and display frames
     //    val inputFrame = new Mat()
+    //    stopAtFrameNo = 30
     val outputFrame = new Mat()
     var frameNumber: Long = 0
-    val frameConverter = new OpenCVFrameConverter.ToMat()
-    for (frame <- Iterator.continually(grabber.grab()).takeWhile(_ != null)
-         if !isStopped) {
+    var frame = grabber.grab()
+    Using.resource(new OpenCVFrameConverter.ToMat()) { frameConverter =>
+      while (frame != null && !isStopped) {
 
-      val inputFrame = frameConverter.convert(frame)
+        val inputMat = frameConverter.convert(frame)
 
-      // Display input frame, if canvas was created
-      inputCanvas.foreach(_.showImage(toBufferedImage(inputFrame)))
+        // Display input frame, if canvas was created
+        inputCanvas.foreach(_.showImage(toBufferedImage(inputMat)))
 
-      if (processFrames) {
-        frameProcessor(inputFrame, outputFrame)
-        frameNumber += 1
-      } else {
-        inputFrame.copyTo(outputFrame)
+        if (processFrames) {
+          frameProcessor(inputMat, outputFrame)
+          frameNumber += 1
+        } else {
+          inputMat.copyTo(outputFrame)
+        }
+
+        // write output sequence
+        writeNextFrame(recorder, outputFrame)
+
+        // Display output frame, if canvas was created
+        outputCanvas.foreach(_.showImage(toBufferedImage(outputFrame)))
+
+        // introduce a delay
+        if (delay > 0) Thread.sleep(delay)
+
+        // check if we should stop
+        _stop = stopAtFrameNo >= 0 && frameNumber >= stopAtFrameNo
+        if (!_stop) {
+          frame = grabber.grab()
+        }
       }
 
-      // write output sequence
-      writeNextFrame(recorder, outputFrame)
-
-      // Display output frame, if canvas was created
-      outputCanvas.foreach(_.showImage(toBufferedImage(outputFrame)))
-
-      // introduce a delay
-      if (delay > 0) Thread.sleep(delay)
-
-      // check if we should stop
-      _stop = stopAtFrameNo >= 0 && frameNumber >= stopAtFrameNo
+      // Release writer (if created) to make sure that data is flushed to the output file, and file is closed.
+      recorder.foreach(_.stop())
     }
-
-    // Release writer (if created) to make sure that data is flushed to the output file, and file is closed.
-    recorder.foreach(_.stop())
   }
 
   private def grabber: FFmpegFrameGrabber =
@@ -137,7 +144,7 @@ class VideoProcessor(var frameProcessor: (Mat, Mat) => Unit = { (src, dest) => s
 
   /* Create canvas if its name is not empty */
   private def createCanvas(title: String): Option[CanvasFrame] =
-    if (title != null && !title.isEmpty) {
+    if (title != null && title.nonEmpty) {
       val canvas = new CanvasFrame(title, 1)
       canvas.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE)
       Some(canvas)
@@ -154,9 +161,13 @@ class VideoProcessor(var frameProcessor: (Mat, Mat) => Unit = { (src, dest) => s
   }
 
   /** Write the output frame. */
-  private def writeNextFrame(writer: Option[FrameRecorder], frame: Mat): Unit = {
-    val converter = new OpenCVFrameConverter.ToIplImage()
-    val f = converter.convert(frame)
-    if (writer.isDefined) writer.foreach(_.record(f))
+  private def writeNextFrame(writerOpt: Option[FrameRecorder], frame: Mat): Unit = {
+    writerOpt.foreach { writer =>
+      Using.resource(new OpenCVFrameConverter.ToMat()) { converter =>
+        Using.resource(converter.convert(frame)) { frame =>
+          writer.record(frame)
+        }
+      }
+    }
   }
 }
