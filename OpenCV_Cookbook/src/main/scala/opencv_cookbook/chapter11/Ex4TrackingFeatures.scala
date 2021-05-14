@@ -21,8 +21,13 @@ import java.io.File
   */
 object Ex4TrackingFeatures extends App {
 
+  // Use command line path, if provided
+  val inputFile = args
+    .headOption
+    .map(new File(_))
+    .getOrElse(new File("data/bike.avi"))
+
   // Open video file
-  val inputFile = new File("data/bike.avi")
   println("Processing video file: " + inputFile.getCanonicalPath)
 
   // Feature tracker
