@@ -20,13 +20,13 @@ import scala.concurrent.duration.Duration
   * This version aims at playing video at correct playback speed. Delay is added to for slow frame rates.
   * For fast frame rates, some frames are skipped.
   *
-  * A set of stopwatches is used measure playback speed (playStopWatch). The intention is to match playback time and
-  * video frame timestamps. If a playback would get a head of frame timestamp a delay is added.
-  * If playback falls behind frame timestamp a time consuming operation, frame display or frame grab, is skipped.
+  * A set of stopwatches is used to measure playback speed (playStopWatch). The intention is to match playback time and
+  * video frame timestamps. If the playback would get ahead of the frame timestamp a delay is added.
+  * If the playback falls behind the frame timestamp a time consuming operation, frame display or frame grab, is skipped.
   *
   * Additional stopwatches are used to continuously measure time taken by the most time consuming operations:
   * grabbing frames (grabStopWatch), displaying frames (displayStopWatch), and skipping frames (setTimestampStopWatch).
-  * They are used to estimate how many frames we need to skip so playback time can keep yo with the frame timestamps.
+  * They are used to estimate how many frames we need to skip so the playback time can keep yo with the frame timestamps.
   */
 object DisplayVideoSequence extends App {
 
