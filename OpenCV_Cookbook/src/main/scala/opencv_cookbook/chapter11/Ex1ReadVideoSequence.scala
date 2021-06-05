@@ -6,9 +6,10 @@
 
 package opencv_cookbook.chapter11
 
-import javax.swing.WindowConstants
 import org.bytedeco.javacv.{CanvasFrame, FFmpegFrameGrabber}
 
+import java.io.File
+import javax.swing.WindowConstants
 import scala.collection.Iterator.continually
 
 
@@ -19,7 +20,13 @@ import scala.collection.Iterator.continually
   */
 object Ex1ReadVideoSequence extends App {
 
-  val grabber = new FFmpegFrameGrabber("data/bike.avi")
+  // Use command line path, if provided
+  val inputFile = args
+    .headOption
+    .map(new File(_))
+    .getOrElse(new File("data/bike.avi"))
+
+  val grabber = new FFmpegFrameGrabber(inputFile)
   // Open video video file
   grabber.start()
 
