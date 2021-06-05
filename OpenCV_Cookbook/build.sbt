@@ -5,7 +5,7 @@ organization := "javacv.examples"
 
 val javacppVersion = "1.5.5"
 version      := javacppVersion
-scalaVersion := "2.13.5"
+scalaVersion := "2.13.6"
 
 scalacOptions ++= Seq("-unchecked", "-deprecation", "-Xlint")
 
