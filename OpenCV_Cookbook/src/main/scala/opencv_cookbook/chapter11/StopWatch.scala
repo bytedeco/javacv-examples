@@ -9,7 +9,7 @@ import scala.concurrent.duration.Duration
 class StopWatch {
   private var accumulatedDuration = Duration.Zero
   private var startTime: Option[Long] = None
-  private var _stopCount: Long = 0L
+  private var stopCount: Long = 0L
 
   def start(): Unit = {
     startTime = Option(System.nanoTime())
@@ -20,7 +20,7 @@ class StopWatch {
       case Some(t0) =>
         accumulatedDuration = accumulatedDuration + Duration(System.nanoTime() - t0, TimeUnit.NANOSECONDS)
         startTime = None
-        _stopCount += 1
+        stopCount += 1
       case None =>
         throw new IllegalStateException("StopWatch: cannot stop, not started.")
     }
@@ -29,7 +29,7 @@ class StopWatch {
   def reset(): Unit = {
     accumulatedDuration = Duration.Zero
     startTime = None
-    _stopCount = 0
+    stopCount = 0
   }
 
   def add[R](op: => R): R = {
@@ -54,11 +54,11 @@ class StopWatch {
 
   def averageDuration: Duration = {
     if (startTime.isEmpty) {
-      if (_stopCount == 0) Duration.Zero else duration / _stopCount
+      if (stopCount == 0) Duration.Zero else duration / stopCount
     } else {
       throw new IllegalStateException("Cannot average when in stated state.")
     }
   }
 
-  def intervalCount: Long = _stopCount
+  def intervalCount: Long = stopCount
 }
