@@ -15,7 +15,7 @@ object Enumeration_C {
     */
   @throws[spinnaker_c.helpers.SpinnakerSDKException]("When a Spinnaker SDK operation fails.")
   def printDeviceVendorAndModel(hCameraList: spinCameraList): Unit = {
-    var err = _spinError.SPINNAKER_ERR_SUCCESS
+    var err = spinError.SPINNAKER_ERR_SUCCESS
 
     // Retrieve number of cameras
     val numCameras = new SizeTPointer(1)
@@ -83,7 +83,7 @@ object Enumeration_C {
     */
   @throws[spinnaker_c.helpers.SpinnakerSDKException]("When a Spinnaker SDK operation fails.")
   def queryInterface(hInterface: spinInterface): Unit = {
-    var err = _spinError.SPINNAKER_ERR_SUCCESS
+    var err = spinError.SPINNAKER_ERR_SUCCESS
 
     //
     // Retrieve TL nodemap from interface
@@ -157,8 +157,8 @@ object Enumeration_C {
     * interfaces for the example.
     */
   def main(args: Array[String]): Unit = {
-    var errReturn = _spinError.SPINNAKER_ERR_SUCCESS
-    var err = _spinError.SPINNAKER_ERR_SUCCESS
+    var errReturn = spinError.SPINNAKER_ERR_SUCCESS
+    var err = spinError.SPINNAKER_ERR_SUCCESS
 
     //
     // Retrieve singleton reference to system object
@@ -263,7 +263,7 @@ object Enumeration_C {
 
           // Release interface
           err = spinInterfaceRelease(hInterface)
-          if (err != _spinError.SPINNAKER_ERR_SUCCESS) errReturn = err
+          if (err != spinError.SPINNAKER_ERR_SUCCESS) errReturn = err
         }
       }
     } else {

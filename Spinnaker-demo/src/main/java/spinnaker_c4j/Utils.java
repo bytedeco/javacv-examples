@@ -21,7 +21,7 @@ class Utils {
      * @param err     error value.
      * @param message additional message to print.
      */
-    static void exitOnError(_spinError err, String message) {
+    static void exitOnError(spinError err, String message) {
         if (Utils.printOnError(err, message)) {
             System.out.println("Aborting.");
             System.exit(err.value);
@@ -36,8 +36,8 @@ class Utils {
      * @param message additional message to print.
      * @return 'false' if err is SPINNAKER_ERR_SUCCESS, or 'true' for any other 'err' value.
      */
-    static boolean printOnError(_spinError err, String message) {
-        if (err.value != _spinError.SPINNAKER_ERR_SUCCESS.value) {
+    static boolean printOnError(spinError err, String message) {
+        if (err.intern() != spinError.SPINNAKER_ERR_SUCCESS) {
             System.out.println(message);
             System.out.println("Error " + err.value + " " + findErrorNameByValue(err.value) + "\n");
             return true;
@@ -51,8 +51,8 @@ class Utils {
      * layer; please see NodeMapInfo_C example for more in-depth comments on
      * printing device information from the nodemap.
      */
-    static _spinError printDeviceInfo(spinNodeMapHandle hNodeMap) {
-        _spinError err;
+    static spinError printDeviceInfo(spinNodeMapHandle hNodeMap) {
+        spinError err;
         System.out.println("\n*** DEVICE INFORMATION ***\n\n");
         // Retrieve device information category node
         spinNodeHandle hDeviceInformation = new spinNodeHandle();
@@ -66,7 +66,7 @@ class Utils {
             Utils.printOnError(err, "Unable to retrieve number of nodes.");
         } else {
             printRetrieveNodeFailure("node", "DeviceInformation");
-            return _spinError.SPINNAKER_ERR_ACCESS_DENIED;
+            return spinError.SPINNAKER_ERR_ACCESS_DENIED;
         }
 
         // Iterate through nodes and print information
@@ -84,7 +84,7 @@ class Utils {
                 featureName.putString("Unknown name");
             }
 
-            int[] featureType = {_spinNodeType.UnknownNode.value};
+            int[] featureType = {spinNodeType.UnknownNode.value};
             if (isAvailableAndReadable(hFeatureNode, featureName.getString())) {
                 err = spinNodeGetType(hFeatureNode, featureType);
                 if (Utils.printOnError(err, "Unable to retrieve node type.")) {
@@ -113,7 +113,7 @@ class Utils {
     static boolean isAvailable(spinNodeHandle hNode) {
         BytePointer pbAvailable = new BytePointer(1);
         pbAvailable.putBool(false);
-        _spinError err = spinNodeIsAvailable(hNode, pbAvailable);
+        spinError err = spinNodeIsAvailable(hNode, pbAvailable);
         printOnError(err, "Unable to retrieve node availability (" + hNode + " node)");
         return pbAvailable.getBool();
     }
@@ -123,7 +123,7 @@ class Utils {
      */
     static boolean isAvailableAndReadable(spinNodeHandle hNode, String nodeName) {
         BytePointer pbAvailable = new BytePointer(1);
-        _spinError err;
+        spinError err;
         err = spinNodeIsAvailable(hNode, pbAvailable);
         Utils.printOnError(err, "Unable to retrieve node availability (" + nodeName + " node)");
 
@@ -138,7 +138,7 @@ class Utils {
      */
     static boolean isAvailableAndWritable(spinNodeHandle hNode, String nodeName) {
         BytePointer pbAvailable = new BytePointer(1);
-        _spinError err;
+        spinError err;
         err = spinNodeIsAvailable(hNode, pbAvailable);
         Utils.printOnError(err, "Unable to retrieve node availability (" + nodeName + " node).");
 
@@ -154,7 +154,7 @@ class Utils {
     static boolean isReadable(spinNodeHandle hNode) {
         BytePointer pbReadable = new BytePointer(1);
         pbReadable.putBool(false);
-        _spinError err = spinNodeIsReadable(hNode, pbReadable);
+        spinError err = spinNodeIsReadable(hNode, pbReadable);
         printOnError(err, "Unable to retrieve node availability (" + hNode + " node)");
         return pbReadable.getBool();
     }
@@ -165,7 +165,7 @@ class Utils {
     static boolean isWritable(spinNodeHandle hNode) {
         BytePointer pbWritable = new BytePointer(1);
         pbWritable.putBool(false);
-        _spinError err = spinNodeIsWritable(hNode, pbWritable);
+        spinError err = spinNodeIsWritable(hNode, pbWritable);
         printOnError(err, "Unable to retrieve node writability(" + hNode + " node)");
         return pbWritable.getBool();
     }
@@ -188,7 +188,7 @@ class Utils {
     }
 
     private static String findErrorNameByValue(int value) {
-        for (_spinError v : _spinError.values()) {
+        for (spinError v : spinError.values()) {
             if (v.value == value) {
                 return v.name();
             }
@@ -197,7 +197,7 @@ class Utils {
     }
 
     static String findImageStatusNameByValue(int value) {
-        for (_spinImageStatus v : _spinImageStatus.values()) {
+        for (spinImageStatus v : spinImageStatus.values()) {
             if (v.value == value) {
                 return v.name();
             }

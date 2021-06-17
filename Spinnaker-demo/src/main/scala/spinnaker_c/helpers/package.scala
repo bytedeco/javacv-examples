@@ -40,7 +40,7 @@ package object helpers {
 
 
     val MAX_BUFF_LEN = 256
-    var err = _spinError.SPINNAKER_ERR_SUCCESS
+    var err = spinError.SPINNAKER_ERR_SUCCESS
 
     val hNodeName = new spinNodeHandle()
 
@@ -68,15 +68,6 @@ package object helpers {
     }
   }
 
-
-  private def findErrorNameByValue(value: Int): String = {
-    _spinError.values
-      .find(_.value == value)
-      .map(_.name)
-      .getOrElse("???")
-  }
-
-
   /**
     * Checks if expression evaluated without error code (anything other than SPINNAKER_ERR_SUCCESS).
     * If there was an error an exception is thrown that contains error code and the provided contextual `errorMessage`.
@@ -86,8 +77,8 @@ package object helpers {
     * @throws spinnaker_c.helpers.SpinnakerSDKException if error code is not `SPINNAKER_ERR_SUCCESS`
     */
   @throws[spinnaker_c.helpers.SpinnakerSDKException]("if error code is not `SPINNAKER_ERR_SUCCESS`")
-  def check(expr: _spinError, errorMessage: String): Unit = {
-    if (expr.value != _spinError.SPINNAKER_ERR_SUCCESS.value) {
+  def check(expr: spinError, errorMessage: String): Unit = {
+    if (expr.intern() != spinError.SPINNAKER_ERR_SUCCESS) {
       throw new SpinnakerSDKException(
         "Spinnaker error type : " + expr.toString +
           "\n  Spinnaker error description: " + errorMessage,
@@ -104,10 +95,9 @@ package object helpers {
     * @param message additional message to print.
     * @return 'false' if err is not SPINNAKER_ERR_SUCCESS, or 'true' for any other 'err' value.
     */
-  def printOnError(err: _spinError, message: String): Boolean = {
-    if (err.value != _spinError.SPINNAKER_ERR_SUCCESS.value) {
-      println(message)
-      println(s"${err.value} ${findErrorNameByValue(err.value)}\n")
+  def printOnError(err: spinError, message: String): Boolean = {
+    if (err.intern() != spinError.SPINNAKER_ERR_SUCCESS) {
+      printError(err, message)
       true
     }
     else {
@@ -122,7 +112,7 @@ package object helpers {
     * @param err     error value.
     * @param message additional message to print.
     */
-  private[spinnaker_c] def exitOnError(err: _spinError, message: String): Unit = {
+  private[spinnaker_c] def exitOnError(err: spinError, message: String): Unit = {
     if (printOnError(err, message)) {
       System.out.println("Aborting.")
       System.exit(err.value)

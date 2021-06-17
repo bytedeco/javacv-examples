@@ -6,7 +6,7 @@ import org.bytedeco.spinnaker.global.Spinnaker_C._
 import spinnaker_c.helpers.{exitOnError, printOnError}
 
 /**
-  * Code based on C version, EnumerationEvents_C4J.cpp, from Spinnaker SDK by FLIR.
+  * Code based on C version, EnumerationEvents_C, from Spinnaker SDK by FLIR.
   *
   * EnumerationEvents_C.cpp explores arrival and removal events on
   * interfaces and the system. It relies on information provided in the
@@ -37,7 +37,7 @@ object EnumerationEvents_C {
     protected def onInterface(deviceSerialNumber: Int, interfaceNum: Int): Unit
 
     protected def onSystem(deviceSerialNumber: Int, hSystem: spinSystem): Unit = {
-      var err: _spinError = null
+      var err: spinError = null
 
       // Retrieve count
       val hCameraList = new spinCameraList
@@ -130,7 +130,7 @@ object EnumerationEvents_C {
     * in-depth comments on preparing and cleaning up the system.
     */
   def main(args: Array[String]): Unit = {
-    var err: _spinError = null
+    var err: spinError = null
 
     // Retrieve singleton reference to system object
     val hSystem = new spinSystem()

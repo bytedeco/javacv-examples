@@ -6,7 +6,7 @@ import org.bytedeco.spinnaker.Spinnaker_C.*;
 import java.io.File;
 
 import static org.bytedeco.spinnaker.global.Spinnaker_C.*;
-import static org.bytedeco.spinnaker.global.Spinnaker_C._spinError.*;
+import static org.bytedeco.spinnaker.global.Spinnaker_C.spinError.*;
 
 /**
  * Code based on C version, Sequencer_C.cpp, from Spinnaker SDK by FLIR.
@@ -38,8 +38,8 @@ public class Sequencer_C {
      * sequencer configuration mode), disabling automatic gain and exposure, and
      * turning sequencer configuration mode on.
      */
-    private static _spinError configureSequencerPartOne(spinNodeMapHandle hNodeMap) {
-        _spinError err;
+    private static spinError configureSequencerPartOne(spinNodeMapHandle hNodeMap) {
+        spinError err;
 
         System.out.println("\n\n*** SEQUENCER CONFIGURATION ***\n\n");
 
@@ -72,7 +72,7 @@ public class Sequencer_C {
         sequencerModeOff.put(0);
 
         err = spinNodeMapGetNode(hNodeMap, new BytePointer("SequencerConfigurationValid"), hSequencerConfigurationValid);
-        if (err.value != SPINNAKER_ERR_SUCCESS.value) {
+        if (err.intern() != SPINNAKER_ERR_SUCCESS) {
             Utils.printRetrieveNodeFailure("node", "SequencerConfigurationValid");
             return SPINNAKER_ERR_ACCESS_DENIED;
         }
@@ -84,7 +84,7 @@ public class Sequencer_C {
         }
 
         err = spinEnumerationGetCurrentEntry(hSequencerConfigurationValid, hSequencerConfigurationValidCurrent);
-        if (err.value != SPINNAKER_ERR_SUCCESS.value) {
+        if (err.intern() != SPINNAKER_ERR_SUCCESS) {
             Utils.printRetrieveNodeFailure("entry", "SequencerConfigurationValid current");
             return SPINNAKER_ERR_ACCESS_DENIED;
         }
@@ -95,7 +95,7 @@ public class Sequencer_C {
         }
 
         err = spinEnumerationGetEntryByName(hSequencerConfigurationValid, new BytePointer("Yes"), hSequencerConfigurationValidYes);
-        if (err.value != SPINNAKER_ERR_SUCCESS.value) {
+        if (err.intern() != SPINNAKER_ERR_SUCCESS) {
             Utils.printRetrieveNodeFailure("entry", "SequencerConfigurationValid 'Yes'");
             return SPINNAKER_ERR_ACCESS_DENIED;
         }
@@ -108,7 +108,7 @@ public class Sequencer_C {
         // If valid, disable sequencer mode; otherwise, do nothing
         if (hSequencerConfigurationValidCurrent.equals(hSequencerConfigurationValidYes)) {
             err = spinNodeMapGetNode(hNodeMap, new BytePointer("SequencerMode"), hSequencerMode);
-            if (err.value != SPINNAKER_ERR_SUCCESS.value) {
+            if (err.intern() != SPINNAKER_ERR_SUCCESS) {
                 Utils.printRetrieveNodeFailure("node", "SequencerMode");
                 return SPINNAKER_ERR_ACCESS_DENIED;
             }
@@ -119,7 +119,7 @@ public class Sequencer_C {
             }
 
             err = spinEnumerationGetEntryByName(hSequencerMode, new BytePointer("Off"), hSequencerModeOff);
-            if (err.value != SPINNAKER_ERR_SUCCESS.value) {
+            if (err.intern() != SPINNAKER_ERR_SUCCESS) {
                 Utils.printRetrieveNodeFailure("entry", "SequencerMode 'Off'");
                 return SPINNAKER_ERR_ACCESS_DENIED;
             }
@@ -130,13 +130,13 @@ public class Sequencer_C {
             }
 
             err = spinEnumerationEntryGetIntValue(hSequencerModeOff, sequencerModeOff);
-            if (err.value != SPINNAKER_ERR_SUCCESS.value) {
+            if (err.intern() != SPINNAKER_ERR_SUCCESS) {
                 System.out.printf("Unable to disable sequencer mode (entry int value retrieval). Aborting with error %d...\n\n", err.value);
                 return SPINNAKER_ERR_ACCESS_DENIED;
             }
 
             err = spinEnumerationSetIntValue(hSequencerMode, sequencerModeOff.get());
-            if (err.value != SPINNAKER_ERR_SUCCESS.value) {
+            if (err.intern() != SPINNAKER_ERR_SUCCESS) {
                 System.out.printf("Unable to disable sequencer mode (entry int value setting). Aborting with error %d...\n\n", err.value);
                 return SPINNAKER_ERR_ACCESS_DENIED;
             }
@@ -161,7 +161,7 @@ public class Sequencer_C {
         exposureAutoOff.put(0);
 
         err = spinNodeMapGetNode(hNodeMap, new BytePointer("ExposureAuto"), hExposureAuto);
-        if (err.value != SPINNAKER_ERR_SUCCESS.value) {
+        if (err.intern() != SPINNAKER_ERR_SUCCESS) {
             Utils.printRetrieveNodeFailure("node", "ExposureAuto");
             return SPINNAKER_ERR_ACCESS_DENIED;
         }
@@ -172,7 +172,7 @@ public class Sequencer_C {
         }
 
         err = spinEnumerationGetEntryByName(hExposureAuto, new BytePointer("Off"), hExposureAutoOff);
-        if (err.value != SPINNAKER_ERR_SUCCESS.value) {
+        if (err.intern() != SPINNAKER_ERR_SUCCESS) {
             Utils.printRetrieveNodeFailure("entry", "ExposureAuto 'Off'");
             return SPINNAKER_ERR_ACCESS_DENIED;
         }
@@ -183,13 +183,13 @@ public class Sequencer_C {
         }
 
         err = spinEnumerationEntryGetIntValue(hExposureAutoOff, exposureAutoOff);
-        if (err.value != SPINNAKER_ERR_SUCCESS.value) {
+        if (err.intern() != SPINNAKER_ERR_SUCCESS) {
             Utils.printf("Unable to disable automatic exposure (entry int value retrieval). Aborting with error %d...\n\n", err.value);
             return SPINNAKER_ERR_ACCESS_DENIED;
         }
 
         err = spinEnumerationSetIntValue(hExposureAuto, exposureAutoOff.get());
-        if (err.value != SPINNAKER_ERR_SUCCESS.value) {
+        if (err.intern() != SPINNAKER_ERR_SUCCESS) {
             Utils.printf("Unable to disable automatic exposure (entry int value setting). Aborting with error %d...\n\n", err.value);
             return SPINNAKER_ERR_ACCESS_DENIED;
         }
@@ -212,7 +212,7 @@ public class Sequencer_C {
         LongPointer gainAutoOff = new LongPointer(1);
 
         err = spinNodeMapGetNode(hNodeMap, new BytePointer("GainAuto"), hGainAuto);
-        if (err.value != SPINNAKER_ERR_SUCCESS.value) {
+        if (err.intern() != SPINNAKER_ERR_SUCCESS) {
             Utils.printRetrieveNodeFailure("node", "GainAuto");
             return SPINNAKER_ERR_ACCESS_DENIED;
         }
@@ -223,7 +223,7 @@ public class Sequencer_C {
         }
 
         err = spinEnumerationGetEntryByName(hGainAuto, new BytePointer("Off"), hGainAutoOff);
-        if (err.value != SPINNAKER_ERR_SUCCESS.value) {
+        if (err.intern() != SPINNAKER_ERR_SUCCESS) {
             Utils.printRetrieveNodeFailure(" entry", "GainAuto 'Off'");
             return SPINNAKER_ERR_ACCESS_DENIED;
         }
@@ -234,13 +234,13 @@ public class Sequencer_C {
         }
 
         err = spinEnumerationEntryGetIntValue(hGainAutoOff, gainAutoOff);
-        if (err.value != SPINNAKER_ERR_SUCCESS.value) {
+        if (err.intern() != SPINNAKER_ERR_SUCCESS) {
             Utils.printf("Unable to disable automatic gain. Aborting with error %d...\n\n", err);
             return SPINNAKER_ERR_ACCESS_DENIED;
         }
 
         err = spinEnumerationSetIntValue(hGainAuto, gainAutoOff.get());
-        if (err.value != SPINNAKER_ERR_SUCCESS.value) {
+        if (err.intern() != SPINNAKER_ERR_SUCCESS) {
             Utils.printf("Unable to disable automatic gain. Aborting with error %d...\n\n", err);
             return SPINNAKER_ERR_ACCESS_DENIED;
         }
@@ -264,7 +264,7 @@ public class Sequencer_C {
         sequencerConfigurationModeOn.put(0);
 
         err = spinNodeMapGetNode(hNodeMap, new BytePointer("SequencerConfigurationMode"), hSequencerConfigurationMode);
-        if (err.value != SPINNAKER_ERR_SUCCESS.value) {
+        if (err.intern() != SPINNAKER_ERR_SUCCESS) {
             Utils.printRetrieveNodeFailure("node", "SequencerConfigurationMode");
             return SPINNAKER_ERR_ACCESS_DENIED;
         }
@@ -275,7 +275,7 @@ public class Sequencer_C {
         }
 
         err = spinEnumerationGetEntryByName(hSequencerConfigurationMode, new BytePointer("On"), hSequencerConfigurationModeOn);
-        if (err.value != SPINNAKER_ERR_SUCCESS.value) {
+        if (err.intern() != SPINNAKER_ERR_SUCCESS) {
             Utils.printRetrieveNodeFailure("entry", "SequencerConfigurationMode 'On'");
             return SPINNAKER_ERR_ACCESS_DENIED;
         }
@@ -286,13 +286,13 @@ public class Sequencer_C {
         }
 
         err = spinEnumerationEntryGetIntValue(hSequencerConfigurationModeOn, sequencerConfigurationModeOn);
-        if (err.value != SPINNAKER_ERR_SUCCESS.value) {
+        if (err.intern() != SPINNAKER_ERR_SUCCESS) {
             Utils.printf("Unable to enable sequencer configuration mode. Aborting with error %d...\n\n", err);
             return SPINNAKER_ERR_ACCESS_DENIED;
         }
 
         err = spinEnumerationSetIntValue(hSequencerConfigurationMode, sequencerConfigurationModeOn.get());
-        if (err.value != SPINNAKER_ERR_SUCCESS.value) {
+        if (err.intern() != SPINNAKER_ERR_SUCCESS) {
             Utils.printf("Unable to enable sequencer configuration mode. Aborting with error %d...\n\n", err);
             return SPINNAKER_ERR_ACCESS_DENIED;
         }
@@ -309,8 +309,8 @@ public class Sequencer_C {
      * the state. The custom values that are applied are all calculated in the
      * function that calls this one, RunSingleCamera().
      */
-    private static _spinError setSingleState(spinNodeMapHandle hNodeMap, int sequenceNumber, long widthToSet, long heightToSet, double exposureTimeToSet, double gainToSet) {
-        _spinError err;
+    private static spinError setSingleState(spinNodeMapHandle hNodeMap, int sequenceNumber, long widthToSet, long heightToSet, double exposureTimeToSet, double gainToSet) {
+        spinError err;
 
         //
         // Select the sequence number
@@ -325,7 +325,7 @@ public class Sequencer_C {
         spinNodeHandle hSequencerSetSelector = new spinNodeHandle();
 
         err = spinNodeMapGetNode(hNodeMap, new BytePointer("SequencerSetSelector"), hSequencerSetSelector);
-        if (err.value != SPINNAKER_ERR_SUCCESS.value) {
+        if (err.intern() != SPINNAKER_ERR_SUCCESS) {
             Utils.printf("Unable to select current sequence. Aborting with error %d...\n\n", err);
             return SPINNAKER_ERR_ACCESS_DENIED;
         }
@@ -336,7 +336,7 @@ public class Sequencer_C {
         }
 
         err = spinIntegerSetValue(hSequencerSetSelector, sequenceNumber);
-        if (err.value != SPINNAKER_ERR_SUCCESS.value) {
+        if (err.intern() != SPINNAKER_ERR_SUCCESS) {
             Utils.printf("Unable to select current sequence. Aborting with error %d...\n\n", err);
             return SPINNAKER_ERR_ACCESS_DENIED;
         }
@@ -361,14 +361,14 @@ public class Sequencer_C {
         widthInc.put(0);
 
         err = spinNodeMapGetNode(hNodeMap, new BytePointer("Width"), hWidth);
-        if (err.value != SPINNAKER_ERR_SUCCESS.value) {
+        if (err.intern() != SPINNAKER_ERR_SUCCESS) {
             Utils.printf("Unable to set width. Aborting with error %d...\n\n", err);
             return SPINNAKER_ERR_ACCESS_DENIED;
         }
 
         if (Utils.isAvailable(hWidth) && Utils.isWritable(hWidth)) {
             err = spinIntegerGetInc(hWidth, widthInc);
-            if (err.value != SPINNAKER_ERR_SUCCESS.value) {
+            if (err.intern() != SPINNAKER_ERR_SUCCESS) {
                 Utils.printf("Unable to set width. Aborting with error %d...\n\n", err);
                 return SPINNAKER_ERR_ACCESS_DENIED;
             }
@@ -378,7 +378,7 @@ public class Sequencer_C {
             }
 
             err = spinIntegerSetValue(hWidth, widthToSet);
-            if (err.value != SPINNAKER_ERR_SUCCESS.value) {
+            if (err.intern() != SPINNAKER_ERR_SUCCESS) {
                 Utils.printf("Unable to set width. Aborting with error %d...\n\n", err);
                 return SPINNAKER_ERR_ACCESS_DENIED;
             }
@@ -394,14 +394,14 @@ public class Sequencer_C {
         heightInc.put(0);
 
         err = spinNodeMapGetNode(hNodeMap, new BytePointer("Height"), hHeight);
-        if (err.value != SPINNAKER_ERR_SUCCESS.value) {
+        if (err.intern() != SPINNAKER_ERR_SUCCESS) {
             Utils.printf("Unable to set height. Aborting with error %d...\n\n", err);
             return SPINNAKER_ERR_ACCESS_DENIED;
         }
 
         if (Utils.isAvailable(hHeight) && Utils.isWritable(hHeight)) {
             err = spinIntegerGetInc(hHeight, heightInc);
-            if (err.value != SPINNAKER_ERR_SUCCESS.value) {
+            if (err.intern() != SPINNAKER_ERR_SUCCESS) {
                 Utils.printf("Unable to set height. Aborting with error %d...\n\n", err);
                 return SPINNAKER_ERR_ACCESS_DENIED;
             }
@@ -411,7 +411,7 @@ public class Sequencer_C {
             }
 
             err = spinIntegerSetValue(hHeight, heightToSet);
-            if (err.value != SPINNAKER_ERR_SUCCESS.value) {
+            if (err.intern() != SPINNAKER_ERR_SUCCESS) {
                 Utils.printf("Unable to set height. Aborting with error %d...\n\n", err);
                 return SPINNAKER_ERR_ACCESS_DENIED;
             }
@@ -425,7 +425,7 @@ public class Sequencer_C {
         spinNodeHandle hExposureTime = new spinNodeHandle();
 
         err = spinNodeMapGetNode(hNodeMap, new BytePointer("ExposureTime"), hExposureTime);
-        if (err.value != SPINNAKER_ERR_SUCCESS.value) {
+        if (err.intern() != SPINNAKER_ERR_SUCCESS) {
             Utils.printf("Unable to set exposure. Aborting with error %d...\n\n", err);
             return SPINNAKER_ERR_ACCESS_DENIED;
         }
@@ -436,7 +436,7 @@ public class Sequencer_C {
         }
 
         err = spinFloatSetValue(hExposureTime, exposureTimeToSet);
-        if (err.value != SPINNAKER_ERR_SUCCESS.value) {
+        if (err.intern() != SPINNAKER_ERR_SUCCESS) {
             Utils.printf("Unable to set exposure. Aborting with error %d...\n\n", err);
             return SPINNAKER_ERR_ACCESS_DENIED;
         }
@@ -447,7 +447,7 @@ public class Sequencer_C {
         spinNodeHandle hGain = new spinNodeHandle();
 
         err = spinNodeMapGetNode(hNodeMap, new BytePointer("Gain"), hGain);
-        if (err.value != SPINNAKER_ERR_SUCCESS.value) {
+        if (err.intern() != SPINNAKER_ERR_SUCCESS) {
             Utils.printf("Unable to set gain. Aborting with error %d...\n\n", err);
             return SPINNAKER_ERR_ACCESS_DENIED;
         }
@@ -458,7 +458,7 @@ public class Sequencer_C {
         }
 
         err = spinFloatSetValue(hGain, gainToSet);
-        if (err.value != SPINNAKER_ERR_SUCCESS.value) {
+        if (err.intern() != SPINNAKER_ERR_SUCCESS) {
             Utils.printf("Unable to set gain. Aborting with error %d...\n\n", err);
             return SPINNAKER_ERR_ACCESS_DENIED;
         }
@@ -479,7 +479,7 @@ public class Sequencer_C {
         sequencerTriggerSourceFrameStart.put(0);
 
         err = spinNodeMapGetNode(hNodeMap, new BytePointer("SequencerTriggerSource"), hSequencerTriggerSource);
-        if (err.value != SPINNAKER_ERR_SUCCESS.value) {
+        if (err.intern() != SPINNAKER_ERR_SUCCESS) {
             Utils.printf("Unable to set trigger source. Aborting with error %d...\n\n", err);
             return SPINNAKER_ERR_ACCESS_DENIED;
         }
@@ -490,7 +490,7 @@ public class Sequencer_C {
         }
 
         err = spinEnumerationGetEntryByName(hSequencerTriggerSource, new BytePointer("FrameStart"), hSequencerTriggerSourceFrameStart);
-        if (err.value != SPINNAKER_ERR_SUCCESS.value) {
+        if (err.intern() != SPINNAKER_ERR_SUCCESS) {
             Utils.printf("Unable to set trigger source. Aborting with error %d...\n\n", err);
             return SPINNAKER_ERR_ACCESS_DENIED;
         }
@@ -501,13 +501,13 @@ public class Sequencer_C {
         }
 
         err = spinEnumerationEntryGetIntValue(hSequencerTriggerSourceFrameStart, sequencerTriggerSourceFrameStart);
-        if (err.value != SPINNAKER_ERR_SUCCESS.value) {
+        if (err.intern() != SPINNAKER_ERR_SUCCESS) {
             Utils.printf("Unable to set trigger source. Aborting with error %d...\n\n", err);
             return SPINNAKER_ERR_ACCESS_DENIED;
         }
 
         err = spinEnumerationSetIntValue(hSequencerTriggerSource, sequencerTriggerSourceFrameStart.get());
-        if (err.value != SPINNAKER_ERR_SUCCESS.value) {
+        if (err.intern() != SPINNAKER_ERR_SUCCESS) {
             Utils.printf("Unable to set trigger source. Aborting with error %d...\n\n", err);
             return SPINNAKER_ERR_ACCESS_DENIED;
         }
@@ -526,7 +526,7 @@ public class Sequencer_C {
         int nextSequence = 0;
 
         err = spinNodeMapGetNode(hNodeMap, new BytePointer("SequencerSetNext"), hSequencerSetNext);
-        if (err.value != SPINNAKER_ERR_SUCCESS.value) {
+        if (err.intern() != SPINNAKER_ERR_SUCCESS) {
             Utils.printf("Unable to set next sequence. Aborting with err %d...\n\n", err);
             return SPINNAKER_ERR_ACCESS_DENIED;
         }
@@ -541,7 +541,7 @@ public class Sequencer_C {
         }
 
         err = spinIntegerSetValue(hSequencerSetNext, nextSequence);
-        if (err.value != SPINNAKER_ERR_SUCCESS.value) {
+        if (err.intern() != SPINNAKER_ERR_SUCCESS) {
             Utils.printf("Unable to set next sequence. Aborting with err %d...\n\n", err);
             return SPINNAKER_ERR_ACCESS_DENIED;
         }
@@ -559,7 +559,7 @@ public class Sequencer_C {
         spinNodeHandle hSequencerSetSave = new spinNodeHandle();
 
         err = spinNodeMapGetNode(hNodeMap, new BytePointer("SequencerSetSave"), hSequencerSetSave);
-        if (err.value != SPINNAKER_ERR_SUCCESS.value) {
+        if (err.intern() != SPINNAKER_ERR_SUCCESS) {
             Utils.printf("Unable to save sequence. Aborting with err %d...\n\n", err);
             return SPINNAKER_ERR_ACCESS_DENIED;
         }
@@ -570,7 +570,7 @@ public class Sequencer_C {
         }
 
         err = spinCommandExecute(hSequencerSetSave);
-        if (err.value != SPINNAKER_ERR_SUCCESS.value) {
+        if (err.intern() != SPINNAKER_ERR_SUCCESS) {
             Utils.printf("Unable to save sequence. Aborting with err %d...\n\n", err);
             return SPINNAKER_ERR_ACCESS_DENIED;
         }
@@ -584,8 +584,8 @@ public class Sequencer_C {
      * Now that the states have all been set, this function readies the camera
      * to use the sequencer during image acquisition.
      */
-    private static _spinError ConfigureSequencerPartTwo(spinNodeMapHandle hNodeMap) {
-        _spinError err;
+    private static spinError ConfigureSequencerPartTwo(spinNodeMapHandle hNodeMap) {
+        spinError err;
 
         //
         // Turn configuration mode off
@@ -600,7 +600,7 @@ public class Sequencer_C {
         sequencerConfigurationModeOff.put(0);
 
         err = spinNodeMapGetNode(hNodeMap, new BytePointer("SequencerConfigurationMode"), hSequencerConfigurationMode);
-        if (err.value != SPINNAKER_ERR_SUCCESS.value) {
+        if (err.intern() != SPINNAKER_ERR_SUCCESS) {
             Utils.printRetrieveNodeFailure("node", "SequencerConfigurationMode");
             return SPINNAKER_ERR_ACCESS_DENIED;
         }
@@ -611,7 +611,7 @@ public class Sequencer_C {
         }
 
         err = spinEnumerationGetEntryByName(hSequencerConfigurationMode, new BytePointer("Off"), hSequencerConfigurationModeOff);
-        if (err.value != SPINNAKER_ERR_SUCCESS.value) {
+        if (err.intern() != SPINNAKER_ERR_SUCCESS) {
             Utils.printRetrieveNodeFailure("entry", "SequencerConfigurationMode 'Off'");
             return SPINNAKER_ERR_ACCESS_DENIED;
         }
@@ -622,13 +622,13 @@ public class Sequencer_C {
         }
 
         err = spinEnumerationEntryGetIntValue(hSequencerConfigurationModeOff, sequencerConfigurationModeOff);
-        if (err.value != SPINNAKER_ERR_SUCCESS.value) {
+        if (err.intern() != SPINNAKER_ERR_SUCCESS) {
             Utils.printf("Unable to disable sequencer configuration mode. Aborting with error %d...\n\n", err);
             return SPINNAKER_ERR_ACCESS_DENIED;
         }
 
         err = spinEnumerationSetIntValue(hSequencerConfigurationMode, sequencerConfigurationModeOff.get());
-        if (err.value != SPINNAKER_ERR_SUCCESS.value) {
+        if (err.intern() != SPINNAKER_ERR_SUCCESS) {
             Utils.printf("Unable to disable sequencer configuration mode. Aborting with error %d...\n\n", err);
             return SPINNAKER_ERR_ACCESS_DENIED;
         }
@@ -652,7 +652,7 @@ public class Sequencer_C {
         sequencerModeOn.put(0);
 
         err = spinNodeMapGetNode(hNodeMap, new BytePointer("SequencerMode"), hSequencerMode);
-        if (err.value != SPINNAKER_ERR_SUCCESS.value) {
+        if (err.intern() != SPINNAKER_ERR_SUCCESS) {
             Utils.printRetrieveNodeFailure("node", "SequencerMode");
             return SPINNAKER_ERR_ACCESS_DENIED;
         }
@@ -663,7 +663,7 @@ public class Sequencer_C {
         }
 
         err = spinEnumerationGetEntryByName(hSequencerMode, new BytePointer("On"), hSequencerModeOn);
-        if (err.value != SPINNAKER_ERR_SUCCESS.value) {
+        if (err.intern() != SPINNAKER_ERR_SUCCESS) {
             Utils.printRetrieveNodeFailure("entry", "SequencerMode 'On'");
             return SPINNAKER_ERR_ACCESS_DENIED;
         }
@@ -674,13 +674,13 @@ public class Sequencer_C {
         }
 
         err = spinEnumerationEntryGetIntValue(hSequencerModeOn, sequencerModeOn);
-        if (err.value != SPINNAKER_ERR_SUCCESS.value) {
+        if (err.intern() != SPINNAKER_ERR_SUCCESS) {
             Utils.printf("Unable to enable sequencer mode. Aborting with error %d...\n\n", err);
             return SPINNAKER_ERR_ACCESS_DENIED;
         }
 
         err = spinEnumerationSetIntValue(hSequencerMode, sequencerModeOn.get());
-        if (err.value != SPINNAKER_ERR_SUCCESS.value) {
+        if (err.intern() != SPINNAKER_ERR_SUCCESS) {
             Utils.printf("Unable to enable sequencer mode. Aborting with error %d...\n\n", err);
             return SPINNAKER_ERR_ACCESS_DENIED;
         }
@@ -705,7 +705,7 @@ public class Sequencer_C {
         sequencerConfigurationValidYes.put(0);
 
         err = spinNodeMapGetNode(hNodeMap, new BytePointer("SequencerConfigurationValid"), hSequencerConfigurationValid);
-        if (err.value != SPINNAKER_ERR_SUCCESS.value) {
+        if (err.intern() != SPINNAKER_ERR_SUCCESS) {
             Utils.printRetrieveNodeFailure("node", "SequencerConfigurationValid");
             return SPINNAKER_ERR_ACCESS_DENIED;
         }
@@ -716,7 +716,7 @@ public class Sequencer_C {
         }
 
         err = spinEnumerationGetCurrentEntry(hSequencerConfigurationValid, hSequencerConfigurationValidCurrent);
-        if (err.value != SPINNAKER_ERR_SUCCESS.value) {
+        if (err.intern() != SPINNAKER_ERR_SUCCESS) {
             Utils.printRetrieveNodeFailure("entry", "SequencerConfigurationValid current");
             return SPINNAKER_ERR_ACCESS_DENIED;
         }
@@ -727,7 +727,7 @@ public class Sequencer_C {
         }
 
         err = spinEnumerationGetEntryByName(hSequencerConfigurationValid, new BytePointer("Yes"), hSequencerConfigurationValidYes);
-        if (err.value != SPINNAKER_ERR_SUCCESS.value) {
+        if (err.intern() != SPINNAKER_ERR_SUCCESS) {
             Utils.printRetrieveNodeFailure("entry", "SequencerConfigurationValid 'Yes'");
             return SPINNAKER_ERR_ACCESS_DENIED;
         }
@@ -738,13 +738,13 @@ public class Sequencer_C {
         }
 
         err = spinEnumerationEntryGetIntValue(hSequencerConfigurationValidCurrent, sequencerConfigurationValidCurrent);
-        if (err.value != SPINNAKER_ERR_SUCCESS.value) {
+        if (err.intern() != SPINNAKER_ERR_SUCCESS) {
             Utils.printf("Unable to validate sequencer configuration ('current' value retrieval). Aborting with error %d...\n\n", err);
             return SPINNAKER_ERR_ACCESS_DENIED;
         }
 
         err = spinEnumerationEntryGetIntValue(hSequencerConfigurationValidYes, sequencerConfigurationValidYes);
-        if (err.value != SPINNAKER_ERR_SUCCESS.value) {
+        if (err.intern() != SPINNAKER_ERR_SUCCESS) {
             Utils.printf("Unable to validate sequencer configuration ('yes' value retrieval). Aborting with error %d...\n\n", err);
             return SPINNAKER_ERR_ACCESS_DENIED;
         }
@@ -764,8 +764,8 @@ public class Sequencer_C {
      * This function restores the camera to its default state by turning sequencer
      * mode off and re-enabling automatic exposure and gain.
      */
-    private static _spinError resetSequencer(spinNodeMapHandle hNodeMap) {
-        _spinError err;
+    private static spinError resetSequencer(spinNodeMapHandle hNodeMap) {
+        spinError err;
 
         //
         // Turn sequencer mode back off
@@ -780,7 +780,7 @@ public class Sequencer_C {
         sequencerModeOff.put(0);
 
         err = spinNodeMapGetNode(hNodeMap, new BytePointer("SequencerMode"), hSequencerMode);
-        if (err.value != SPINNAKER_ERR_SUCCESS.value) {
+        if (err.intern() != SPINNAKER_ERR_SUCCESS) {
             Utils.printf("Unable to enable sequencer mode. Aborting with error %d...\n\n", err);
             return SPINNAKER_ERR_ACCESS_DENIED;
         }
@@ -791,7 +791,7 @@ public class Sequencer_C {
         }
 
         err = spinEnumerationGetEntryByName(hSequencerMode, new BytePointer("Off"), hSequencerModeOff);
-        if (err.value != SPINNAKER_ERR_SUCCESS.value) {
+        if (err.intern() != SPINNAKER_ERR_SUCCESS) {
             Utils.printf("Unable to enable sequencer mode. Aborting with error %d...\n\n", err);
             return SPINNAKER_ERR_ACCESS_DENIED;
         }
@@ -802,13 +802,13 @@ public class Sequencer_C {
         }
 
         err = spinEnumerationEntryGetIntValue(hSequencerModeOff, sequencerModeOff);
-        if (err.value != SPINNAKER_ERR_SUCCESS.value) {
+        if (err.intern() != SPINNAKER_ERR_SUCCESS) {
             Utils.printf("Unable to enable sequencer mode. Aborting with error %d...\n\n", err);
             return SPINNAKER_ERR_ACCESS_DENIED;
         }
 
         err = spinEnumerationSetIntValue(hSequencerMode, sequencerModeOff.get());
-        if (err.value != SPINNAKER_ERR_SUCCESS.value) {
+        if (err.intern() != SPINNAKER_ERR_SUCCESS) {
             Utils.printf("Unable to enable sequencer mode. Aborting with error %d...\n\n", err);
             return SPINNAKER_ERR_ACCESS_DENIED;
         }
@@ -827,7 +827,7 @@ public class Sequencer_C {
         LongPointer exposureAutoContinuous = new LongPointer(1);
 
         err = spinNodeMapGetNode(hNodeMap, new BytePointer("ExposureAuto"), hExposureAuto);
-        if (err.value != SPINNAKER_ERR_SUCCESS.value) {
+        if (err.intern() != SPINNAKER_ERR_SUCCESS) {
             Utils.printf("Unable to enable automatic exposure. Aborting with error %d...\n\n", err);
             return SPINNAKER_ERR_ACCESS_DENIED;
         }
@@ -838,7 +838,7 @@ public class Sequencer_C {
         }
 
         err = spinEnumerationGetEntryByName(hExposureAuto, new BytePointer("Continuous"), hExposureAutoContinuous);
-        if (err.value != SPINNAKER_ERR_SUCCESS.value) {
+        if (err.intern() != SPINNAKER_ERR_SUCCESS) {
             Utils.printf("Unable to enable automatic exposure. Aborting with error %d...\n\n", err);
             return SPINNAKER_ERR_ACCESS_DENIED;
         }
@@ -849,13 +849,13 @@ public class Sequencer_C {
         }
 
         err = spinEnumerationEntryGetIntValue(hExposureAutoContinuous, exposureAutoContinuous);
-        if (err.value != SPINNAKER_ERR_SUCCESS.value) {
+        if (err.intern() != SPINNAKER_ERR_SUCCESS) {
             Utils.printf("Unable to enable automatic exposure. Aborting with error %d...\n\n", err);
             return SPINNAKER_ERR_ACCESS_DENIED;
         }
 
         err = spinEnumerationSetIntValue(hExposureAuto, exposureAutoContinuous.get());
-        if (err.value != SPINNAKER_ERR_SUCCESS.value) {
+        if (err.intern() != SPINNAKER_ERR_SUCCESS) {
             Utils.printf("Unable to enable automatic exposure. Aborting with error %d...\n\n", err);
             return SPINNAKER_ERR_ACCESS_DENIED;
         }
@@ -874,7 +874,7 @@ public class Sequencer_C {
         LongPointer gainAutoContinuous = new LongPointer(1);
 
         err = spinNodeMapGetNode(hNodeMap, new BytePointer("GainAuto"), hGainAuto);
-        if (err.value != SPINNAKER_ERR_SUCCESS.value) {
+        if (err.intern() != SPINNAKER_ERR_SUCCESS) {
             Utils.printf("Unable to enable automatic gain. Aborting with error %d...\n\n", err);
             return SPINNAKER_ERR_ACCESS_DENIED;
         }
@@ -885,7 +885,7 @@ public class Sequencer_C {
         }
 
         err = spinEnumerationGetEntryByName(hGainAuto, new BytePointer("Continuous"), hGainAutoContinuous);
-        if (err.value != SPINNAKER_ERR_SUCCESS.value) {
+        if (err.intern() != SPINNAKER_ERR_SUCCESS) {
             Utils.printf("Unable to enable automatic gain. Aborting with error %d...\n\n", err);
             return SPINNAKER_ERR_ACCESS_DENIED;
         }
@@ -896,13 +896,13 @@ public class Sequencer_C {
         }
 
         err = spinEnumerationEntryGetIntValue(hGainAutoContinuous, gainAutoContinuous);
-        if (err.value != SPINNAKER_ERR_SUCCESS.value) {
+        if (err.intern() != SPINNAKER_ERR_SUCCESS) {
             Utils.printf("Unable to enable automatic gain. Aborting with error %d...\n\n", err);
             return SPINNAKER_ERR_ACCESS_DENIED;
         }
 
         err = spinEnumerationSetIntValue(hGainAuto, gainAutoContinuous.get());
-        if (err.value != SPINNAKER_ERR_SUCCESS.value) {
+        if (err.intern() != SPINNAKER_ERR_SUCCESS) {
             Utils.printf("Unable to enable automatic gain. Aborting with error %d...\n\n", err);
             return SPINNAKER_ERR_ACCESS_DENIED;
         }
@@ -917,8 +917,8 @@ public class Sequencer_C {
      * layer; please see NodeMapInfo_C example for more in-depth comments on
      * printing device information from the nodemap.
      */
-    private static _spinError printDeviceInfo(spinNodeMapHandle hNodeMap) {
-        _spinError err;
+    private static spinError printDeviceInfo(spinNodeMapHandle hNodeMap) {
+        spinError err;
         System.out.println("\n*** DEVICE INFORMATION ***\n\n");
         // Retrieve device information category node
         spinNodeHandle hDeviceInformation = new spinNodeHandle();
@@ -950,7 +950,7 @@ public class Sequencer_C {
                 featureName.putString("Unknown name");
             }
 
-            int[] featureType = {_spinNodeType.UnknownNode.value};
+            int[] featureType = {spinNodeType.UnknownNode.value};
             if (Utils.isAvailable(hFeatureNode) && Utils.isReadable(hFeatureNode)) {
                 err = spinNodeGetType(hFeatureNode, featureType);
                 if (Utils.printOnError(err, "Unable to retrieve node type.")) {
@@ -978,11 +978,11 @@ public class Sequencer_C {
     // This function acquires and saves 10 images from a device; please see
 // Acquisition_C example for more in-depth comments on the acquisition of
 // images.
-    private static _spinError acquireImages(spinCamera hCam,
-                                            spinNodeMapHandle hNodeMap,
-                                            spinNodeMapHandle hNodeMapTLDevice,
-                                            int timeout) {
-        _spinError err;
+    private static spinError acquireImages(spinCamera hCam,
+                                           spinNodeMapHandle hNodeMap,
+                                           spinNodeMapHandle hNodeMapTLDevice,
+                                           int timeout) {
+        spinError err;
 
         Utils.printf("\n*** IMAGE ACQUISITION ***\n\n");
 
@@ -994,7 +994,7 @@ public class Sequencer_C {
 
 
         err = spinNodeMapGetNode(hNodeMap, new BytePointer("AcquisitionMode"), hAcquisitionMode);
-        if (err.value != SPINNAKER_ERR_SUCCESS.value) {
+        if (err.intern() != SPINNAKER_ERR_SUCCESS) {
             Utils.printf("Unable to set acquisition mode to continuous (node retrieval). Aborting with error %d...\n\n", err);
             return SPINNAKER_ERR_ACCESS_DENIED;
         }
@@ -1005,7 +1005,7 @@ public class Sequencer_C {
         }
 
         err = spinEnumerationGetEntryByName(hAcquisitionMode, new BytePointer("Continuous"), hAcquisitionModeContinuous);
-        if (err.value != SPINNAKER_ERR_SUCCESS.value) {
+        if (err.intern() != SPINNAKER_ERR_SUCCESS) {
             Utils.printf("Unable to set acquisition mode to continuous (entry 'continuous' retrieval). Aborting with error %d...\n\n", err);
             return SPINNAKER_ERR_ACCESS_DENIED;
         }
@@ -1016,13 +1016,13 @@ public class Sequencer_C {
         }
 
         err = spinEnumerationEntryGetIntValue(hAcquisitionModeContinuous, acquisitionModeContinuous);
-        if (err.value != SPINNAKER_ERR_SUCCESS.value) {
+        if (err.intern() != SPINNAKER_ERR_SUCCESS) {
             Utils.printf("Unable to set acquisition mode to continuous (entry int value retrieval). Aborting with error %d...\n\n", err);
             return SPINNAKER_ERR_ACCESS_DENIED;
         }
 
         err = spinEnumerationSetIntValue(hAcquisitionMode, acquisitionModeContinuous.get());
-        if (err.value != SPINNAKER_ERR_SUCCESS.value) {
+        if (err.intern() != SPINNAKER_ERR_SUCCESS) {
             Utils.printf("Unable to set acquisition mode to continuous (entry int value setting). Aborting with error %d...\n\n", err);
             return SPINNAKER_ERR_ACCESS_DENIED;
         }
@@ -1031,7 +1031,7 @@ public class Sequencer_C {
 
         // Begin acquiring images
         err = spinCameraBeginAcquisition(hCam);
-        if (err.value != SPINNAKER_ERR_SUCCESS.value) {
+        if (err.intern() != SPINNAKER_ERR_SUCCESS) {
             Utils.printf("Unable to begin image acquisition. Aborting with error %d...\n\n", err);
             return SPINNAKER_ERR_ACCESS_DENIED;
         }
@@ -1101,7 +1101,7 @@ public class Sequencer_C {
             // Release incomplete or failed image
             if (hasFailed) {
                 err = spinImageRelease(hResultImage);
-                if (err.value != SPINNAKER_ERR_SUCCESS.value) {
+                if (err.intern() != SPINNAKER_ERR_SUCCESS) {
                     Utils.printf("Unable to release image. Non-fatal error %d...\n\n", err);
                 }
 
@@ -1134,7 +1134,7 @@ public class Sequencer_C {
                 hasFailed = true;
             }
 
-            err = spinImageConvert(hResultImage, _spinPixelFormatEnums.PixelFormat_Mono8.value, hConvertedImage);
+            err = spinImageConvert(hResultImage, spinPixelFormatEnums.PixelFormat_Mono8, hConvertedImage);
             if (Utils.printOnError(err, "\"Unable to convert image. Non-fatal error.")) {
                 hasFailed = true;
             }
@@ -1145,27 +1145,27 @@ public class Sequencer_C {
                     : ("Sequencer-C-" + deviceSerialNumber.getString().trim() + "-" + imageCnt + ".jpg");
 
             // Save image
-            err = spinImageSave(hConvertedImage, new BytePointer(filename), _spinImageFileFormat.JPEG.value);
+            err = spinImageSave(hConvertedImage, new BytePointer(filename), spinImageFileFormat.JPEG);
             if (!Utils.printOnError(err, "Unable to save image. Non-fatal error.")) {
                 System.out.println("Image saved at " + filename + "\n");
             }
 
             // Destroy converted image
             err = spinImageDestroy(hConvertedImage);
-            if (err.value != SPINNAKER_ERR_SUCCESS.value) {
+            if (err.intern() != SPINNAKER_ERR_SUCCESS) {
                 Utils.printf("Unable to destroy image. Non-fatal error %d...\n\n", err);
             }
 
             // Release image
             err = spinImageRelease(hResultImage);
-            if (err.value != SPINNAKER_ERR_SUCCESS.value) {
+            if (err.intern() != SPINNAKER_ERR_SUCCESS) {
                 Utils.printf("Unable to release image. Non-fatal error %d...\n\n", err);
             }
         }
 
         // End acquisition
         err = spinCameraEndAcquisition(hCam);
-        if (err.value != SPINNAKER_ERR_SUCCESS.value) {
+        if (err.intern() != SPINNAKER_ERR_SUCCESS) {
             Utils.printf("Unable to end acquisition. Non-fatal error %d...\n\n", err);
         }
 
@@ -1178,8 +1178,8 @@ public class Sequencer_C {
      * please see NodeMapInfo example for additional information on the steps in
      * this function.
      */
-    private static _spinError runSingleCamera(spinCamera hCam) {
-        _spinError err;
+    private static spinError runSingleCamera(spinCamera hCam) {
+        spinError err;
 
         // Retrieve TL device nodemap and print device information
         spinNodeMapHandle hNodeMapTLDevice = new spinNodeMapHandle();
@@ -1202,7 +1202,7 @@ public class Sequencer_C {
         }
 
         // Configure sequencer to be ready to set sequences
-        if (configureSequencerPartOne(hNodeMap).value != SPINNAKER_ERR_SUCCESS.value) {
+        if (configureSequencerPartOne(hNodeMap).intern() != SPINNAKER_ERR_SUCCESS) {
             return SPINNAKER_ERR_ACCESS_DENIED;
         }
 
@@ -1226,7 +1226,7 @@ public class Sequencer_C {
         widthMax.put(0);
 
         err = spinNodeMapGetNode(hNodeMap, new BytePointer("Width"), hWidth);
-        if (err.value != SPINNAKER_ERR_SUCCESS.value) {
+        if (err.intern() != SPINNAKER_ERR_SUCCESS) {
             Utils.printf("Unable to get max width (node retrieval). Aborting with error %d...\n\n", err);
             return SPINNAKER_ERR_ACCESS_DENIED;
         }
@@ -1237,7 +1237,7 @@ public class Sequencer_C {
         }
 
         err = spinIntegerGetMax(hWidth, widthMax);
-        if (err.value != SPINNAKER_ERR_SUCCESS.value) {
+        if (err.intern() != SPINNAKER_ERR_SUCCESS) {
             Utils.printf("Unable to get max width (max retrieval). Aborting with error %d...\n\n", err);
             return SPINNAKER_ERR_ACCESS_DENIED;
         }
@@ -1248,7 +1248,7 @@ public class Sequencer_C {
         heightMax.put(1);
 
         err = spinNodeMapGetNode(hNodeMap, new BytePointer("Height"), hHeight);
-        if (err.value != SPINNAKER_ERR_SUCCESS.value) {
+        if (err.intern() != SPINNAKER_ERR_SUCCESS) {
             Utils.printf("Unable to get max height (node retrieval). Aborting with error %d...\n\n", err);
             return SPINNAKER_ERR_ACCESS_DENIED;
         }
@@ -1259,7 +1259,7 @@ public class Sequencer_C {
         }
 
         err = spinIntegerGetMax(hHeight, heightMax);
-        if (err.value != SPINNAKER_ERR_SUCCESS.value) {
+        if (err.intern() != SPINNAKER_ERR_SUCCESS) {
             Utils.printf("Unable to get max height (max retrieval). Aborting with error %d...\n\n", err);
             return SPINNAKER_ERR_ACCESS_DENIED;
         }
@@ -1273,7 +1273,7 @@ public class Sequencer_C {
         exposureTimeMin.put(0);
 
         err = spinNodeMapGetNode(hNodeMap, new BytePointer("ExposureTime"), hExposureTime);
-        if (err.value != SPINNAKER_ERR_SUCCESS.value) {
+        if (err.intern() != SPINNAKER_ERR_SUCCESS) {
             Utils.printf("Unable to retrieve exposure time node. Aborting with error %d...\n\n", err);
             return SPINNAKER_ERR_ACCESS_DENIED;
         }
@@ -1284,7 +1284,7 @@ public class Sequencer_C {
         }
 
         err = spinFloatGetMax(hExposureTime, exposureTimeMax);
-        if (err.value != SPINNAKER_ERR_SUCCESS.value) {
+        if (err.intern() != SPINNAKER_ERR_SUCCESS) {
             Utils.printf("Unable to retrieve maximum exposure time. Aborting with error %d...\n\n", err);
             return SPINNAKER_ERR_ACCESS_DENIED;
         }
@@ -1294,7 +1294,7 @@ public class Sequencer_C {
         }
 
         err = spinFloatGetMin(hExposureTime, exposureTimeMin);
-        if (err.value != SPINNAKER_ERR_SUCCESS.value) {
+        if (err.intern() != SPINNAKER_ERR_SUCCESS) {
             Utils.printf("Unable to retrieve minimum exposure time. Aborting with error %d...\n\n", err);
             return SPINNAKER_ERR_ACCESS_DENIED;
         }
@@ -1307,7 +1307,7 @@ public class Sequencer_C {
         gainMin.put(0);
 
         err = spinNodeMapGetNode(hNodeMap, new BytePointer("Gain"), hGain);
-        if (err.value != SPINNAKER_ERR_SUCCESS.value) {
+        if (err.intern() != SPINNAKER_ERR_SUCCESS) {
             Utils.printf("Unable to retrieve gain node. Aborting with error %d...\n\n", err);
             return SPINNAKER_ERR_ACCESS_DENIED;
         }
@@ -1318,13 +1318,13 @@ public class Sequencer_C {
         }
 
         err = spinFloatGetMax(hGain, gainMax);
-        if (err.value != SPINNAKER_ERR_SUCCESS.value) {
+        if (err.intern() != SPINNAKER_ERR_SUCCESS) {
             Utils.printf("Unable to retrieve maximum gain. Aborting with error %d...\n\n", err);
             return SPINNAKER_ERR_ACCESS_DENIED;
         }
 
         err = spinFloatGetMin(hGain, gainMin);
-        if (err.value != SPINNAKER_ERR_SUCCESS.value) {
+        if (err.intern() != SPINNAKER_ERR_SUCCESS) {
             Utils.printf("Unable to retrieve minimum gain. Aborting with error %d...\n\n", err);
             return SPINNAKER_ERR_ACCESS_DENIED;
         }
@@ -1336,7 +1336,7 @@ public class Sequencer_C {
         double gainToSet = gainMin.get();
 
         for (int sequenceNumber = 0; sequenceNumber < k_numSequences; sequenceNumber++) {
-            if (setSingleState(hNodeMap, sequenceNumber, widthToSet, heightToSet, exposureTimeToSet, gainToSet).value != SPINNAKER_ERR_SUCCESS.value) {
+            if (setSingleState(hNodeMap, sequenceNumber, widthToSet, heightToSet, exposureTimeToSet, gainToSet).intern() != SPINNAKER_ERR_SUCCESS) {
                 return SPINNAKER_ERR_ACCESS_DENIED;
             }
 
@@ -1351,17 +1351,17 @@ public class Sequencer_C {
         int timeout = (int) ((exposureTimeToSet / 1000) + 1000);
 
         // Configure sequencer to acquire images
-        if (ConfigureSequencerPartTwo(hNodeMap).value != SPINNAKER_ERR_SUCCESS.value) {
+        if (ConfigureSequencerPartTwo(hNodeMap).intern() != SPINNAKER_ERR_SUCCESS) {
             return SPINNAKER_ERR_ACCESS_DENIED;
         }
 
         // Acquire images
-        if (acquireImages(hCam, hNodeMap, hNodeMapTLDevice, timeout).value != SPINNAKER_ERR_SUCCESS.value) {
+        if (acquireImages(hCam, hNodeMap, hNodeMapTLDevice, timeout).intern() != SPINNAKER_ERR_SUCCESS) {
             return SPINNAKER_ERR_ACCESS_DENIED;
         }
 
         // Reset sequencer
-        if (resetSequencer(hNodeMap).value != SPINNAKER_ERR_SUCCESS.value) {
+        if (resetSequencer(hNodeMap).intern() != SPINNAKER_ERR_SUCCESS) {
             return SPINNAKER_ERR_ACCESS_DENIED;
         }
 
@@ -1381,7 +1381,7 @@ public class Sequencer_C {
      */
     public static void main(String[] args) {
         int errReturn = 0;
-        _spinError err;
+        spinError err;
 
         // Since this application saves images in the current folder
         // we must ensure that we have permission to write to this folder.
@@ -1450,8 +1450,8 @@ public class Sequencer_C {
                 //
                 // Run example
                 //
-                _spinError ret = runSingleCamera(hCamera);
-                if (ret.value != SPINNAKER_ERR_SUCCESS.value) {
+                spinError ret = runSingleCamera(hCamera);
+                if (ret.intern() != SPINNAKER_ERR_SUCCESS) {
                     errReturn = -1;
                 }
                 Utils.printOnError(err, "RunSingleCamera");

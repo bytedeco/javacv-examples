@@ -47,8 +47,8 @@ public class Enumeration_C {
     /* This function queries an interface for its cameras and then prints out
      * device information.
      */
-    static public _spinError QueryInterface(spinInterface hInterface) {
-        _spinError err;
+    static public spinError QueryInterface(spinInterface hInterface) {
+        spinError err;
 
         //
         // Retrieve TL nodemap from interface
@@ -338,7 +338,7 @@ public class Enumeration_C {
      * interfaces for the example.
      */
     public static void main(String[] args) {
-        _spinError err;
+        spinError err;
 
         //
         // Retrieve singleton reference to system object

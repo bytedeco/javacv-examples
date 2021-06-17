@@ -53,9 +53,9 @@ public class Acquisition_C {
     private final static int MAX_BUFF_LEN = 256;
 
     // This function acquires and saves 10 images from a device.
-    private static _spinError acquireImages(spinCamera hCam, spinNodeMapHandle hNodeMap, spinNodeMapHandle hNodeMapTLDevice) {
+    private static spinError acquireImages(spinCamera hCam, spinNodeMapHandle hNodeMap, spinNodeMapHandle hNodeMapTLDevice) {
         System.out.println("\n*** IMAGE ACQUISITION ***\n");
-        _spinError err;
+        spinError err;
         //
         // Set acquisition mode to continuous
         //
@@ -100,7 +100,7 @@ public class Acquisition_C {
             }
         } else {
             printRetrieveNodeFailure("entry", "AcquisitionMode");
-            return _spinError.SPINNAKER_ERR_ACCESS_DENIED;
+            return spinError.SPINNAKER_ERR_ACCESS_DENIED;
         }
 
         // Retrieve integer from entry node
@@ -113,7 +113,7 @@ public class Acquisition_C {
             }
         } else {
             printRetrieveNodeFailure("entry", "AcquisitionMode 'Continuous'");
-            return _spinError.SPINNAKER_ERR_ACCESS_DENIED;
+            return spinError.SPINNAKER_ERR_ACCESS_DENIED;
         }
 
         // Set integer as new value of enumeration node
@@ -124,7 +124,7 @@ public class Acquisition_C {
             }
         } else {
             printRetrieveNodeFailure("entry", "AcquisitionMode");
-            return _spinError.SPINNAKER_ERR_ACCESS_DENIED;
+            return spinError.SPINNAKER_ERR_ACCESS_DENIED;
         }
 
         System.out.println("Acquisition mode set to continuous...");
@@ -286,7 +286,7 @@ public class Acquisition_C {
             if (Utils.printOnError(err, "Unable to create image. Non-fatal error.")) {
                 hasFailed = true;
             }
-            err = spinImageConvert(hResultImage, _spinPixelFormatEnums.PixelFormat_Mono8.value, hConvertedImage);
+            err = spinImageConvert(hResultImage, spinPixelFormatEnums.PixelFormat_Mono8, hConvertedImage);
             if (Utils.printOnError(err, "\"Unable to convert image. Non-fatal error.")) {
                 hasFailed = true;
             }
@@ -305,7 +305,7 @@ public class Acquisition_C {
                 // numbers to keep images of one device from overwriting those of
                 // another.
                 //
-                err = spinImageSave(hConvertedImage, new BytePointer(filename), _spinImageFileFormat.JPEG.value);
+                err = spinImageSave(hConvertedImage, new BytePointer(filename), spinImageFileFormat.JPEG);
                 if (!Utils.printOnError(err, "Unable to save image. Non-fatal error.")) {
                     System.out.println("Image saved at " + filename + "\n");
                 }
@@ -348,8 +348,8 @@ public class Acquisition_C {
      * This function acts as the body of the example; please see NodeMapInfo_C
      * example for more in-depth comments on setting up cameras.
      */
-    private static _spinError runSingleCamera(spinCamera hCam) {
-        _spinError err;
+    private static spinError runSingleCamera(spinCamera hCam) {
+        spinError err;
         // Retrieve TL device nodemap and print device information
         spinNodeMapHandle hNodeMapTLDevice = new spinNodeMapHandle();
         err = spinCameraGetTLDeviceNodeMap(hCam, hNodeMapTLDevice);
@@ -391,7 +391,7 @@ public class Acquisition_C {
      */
     public static void main(String[] args) {
 
-        _spinError err;
+        spinError err;
 
         // Since this application saves images in the current folder
         // we must ensure that we have permission to write to this folder.
