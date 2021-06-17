@@ -6,6 +6,10 @@ import org.bytedeco.spinnaker.global.Spinnaker_C._
 
 package object helpers {
 
+  private val MAX_BUFF_LEN = 256
+
+  def toBytePointer(str: String): BytePointer = new BytePointer(str.length + 2).putString(str)
+
   /**
     * Read node value assuming it is a string
     *
@@ -37,7 +41,6 @@ package object helpers {
     // availability and readability/writability prior to making an
     // attempt to read from or write to the node.
     //
-
 
     val MAX_BUFF_LEN = 256
     var err = spinError.SPINNAKER_ERR_SUCCESS
@@ -88,6 +91,98 @@ package object helpers {
   }
 
   /**
+    * This function prints the device information of the camera from the transport
+    * layer; please see NodeMapInfo_C example for more in-depth comments on
+    * printing device information from the nodemap.
+    */
+  def printDeviceInfo(hNodeMap: spinNodeMapHandle): spinError = {
+    var err = spinError.SPINNAKER_ERR_SUCCESS
+
+    System.out.println("\n*** DEVICE INFORMATION ***\n")
+    // Retrieve device information category node
+    val hDeviceInformation = new spinNodeHandle
+    err = spinNodeMapGetNode(hNodeMap, new BytePointer("DeviceInformation"), hDeviceInformation)
+    printOnError(err, "Unable to retrieve node.")
+
+    // Retrieve number of nodes within device information node
+    val numFeatures = new SizeTPointer(1)
+    if (isAvailableAndReadable(hDeviceInformation, "DeviceInformation")) {
+      err = spinCategoryGetNumFeatures(hDeviceInformation, numFeatures)
+      printOnError(err, "Unable to retrieve number of nodes.")
+    } else {
+      printRetrieveNodeFailure("node", "DeviceInformation")
+      return spinError.SPINNAKER_ERR_ACCESS_DENIED
+    }
+
+    // Iterate through nodes and print information
+    for (i <- 0 until numFeatures.get.toInt) {
+      val hFeatureNode = new spinNodeHandle
+      err = spinCategoryGetFeatureByIndex(hDeviceInformation, i, hFeatureNode)
+      printOnError(err, "Unable to retrieve node.")
+
+      // get feature node name
+      val featureName = new BytePointer(MAX_BUFF_LEN)
+      val lenFeatureName = new SizeTPointer(1)
+      lenFeatureName.put(MAX_BUFF_LEN)
+      err = spinNodeGetName(hFeatureNode, featureName, lenFeatureName)
+      if (printOnError(err, "Error retrieving node name."))
+        featureName.putString("Unknown name")
+
+      val featureType = Array(spinNodeType.UnknownNode.value)
+      var skipRest = false
+      if (isAvailableAndReadable(hFeatureNode, featureName.getString)) {
+        err = spinNodeGetType(hFeatureNode, featureType)
+        if (printOnError(err, "Unable to retrieve node type."))
+          skipRest = true
+      } else {
+        println(featureName + ": Node not readable")
+        skipRest = true
+      }
+
+      if (!skipRest) {
+        val featureValue = new BytePointer(MAX_BUFF_LEN)
+        val lenFeatureValue = new SizeTPointer(1)
+        lenFeatureValue.put(MAX_BUFF_LEN)
+        err = spinNodeToString(hFeatureNode, featureValue, lenFeatureValue)
+        if (printOnError(err, "spinNodeToString"))
+          featureValue.putString("Unknown value")
+        println(featureName.getString.trim + ": " + featureValue.getString.trim + ".")
+      }
+    }
+    println()
+    err
+  }
+
+  def isAvailableAndReadable(hNode: spinNodeHandle, nodeName: String): Boolean = {
+    val pbAvailable = new BytePointer(1)
+    var err = spinError.SPINNAKER_ERR_SUCCESS
+    err = spinNodeIsAvailable(hNode, pbAvailable)
+    printOnError(err, "Unable to retrieve node availability (" + nodeName + " node)")
+
+    val pbReadable = new BytePointer(1)
+    err = spinNodeIsReadable(hNode, pbReadable)
+    printOnError(err, "Unable to retrieve node readability (" + nodeName + " node)")
+    pbReadable.getBool && pbAvailable.getBool
+  }
+
+  /**
+    * This function helps to check if a node is available and writable
+    */
+  def isAvailableAndWritable(hNode: spinNodeHandle, nodeName: String): Boolean = {
+    val pbAvailable = new BytePointer(1)
+    var err = spinError.SPINNAKER_ERR_SUCCESS
+
+    err = spinNodeIsAvailable(hNode, pbAvailable)
+    printOnError(err, "Unable to retrieve node availability (" + nodeName + " node).")
+
+    val pbWritable = new BytePointer(1)
+    err = spinNodeIsWritable(hNode, pbWritable)
+    printOnError(err, "Unable to retrieve node writability (" + nodeName + " node).")
+
+    pbWritable.getBool && pbAvailable.getBool
+  }
+
+  /**
     * Check if 'err' is 'SPINNAKER_ERR_SUCCESS'.
     * If it is do nothing otherwise print error information.
     *
@@ -99,10 +194,38 @@ package object helpers {
     if (err.intern() != spinError.SPINNAKER_ERR_SUCCESS) {
       printError(err, message)
       true
-    }
-    else {
+    } else {
       false
     }
+  }
+
+  def printError(err: spinError, message: String): Unit = {
+    println(message)
+    println(s"${err.value} ${findErrorNameByValue(err.value)}\n")
+  }
+
+  /**
+    * This function handles the error prints when a node or entry is unavailable or
+    * not readable/writable on the connected camera
+    */
+  def printRetrieveNodeFailure(node: String, name: String): Unit = {
+    println("Unable to get " + node + " (" + name + " " + node + " retrieval failed).")
+    println("The " + node + " may not be available on all camera models...")
+    println("Please try a Blackfly S camera.\n")
+  }
+
+  def findErrorNameByValue(value: Int): String = {
+    spinError.values
+      .find(_.value == value)
+      .map(_.name)
+      .getOrElse("???")
+  }
+
+  def findImageStatusNameByValue(value: Int): String = {
+    for (v <- spinImageStatus.values) {
+      if (v.value == value) return v.name
+    }
+    "???"
   }
 
   /**
