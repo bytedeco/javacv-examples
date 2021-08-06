@@ -2,7 +2,7 @@ package spinnaker_c
 
 import org.bytedeco.javacpp.{BytePointer, SizeTPointer}
 import org.bytedeco.spinnaker.Spinnaker_C.{spinNodeHandle, spinNodeMapHandle}
-import org.bytedeco.spinnaker.global.Spinnaker_C._
+import org.bytedeco.spinnaker.global.Spinnaker_C.*
 
 package object helpers {
 
@@ -135,7 +135,7 @@ package object helpers {
         if (printOnError(err, "Unable to retrieve node type."))
           skipRest = true
       } else {
-        println(featureName + ": Node not readable")
+        println(s"$featureName: Node not readable")
         skipRest = true
       }
 
