@@ -1,9 +1,9 @@
 package spinnaker_c
 
-import org.bytedeco.javacpp._
-import org.bytedeco.spinnaker.Spinnaker_C._
-import org.bytedeco.spinnaker.global.Spinnaker_C._
-import spinnaker_c.helpers._
+import org.bytedeco.javacpp.*
+import org.bytedeco.spinnaker.Spinnaker_C.*
+import org.bytedeco.spinnaker.global.Spinnaker_C.*
+import spinnaker_c.helpers.*
 
 /**
   * `SaveToAvi_C` shows how to create a video from a vector of images.

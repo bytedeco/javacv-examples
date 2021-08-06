@@ -1,10 +1,9 @@
 package spinnaker_c
 
 import org.bytedeco.javacpp.SizeTPointer
-import org.bytedeco.spinnaker.Spinnaker_C._
-import org.bytedeco.spinnaker.global.Spinnaker_C._
-import spinnaker_c.helpers._
-
+import org.bytedeco.spinnaker.Spinnaker_C.*
+import org.bytedeco.spinnaker.global.Spinnaker_C.*
+import spinnaker_c.helpers.*
 
 object Enumeration_C {
 
@@ -63,7 +62,6 @@ object Enumeration_C {
 
       println(s"\tDevice $i / $deviceVendorName / $deviceModelName \n\n")
 
-
       //
       // Release camera before losing scope
       //
@@ -75,7 +73,6 @@ object Enumeration_C {
       check(err, "\"Unable to release camera.")
     }
   }
-
 
   /**
     * This function queries an interface for its cameras and then prints out
@@ -179,11 +176,13 @@ object Enumeration_C {
     // Print out current library version
     val hLibraryVersion = new spinLibraryVersion()
     spinSystemGetLibraryVersion(hSystem, hLibraryVersion)
-    printf("Spinnaker library version: %d.%d.%d.%d\n\n%n",
+    printf(
+      "Spinnaker library version: %d.%d.%d.%d\n\n%n",
       hLibraryVersion.major(),
       hLibraryVersion.minor(),
       hLibraryVersion.`type`(),
-      hLibraryVersion.build())
+      hLibraryVersion.build()
+    )
 
     //
     // Retrieve list of interfaces from the system

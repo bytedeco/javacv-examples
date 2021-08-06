@@ -1,8 +1,8 @@
 package spinnaker_c
 
-import org.bytedeco.javacpp._
-import org.bytedeco.spinnaker.Spinnaker_C._
-import org.bytedeco.spinnaker.global.Spinnaker_C._
+import org.bytedeco.javacpp.*
+import org.bytedeco.spinnaker.Spinnaker_C.*
+import org.bytedeco.spinnaker.global.Spinnaker_C.*
 import spinnaker_c.helpers.{exitOnError, printOnError}
 
 /**
@@ -141,11 +141,13 @@ object EnumerationEvents_C {
     val hLibraryVersion: spinLibraryVersion = new spinLibraryVersion()
 
     spinSystemGetLibraryVersion(hSystem, hLibraryVersion)
-    System.out.printf("Spinnaker library version: %d.%d.%d.%d\n\n%n",
+    System.out.printf(
+      "Spinnaker library version: %d.%d.%d.%d\n\n%n",
       hLibraryVersion.major(),
       hLibraryVersion.minor(),
       hLibraryVersion.`type`(),
-      hLibraryVersion.build())
+      hLibraryVersion.build()
+    )
 
     // Retrieve list of cameras from the system
     val hCameraList = new spinCameraList()
