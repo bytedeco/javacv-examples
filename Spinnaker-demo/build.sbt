@@ -3,7 +3,7 @@
 name         := "Spinnaker-demo"
 organization := "javacv.examples"
 
-val javacppVersion = "1.5.6-SNAPSHOT"
+val javacppVersion = "1.5.6"
 version      := javacppVersion
 scalaVersion := "2.13.6"
 scalacOptions ++= Seq("-unchecked", "-deprecation", "-Xlint")
