@@ -9,8 +9,8 @@ Overview
 **OpenCV Cookbook Examples** illustrate use of OpenCV with [JavaCV][javacv]. The Examples started as a port of C++ code
 from Robert Laganière's
 book "[OpenCV 2 Computer Vision Application Programming Cookbook](https://www.packtpub.com/application-development/opencv-2-computer-vision-application-programming-cookbook)"
-. Later updated for the second edition of the
-book "[OpenCV Computer Vision Application Programming Cookbook Second Edition](https://www.packtpub.com/application-development/opencv-3-computer-vision-application-programming-cookbook)"
+. Later updated for the fourth edition of the
+book "[OpenCV Computer Vision Application Programming Cookbook Fourth Edition](https://www.packtpub.com/product/opencv-4-computer-vision-application-programming-cookbook-fourth-edition/9781789340723)"
 . The examples in the book use [OpenCV](http://opencv.org/) C++ API. Here they are translated to
 use [JavaCV](https://github.com/bytedeco/javacv) and [JavaCPP-Presets](https://github.com/bytedeco/javacpp-presets)
 APIs.
