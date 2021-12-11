@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2019 Jarek Sacha. All Rights Reserved.
+ * Copyright (c) 2011-2021 Jarek Sacha. All Rights Reserved.
  *
  * Author's e-mail: jpsacha at gmail.com
  */
@@ -18,7 +18,7 @@ import org.bytedeco.flycapture.global.FlyCapture2._
  */
 object FlyCapture2Test extends App {
 
-  def runSingleCamera(guid: PGRGuid) {
+  def runSingleCamera(guid: PGRGuid): Unit = {
     val numImages = 10
 
     // Connect to a camera
@@ -61,10 +61,9 @@ object FlyCapture2Test extends App {
     check(cam.Disconnect())
   }
 
-
   printBuildInfo()
 
-  val busMgr = new BusManager()
+  val busMgr     = new BusManager()
   val numCameras = Array[Int](0)
   check(busMgr.GetNumOfCameras(numCameras))
   println("Number of cameras detected: " + numCameras(0))

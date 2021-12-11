@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2019 Jarek Sacha. All Rights Reserved.
+ * Copyright (c) 2011-2021 Jarek Sacha. All Rights Reserved.
  *
  * Author's e-mail: jpsacha at gmail.com
  */
@@ -17,14 +17,14 @@ package object cpp {
   /**
    * Query and print version of FlyCapture SDK.
    */
-  def printBuildInfo() {
+  def printBuildInfo(): Unit = {
     val version = new FC2Version()
     Utilities.GetLibraryVersion(version)
 
     println(s"FlyCapture2 library version: ${version.major}.${version.minor}.${version.`type`}.${version.build}")
   }
 
-  def printCameraInfo(camInfo: CameraInfo) {
+  def printCameraInfo(camInfo: CameraInfo): Unit = {
     println("\n*** CAMERA INFORMATION ***\n" +
       s"Serial number       - ${camInfo.serialNumber} \n" +
       s"Camera model        - ${camInfo.modelName.getString}\n" +
@@ -37,26 +37,26 @@ package object cpp {
 
   def printPropertyInfo(cam: Camera): Unit = {
     val props = List(
-      BRIGHTNESS -> "BRIGHTNESS",
+      BRIGHTNESS    -> "BRIGHTNESS",
       AUTO_EXPOSURE -> "AUTO_EXPOSURE",
-      SHARPNESS -> "SHARPNESS",
+      SHARPNESS     -> "SHARPNESS",
       WHITE_BALANCE -> "WHITE_BALANCE",
-      HUE -> "HUE",
-      GAMMA -> "GAMMA",
-      IRIS -> "IRIS",
-      FOCUS -> "FOCUS",
-      ZOOM -> "ZOOM",
-      PAN -> "PAN",
-      TILT -> "TILT",
-      SHUTTER -> "SHUTTER",
-      GAIN -> "GAIN",
-      TRIGGER_MODE -> "TRIGGER_MODE",
+      HUE           -> "HUE",
+      GAMMA         -> "GAMMA",
+      IRIS          -> "IRIS",
+      FOCUS         -> "FOCUS",
+      ZOOM          -> "ZOOM",
+      PAN           -> "PAN",
+      TILT          -> "TILT",
+      SHUTTER       -> "SHUTTER",
+      GAIN          -> "GAIN",
+      TRIGGER_MODE  -> "TRIGGER_MODE",
       TRIGGER_DELAY -> "TRIGGER_DELAY",
-      FRAME_RATE -> "FRAME_RATE",
-      TEMPERATURE -> "TEMPERATURE"
+      FRAME_RATE    -> "FRAME_RATE",
+      TEMPERATURE   -> "TEMPERATURE"
     )
 
-    props.foreach { case (t, n) => printPropertyInfo(cam, t, n)}
+    props.foreach { case (t, n) => printPropertyInfo(cam, t, n) }
   }
 
   def printPropertyInfo(cam: Camera, propType: Int, propName: String): Unit = {

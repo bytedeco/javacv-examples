@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2019 Jarek Sacha. All Rights Reserved.
+ * Copyright (c) 2011-2021 Jarek Sacha. All Rights Reserved.
  *
  * Author's e-mail: jpsacha at gmail.com
  */
@@ -38,14 +38,14 @@ object GrabCallbackEx extends App {
     /**
      * Actual callback method.
      */
-    override def call(pImage: Image, pCallbackData: Pointer) {
+    override def call(pImage: Image, pCallbackData: Pointer): Unit = {
       println("OnImageGrabbed::call(...)")
       counter += 1
       println("OnImageGrabbed -> Grabbed image " + counter)
     }
   }
 
-  def runSingleCamera(guid: PGRGuid) {
+  def runSingleCamera(guid: PGRGuid): Unit = {
     val numImages = 10
 
     // Connect to a camera
@@ -81,7 +81,7 @@ object GrabCallbackEx extends App {
 
   printBuildInfo()
 
-  val busMgr = new BusManager()
+  val busMgr     = new BusManager()
   val numCameras = Array[Int](0)
   check(busMgr.GetNumOfCameras(numCameras))
   println("Number of cameras detected: " + numCameras(0))

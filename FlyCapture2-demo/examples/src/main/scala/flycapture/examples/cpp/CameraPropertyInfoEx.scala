@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2019 Jarek Sacha. All Rights Reserved.
+ * Copyright (c) 2011-2021 Jarek Sacha. All Rights Reserved.
  *
  * Author's e-mail: jpsacha at gmail.com
  */
@@ -7,15 +7,13 @@ package flycapture.examples.cpp
 
 import flycapture.CheckMacro.check
 import org.bytedeco.flycapture.FlyCapture2.{BusManager, Camera, CameraInfo, PGRGuid}
-//import org.bytedeco.flycapture.FlyCapture2._
-//import org.bytedeco.flycapture.global.FlyCapture2._
 
 /**
  * The CameraPropertyInfoEx prints out property information from attached cameras.
  */
 object CameraPropertyInfoEx extends App {
 
-  def runSingleCamera(guid: PGRGuid) {
+  def runSingleCamera(guid: PGRGuid): Unit = {
 
     // Connect to a camera
     val cam = new Camera()
@@ -32,10 +30,9 @@ object CameraPropertyInfoEx extends App {
     check(cam.Disconnect())
   }
 
-
   printBuildInfo()
 
-  val busMgr = new BusManager()
+  val busMgr     = new BusManager()
   val numCameras = Array[Int](0)
   check(busMgr.GetNumOfCameras(numCameras))
   println("Number of cameras detected: " + numCameras(0))

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2019 Jarek Sacha. All Rights Reserved.
+ * Copyright (c) 2011-2021 Jarek Sacha. All Rights Reserved.
  *
  * Author's e-mail: jpsacha at gmail.com
  */
@@ -20,9 +20,9 @@ import scala.io.StdIn.readLine
  */
 object SoftwareTriggerEx extends App {
 
-  val triggerInquiryRegister = 0x530
-  val softwareTriggerRegister = 0x62C
-  val cameraPowerRegister = 0x610
+  val triggerInquiryRegister  = 0x530
+  val softwareTriggerRegister = 0x62c
+  val cameraPowerRegister     = 0x610
 
   def checkSoftwareTriggerPresence(cam: Camera): Boolean = {
     val regValPtr = new IntPointer(1L)
@@ -34,10 +34,10 @@ object SoftwareTriggerEx extends App {
 
   def pollForTriggerReady(cam: Camera): Boolean = {
     var regVal = 0
-    var ok = true
+    var ok     = true
     do {
       val regVarPtr = new IntPointer(1L)
-      val error = cam.ReadRegister(softwareTriggerRegister, regVarPtr)
+      val error     = cam.ReadRegister(softwareTriggerRegister, regVarPtr)
       if (error.GetType() != PGRERROR_OK) {
         println(error.GetDescription().getString)
         error.PrintErrorTrace()
@@ -51,11 +51,10 @@ object SoftwareTriggerEx extends App {
     ok
   }
 
-  def fireSoftwareTrigger(cam: Camera) {
+  def fireSoftwareTrigger(cam: Camera): Unit = {
     val fireTriggerVal = 0x80000000
     check(cam.WriteRegister(softwareTriggerRegister, fireTriggerVal))
   }
-
 
   printBuildInfo()
 
@@ -86,7 +85,7 @@ object SoftwareTriggerEx extends App {
     check(cam.WriteRegister(cameraPowerRegister, cameraPowerVal))
 
     // Wait for camera to complete power-up
-    val regVal = new IntPointer(1L)
+    val regVal  = new IntPointer(1L)
     var retries = 10
     do {
       Thread.sleep(100)
@@ -99,7 +98,6 @@ object SoftwareTriggerEx extends App {
       }
       retries -= 1
     } while ((regVal.get() & cameraPowerVal) == 0 && retries > 0)
-
 
     // Get the camera information
     val camInfo = new CameraInfo()

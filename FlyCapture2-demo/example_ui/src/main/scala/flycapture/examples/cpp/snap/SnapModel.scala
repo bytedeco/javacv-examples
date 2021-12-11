@@ -1,18 +1,16 @@
 /*
- * Copyright (c) 2011-2019 Jarek Sacha. All Rights Reserved.
+ * Copyright (c) 2011-2021 Jarek Sacha. All Rights Reserved.
  *
  * Author's e-mail: jpsacha at gmail.com
  */
 
 package flycapture.examples.cpp.snap
 
-import java.io.{File, IOException}
-import java.util.concurrent.locks.ReentrantReadWriteLock
-
 import flycapture.CheckMacro.check
 import flycapture.examples.cpp.FC2Exception
 import flycapture.examples.cpp.FC2Utils._
 import grizzled.slf4j.Logger
+import javafx.scene.image
 import javafx.{concurrent => jfxc}
 import org.bytedeco.flycapture.FlyCapture2._
 import org.bytedeco.flycapture.global.FlyCapture2._
@@ -31,17 +29,14 @@ import scalafx.stage.{FileChooser, Stage}
 import scalafx.util.Duration
 import scalafxml.core.{DependenciesByType, FXMLView}
 
+import java.io.{File, IOException}
+import java.util.concurrent.locks.ReentrantReadWriteLock
 import scala.reflect.runtime.universe.typeOf
-
-object SnapModel {
-
-
-}
 
 /**
  * Model for [[flycapture.examples.cpp.snap.SnapView]].
  *
- * @author Jarek Sacha 
+ * @author Jarek Sacha
  */
 class SnapModel {
 
@@ -51,22 +46,22 @@ class SnapModel {
 
   var parent: Stage = _
 
-  val fc2Version = new StringProperty("?.?.?.?")
-  val cameraInfo = new StringProperty("No camera connected")
+  val fc2Version: StringProperty                         = new StringProperty("?.?.?.?")
+  val cameraInfo: StringProperty                         = new StringProperty("No camera connected")
   val selectedCamera: ObjectProperty[Option[CameraBase]] = ObjectProperty[Option[CameraBase]](None)
-  private var selectedCameraID: Option[CameraID] = None
-  val snappedImage = new ObjectProperty[javafx.scene.image.Image]()
-  val canSnap = BooleanProperty(value = false)
-  val canStart = BooleanProperty(value = false)
-  val canStop = BooleanProperty(value = false)
-  val canSave = BooleanProperty(value = false)
+  private var selectedCameraID: Option[CameraID]         = None
+  val snappedImage: ObjectProperty[image.Image]          = new ObjectProperty[javafx.scene.image.Image]()
+  val canSnap: BooleanProperty                           = BooleanProperty(value = false)
+  val canStart: BooleanProperty                          = BooleanProperty(value = false)
+  val canStop: BooleanProperty                           = BooleanProperty(value = false)
+  val canSave: BooleanProperty                           = BooleanProperty(value = false)
 
   private val liveViewOn = BooleanProperty(value = false)
 
   /**
    * Image in FC2 format, so we can use FC2 API to save it to a file.
    */
-  private val snappedFC2ImageLock = new ReentrantReadWriteLock()
+  private val snappedFC2ImageLock            = new ReentrantReadWriteLock()
   private var snappedFC2Image: Option[Image] = None
 
   private val imageCaptureScheduledService = new ImageCaptureScheduledService()
@@ -78,15 +73,13 @@ class SnapModel {
     initialFileName = "image.png"
   }
 
-
   // Logic for enabling controls
   canSnap <== !liveViewOn && selectedCamera =!= None
   canStart <== !liveViewOn && selectedCamera =!= None
   canStop <== liveViewOn && selectedCamera =!= None
   canSave <== snappedImage =!= null
 
-
-  private val busCallback = new BusEventCallback() {
+  private val busCallback: BusEventCallback = new BusEventCallback() {
     def eventName(id: Int): String = id match {
       case 1 => "BUS_RESET"
       case 2 => "ARRIVAL"
@@ -116,7 +109,7 @@ class SnapModel {
 
   private var busManager: Option[BusManager] = None
 
-  private def disconnectCurrentCamera(noFX: Boolean = false) {
+  private def disconnectCurrentCamera(): Unit = {
     logger.trace("disconnectCurrentCamera() - start")
 
     onStopLiveCapture()
@@ -165,14 +158,13 @@ class SnapModel {
     selectCamera()
   }
 
-
   def selectCamera(): Unit = {
     onFXAndWait {
       logger.debug("selectCamera()")
 
       busManager match {
         case Some(bm) => selectCamera(bm)
-        case None =>
+        case None     =>
       }
     }
   }
@@ -189,7 +181,7 @@ class SnapModel {
 
       // Load main view
       val resourcePath = "CameraSelectionView.fxml"
-      val resource = getClass.getResource(resourcePath)
+      val resource     = getClass.getResource(resourcePath)
       if (resource == null) throw new IOException("Cannot load resource: '" + resourcePath + "'")
 
       val model = new CameraSelectionModel(bm)
@@ -228,7 +220,7 @@ class SnapModel {
         check(busManager.get.GetInterfaceTypeFromGuid(id.guid, interfaceType))
         val cam = interfaceType.get match {
           case INTERFACE_GIGE => new GigECamera()
-          case _ => new Camera()
+          case _              => new Camera()
         }
 
         // Connect to a camera
@@ -279,7 +271,7 @@ class SnapModel {
     }).start()
   }
 
-  private def snap(camera: CameraBase) {
+  private def snap(camera: CameraBase): Unit = {
     logger.trace("snap(...)")
     // Start capturing images
     if (!camera.IsConnected()) {
@@ -301,11 +293,11 @@ class SnapModel {
     check(rawImage.Convert(PIXEL_FORMAT_RGB, convertedImage))
 
     // Convert to JFX Image
-    val width = rawImage.GetCols()
+    val width  = rawImage.GetCols()
     val height = rawImage.GetRows()
-    val wi = new WritableImage(width, height)
-    val pf = PixelFormat.getByteRgbInstance
-    val data = convertedImage.GetData
+    val wi     = new WritableImage(width, height)
+    val pf     = PixelFormat.getByteRgbInstance
+    val data   = convertedImage.GetData
     data.capacity(convertedImage.GetDataSize())
     wi.getPixelWriter.setPixels(0, 0, width, height, pf, data.asBuffer(), width * 3)
     Platform.runLater {
@@ -316,7 +308,6 @@ class SnapModel {
     snappedFC2Image = Some(convertedImage)
     snappedFC2ImageLock.writeLock.unlock()
   }
-
 
   def onStartLiveCapture(): Unit = {
     offFXAndWait {
@@ -343,9 +334,9 @@ class SnapModel {
           logger.debug("Cancelling capture service. Current state: " + imageCaptureScheduledService.state())
           imageCaptureScheduledService.cancel()
           logger.debug("Current state: " + imageCaptureScheduledService.state())
-          val timeout = 1000
+          val timeout   = 1000
           val sleepTime = 100
-          var waitTime = 0
+          var waitTime  = 0
           while (Worker.State.Cancelled.delegate != imageCaptureScheduledService.state() && waitTime < timeout) {
             logger.debug("Waiting for CANCEL to complete, Current state: " + imageCaptureScheduledService.state())
             Thread.sleep(sleepTime)
@@ -375,23 +366,24 @@ class SnapModel {
     // Do minimal blocking by creating a copy of the snapped image.
     // Blocking while saving would take much longer.
     snappedFC2ImageLock.readLock.lock()
-    val image: Option[Image] = try {
-      if (snappedFC2Image.isEmpty) None
-      else {
-        val tmp = new Image()
-        try {
-          check {tmp.DeepCopy(snappedFC2Image.get)}
-          Some(tmp)
-        } catch {
-          case ex: FC2Exception =>
-            showException(parent, "Save Image", "Error preparing image for saving.", ex)
-            tmp.ReleaseBuffer()
-            None
+    val image: Option[Image] =
+      try {
+        if (snappedFC2Image.isEmpty) None
+        else {
+          val tmp = new Image()
+          try {
+            check { tmp.DeepCopy(snappedFC2Image.get) }
+            Some(tmp)
+          } catch {
+            case ex: FC2Exception =>
+              showException(parent, "Save Image", "Error preparing image for saving.", ex)
+              tmp.ReleaseBuffer()
+              None
+          }
         }
+      } finally {
+        snappedFC2ImageLock.readLock.unlock()
       }
-    } finally {
-      snappedFC2ImageLock.readLock.unlock()
-    }
 
     if (image.isEmpty) {
       new Alert(AlertType.Error) {
@@ -452,7 +444,6 @@ class SnapModel {
     }
   }
 
-
   private class ImageCaptureScheduledService() extends jfxc.ScheduledService[String]() {
     logger.debug("ImageCaptureScheduledService()")
 
@@ -462,7 +453,6 @@ class SnapModel {
     private var counter = 0
     setPeriod(Duration(33))
 
-
     override def scheduled(): Unit = {
       logger.trace("ImageCaptureScheduledService::scheduled()")
       require(selectedCamera().isDefined, "Camera must be defined.")
@@ -471,7 +461,6 @@ class SnapModel {
         imageFormat = getCamResolutionAndPixelFormat(selectedCamera().get)
       }
     }
-
 
     override def createTask(): jfxc.Task[String] =
       new jfxc.Task[String]() {
@@ -528,11 +517,11 @@ class SnapModel {
 
             // Update displayed image.
             // Convert to JFX Image
-            val width = convertedImage.GetCols()
+            val width  = convertedImage.GetCols()
             val height = convertedImage.GetRows()
-            val wi = new WritableImage(width, height)
-            val pf = PixelFormat.getByteRgbInstance
-            val data = convertedImage.GetData
+            val wi     = new WritableImage(width, height)
+            val pf     = PixelFormat.getByteRgbInstance
+            val data   = convertedImage.GetData
             data.capacity(convertedImage.GetDataSize())
             wi.getPixelWriter.setPixels(0, 0, width, height, pf, data.asBuffer(), width * 3)
 

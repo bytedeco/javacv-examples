@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2019 Jarek Sacha. All Rights Reserved.
+ * Copyright (c) 2011-2021 Jarek Sacha. All Rights Reserved.
  *
  * Author's e-mail: jpsacha at gmail.com
  */
@@ -24,15 +24,18 @@ object FlyCapture2Test_C extends App {
    * @param method Method to be checked.
    * @param errorMessage Error message used in the exception (if exception is thrown).
    */
-  def check(method: => Int, errorMessage: String) {
+  def check(method: => Int, errorMessage: String): Unit = {
     val err = method
     if (err != FC2_ERROR_OK) {
       val desc = fc2ErrorToDescription(err)
-      throw new FC2Exception("Err: " + err + " " + errorMessage + "\nInternal error description: " + desc.getString, err)
+      throw new FC2Exception(
+        "Err: " + err + " " + errorMessage + "\nInternal error description: " + desc.getString,
+        err
+      )
     }
   }
 
-  def printCameraInfo(context: fc2Context) {
+  def printCameraInfo(context: fc2Context): Unit = {
     val camInfo = new fc2CameraInfo()
     check(fc2GetCameraInfo(context, camInfo), " - in fc2GetCameraInfo")
 
@@ -46,7 +49,7 @@ object FlyCapture2Test_C extends App {
       s"Firmware build time - ${camInfo.firmwareBuildTime.getString}\n")
   }
 
-  def setTimeStamping(context: fc2Context, enableTimeStamp: Boolean) {
+  def setTimeStamping(context: fc2Context, enableTimeStamp: Boolean): Unit = {
     val embeddedInfo = new fc2EmbeddedImageInfo()
 
     check(fc2GetEmbeddedImageInfo(context, embeddedInfo), " - in fc2GetEmbeddedImageInfo")
@@ -57,7 +60,7 @@ object FlyCapture2Test_C extends App {
     check(fc2SetEmbeddedImageInfo(context, embeddedInfo), " - in fc2SetEmbeddedImageInfo ")
   }
 
-  def grabImages(context: fc2Context, numImagesToGrab: Int) {
+  def grabImages(context: fc2Context, numImagesToGrab: Int): Unit = {
     val rawImage = new fc2Image()
 
     check(fc2CreateImage(rawImage), " - in fc2CreateImage")
@@ -88,12 +91,14 @@ object FlyCapture2Test_C extends App {
 
     // Save it to PNG
     printf("Saving the last image to fc2TestImage.png \n")
-    check(fc2SaveImage(convertedImage, "fc2TestImage.png", FC2_PNG), "- in fc2SaveImage\nPlease check write permissions.")
+    check(
+      fc2SaveImage(convertedImage, "fc2TestImage.png", FC2_PNG),
+      "- in fc2SaveImage\nPlease check write permissions."
+    )
 
     check(fc2DestroyImage(rawImage), " - in fc2DestroyImage")
     check(fc2DestroyImage(convertedImage), " - in fc2DestroyImage")
   }
-
 
   val version = new fc2Version()
   fc2GetLibraryVersion(version)

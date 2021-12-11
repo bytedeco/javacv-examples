@@ -1,12 +1,10 @@
 /*
- * Copyright (c) 2011-2019 Jarek Sacha. All Rights Reserved.
+ * Copyright (c) 2011-2021 Jarek Sacha. All Rights Reserved.
  *
  * Author's e-mail: jpsacha at gmail.com
  */
 
 package flycapture.examples.cpp.snap
-
-import java.util.concurrent.atomic.AtomicBoolean
 
 import flycapture.CheckMacro.check
 import flycapture.examples.cpp.FC2Exception
@@ -22,28 +20,29 @@ import scalafx.scene.layout.GridPane
 import scalafx.stage.Stage
 import scalafx.util.Duration
 
+import java.util.concurrent.atomic.AtomicBoolean
 
 object CameraConfigurationModel {
 
   private class PropertyControls(val propType: Int, val name: String, val isUsingValueB: Boolean = false) {
-    val slider = new Slider()
-    val textField = new TextField {
+    val slider: Slider = new Slider()
+    val textField: TextField = new TextField {
       editable = false
       alignment = Pos.BaselineRight
     }
-    val unitLabel = new Label()
-    val autoCheckBox = new CheckBox()
-    val onOffCheckBox = new CheckBox()
-    val onePushButton = new Button("  ")
-    val isUpdating = new AtomicBoolean(false)
+    val unitLabel: Label          = new Label()
+    val autoCheckBox: CheckBox    = new CheckBox()
+    val onOffCheckBox: CheckBox   = new CheckBox()
+    val onePushButton: Button     = new Button("  ")
+    val isUpdating: AtomicBoolean = new AtomicBoolean(false)
   }
 
   object TestPattern {
-    val Pattern1 = new TestPattern(1)
-    val Pattern2 = new TestPattern(2)
-    val None = new TestPattern(0)
+    val Pattern1: TestPattern = new TestPattern(1)
+    val Pattern2: TestPattern = new TestPattern(2)
+    val None: TestPattern     = new TestPattern(0)
 
-    val values = Seq(Pattern1, Pattern2, None)
+    val values: Seq[TestPattern] = Seq(Pattern1, Pattern2, None)
   }
 
   sealed class TestPattern(val code: Int)
@@ -53,10 +52,9 @@ object CameraConfigurationModel {
 /**
  * Model for camera configuration UI.
  *
- * @author Jarek Sacha 
+ * @author Jarek Sacha
  */
 class CameraConfigurationModel(camera: CameraBase, parent: Stage) extends ShowMessage {
-
 
   import flycapture.examples.cpp.snap.CameraConfigurationModel._
 
@@ -64,12 +62,11 @@ class CameraConfigurationModel(camera: CameraBase, parent: Stage) extends ShowMe
 
   val title = "Camera Configuration"
 
-  val absoluteMode = BooleanProperty(value = true)
-  val testPattern = new ObjectProperty[TestPattern]()
+  val absoluteMode               = BooleanProperty(value = true)
+  val testPattern                = new ObjectProperty[TestPattern]()
   var propertyGridPane: GridPane = _
 
-  val testPatternReg: Int = 0x104C
-
+  val testPatternReg: Int = 0x104c
 
   private val properties = Seq(
     new PropertyControls(BRIGHTNESS, "Brightness"),
@@ -99,7 +96,6 @@ class CameraConfigurationModel(camera: CameraBase, parent: Stage) extends ShowMe
   private val updateViewScheduledService = new UpdateViewScheduledService()
 
   testPattern.onChange { (_, _, _) =>
-
   }
 
   override def parentWindow: Stage = parent
@@ -161,7 +157,7 @@ class CameraConfigurationModel(camera: CameraBase, parent: Stage) extends ShowMe
         // Auto check box
         if (propertyInfo.manualSupported && propertyInfo.autoSupported) {
           propertyGridPane.add(pc.autoCheckBox, 4, row)
-          pc.autoCheckBox.onAction = handle {
+          pc.autoCheckBox.onAction = () => {
             val property = new Property(pc.propType)
             check(cam.GetProperty(property))
             if (propertyInfo.absValSupported) property.absControl(absoluteMode())
@@ -174,7 +170,7 @@ class CameraConfigurationModel(camera: CameraBase, parent: Stage) extends ShowMe
         // On/Off check box
         if (propertyInfo.onOffSupported()) {
           propertyGridPane.add(pc.onOffCheckBox, 5, row)
-          pc.onOffCheckBox.onAction = handle {
+          pc.onOffCheckBox.onAction = () => {
             val property = new Property(pc.propType)
             check(cam.GetProperty(property))
             if (propertyInfo.absValSupported) property.absControl(absoluteMode())
@@ -187,7 +183,7 @@ class CameraConfigurationModel(camera: CameraBase, parent: Stage) extends ShowMe
         // One Push button
         if (propertyInfo.onePushSupported()) {
           propertyGridPane.add(pc.onePushButton, 6, row)
-          pc.onePushButton.onAction = handle {
+          pc.onePushButton.onAction = () => {
             val property = new Property(pc.propType)
             check(cam.GetProperty(property))
             if (propertyInfo.absValSupported) property.absControl(absoluteMode())
@@ -221,12 +217,13 @@ class CameraConfigurationModel(camera: CameraBase, parent: Stage) extends ShowMe
             } else {
               p.slider.min = propertyInfo.min
               p.slider.max = propertyInfo.max
-              val value = if (p.propType == SHUTTER) {
-                // Bug 19306
-                property.valueA + (property.valueB << 12)
-              } else {
-                if (p.isUsingValueB) property.valueB else property.valueA
-              }
+              val value =
+                if (p.propType == SHUTTER) {
+                  // Bug 19306
+                  property.valueA + (property.valueB << 12)
+                } else {
+                  if (p.isUsingValueB) property.valueB else property.valueA
+                }
               val actualValue = math.min(math.max(value, propertyInfo.min), propertyInfo.max)
               p.slider.value = actualValue
               p.textField.text = actualValue.toString
@@ -252,19 +249,20 @@ class CameraConfigurationModel(camera: CameraBase, parent: Stage) extends ShowMe
 
   def writeTestPatternRegister(newTestPattern: TestPattern): Unit = {
 
-
-    val pattern = try {
-      readTestPatternRegister()
-    } catch {
-      case ex: Exception => showException(title, "Error reading test pattern register.", ex)
-        return
-    }
+    val pattern =
+      try {
+        readTestPatternRegister()
+      } catch {
+        case ex: Exception =>
+          showException(title, "Error reading test pattern register.", ex)
+          return
+      }
 
     val newPatternRegisterValue = newTestPattern match {
-      case TestPattern.None => pattern.code & 0x00
+      case TestPattern.None     => pattern.code & 0x00
       case TestPattern.Pattern1 => pattern.code | (0x1 << 0)
       case TestPattern.Pattern2 => pattern.code | (0x1 << 1)
-      case t => throw new Exception("Unsupported test pattern: " + t)
+      case t                    => throw new Exception("Unsupported test pattern: " + t)
     }
 
     try {
