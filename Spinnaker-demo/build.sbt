@@ -5,7 +5,7 @@ organization := "javacv.examples"
 
 val javacppVersion = "1.5.6"
 version      := javacppVersion
-scalaVersion := "3.0.1"
+scalaVersion := "3.1.0"
 scalacOptions ++= Seq("-unchecked", "-deprecation")
 
 // Platform classifier for native library dependencies
