@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2019 Jarek Sacha. All Rights Reserved.
+ * Copyright (c) 2011-2021 Jarek Sacha. All Rights Reserved.
  *
  * Author's e-mail: jpsacha at gmail.com
  */
@@ -10,52 +10,57 @@ import com.typesafe.scalalogging.Logger
 import flycapture.CheckMacro.check
 import org.apache.log4j.Level
 import org.bytedeco.flycapture.FlyCapture2._
-import scalafx.application.JFXApp.PrimaryStage
-import scalafx.application.{JFXApp, Platform}
+import scalafx.application.JFXApp3.PrimaryStage
+import scalafx.application.{JFXApp3, Platform}
 import scalafx.scene.Scene
 
 /**
  * @author Jarek Sacha
  */
-object CameraConfigurationViewDemo extends JFXApp {
+object CameraConfigurationViewDemo extends JFXApp3 {
 
-  lazy val title = "Fly Capture CameraConfiguration Demo"
+  private val appName = "Fly Capture CameraConfiguration Demo"
+  private val logger  = Logger(this.getClass)
+
+  private var cameraOption: Option[Camera] = None
+
   initializeLogging(Level.INFO)
+  setupUncaughtExceptionHandling(logger, appName)
 
-  private val logger = Logger(this.getClass)
-  setupUncaughtExceptionHandling(logger, title)
+  override def start(): Unit = {
+    try {
+      val busMgr     = new BusManager()
+      val numCameras = Array[Int](0)
+      check(busMgr.GetNumOfCameras(numCameras))
+      logger.info("Number of cameras detected: " + numCameras(0))
 
-  private val busMgr     = new BusManager()
-  private val numCameras = Array[Int](0)
-  check(busMgr.GetNumOfCameras(numCameras))
-  println("Number of cameras detected: " + numCameras(0))
+      val guid = new PGRGuid()
+      check(busMgr.GetCameraFromIndex(0, guid))
 
-  private val guid = new PGRGuid()
-  check(busMgr.GetCameraFromIndex(0, guid))
+      // Connect to a camera
+      cameraOption = Option(new Camera())
+      cameraOption.foreach { camera =>
+        check(camera.Connect(guid))
 
-  // Connect to a camera
-  private val cam = new Camera()
-  check(cam.Connect(guid))
+        val cameraConfiguration = new CameraConfiguration(camera, null)
 
-  try {
-    val cameraConfiguration = new CameraConfiguration(cam, null)
+        // Create UI
+        stage = new PrimaryStage() {
+          title = appName
+          scene = new Scene(cameraConfiguration.view)
+        }
+      }
+    } catch {
+      case t: Throwable =>
+        logger.error("Unexpected error. Application will terminate.", t)
+        showException(null, appName, "Unexpected error. Application will terminate.", t)
 
-    // Create UI
-    stage = new PrimaryStage() {
-      title = CameraSelectionViewDemo.title
-      scene = new Scene(cameraConfiguration.view)
+        Platform.exit()
     }
-  } catch {
-    case t: Throwable =>
-      logger.error("Unexpected error. Application will terminate.", t)
-      showException(null, title, "Unexpected error. Application will terminate.", t)
-
-      Platform.exit()
   }
 
   override def stopApp(): Unit = {
     super.stopApp()
-
-    cam.Disconnect()
+    cameraOption.foreach(_.Disconnect())
   }
 }
