@@ -6,8 +6,8 @@
 
 package flycapture.examples.cpp.snap
 
+import com.typesafe.scalalogging.Logger
 import flycapture.CheckMacro.check
-import grizzled.slf4j.Logger
 import javafx.scene.control.MultipleSelectionModel
 import org.bytedeco.flycapture.FlyCapture2._
 import scalafx.Includes._
@@ -16,40 +16,40 @@ import scalafx.collections.ObservableBuffer
 import scalafx.event.subscriptions.Subscription
 
 /**
-  * Model for camera selection UI.
-  *
-  * @author Jarek Sacha
-  */
+ * Model for camera selection UI.
+ *
+ * @author Jarek Sacha
+ */
 class CameraSelectionModel(busManager: BusManager) {
 
   // TODO automatically update list of cameras when cameras are connected/disconnected
 
-  val fc2Version = StringProperty("?.?.?.?")
-  val numberOfDetectedCameras = IntegerProperty(0)
-  val serialNumber = StringProperty("?")
-  val cameraModel = StringProperty("?")
-  val sensor = StringProperty("?")
-  val resolution = StringProperty("?")
-  val cameraListViewItems = new ObservableBuffer[CameraID]()
+  val fc2Version                = StringProperty("?.?.?.?")
+  val numberOfDetectedCameras   = IntegerProperty(0)
+  val serialNumber              = StringProperty("?")
+  val cameraModel               = StringProperty("?")
+  val sensor                    = StringProperty("?")
+  val resolution                = StringProperty("?")
+  val cameraListViewItems       = new ObservableBuffer[CameraID]()
   val cameraItemsSelectionModel = new ObjectProperty[MultipleSelectionModel[CameraID]]()
 
-  private val logger = Logger(this.getClass)
+  private val logger                             = Logger(this.getClass)
   private var subscription: Option[Subscription] = None
 
   cameraItemsSelectionModel.onChange { (_, _, newSelectionModel) =>
     subscription.foreach(_.cancel())
-    subscription = if (newSelectionModel != null) {
-      Some(newSelectionModel.selectedItem.onChange { (_, _, newCamera) =>
-        serialNumber() = if (newCamera != null) newCamera.cameraInfo.serialNumber().toString else "?"
-        cameraModel() = if (newCamera != null) newCamera.cameraInfo.modelName().getString else "?"
-        sensor() = if (newCamera != null) newCamera.cameraInfo.sensorInfo().getString else "?"
-        resolution() = if (newCamera != null) newCamera.cameraInfo.sensorResolution().getString else "?"
-      })
-    } else {
-      None
-    }
+    subscription =
+      if (newSelectionModel != null) {
+        Some(newSelectionModel.selectedItem.onChange { (_, _, newCamera) =>
+          serialNumber() = if (newCamera != null) newCamera.cameraInfo.serialNumber().toString else "?"
+          cameraModel() = if (newCamera != null) newCamera.cameraInfo.modelName().getString else "?"
+          sensor() = if (newCamera != null) newCamera.cameraInfo.sensorInfo().getString else "?"
+          resolution() = if (newCamera != null) newCamera.cameraInfo.sensorResolution().getString else "?"
+        })
+      } else {
+        None
+      }
   }
-
 
   def initialize(): Unit = {
     logger.trace("Initializing FlyCapture camera connections")
@@ -59,7 +59,6 @@ class CameraSelectionModel(busManager: BusManager) {
     Utilities.GetLibraryVersion(version)
     fc2Version() = s"${version.major}.${version.minor}.${version.`type`}.${version.build}"
     logger.trace(s"FlyCapture2 library version: ${fc2Version()}")
-
 
     // Query connected cameras
     // TODO: monitor connected/disconnected camera events and update camera list appropriately

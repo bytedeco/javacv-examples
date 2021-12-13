@@ -6,10 +6,7 @@
 
 package flycapture.examples.cpp
 
-import java.io.{IOException, PrintWriter, StringWriter}
-import java.util.concurrent
-
-import grizzled.slf4j.Logger
+import com.typesafe.scalalogging.Logger
 import org.apache.log4j.{BasicConfigurator, Level}
 import scalafx.Includes._
 import scalafx.application.Platform
@@ -20,15 +17,17 @@ import scalafx.scene.layout.{GridPane, Priority}
 import scalafx.stage.Window
 import scalafxml.core.{DependenciesByType, FXMLView}
 
+import java.io.{IOException, PrintWriter, StringWriter}
+import java.util.concurrent
 import scala.reflect.runtime.universe._
 
 /**
- * @author Jarek Sacha 
+ * @author Jarek Sacha
  */
 package object snap {
 
   def initializeLogging(level: Level): Unit = {
-    val root = org.apache.log4j.Logger.getRootLogger
+    val root      = org.apache.log4j.Logger.getRootLogger
     val appenders = root.getAllAppenders
     // Configure default appenders if non created yet
     if (appenders == null || !appenders.hasMoreElements) {
@@ -37,24 +36,19 @@ package object snap {
     org.apache.log4j.Logger.getRootLogger.setLevel(level)
   }
 
-
   def setupUncaughtExceptionHandling(logger: Logger, title: String): Unit = {
-    Thread.setDefaultUncaughtExceptionHandler(
-      (_: Thread, e: Throwable) => {
-        logger.error("Default handler caught exception: " + e.getMessage, e)
-        showException(null, title, "Unhandled exception.", e)
-      }
-    )
+    Thread.setDefaultUncaughtExceptionHandler((_: Thread, e: Throwable) => {
+      logger.error("Default handler caught exception: " + e.getMessage, e)
+      showException(null, title, "Unhandled exception.", e)
+    })
 
     // start is called on the FX Application Thread,
     // so Thread.currentThread() is the FX application thread:
-    Thread.currentThread().setUncaughtExceptionHandler(
-      (_: Thread, e: Throwable) => {
-        logger.error("FX handler caught exception: " + e.getMessage, e)
-        e.printStackTrace()
-        showException(null, title, "Unhandled FX exception.", e)
-      }
-    )
+    Thread.currentThread().setUncaughtExceptionHandler((_: Thread, e: Throwable) => {
+      logger.error("FX handler caught exception: " + e.getMessage, e)
+      e.printStackTrace()
+      showException(null, title, "Unhandled FX exception.", e)
+    })
   }
 
   /**

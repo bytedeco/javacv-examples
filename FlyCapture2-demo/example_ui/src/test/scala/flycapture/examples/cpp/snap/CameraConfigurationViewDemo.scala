@@ -6,8 +6,8 @@
 
 package flycapture.examples.cpp.snap
 
+import com.typesafe.scalalogging.Logger
 import flycapture.CheckMacro.check
-import grizzled.slf4j.Logger
 import org.apache.log4j.Level
 import org.bytedeco.flycapture.FlyCapture2._
 import scalafx.application.JFXApp.PrimaryStage
@@ -15,8 +15,8 @@ import scalafx.application.{JFXApp, Platform}
 import scalafx.scene.Scene
 
 /**
-  * @author Jarek Sacha
-  */
+ * @author Jarek Sacha
+ */
 object CameraConfigurationViewDemo extends JFXApp {
 
   lazy val title = "Fly Capture CameraConfiguration Demo"
@@ -25,7 +25,7 @@ object CameraConfigurationViewDemo extends JFXApp {
   private val logger = Logger(this.getClass)
   setupUncaughtExceptionHandling(logger, title)
 
-  private val busMgr = new BusManager()
+  private val busMgr     = new BusManager()
   private val numCameras = Array[Int](0)
   check(busMgr.GetNumOfCameras(numCameras))
   println("Number of cameras detected: " + numCameras(0))

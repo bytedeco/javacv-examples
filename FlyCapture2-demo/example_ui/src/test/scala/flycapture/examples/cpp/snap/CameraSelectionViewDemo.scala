@@ -6,7 +6,7 @@
 
 package flycapture.examples.cpp.snap
 
-import grizzled.slf4j.Logger
+import com.typesafe.scalalogging.Logger
 import org.apache.log4j.Level
 import org.bytedeco.flycapture.FlyCapture2._
 import scalafx.application.JFXApp.PrimaryStage

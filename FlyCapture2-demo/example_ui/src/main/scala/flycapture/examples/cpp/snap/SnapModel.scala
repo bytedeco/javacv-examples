@@ -6,10 +6,10 @@
 
 package flycapture.examples.cpp.snap
 
+import com.typesafe.scalalogging.Logger
 import flycapture.CheckMacro.check
 import flycapture.examples.cpp.FC2Exception
 import flycapture.examples.cpp.FC2Utils._
-import grizzled.slf4j.Logger
 import javafx.scene.image
 import javafx.{concurrent => jfxc}
 import org.bytedeco.flycapture.FlyCapture2._
