@@ -6,16 +6,14 @@
 
 package opencv_cookbook
 
-
 import org.bytedeco.javacpp.indexer.FloatIndexer
 import org.bytedeco.javacpp.{DoublePointer, IntPointer}
-import org.bytedeco.javacv.{CanvasFrame, Java2DFrameConverter, OpenCVFrameConverter}
+import org.bytedeco.javacv.{CanvasFrame, Java2DFrameConverter, JavaFXFrameConverter, OpenCVFrameConverter}
 import org.bytedeco.opencv.global.opencv_core._
 import org.bytedeco.opencv.global.opencv_imgcodecs._
 import org.bytedeco.opencv.global.opencv_imgproc._
-import org.bytedeco.opencv.opencv_core.{Point, _}
+import org.bytedeco.opencv.opencv_core._
 
-import java.awt._
 import java.awt.image.BufferedImage
 import java.io.File
 import java.nio.IntBuffer
@@ -23,23 +21,23 @@ import javax.swing.WindowConstants
 import scala.math.round
 import scala.util.Using
 
-
 /** Helper methods that simplify use of OpenCV API. */
 object OpenCVUtils {
 
-  /** Load an image and show in a CanvasFrame. If image cannot be loaded the application will exit with code 1.
-    *
-    * @param flags Flags specifying the color type of a loaded image:
-    *              <ul>
-    *              <li> `>0` Return a 3-channel color image</li>
-    *              <li> `=0` Return a gray scale image</li>
-    *              <li> `<0` Return the loaded image as is. Note that in the current implementation
-    *              the alpha channel, if any, is stripped from the output image. For example, a 4-channel
-    *              RGBA image is loaded as RGB if the `flags` is greater than 0.</li>
-    *              </ul>
-    *              Default is gray scale.
-    * @return loaded image
-    */
+  /**
+   * Load an image and show in a CanvasFrame. If image cannot be loaded the application will exit with code 1.
+   *
+   * @param flags Flags specifying the color type of a loaded image:
+   *              <ul>
+   *              <li> `>0` Return a 3-channel color image</li>
+   *              <li> `=0` Return a gray scale image</li>
+   *              <li> `<0` Return the loaded image as is. Note that in the current implementation
+   *              the alpha channel, if any, is stripped from the output image. For example, a 4-channel
+   *              RGBA image is loaded as RGB if the `flags` is greater than 0.</li>
+   *              </ul>
+   *              Default is gray scale.
+   * @return loaded image
+   */
   def loadAndShowOrExit(file: File, flags: Int = IMREAD_COLOR): Mat = {
     // Read input image
     val image = loadOrExit(file, flags)
@@ -47,19 +45,20 @@ object OpenCVUtils {
     image
   }
 
-  /** Load an image. If image cannot be loaded the application will exit with code 1.
-    *
-    * @param flags Flags specifying the color type of a loaded image:
-    *              <ul>
-    *              <li> `>0` Return a 3-channel color image</li>
-    *              <li> `=0` Return a gray scale image</li>
-    *              <li> `<0` Return the loaded image as is. Note that in the current implementation
-    *              the alpha channel, if any, is stripped from the output image. For example, a 4-channel
-    *              RGBA image is loaded as RGB if the `flags` is greater than 0.</li>
-    *              </ul>
-    *              Default is gray scale.
-    * @return loaded image
-    */
+  /**
+   * Load an image. If image cannot be loaded the application will exit with code 1.
+   *
+   * @param flags Flags specifying the color type of a loaded image:
+   *              <ul>
+   *              <li> `>0` Return a 3-channel color image</li>
+   *              <li> `=0` Return a gray scale image</li>
+   *              <li> `<0` Return the loaded image as is. Note that in the current implementation
+   *              the alpha channel, if any, is stripped from the output image. For example, a 4-channel
+   *              RGBA image is loaded as RGB if the `flags` is greater than 0.</li>
+   *              </ul>
+   *              Default is gray scale.
+   * @return loaded image
+   */
   def loadOrExit(file: File, flags: Int = IMREAD_COLOR): Mat = {
     // Read input image
     val image = imread(file.getAbsolutePath, flags)
@@ -77,18 +76,17 @@ object OpenCVUtils {
   }
 
   /** Show image in a window. Closing the window will exit the application. */
-  def show(image: Image, title: String): Unit = {
+  def show(image: java.awt.Image, title: String): Unit = {
     val canvas = new CanvasFrame(title, 1)
     canvas.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE)
     canvas.showImage(image)
   }
 
-
   /** Draw red circles at point locations on an image. */
   def drawOnImage(image: Mat, points: Point2fVector): Mat = {
-    val dest = image.clone()
+    val dest   = image.clone()
     val radius = 5
-    val red = new Scalar(0, 0, 255, 0)
+    val red    = new Scalar(0, 0, 255, 0)
     for (i <- 0 until points.size.toInt) {
       val p = points.get(i)
       circle(dest, new Point(round(p.x), round(p.y)), radius, red)
@@ -97,37 +95,40 @@ object OpenCVUtils {
     dest
   }
 
-  /** Draw a shape on an image.
-    *
-    * @param image   input image
-    * @param overlay shape to draw
-    * @param color   color to use
-    * @return new image with drawn overlay
-    */
+  /**
+   * Draw a shape on an image.
+   *
+   * @param image   input image
+   * @param overlay shape to draw
+   * @param color   color to use
+   * @return new image with drawn overlay
+   */
   def drawOnImage(image: Mat, overlay: Rect, color: Scalar): Mat = {
     val dest = image.clone()
     rectangle(dest, overlay, color)
     dest
   }
 
-  /** Save the image to the specified file.
-    *
-    * The image format is chosen based on the filename extension (see `imread()` in OpenCV documentation for the list of extensions).
-    * Only 8-bit (or 16-bit in case of PNG, JPEG 2000, and TIFF) single-channel or
-    * 3-channel (with ‘BGR’ channel order) images can be saved using this function.
-    * If the format, depth or channel order is different, use Mat::convertTo() , and cvtColor() to convert it before saving.
-    *
-    * @param file  file to save to. File name extension decides output image format.
-    * @param image image to save.
-    */
+  /**
+   * Save the image to the specified file.
+   *
+   * The image format is chosen based on the filename extension (see `imread()` in OpenCV documentation for the list of extensions).
+   * Only 8-bit (or 16-bit in case of PNG, JPEG 2000, and TIFF) single-channel or
+   * 3-channel (with ‘BGR’ channel order) images can be saved using this function.
+   * If the format, depth or channel order is different, use Mat::convertTo() , and cvtColor() to convert it before saving.
+   *
+   * @param file  file to save to. File name extension decides output image format.
+   * @param image image to save.
+   */
   def save(file: File, image: Mat): Unit = {
     imwrite(file.getAbsolutePath, image)
   }
 
-  /** Convert native vector to JVM array.
-    *
-    * @param keyPoints pointer to a native vector containing KeyPoints.
-    */
+  /**
+   * Convert native vector to JVM array.
+   *
+   * @param keyPoints pointer to a native vector containing KeyPoints.
+   */
   def toArray(keyPoints: KeyPoint): Array[KeyPoint] = {
     val oldPosition = keyPoints.position()
     // Convert keyPoints to Scala sequence
@@ -138,10 +139,11 @@ object OpenCVUtils {
     points
   }
 
-  /** Convert native vector to JVM array.
-    *
-    * @param keyPoints pointer to a native vector containing KeyPoints.
-    */
+  /**
+   * Convert native vector to JVM array.
+   *
+   * @param keyPoints pointer to a native vector containing KeyPoints.
+   */
   def toArray(keyPoints: KeyPointVector): Array[KeyPoint] = {
     // for the simplicity of the implementation we will assume that number of key points is within Int range.
     require(keyPoints.size() <= Int.MaxValue)
@@ -151,11 +153,12 @@ object OpenCVUtils {
     for (i <- Array.range(0, n)) yield new KeyPoint(keyPoints.get(i))
   }
 
-  /** Convert native vector to JVM array.
-    *
-    * @param matches pointer to a native vector containing DMatches.
-    * @return
-    */
+  /**
+   * Convert native vector to JVM array.
+   *
+   * @param matches pointer to a native vector containing DMatches.
+   * @return
+   */
   def toArray(matches: DMatchVector): Array[DMatch] = {
     // for the simplicity of the implementation we will assume that number of key points is within Int range.
     require(matches.size() <= Int.MaxValue)
@@ -175,27 +178,40 @@ object OpenCVUtils {
     }
   }
 
+  /**
+   * Convert a Mat to ScalaFX Image
+   */
+  def toFXImage(mat: Mat): scalafx.scene.image.Image = {
+    import scalafx.scene.image.ImageIncludes._
+    Using.resource(new OpenCVFrameConverter.ToMat()) { openCVConverter =>
+      Using.resource(openCVConverter.convert(mat)) { frame =>
+        Using.resource(new JavaFXFrameConverter()) { javaFXConverter =>
+          javaFXConverter.convert(frame)
+        }
+      }
+    }
+  }
 
   def toPoint(p: Point2f): Point = new Point(round(p.x), round(p.y))
 
-
   /**
-    * Convert `Mat` to one where pixels are represented as 8 bit unsigned integers (`CV_8U`).
-    * It creates a copy of the input image.
-    *
-    * @param src input image.
-    * @return copy of the input with pixels values represented as 8 bit unsigned integers.
-    */
+   * Convert `Mat` to one where pixels are represented as 8 bit unsigned integers (`CV_8U`).
+   * It creates a copy of the input image.
+   *
+   * @param src input image.
+   * @return copy of the input with pixels values represented as 8 bit unsigned integers.
+   */
   def toMat8U(src: Mat, doScaling: Boolean = true): Mat = {
     val minVal = new DoublePointer(Double.MaxValue)
     val maxVal = new DoublePointer(Double.MinValue)
     minMaxLoc(src, minVal, maxVal, null, null, new Mat())
     val min = minVal.get(0)
     val max = maxVal.get(0)
-    val (scale, offset) = if (doScaling) {
-      val s = 255d / (max - min)
-      (s, -min * s)
-    } else (1d, 0d)
+    val (scale, offset) =
+      if (doScaling) {
+        val s = 255d / (max - min)
+        (s, -min * s)
+      } else (1d, 0d)
 
     val dest = new Mat()
     src.convertTo(dest, CV_8U, scale, offset)
@@ -216,9 +232,9 @@ object OpenCVUtils {
   }
 
   /**
-    * Convert a sequence of Point3D to a Mat representing a vector of Points3f.
-    * Calling  `checkVector(3)` on the return value will return non-negative value indicating that it is a vector with 3 channels.
-    */
+   * Convert a sequence of Point3D to a Mat representing a vector of Points3f.
+   * Calling  `checkVector(3)` on the return value will return non-negative value indicating that it is a vector with 3 channels.
+   */
   def toMatPoint3f(points: Seq[Point3f]): Mat = {
     // Create Mat representing a vector of Points3f
     val dest = new Mat(1, points.size, CV_32FC3)
@@ -236,16 +252,16 @@ object OpenCVUtils {
     require(mat.checkVector(2) >= 0, "Expecting a vector Mat")
 
     val indexer = mat.createIndexer().asInstanceOf[FloatIndexer]
-    val size = mat.total.toInt
-    val dest = new Array[Point2f](size)
+    val size    = mat.total.toInt
+    val dest    = new Array[Point2f](size)
 
     for (i <- 0 until size) dest(i) = new Point2f(indexer.get(0, i, 0), indexer.get(0, i, 1))
     dest
   }
 
   /**
-    * Convert a vector of Point2f to a Mat representing a vector of Points2f.
-    */
+   * Convert a vector of Point2f to a Mat representing a vector of Points2f.
+   */
   def toMat(points: Point2fVector): Mat = {
     // Create Mat representing a vector of Points3f
     val size: Int = points.size.toInt
@@ -260,12 +276,12 @@ object OpenCVUtils {
     dest
   }
 
-
-  /** Convert a Scala collection to a JavaCV "vector".
-    *
-    * @param src Scala collection
-    * @return JavaCV/native collection
-    */
+  /**
+   * Convert a Scala collection to a JavaCV "vector".
+   *
+   * @param src Scala collection
+   * @return JavaCV/native collection
+   */
   def toVector(src: Array[DMatch]): DMatchVector = {
     val dest = new DMatchVector(src.length)
     for (i <- src.indices) dest.put(i, src(i))
@@ -273,36 +289,35 @@ object OpenCVUtils {
   }
 
   /**
-    * Creates a `MatVector` and put `mat` as its only element.
-    *
-    * @return
-    */
+   * Creates a `MatVector` and put `mat` as its only element.
+   *
+   * @return
+   */
   def wrapInMatVector(mat: Mat): MatVector = {
     new MatVector(Array(mat): _*)
   }
 
   /**
-    * Creates a `IntBuffer` and put `v` as its only element.
-    *
-    * @return
-    */
+   * Creates a `IntBuffer` and put `v` as its only element.
+   *
+   * @return
+   */
   def wrapInIntBuffer(v: Int): IntBuffer = {
     IntBuffer.wrap(Array(v))
   }
 
   /**
-    * Creates a `IntPointer` and put `v` as its only element.
-    *
-    * @return
-    */
+   * Creates a `IntPointer` and put `v` as its only element.
+   *
+   * @return
+   */
   def wrapInIntPointer(v: Int): IntPointer = {
     new IntPointer(1L).put(v)
   }
 
-
   /**
-    * Print info about the `mat`.
-    */
+   * Print info about the `mat`.
+   */
   def printInfo(mat: Mat, caption: String = ""): Unit = {
     println(
       caption + "\n" +

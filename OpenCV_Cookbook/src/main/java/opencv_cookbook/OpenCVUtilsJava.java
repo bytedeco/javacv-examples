@@ -7,10 +7,7 @@
 package opencv_cookbook;
 
 
-import org.bytedeco.javacv.CanvasFrame;
-import org.bytedeco.javacv.Frame;
-import org.bytedeco.javacv.Java2DFrameConverter;
-import org.bytedeco.javacv.OpenCVFrameConverter;
+import org.bytedeco.javacv.*;
 import org.bytedeco.opencv.opencv_core.Mat;
 
 import javax.swing.*;
@@ -127,5 +124,19 @@ public class OpenCVUtilsJava {
      */
     public void save(File file, Mat image) {
         imwrite(file.getAbsolutePath(), image);
+    }
+
+
+    /**
+     * Convert a Mat to ScalaFX Image
+     */
+    public static javafx.scene.image.Image toFXImage(Mat mat) {
+        try(OpenCVFrameConverter.ToMat openCVConverter = new OpenCVFrameConverter.ToMat()) {
+            try(Frame frame = openCVConverter.convert(mat)){
+                try(JavaFXFrameConverter javaFXConverter  = new JavaFXFrameConverter()) {
+                    return javaFXConverter.convert(frame);
+                }
+            }
+        }
     }
 }
