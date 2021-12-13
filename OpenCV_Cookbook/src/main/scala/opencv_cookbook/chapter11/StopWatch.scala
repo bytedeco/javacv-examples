@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2021.  Jarek Sacha. All Rights Reserved.
+ *
+ * Author's e-mail: jpsacha at gmail.com
+ */
+
 package opencv_cookbook.chapter11
 
 import java.util.concurrent.TimeUnit
@@ -54,7 +60,7 @@ class StopWatch {
 
   def averageDuration: Duration = {
     if (startTime.isEmpty) {
-      if (stopCount == 0) Duration.Zero else duration / stopCount
+      if (stopCount == 0) Duration.Zero else duration / stopCount.toDouble
     } else {
       throw new IllegalStateException("Cannot average when in stated state.")
     }
