@@ -43,7 +43,7 @@ libraryDependencies ++= {
     case _                            => throw new Exception("Unknown platform!")
   }
   Seq("base", "controls", "fxml", "graphics", "media", "swing", "web")
-    .map(m => "org.openjfx" % s"javafx-$m" % "17.0.1" classifier osName)
+    .map(m => "org.openjfx" % s"javafx-$m" % "17.0.2" classifier osName)
 }
 
 resolvers += Resolver.sonatypeRepo("snapshots")
