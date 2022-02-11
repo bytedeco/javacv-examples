@@ -1,7 +1,7 @@
 name         := "opencv-cookbook"
 organization := "javacv.examples"
 
-val javacppVersion = "1.5.6"
+val javacppVersion = "1.5.7"
 version      := javacppVersion
 scalaVersion := "2.13.7"
 
@@ -12,9 +12,9 @@ val platform = org.bytedeco.javacpp.Loader.Detector.getPlatform
 
 // JavaCPP-Preset libraries with native dependencies
 val presetLibs = Seq(
-  "opencv"   -> "4.5.3",
-  "ffmpeg"   -> "4.4",
-  "openblas" -> "0.3.17"
+  "opencv"   -> "4.5.5",
+  "ffmpeg"   -> "5.0",
+  "openblas" -> "0.3.19"
 ).flatMap { case (lib, ver) =>
   Seq(
     "org.bytedeco" % lib % s"$ver-$javacppVersion",
