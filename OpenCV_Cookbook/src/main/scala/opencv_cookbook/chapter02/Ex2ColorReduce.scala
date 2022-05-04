@@ -1,18 +1,17 @@
 /*
- * Copyright (c) 2011-2019 Jarek Sacha. All Rights Reserved.
+ * Copyright (c) 2011-2022 Jarek Sacha. All Rights Reserved.
  *
  * Author's e-mail: jpsacha at gmail.com
  */
 
 package opencv_cookbook.chapter02
 
-import java.io.File
-
 import opencv_cookbook.OpenCVUtils._
-import org.bytedeco.javacpp.indexer.UByteIndexer
+import org.bytedeco.javacpp.indexer.{Indexer, OneIndex, UByteIndexer}
 import org.bytedeco.opencv.global.opencv_imgcodecs._
 import org.bytedeco.opencv.opencv_core._
 
+import java.io.File
 
 /**
  * Reduce colors in the image by modifying color values in all bands the same way.
@@ -30,7 +29,6 @@ object Ex2ColorReduce extends App {
   // Display
   show(dest, "Reduced colors")
 
-
   /**
    * Reduce number of colors.
    * @param image input image.
@@ -38,18 +36,24 @@ object Ex2ColorReduce extends App {
    */
   def colorReduce(image: Mat, div: Int = 64): Mat = {
 
-    // Indexer is used to access value in the image
-    val indexer = image.createIndexer().asInstanceOf[UByteIndexer]
-
     // Total number of elements, combining components from each channel
     val nbElements = image.rows * image.cols * image.channels
+
+    // Indexer is used to access value in the image
+    val indexer =
+      image
+        .createIndexer()
+        .asInstanceOf[Indexer] // cast needed to avoid: UByteRawIndexer cannot be cast to class scala.runtime.Nothing$
+        .reindex[UByteIndexer](new OneIndex(nbElements)) // Reindex needed to avoid  IndexOutOfBoundsException later
+    // See discussion: https://github.com/bytedeco/javacv-examples/issues/23
+
     for (i <- 0 until nbElements) {
       // Convert to integer, byte is treated as an unsigned value
-      val v = indexer.get(i) & 0xFF
+      val v = indexer.get(i) & 0xff
       // Use integer division to reduce number of values
       val newV = v / div * div + div / 2
       // Put back into the image
-      indexer.put(i, (newV & 0xFF).toByte)
+      indexer.put(i, (newV & 0xff).toByte)
     }
 
     image
