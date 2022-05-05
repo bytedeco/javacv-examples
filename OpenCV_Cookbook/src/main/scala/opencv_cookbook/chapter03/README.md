@@ -38,7 +38,7 @@ for (y <- 0 until image.rows) {
   for (x <- 0 until image.cols) {
     srcI.get(y, x, brg)
     val c = ColorRGB(brg)
-    val t = if (distance(c) < colorDistanceThreshold) (255 & 0xFF).toByte else 0.toByte
+    val t = if (distance(c) < colorDistanceThreshold) 255 else 0
     destI.put(y, x, t)
   }
 }    

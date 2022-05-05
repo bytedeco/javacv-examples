@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2019 Jarek Sacha. All Rights Reserved.
+ * Copyright (c) 2011-2022 Jarek Sacha. All Rights Reserved.
  *
  * Author's e-mail: jpsacha at gmail.com
  */
@@ -61,7 +61,7 @@ class ColorDetector(private var _minDist: Int = 100,
       for (x <- 0 until image.cols) {
         srcI.get(y, x, brg)
         val c = ColorRGB.fromBGR(brg)
-        val t = if (distance(c) < colorDistanceThreshold) (255 & 0xFF).toByte else 0.toByte
+        val t = if (distance(c) < colorDistanceThreshold) 255 else 0
         // Convert indexes to Long to avoid API ambiguity
         destI.put(y.toLong, x.toLong, t)
       }

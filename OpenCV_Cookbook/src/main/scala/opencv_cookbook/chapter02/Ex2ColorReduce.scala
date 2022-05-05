@@ -49,11 +49,11 @@ object Ex2ColorReduce extends App {
 
     for (i <- 0 until nbElements) {
       // Convert to integer, byte is treated as an unsigned value
-      val v = indexer.get(i) & 0xff
+      val v = indexer.get(i)
       // Use integer division to reduce number of values
       val newV = v / div * div + div / 2
       // Put back into the image
-      indexer.put(i, (newV & 0xff).toByte)
+      indexer.put(i, newV)
     }
 
     image

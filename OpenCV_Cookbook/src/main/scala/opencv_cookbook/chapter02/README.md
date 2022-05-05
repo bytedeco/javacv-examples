@@ -93,11 +93,11 @@ val indexer = image.createIndexer().asInstanceOf[UByteIndexer]
 val nbElements = image.rows * image.cols * image.channels
 for (i <- 0 until nbElements) {
   // Convert to integer, byte is treated as an unsigned value
-  val v = indexer.get(i) & 0xFF
+  val v = indexer.get(i)
   // Use integer division to reduce number of values
   val newV = v / div * div + div / 2
   // Put back into the image
-  indexer.put(i, (newV & 0xFF).toByte)
+  indexer.put(i, newV)
 }
 ```
 
