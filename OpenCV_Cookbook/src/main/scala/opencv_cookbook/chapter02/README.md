@@ -86,11 +86,14 @@ Since we do not care here about location of pixels or channels, each is processe
 // We have an 8-bit grey lavel image (byte image) representead as `Mat`
 val image : Mat = ...
 
-// Indexer is used to access value in the image
-val indexer = image.createIndexer().asInstanceOf[UByteIndexer]
-
 // Total number of elements, combining components from each channel
 val nbElements = image.rows * image.cols * image.channels
+
+// Indexer is used to access value in the image
+// Reshape to create flat view so we can iterate using a single loop
+// Annotate type correct type of the indexer: UByteIndexer
+val indexer: UByteIndexer = image.reshape(1, nbElements).createIndexer()
+
 for (i <- 0 until nbElements) {
   // Convert to integer, byte is treated as an unsigned value
   val v = indexer.get(i)

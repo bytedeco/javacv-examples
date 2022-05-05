@@ -7,7 +7,7 @@
 package opencv_cookbook.chapter02
 
 import opencv_cookbook.OpenCVUtils._
-import org.bytedeco.javacpp.indexer.{Indexer, OneIndex, UByteIndexer}
+import org.bytedeco.javacpp.indexer.UByteIndexer
 import org.bytedeco.opencv.global.opencv_imgcodecs._
 import org.bytedeco.opencv.opencv_core._
 
@@ -40,12 +40,9 @@ object Ex2ColorReduce extends App {
     val nbElements = image.rows * image.cols * image.channels
 
     // Indexer is used to access value in the image
-    val indexer =
-      image
-        .createIndexer()
-        .asInstanceOf[Indexer] // cast needed to avoid: UByteRawIndexer cannot be cast to class scala.runtime.Nothing$
-        .reindex[UByteIndexer](new OneIndex(nbElements)) // Reindex needed to avoid  IndexOutOfBoundsException later
-    // See discussion: https://github.com/bytedeco/javacv-examples/issues/23
+    // Reshape to create flat view so we can iterate using a single loop
+    // Annotate type correct type of the indexer: UByteIndexer
+    val indexer: UByteIndexer = image.reshape(1, nbElements).createIndexer()
 
     for (i <- 0 until nbElements) {
       // Convert to integer, byte is treated as an unsigned value
