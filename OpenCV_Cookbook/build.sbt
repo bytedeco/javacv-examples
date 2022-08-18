@@ -23,28 +23,15 @@ val presetLibs = Seq(
 }
 
 libraryDependencies ++= Seq(
-  "org.bytedeco" % "javacpp" % javacppVersion,
-  "org.bytedeco" % "javacpp" % javacppVersion classifier platform,
-  "org.bytedeco" % "javacv" % javacppVersion,
-  "org.scala-lang.modules" %% "scala-swing" % "3.0.0",
-  "org.scalafx" %% "scalafx" % "18.0.1-R27",
-  "org.scalafx" %% "scalafx-extras" % "0.5.0",
-  "junit" % "junit" % "4.13.2" % "test",
-  "com.novocode" % "junit-interface" % "0.11" % "test"
+  "org.bytedeco"            % "javacpp"         % javacppVersion,
+  "org.bytedeco"            % "javacpp"         % javacppVersion classifier platform,
+  "org.bytedeco"            % "javacv"          % javacppVersion,
+  "org.scala-lang.modules" %% "scala-swing"     % "3.0.0",
+  "org.scalafx"            %% "scalafx"         % "18.0.2-R29",
+  "org.scalafx"            %% "scalafx-extras"  % "0.7.0",
+  "junit"                   % "junit"           % "4.13.2" % "test",
+  "com.novocode"            % "junit-interface" % "0.11"   % "test"
 ) ++ presetLibs
-
-// Add JavaFX dependencies, needed for GUI example
-libraryDependencies ++= {
-  // Determine OS version of JavaFX binaries
-  lazy val osName = System.getProperty("os.name") match {
-    case n if n.startsWith("Linux")   => "linux"
-    case n if n.startsWith("Mac")     => "mac"
-    case n if n.startsWith("Windows") => "win"
-    case _                            => throw new Exception("Unknown platform!")
-  }
-  Seq("base", "controls", "fxml", "graphics", "media", "swing", "web")
-    .map(m => "org.openjfx" % s"javafx-$m" % "18.0.1" classifier osName)
-}
 
 resolvers += Resolver.sonatypeRepo("snapshots")
 

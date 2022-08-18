@@ -3,9 +3,9 @@
 name         := "Spinnaker-demo"
 organization := "javacv.examples"
 
-val javacppVersion = "1.5.6"
+val javacppVersion = "1.5.7"
 version      := javacppVersion
-scalaVersion := "3.1.0"
+scalaVersion := "3.1.3"
 scalacOptions ++= Seq("-unchecked", "-deprecation")
 
 // Platform classifier for native library dependencies
@@ -25,11 +25,8 @@ libraryDependencies ++= Seq(
   "org.bytedeco" % "javacv"  % javacppVersion withSources() withJavadoc()
 ) ++ bytedecoPresetLibs
 
-resolvers ++= Seq(
-     Resolver.sonatypeRepo("snapshots"),
-    // Use local maven repo for local javacv builds
-    Resolver.mavenLocal
-)
+resolvers ++=  Resolver.sonatypeOssRepos("snapshots")
+resolvers +=  Resolver.mavenLocal
 
 autoCompilerPlugins := true
 

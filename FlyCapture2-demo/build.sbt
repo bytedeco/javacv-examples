@@ -2,8 +2,8 @@ import sbt.Keys._
 
 name := "FlyCapture2-demo"
 
-ThisBuild / version      := "1.5.6"
-ThisBuild / scalaVersion := "2.13.7"
+ThisBuild / version      := "1.5.7"
+ThisBuild / scalaVersion := "2.13.8"
 
 // Platform classifier for native library dependencies
 lazy val platform = org.bytedeco.javacpp.Loader.Detector.getPlatform
@@ -13,11 +13,11 @@ val commonSettings = Seq(
   // Some dependencies like `javacpp` are packaged with maven-plugin packaging
   classpathTypes += "maven-plugin",
   libraryDependencies ++= Seq(
-    "org.bytedeco"            % "flycapture"               % "2.13.3.31-1.5.6" classifier "",
-    "org.bytedeco"            % "flycapture"               % "2.13.3.31-1.5.6" classifier platform,
+    "org.bytedeco"            % "flycapture"               % "2.13.3.31-1.5.7" classifier "",
+    "org.bytedeco"            % "flycapture"               % "2.13.3.31-1.5.7" classifier platform,
     "log4j"                   % "log4j"                    % "1.2.17",
     "org.scala-lang"          % "scala-reflect"            % scalaVersion.value,
-    "org.scala-lang.modules" %% "scala-parser-combinators" % "2.1.0"
+    "org.scala-lang.modules" %% "scala-parser-combinators" % "2.1.1"
   ),
   resolvers ++= Seq(
     // Resolver.sonatypeRepo("snapshots"),
@@ -31,28 +31,15 @@ val commonSettings = Seq(
   javaOptions += "-Xmx1G"
 )
 
-lazy val javaFXModules = {
-  // Determine OS version of JavaFX binaries
-  lazy val osName = System.getProperty("os.name") match {
-    case n if n.startsWith("Linux")   => "linux"
-    case n if n.startsWith("Mac")     => "mac"
-    case n if n.startsWith("Windows") => "win"
-    case _                            => throw new Exception("Unknown platform!")
-  }
-  Seq("base", "controls", "fxml", "graphics", "media", "swing", "web")
-    .map(m => "org.openjfx" % s"javafx-$m" % "17.0.1" classifier osName)
-}
-
 val uiSettings = commonSettings ++ Seq(
   libraryDependencies ++= Seq(
-    "com.typesafe.scala-logging" %% "scala-logging"       % "3.9.4",
-    "org.slf4j"                   % "slf4j-api"           % "1.7.32",
-    "org.slf4j"                   % "slf4j-log4j12"       % "1.7.32",
-    "org.scalafx"                %% "scalafx"             % "17.0.1-R26",
+    "com.typesafe.scala-logging" %% "scala-logging"       % "3.9.5",
+    "org.slf4j"                   % "slf4j-api"           % "1.7.36",
+    "org.slf4j"                   % "slf4j-log4j12"       % "1.7.36",
+    "org.scalafx"                %% "scalafx"             % "18.0.2-R29",
     "org.scalafx"                %% "scalafxml-core-sfx8" % "0.5",
-    "org.scalafx"                %% "scalafx-extras"      % "0.4.0"
-  ),
-  libraryDependencies ++= javaFXModules
+    "org.scalafx"                %% "scalafx-extras"      % "0.7.0"
+    )
 )
 
 lazy val check_macro = project.in(file("check_macro")).settings(commonSettings: _*)
