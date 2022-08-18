@@ -1,10 +1,10 @@
 /*
- * Copyright (c) 2021.  Jarek Sacha. All Rights Reserved.
+ * Copyright (c) 2021-2022 Jarek Sacha. All Rights Reserved.
  *
  * Author's e-mail: jpsacha at gmail.com
  */
 
-package opencv_cookbook.chapter11
+package opencv_cookbook
 
 import java.util.concurrent.TimeUnit
 import scala.concurrent.duration.Duration

@@ -6,6 +6,7 @@
 
 package opencv_cookbook.chapter11
 
+import opencv_cookbook.StopWatch
 import org.bytedeco.javacv.{CanvasFrame, FFmpegFrameGrabber}
 
 import java.io.File
