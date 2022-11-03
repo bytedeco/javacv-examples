@@ -33,7 +33,7 @@ libraryDependencies ++= Seq(
   "com.novocode"            % "junit-interface" % "0.11"   % "test"
 ) ++ presetLibs
 
-resolvers += Resolver.sonatypeRepo("snapshots")
+resolvers ++= Resolver.sonatypeOssRepos("snapshots")
 
 autoCompilerPlugins := true
 
