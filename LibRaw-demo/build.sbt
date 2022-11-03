@@ -5,7 +5,7 @@ name := "LibRaw-demo"
 version := "1.5.8"
 
 // Version of Scala used by the project
-scalaVersion := "3.2.0"
+scalaVersion := "3.2.1"
 
 scalacOptions ++= Seq("-unchecked", "-deprecation")
 
