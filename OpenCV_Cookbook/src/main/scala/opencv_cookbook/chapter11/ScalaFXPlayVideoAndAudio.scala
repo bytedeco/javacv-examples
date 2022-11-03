@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Jarek Sacha. All Rights Reserved.
+ * Copyright (c) 2021-2022 Jarek Sacha. All Rights Reserved.
  *
  * Author's e-mail: jpsacha at gmail.com
  */
@@ -104,7 +104,7 @@ object ScalaFXPlayVideoAndAudio extends JFXApp3 {
 
       val (playbackTimer, soundLine): (PlaybackTimer, Option[SourceDataLine]) =
         if (grabber.getAudioChannels > 0) {
-          val audioFormat = new AudioFormat(grabber.getSampleRate, 16, grabber.getAudioChannels, true, true)
+          val audioFormat = new AudioFormat(grabber.getSampleRate.toFloat, 16, grabber.getAudioChannels, true, true)
           val info        = new DataLine.Info(classOf[SourceDataLine], audioFormat)
           val soundLine   = AudioSystem.getLine(info).asInstanceOf[SourceDataLine]
           soundLine.open(audioFormat)
