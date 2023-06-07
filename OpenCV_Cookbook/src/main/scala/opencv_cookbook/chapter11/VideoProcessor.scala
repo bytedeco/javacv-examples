@@ -13,18 +13,20 @@ import org.bytedeco.opencv.opencv_core._
 import javax.swing.WindowConstants
 import scala.util.Using
 
-/** Video processor.
-  *
-  * @param frameProcessor frame processing method, by default simply copies the input
-  * @param displayInput   name for the window displaying input image.
-  *                       If empty, input image will not be displayed.
-  * @param displayOutput  name for the window displaying output image,
-  *                       If empty, output image will not be displayed.
-  */
-class VideoProcessor(var frameProcessor: (Mat, Mat) => Unit = { (src, dest) => src.copyTo(dest) },
-                     var displayInput: String = "Input",
-                     var displayOutput: String = "Output") {
-
+/**
+ * Video processor.
+ *
+ * @param frameProcessor frame processing method, by default simply copies the input
+ * @param displayInput   name for the window displaying input image.
+ *                       If empty, input image will not be displayed.
+ * @param displayOutput  name for the window displaying output image,
+ *                       If empty, output image will not be displayed.
+ */
+class VideoProcessor(
+  var frameProcessor: (Mat, Mat) => Unit = { (src, dest) => src.copyTo(dest) },
+  var displayInput: String = "Input",
+  var displayOutput: String = "Output"
+) {
 
   require(frameProcessor != null, "Argument `frameProcessor` cannot be `null`.")
   require(displayInput != null, "Argument `displayInput` cannot be `null`.")
@@ -38,11 +40,10 @@ class VideoProcessor(var frameProcessor: (Mat, Mat) => Unit = { (src, dest) => s
   /** Delay between displaying input frames. */
   var delay: Long = 0
 
-
   /** If set to `false` input frames will not be processed, just copied to output. */
   var processFrames: Boolean = true
 
-  private var _input: Option[String] = None
+  private var _input: Option[String]               = None
   private var _grabber: Option[FFmpegFrameGrabber] = None
 
   def input: String = _input.orNull
@@ -54,10 +55,8 @@ class VideoProcessor(var frameProcessor: (Mat, Mat) => Unit = { (src, dest) => s
     grabber.start()
   }
 
-
   /** Frame rate property of the video input, */
   def frameRate: Double = grabber.getFrameRate
-
 
   /** Size of the video frame */
   def frameSize: Size = {
@@ -74,11 +73,11 @@ class VideoProcessor(var frameProcessor: (Mat, Mat) => Unit = { (src, dest) => s
 
   private var writerParam: Option[WriterParams] = None
 
-
-  /** Set the output video file.
-    *
-    * By default the same parameters as input video will be used.
-    */
+  /**
+   * Set the output video file.
+   *
+   * By default the same parameters as input video will be used.
+   */
   def setOutput(fileName: String, codec: Int = 0, frameRate: Double = 0.0, isColor: Boolean = true): Unit = {
     writerParam = Some(WriterParams(fileName, codec, frameRate, isColor))
   }
@@ -92,35 +91,38 @@ class VideoProcessor(var frameProcessor: (Mat, Mat) => Unit = { (src, dest) => s
 
     val recorder = createRecorder()
 
-    val inputCanvas = createCanvas(displayInput)
+    val inputCanvas  = createCanvas(displayInput)
     val outputCanvas = createCanvas(displayOutput)
 
     // Capture, process, and display frames
     //    val inputFrame = new Mat()
     //    stopAtFrameNo = 30
-    val outputFrame = new Mat()
+    val outputFrame       = new Mat()
     var frameNumber: Long = 0
-    var frame = grabber.grab()
+    var frame             = grabber.grab()
     Using.resource(new OpenCVFrameConverter.ToMat()) { frameConverter =>
       while (frame != null && !isStopped) {
 
         val inputMat = frameConverter.convert(frame)
 
-        // Display input frame, if canvas was created
-        inputCanvas.foreach(_.showImage(toBufferedImage(inputMat)))
+        if (inputMat != null) {
 
-        if (processFrames) {
-          frameProcessor(inputMat, outputFrame)
-          frameNumber += 1
-        } else {
-          inputMat.copyTo(outputFrame)
+          // Display input frame, if canvas was created
+          inputCanvas.foreach(_.showImage(toBufferedImage(inputMat)))
+
+          if (processFrames) {
+            frameProcessor(inputMat, outputFrame)
+            frameNumber += 1
+          } else {
+            inputMat.copyTo(outputFrame)
+          }
+
+          // write output sequence
+          writeNextFrame(recorder, outputFrame)
+
+          // Display output frame, if canvas was created
+          outputCanvas.foreach(_.showImage(toBufferedImage(outputFrame)))
         }
-
-        // write output sequence
-        writeNextFrame(recorder, outputFrame)
-
-        // Display output frame, if canvas was created
-        outputCanvas.foreach(_.showImage(toBufferedImage(outputFrame)))
 
         // introduce a delay
         if (delay > 0) Thread.sleep(delay)
@@ -150,9 +152,8 @@ class VideoProcessor(var frameProcessor: (Mat, Mat) => Unit = { (src, dest) => s
       Some(canvas)
     } else None
 
-
   private def createRecorder(): Option[FrameRecorder] = writerParam.map { wp =>
-    val recorder = new FFmpegFrameRecorder(wp.fileName, frameSize.width(), frameSize.height())
+    val recorder        = new FFmpegFrameRecorder(wp.fileName, frameSize.width(), frameSize.height())
     val actualFrameRate = if (wp.frameRate == 0.0) frameRate else wp.frameRate
     recorder.setFrameRate(actualFrameRate)
     recorder.setVideoCodec(wp.codec)
