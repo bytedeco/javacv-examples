@@ -2,8 +2,8 @@ import sbt.Keys._
 
 name := "FlyCapture2-demo"
 
-ThisBuild / version      := "1.5.7"
-ThisBuild / scalaVersion := "2.13.8"
+ThisBuild / version      := "1.5.9"
+ThisBuild / scalaVersion := "2.13.11"
 
 // Platform classifier for native library dependencies
 lazy val platform = org.bytedeco.javacpp.Loader.Detector.getPlatform
@@ -13,11 +13,11 @@ val commonSettings = Seq(
   // Some dependencies like `javacpp` are packaged with maven-plugin packaging
   classpathTypes += "maven-plugin",
   libraryDependencies ++= Seq(
-    "org.bytedeco"            % "flycapture"               % "2.13.3.31-1.5.7" classifier "",
-    "org.bytedeco"            % "flycapture"               % "2.13.3.31-1.5.7" classifier platform,
+    "org.bytedeco"            % "flycapture"               % "2.13.3.31-1.5.9" classifier "",
+    "org.bytedeco"            % "flycapture"               % "2.13.3.31-1.5.9" classifier platform,
     "log4j"                   % "log4j"                    % "1.2.17",
     "org.scala-lang"          % "scala-reflect"            % scalaVersion.value,
-    "org.scala-lang.modules" %% "scala-parser-combinators" % "2.1.1"
+    "org.scala-lang.modules" %% "scala-parser-combinators" % "2.3.0"
   ),
   resolvers ++= Seq(
     // Resolver.sonatypeRepo("snapshots"),
@@ -34,11 +34,11 @@ val commonSettings = Seq(
 val uiSettings = commonSettings ++ Seq(
   libraryDependencies ++= Seq(
     "com.typesafe.scala-logging" %% "scala-logging"       % "3.9.5",
-    "org.slf4j"                   % "slf4j-api"           % "1.7.36",
-    "org.slf4j"                   % "slf4j-log4j12"       % "1.7.36",
-    "org.scalafx"                %% "scalafx"             % "18.0.2-R29",
+    "org.slf4j"                   % "slf4j-api"           % "2.0.7",
+    "org.slf4j"                   % "slf4j-log4j12"       % "2.0.7",
+    "org.scalafx"                %% "scalafx"             % "20.0.0-R31",
     "org.scalafx"                %% "scalafxml-core-sfx8" % "0.5",
-    "org.scalafx"                %% "scalafx-extras"      % "0.7.0"
+    "org.scalafx"                %% "scalafx-extras"      % "0.8.0"
     )
 )
 
