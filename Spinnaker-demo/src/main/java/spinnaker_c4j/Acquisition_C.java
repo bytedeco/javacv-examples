@@ -26,6 +26,8 @@ import org.bytedeco.spinnaker.Spinnaker_C.*;
 import java.io.File;
 
 import static org.bytedeco.spinnaker.global.Spinnaker_C.*;
+import static org.bytedeco.spinnaker.global.Spinnaker_C.spinColorProcessingAlgorithm.SPINNAKER_COLOR_PROCESSING_ALGORITHM_HQ_LINEAR;
+import static org.bytedeco.spinnaker.global.Spinnaker_C.spinImageStatus.SPINNAKER_IMAGE_STATUS_NO_ERROR;
 import static spinnaker_c4j.Utils.*;
 
 /**
@@ -85,17 +87,17 @@ public class Acquisition_C {
         //
 
         // Retrieve enumeration node from nodemap
-        spinNodeHandle hAcquisitionMode = new spinNodeHandle(); //NULL
+        spinNodeHandle hAcquisitionMode = new spinNodeHandle(); // Empty handle, equivalent to NULL in C
         err = spinNodeMapGetNode(hNodeMap, new BytePointer("AcquisitionMode"), hAcquisitionMode);
-        if (Utils.printOnError(err, "Unable to set acquisition mode to continuous (node retrieval).")) {
+        if (printOnError(err, "Unable to set acquisition mode to continuous (node retrieval).")) {
             return err;
         }
 
         // Retrieve entry node from enumeration node
-        spinNodeHandle hAcquisitionModeContinuous = new spinNodeHandle(); // NULL
-        if (isAvailableAndReadable(hAcquisitionMode, "AcquisitionMode")) {
+        spinNodeHandle hAcquisitionModeContinuous = new spinNodeHandle(); // Empty handle, equivalent to NULL in C
+        if (isReadable(hAcquisitionMode, "AcquisitionMode")) {
             err = spinEnumerationGetEntryByName(hAcquisitionMode, new BytePointer("Continuous"), hAcquisitionModeContinuous);
-            if (Utils.printOnError(err, "Unable to set acquisition mode to continuous (entry 'continuous' retrieval).")) {
+            if (printOnError(err, "Unable to set acquisition mode to continuous (entry 'continuous' retrieval).")) {
                 return err;
             }
         } else {
@@ -105,10 +107,10 @@ public class Acquisition_C {
 
         // Retrieve integer from entry node
         LongPointer acquisitionModeContinuous = new LongPointer(1);
-        if (isAvailableAndReadable(hAcquisitionModeContinuous, "AcquisitionModeContinuous")) {
+        if (isReadable(hAcquisitionModeContinuous, "AcquisitionModeContinuous")) {
             err = spinEnumerationEntryGetIntValue(hAcquisitionModeContinuous, acquisitionModeContinuous);
 
-            if (Utils.printOnError(err, "Unable to set acquisition mode to continuous (entry int value retrieval).")) {
+            if (printOnError(err, "Unable to set acquisition mode to continuous (entry int value retrieval).")) {
                 return err;
             }
         } else {
@@ -117,9 +119,9 @@ public class Acquisition_C {
         }
 
         // Set integer as new value of enumeration node
-        if (isAvailableAndWritable(hAcquisitionMode, "AcquisitionMode")) {
+        if (isWritable(hAcquisitionMode, "AcquisitionMode")) {
             err = spinEnumerationSetIntValue(hAcquisitionMode, acquisitionModeContinuous.get());
-            if (Utils.printOnError(err, "Unable to set acquisition mode to continuous (entry int value setting).")) {
+            if (printOnError(err, "Unable to set acquisition mode to continuous (entry int value setting).")) {
                 return err;
             }
         } else {
@@ -143,7 +145,7 @@ public class Acquisition_C {
         // Image acquisition must be ended when no more images are needed.
         //
         err = spinCameraBeginAcquisition(hCam);
-        if (Utils.printOnError(err, "Unable to begin image acquisition.")) {
+        if (printOnError(err, "Unable to begin image acquisition.")) {
             return err;
         }
 
@@ -161,13 +163,13 @@ public class Acquisition_C {
         SizeTPointer lenDeviceSerialNumber = new SizeTPointer(1);
         lenDeviceSerialNumber.put(MAX_BUFF_LEN);
         err = spinNodeMapGetNode(hNodeMapTLDevice, new BytePointer("DeviceSerialNumber"), hDeviceSerialNumber);
-        if (Utils.printOnError(err, "")) {
+        if (printOnError(err, "")) {
             deviceSerialNumber.putString("");
             lenDeviceSerialNumber.put(0);
         } else {
-            if (isAvailableAndReadable(hDeviceSerialNumber, "DeviceSerialNumber")) {
+            if (isReadable(hDeviceSerialNumber, "DeviceSerialNumber")) {
                 err = spinStringGetValue(hDeviceSerialNumber, deviceSerialNumber, lenDeviceSerialNumber);
-                if (Utils.printOnError(err, "")) {
+                if (printOnError(err, "")) {
                     deviceSerialNumber.putString("");
                     lenDeviceSerialNumber.put(0);
                 }
@@ -179,6 +181,25 @@ public class Acquisition_C {
             System.out.println("Device serial number retrieved as " + deviceSerialNumber.getString().trim() + "...");
         }
         System.out.println();
+
+        //
+        // Create Image Processor context for post-processing images
+        //
+        spinImageProcessor hImageProcessor = new spinImageProcessor();
+        err = spinImageProcessorCreate(hImageProcessor);
+        if (printOnError(err, "Unable to create image processor. Non-fatal error.")) {
+            return err;
+        }
+
+        //
+        // Set default image processor color processing method
+        //
+        // *** NOTES ***
+        // By default, if no specific color processing algorithm is set, the image
+        // processor will default to NEAREST_NEIGHBOR method.
+        //
+        err = spinImageProcessorSetColorProcessing(hImageProcessor, SPINNAKER_COLOR_PROCESSING_ALGORITHM_HQ_LINEAR);
+        printOnError(err, "Unable to set image processor color processing method. Non-fatal error.");
 
         // Retrieve, convert, and save images
         final int k_numImages = 10;
@@ -196,7 +217,7 @@ public class Acquisition_C {
             //
             spinImage hResultImage = new spinImage(); //NULL;
             err = spinCameraGetNextImageEx(hCam, 1000, hResultImage);
-            if (Utils.printOnError(err, "Unable to get next image. Non-fatal error.")) {
+            if (printOnError(err, "Unable to get next image. Non-fatal error.")) {
                 continue;
             }
             //
@@ -211,14 +232,14 @@ public class Acquisition_C {
             BytePointer isIncomplete = new BytePointer(1);
             boolean hasFailed = false;
             err = spinImageIsIncomplete(hResultImage, isIncomplete);
-            if (Utils.printOnError(err, "Unable to determine image completion. Non-fatal error.")) {
+            if (printOnError(err, "Unable to determine image completion. Non-fatal error.")) {
                 hasFailed = true;
             }
             // Check image for completion
             if (isIncomplete.getBool()) {
-                IntPointer imageStatus = new IntPointer(1); //_spinImageStatus.IMAGE_NO_ERROR;
+                IntPointer imageStatus = new IntPointer(1).put(SPINNAKER_IMAGE_STATUS_NO_ERROR.value);
                 err = spinImageGetStatus(hResultImage, imageStatus);
-                if (!Utils.printOnError(err,
+                if (!printOnError(err,
                         "Unable to retrieve image status. Non-fatal error. " + findImageStatusNameByValue(imageStatus.get()))) {
                     System.out.println(
                             "Image incomplete with image status " + findImageStatusNameByValue(imageStatus.get()) +
@@ -229,7 +250,7 @@ public class Acquisition_C {
             // Release incomplete or failed image
             if (hasFailed) {
                 err = spinImageRelease(hResultImage);
-                Utils.printOnError(err, "Unable to release image. Non-fatal error.");
+                printOnError(err, "Unable to release image. Non-fatal error.");
                 continue;
             }
             //
@@ -244,7 +265,7 @@ public class Acquisition_C {
             // Retrieve image width
             SizeTPointer width = new SizeTPointer(1);
             err = spinImageGetWidth(hResultImage, width);
-            if (Utils.printOnError(err, "spinImageGetWidth()")) {
+            if (printOnError(err, "spinImageGetWidth()")) {
                 System.out.println("width  = unknown");
             } else {
                 System.out.println("width  = " + width.get());
@@ -253,12 +274,11 @@ public class Acquisition_C {
             // Retrieve image height
             SizeTPointer height = new SizeTPointer(1);
             err = spinImageGetHeight(hResultImage, height);
-            if (Utils.printOnError(err, "spinImageGetHeight()")) {
+            if (printOnError(err, "spinImageGetHeight()")) {
                 System.out.println("height = unknown");
             } else {
                 System.out.println("height = " + height.get());
             }
-
 
             //
             // Convert image to mono 8
@@ -283,13 +303,12 @@ public class Acquisition_C {
             //
             spinImage hConvertedImage = new spinImage(); //NULL;
             err = spinImageCreateEmpty(hConvertedImage);
-            if (Utils.printOnError(err, "Unable to create image. Non-fatal error.")) {
+            if (printOnError(err, "Unable to create image. Non-fatal error.")) {
                 hasFailed = true;
             }
-            err = spinImageConvert(hResultImage, spinPixelFormatEnums.PixelFormat_Mono8, hConvertedImage);
-            if (Utils.printOnError(err, "\"Unable to convert image. Non-fatal error.")) {
-                hasFailed = true;
-            }
+
+            err = spinImageProcessorConvert(hImageProcessor, hResultImage, hConvertedImage, spinPixelFormatEnums.PixelFormat_Mono8);
+            printOnError(err, "\"Unable to convert image. Non-fatal error.");
 
             if (!hasFailed) {
                 // Create a unique filename
@@ -305,8 +324,8 @@ public class Acquisition_C {
                 // numbers to keep images of one device from overwriting those of
                 // another.
                 //
-                err = spinImageSave(hConvertedImage, new BytePointer(filename), spinImageFileFormat.JPEG);
-                if (!Utils.printOnError(err, "Unable to save image. Non-fatal error.")) {
+                err = spinImageSave(hConvertedImage, new BytePointer(filename), spinImageFileFormat.SPINNAKER_IMAGE_FILE_FORMAT_JPEG);
+                if (!printOnError(err, "Unable to save image. Non-fatal error.")) {
                     System.out.println("Image saved at " + filename + "\n");
                 }
             }
@@ -319,7 +338,7 @@ public class Acquisition_C {
             // leaks.
             //
             err = spinImageDestroy(hConvertedImage);
-            Utils.printOnError(err, "Unable to destroy image. Non-fatal error.");
+            printOnError(err, "Unable to destroy image. Non-fatal error.");
             //
             // Release image from camera
             //
@@ -329,8 +348,19 @@ public class Acquisition_C {
             // buffer.
             //
             err = spinImageRelease(hResultImage);
-            Utils.printOnError(err, "Unable to release image. Non-fatal error.");
+            printOnError(err, "Unable to release image. Non-fatal error.");
         }
+
+        //
+        // Destroy Image Processor context
+        //
+        // *** NOTES ***
+        // Image processor context needs to be destroyed after all image processing
+        // are complete to avoid memory leaks.
+        //
+        err = spinImageProcessorDestroy(hImageProcessor);
+        printOnError(err, "Unable to destroy image processor. Non-fatal error.");
+
         //
         // End acquisition
         //
@@ -339,7 +369,7 @@ public class Acquisition_C {
         // properly and do not need to be power-cycled to maintain integrity.
         //
         err = spinCameraEndAcquisition(hCam);
-        Utils.printOnError(err, "Unable to end acquisition.");
+        printOnError(err, "Unable to end acquisition.");
         return err;
     }
 
@@ -353,32 +383,32 @@ public class Acquisition_C {
         // Retrieve TL device nodemap and print device information
         spinNodeMapHandle hNodeMapTLDevice = new spinNodeMapHandle();
         err = spinCameraGetTLDeviceNodeMap(hCam, hNodeMapTLDevice);
-        if (!Utils.printOnError(err, "Unable to retrieve TL device nodemap .")) {
+        if (!printOnError(err, "Unable to retrieve TL device nodemap .")) {
             err = printDeviceInfo(hNodeMapTLDevice);
         }
 
         // Initialize camera
         err = spinCameraInit(hCam);
-        if (Utils.printOnError(err, "Unable to initialize camera.")) {
+        if (printOnError(err, "Unable to initialize camera.")) {
             return err;
         }
 
         // Retrieve GenICam nodemap
         spinNodeMapHandle hNodeMap = new spinNodeMapHandle();
         err = spinCameraGetNodeMap(hCam, hNodeMap);
-        if (Utils.printOnError(err, "Unable to retrieve GenICam nodemap.")) {
+        if (printOnError(err, "Unable to retrieve GenICam nodemap.")) {
             return err;
         }
 
         // Acquire images
         err = acquireImages(hCam, hNodeMap, hNodeMapTLDevice);
-        if (Utils.printOnError(err, "acquireImages")) {
+        if (printOnError(err, "acquireImages")) {
             return err;
         }
 
         // Deinitialize camera
         err = spinCameraDeInit(hCam);
-        if (Utils.printOnError(err, "Unable to deinitialize camera.")) {
+        if (printOnError(err, "Unable to deinitialize camera.")) {
             return err;
         }
         return err;
@@ -393,7 +423,7 @@ public class Acquisition_C {
 
         spinError err;
 
-        // Since this application saves images in the current folder
+        // Since this application saves images in the current folder,
         // we must ensure that we have permission to write to this folder.
         // If we do not have permission, fail right away.
         if (!new File(".").canWrite()) {
@@ -443,14 +473,14 @@ public class Acquisition_C {
             // Select camera
             spinCamera hCamera = new spinCamera();
             err = spinCameraListGet(hCameraList, i, hCamera);
-            if (!Utils.printOnError(err, "Unable to retrieve camera from list.")) {
+            if (!printOnError(err, "Unable to retrieve camera from list.")) {
                 // Run example
                 err = runSingleCamera(hCamera);
-                Utils.printOnError(err, "RunSingleCamera");
+                printOnError(err, "RunSingleCamera");
             }
             // Release camera
             err = spinCameraRelease(hCamera);
-            Utils.printOnError(err, "Error releasing camera.");
+            printOnError(err, "Error releasing camera.");
             System.out.println("Camera " + i + " example complete...\n");
         }
         // Clear and destroy camera list before releasing system

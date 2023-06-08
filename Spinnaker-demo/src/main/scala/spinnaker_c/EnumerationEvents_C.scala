@@ -3,40 +3,40 @@ package spinnaker_c
 import org.bytedeco.javacpp.*
 import org.bytedeco.spinnaker.Spinnaker_C.*
 import org.bytedeco.spinnaker.global.Spinnaker_C.*
-import spinnaker_c.helpers.{exitOnError, printOnError}
+import spinnaker_c.helpers.{exitOnError, nodeGetStringValue, printOnError}
 
 /**
-  * Code based on C version, EnumerationEvents_C, from Spinnaker SDK by FLIR.
-  *
-  * EnumerationEvents_C.cpp explores arrival and removal events on
-  * interfaces and the system. It relies on information provided in the
-  * Enumeration_C, Acquisition_C, and NodeMapInfo_C examples.
-  *
-  * It can also be helpful to familiarize yourself with the NodeMapCallback_C
-  * example, as a callback can be thought of as a simpler, easier-to-use event.
-  * Although events are more cumbersome, they are also much more flexible and
-  * extensible.
-  *
-  * NOTE: Due to JavaCPP limitation handling of events / callbacks requires some care.
-  * In particular, in JavaCPP only one event handler can be registered per event type,
-  * see more info on that here [[https://groups.google.com/d/msg/javacpp-project/bxTAlvLKn0M/SUS0z4qMvyAJ]]
-  */
+ * Code based on C version, EnumerationEvents_C, from Spinnaker SDK by FLIR.
+ *
+ * EnumerationEvents_C.cpp explores arrival and removal events on
+ * interfaces and the system. It relies on information provided in the
+ * Enumeration_C, Acquisition_C, and NodeMapInfo_C examples.
+ *
+ * It can also be helpful to familiarize yourself with the NodeMapCallback_C
+ * example, as a callback can be thought of as a simpler, easier-to-use event.
+ * Although events are more cumbersome, they are also much more flexible and
+ * extensible.
+ *
+ * NOTE: Due to JavaCPP limitation handling of events / callbacks requires some care.
+ * In particular, in JavaCPP only one event handler can be registered per event type,
+ * see more info on that here [[https://groups.google.com/d/msg/javacpp-project/bxTAlvLKn0M/SUS0z4qMvyAJ]]
+ */
 object EnumerationEvents_C {
 
   // Define types of events processed by a single handler
   // [[https://groups.google.com/d/msg/javacpp-project/bxTAlvLKn0M/SUS0z4qMvyAJ]]
-  val EVENT_TYPE_INTERFACE = 1
-  val EVENT_TYPE_SYSTEM = 2
+  private val EVENT_TYPE_INTERFACE = 1
+  private val EVENT_TYPE_SYSTEM    = 2
 
   /**
-    * Helper trait to implement event handler, avoid code duplication.
-    */
+   * Helper trait to implement event handler, avoid code duplication.
+   */
   trait OnDeviceEvent {
     def eventName: String
 
-    protected def onInterface(deviceSerialNumber: Int, interfaceNum: Int): Unit
+    protected def onInterface(hCamera: spinCamera, interfaceNum: Int): Unit
 
-    protected def onSystem(deviceSerialNumber: Int, hSystem: spinSystem): Unit = {
+    private def onSystem(hCamera: spinCamera, hSystem: spinSystem): Unit = {
       var err: spinError = null
 
       // Retrieve count
@@ -50,6 +50,14 @@ object EnumerationEvents_C {
       val numCameras = new SizeTPointer(1)
       err = spinCameraListGetSize(hCameraList, numCameras)
       if (printOnError(err, s"Unable to retrieve camera list size (System $eventName).")) return
+
+      // Retrieve device serial number given the camera handle
+      val hNodeMapTLDevice = new spinNodeMapHandle()
+
+      err = spinCameraGetTLDeviceNodeMap(hCamera, hNodeMapTLDevice)
+      if (printOnError(err, "Unable to retrieve the TLDevice NodeMap. Non-fatal error.")) return
+
+      val deviceSerialNumber = nodeGetStringValue(hNodeMapTLDevice, "DeviceSerialNumber")
 
       // Print count
       println("System event handler:\n")
@@ -65,14 +73,15 @@ object EnumerationEvents_C {
       if (printOnError(err, "Unable to destroy camera list.")) return
     }
 
-    protected def doCall(deviceSerialNumber: Int, pUserData: Pointer): Unit = {
+    protected def doCall(hCamera: spinCamera, pUserData: Pointer): Unit = {
+      println(s"doCall(hCamera=$hCamera, pUserData=$pUserData)")
       // Decode event type and event data. Call handler method for each type.
       val pp = new PointerPointer[Pointer](pUserData)
       new IntPointer(pp.get(0)).get match {
         case EVENT_TYPE_INTERFACE =>
-          onInterface(deviceSerialNumber, new IntPointer(pp.get(1)).get())
+          onInterface(hCamera, new IntPointer(pp.get(1)).get())
         case EVENT_TYPE_SYSTEM =>
-          onSystem(deviceSerialNumber, new spinSystem(pp.get(1)))
+          onSystem(hCamera, new spinSystem(pp.get(1)))
         case v =>
           throw new IllegalArgumentException("Invalid EVENT_FUNCTION_TYPE: " + v)
       }
@@ -82,25 +91,43 @@ object EnumerationEvents_C {
   class OnDeviceArrival extends spinArrivalEventFunction with OnDeviceEvent {
     val eventName: String = "Arrival"
 
-    override def onInterface(deviceSerialNumber: Int, interfaceNum: Int): Unit = { // Cast user data to expected type
+    override def onInterface(hCamera: spinCamera, interfaceNum: Int): Unit = { // Cast user data to expected type
       // Print arrival information
+
+      // Retrieve device serial number given the camera handle
+      val hNodeMapTLDevice = new spinNodeMapHandle()
+
+      val err = spinCameraGetTLDeviceNodeMap(hCamera, hNodeMapTLDevice)
+      if (printOnError(err, "Unable to retrieve the TLDevice NodeMap. Non-fatal error.")) return
+
+      val deviceSerialNumber = nodeGetStringValue(hNodeMapTLDevice, "DeviceSerialNumber")
+
       println("Interface event handler:")
       println("\tDevice " + deviceSerialNumber + " has arrived on interface " + interfaceNum + ".\n")
     }
 
-    override def call(deviceSerialNumber: Int, pUserData: Pointer): Unit = doCall(deviceSerialNumber, pUserData)
+    override def call(hCamera: spinCamera, pUserData: Pointer): Unit = doCall(hCamera, pUserData)
   }
 
   class OnDeviceRemoval extends spinRemovalEventFunction with OnDeviceEvent {
     val eventName: String = "Removal"
 
-    override def onInterface(deviceSerialNumber: Int, interfaceNum: Int): Unit = {
+    override def onInterface(hCamera: spinCamera, interfaceNum: Int): Unit = {
       // Print removal information
+
+      // Retrieve device serial number given the camera handle
+      val hNodeMapTLDevice = new spinNodeMapHandle()
+
+      val err = spinCameraGetTLDeviceNodeMap(hCamera, hNodeMapTLDevice)
+      if (printOnError(err, "Unable to retrieve the TLDevice NodeMap. Non-fatal error.")) return
+
+      val deviceSerialNumber = nodeGetStringValue(hNodeMapTLDevice, "DeviceSerialNumber")
+
       println("Interface event handler:\n")
       println("\tDevice " + deviceSerialNumber + " was removed from interface " + interfaceNum + ".\n")
     }
 
-    override def call(deviceSerialNumber: Int, pUserData: Pointer): Unit = doCall(deviceSerialNumber, pUserData)
+    override def call(hCamera: spinCamera, pUserData: Pointer): Unit = doCall(hCamera, pUserData)
   }
 
   private def systemData(data: Pointer): PointerPointer[Nothing] = eventData(EVENT_TYPE_SYSTEM, data)
@@ -108,12 +135,12 @@ object EnumerationEvents_C {
   private def interfaceData(data: Pointer): PointerPointer[Nothing] = eventData(EVENT_TYPE_INTERFACE, data)
 
   /**
-    * Encode event type and event data into single PointerPointer.
-    *
-    * @param eventType event type
-    * @param data      dat a to be passed rto the event handler
-    * @return
-    */
+   * Encode event type and event data into single PointerPointer.
+   *
+   * @param eventType event type
+   * @param data      dat a to be passed rto the event handler
+   * @return
+   */
   private def eventData(eventType: Int, data: Pointer): PointerPointer[Nothing] = {
     val ip = new IntPointer(1L)
     ip.put(eventType)
@@ -125,10 +152,10 @@ object EnumerationEvents_C {
   }
 
   /**
-    * Example entry point; this function sets up the example to act appropriately
-    * upon arrival and removal events; please see Enumeration example for more
-    * in-depth comments on preparing and cleaning up the system.
-    */
+   * Example entry point; this function sets up the example to act appropriately
+   * upon arrival and removal events; please see Enumeration example for more
+   * in-depth comments on preparing and cleaning up the system.
+   */
   def main(args: Array[String]): Unit = {
     var err: spinError = null
 

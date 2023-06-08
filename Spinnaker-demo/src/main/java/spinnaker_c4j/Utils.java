@@ -60,8 +60,8 @@ class Utils {
         Utils.printOnError(err, "Unable to retrieve node.");
 
         // Retrieve number of nodes within device information node
-        SizeTPointer numFeatures = new SizeTPointer(1);
-        if (isAvailableAndReadable(hDeviceInformation, "DeviceInformation")) {
+        SizeTPointer numFeatures = new SizeTPointer(1).put(0);
+        if (isReadable(hDeviceInformation, "DeviceInformation")) {
             err = spinCategoryGetNumFeatures(hDeviceInformation, numFeatures);
             Utils.printOnError(err, "Unable to retrieve number of nodes.");
         } else {
@@ -85,7 +85,7 @@ class Utils {
             }
 
             int[] featureType = {spinNodeType.UnknownNode.value};
-            if (isAvailableAndReadable(hFeatureNode, featureName.getString())) {
+            if (isReadable(hFeatureNode, featureName.getString())) {
                 err = spinNodeGetType(hFeatureNode, featureType);
                 if (Utils.printOnError(err, "Unable to retrieve node type.")) {
                     continue;
@@ -110,11 +110,11 @@ class Utils {
     /**
      * This function helps to check if a node is available
      */
-    static boolean isAvailable(spinNodeHandle hNode) {
+    static boolean isAvailable(spinNodeHandle hNode, String nodeName) {
         BytePointer pbAvailable = new BytePointer(1);
         pbAvailable.putBool(false);
         spinError err = spinNodeIsAvailable(hNode, pbAvailable);
-        printOnError(err, "Unable to retrieve node availability (" + hNode + " node)");
+        printOnError(err, "Unable to retrieve node availability (" + nodeName + " node)");
         return pbAvailable.getBool();
     }
 
@@ -122,51 +122,35 @@ class Utils {
      * This function helps to check if a node is available and readable
      */
     static boolean isAvailableAndReadable(spinNodeHandle hNode, String nodeName) {
-        BytePointer pbAvailable = new BytePointer(1);
-        spinError err;
-        err = spinNodeIsAvailable(hNode, pbAvailable);
-        Utils.printOnError(err, "Unable to retrieve node availability (" + nodeName + " node)");
-
-        BytePointer pbReadable = new BytePointer(1);
-        err = spinNodeIsReadable(hNode, pbReadable);
-        Utils.printOnError(err, "Unable to retrieve node readability (" + nodeName + " node)");
-        return pbReadable.getBool() && pbAvailable.getBool();
+        return isAvailable(hNode, nodeName) && isReadable(hNode, nodeName);
     }
 
     /**
      * This function helps to check if a node is available and writable
      */
     static boolean isAvailableAndWritable(spinNodeHandle hNode, String nodeName) {
-        BytePointer pbAvailable = new BytePointer(1);
-        spinError err;
-        err = spinNodeIsAvailable(hNode, pbAvailable);
-        Utils.printOnError(err, "Unable to retrieve node availability (" + nodeName + " node).");
-
-        BytePointer pbWritable = new BytePointer(1);
-        err = spinNodeIsWritable(hNode, pbWritable);
-        Utils.printOnError(err, "Unable to retrieve node writability (" + nodeName + " node).");
-        return pbWritable.getBool() && pbAvailable.getBool();
+        return isAvailable(hNode, nodeName) && isWritable(hNode, nodeName);
     }
 
     /**
      * This function helps to check if a node is readable
      */
-    static boolean isReadable(spinNodeHandle hNode) {
-        BytePointer pbReadable = new BytePointer(1);
+    static boolean isReadable(spinNodeHandle hNode, String nodeName) {
+        BytePointer pbReadable = new BytePointer(1).putBool(false);
         pbReadable.putBool(false);
         spinError err = spinNodeIsReadable(hNode, pbReadable);
-        printOnError(err, "Unable to retrieve node availability (" + hNode + " node)");
+        printOnError(err, "Unable to retrieve node availability (" + nodeName + " node)");
         return pbReadable.getBool();
     }
 
     /**
      * This function helps to check if a node is writable
      */
-    static boolean isWritable(spinNodeHandle hNode) {
+    static boolean isWritable(spinNodeHandle hNode, String nodeName) {
         BytePointer pbWritable = new BytePointer(1);
         pbWritable.putBool(false);
         spinError err = spinNodeIsWritable(hNode, pbWritable);
-        printOnError(err, "Unable to retrieve node writability(" + hNode + " node)");
+        printOnError(err, "Unable to retrieve node writability(" + nodeName + " node)");
         return pbWritable.getBool();
     }
 

@@ -1,32 +1,40 @@
-// @formatter:off
-
 name         := "Spinnaker-demo"
 organization := "javacv.examples"
 
-val javacppVersion = "1.5.7"
+val javacppVersion = "1.5.9"
 version      := javacppVersion
-scalaVersion := "3.1.3"
-scalacOptions ++= Seq("-unchecked", "-deprecation")
+scalaVersion := "3.3.0"
+scalacOptions ++= Seq(
+  "-unchecked",
+  "-deprecation",
+  "-explain",
+  "-explain-types",
+  "-rewrite",
+  "-source:3.3-migration",
+//  "-Wvalue-discard",
+  "-Wunused:all"
+)
 
 // Platform classifier for native library dependencies
 val platform = org.bytedeco.javacpp.Loader.Detector.getPlatform
 // Libraries with native dependencies
 val bytedecoPresetLibs = Seq(
-  "spinnaker" -> s"2.4.0.143-$javacppVersion").flatMap {
+  "spinnaker" -> s"3.0.0.118-$javacppVersion"
+).flatMap {
   case (lib, ver) => Seq(
-    // Add both: dependency and its native binaries for the current `platform`
-    "org.bytedeco" % lib % ver withSources() withJavadoc(),
-    "org.bytedeco" % lib % ver classifier platform
-  )
+      // Add both: dependency and its native binaries for the current `platform`
+      "org.bytedeco" % lib % ver withSources () withJavadoc (),
+      "org.bytedeco" % lib % ver classifier platform
+    )
 }
 
 libraryDependencies ++= Seq(
-  "org.bytedeco" % "javacpp" % javacppVersion withSources() withJavadoc(),
-  "org.bytedeco" % "javacv"  % javacppVersion withSources() withJavadoc()
+  "org.bytedeco" % "javacpp" % javacppVersion withSources () withJavadoc (),
+  "org.bytedeco" % "javacv"  % javacppVersion withSources () withJavadoc ()
 ) ++ bytedecoPresetLibs
 
-resolvers ++=  Resolver.sonatypeOssRepos("snapshots")
-resolvers +=  Resolver.mavenLocal
+resolvers ++= Resolver.sonatypeOssRepos("snapshots")
+resolvers += Resolver.mavenLocal
 
 autoCompilerPlugins := true
 

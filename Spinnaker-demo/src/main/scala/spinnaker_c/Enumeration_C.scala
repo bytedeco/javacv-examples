@@ -8,10 +8,10 @@ import spinnaker_c.helpers.*
 object Enumeration_C {
 
   /**
-    * Print information about cameras on the list
-    *
-    * @param hCameraList list of cameras that was already allocated and retrieved
-    */
+   * Print information about cameras on the list
+   *
+   * @param hCameraList list of cameras that was already allocated and retrieved
+   */
   @throws[spinnaker_c.helpers.SpinnakerSDKException]("When a Spinnaker SDK operation fails.")
   def printDeviceVendorAndModel(hCameraList: spinCameraList): Unit = {
     var err = spinError.SPINNAKER_ERR_SUCCESS
@@ -58,7 +58,7 @@ object Enumeration_C {
       // attempt to read from or write to the node.
       //
       val deviceVendorName = nodeGetStringValue(hNodeMapTLDevice, "DeviceVendorName")
-      val deviceModelName = nodeGetStringValue(hNodeMapTLDevice, "DeviceModelName")
+      val deviceModelName  = nodeGetStringValue(hNodeMapTLDevice, "DeviceModelName")
 
       println(s"\tDevice $i / $deviceVendorName / $deviceModelName \n\n")
 
@@ -75,9 +75,9 @@ object Enumeration_C {
   }
 
   /**
-    * This function queries an interface for its cameras and then prints out
-    * device information.
-    */
+   * This function queries an interface for its cameras and then prints out
+   * device information.
+   */
   @throws[spinnaker_c.helpers.SpinnakerSDKException]("When a Spinnaker SDK operation fails.")
   def queryInterface(hInterface: spinInterface): Unit = {
     var err = spinError.SPINNAKER_ERR_SUCCESS
@@ -150,12 +150,12 @@ object Enumeration_C {
   }
 
   /**
-    * Example entry point; this function sets up the system and retrieves
-    * interfaces for the example.
-    */
+   * Example entry point; this function sets up the system and retrieves
+   * interfaces for the example.
+   */
   def main(args: Array[String]): Unit = {
     var errReturn = spinError.SPINNAKER_ERR_SUCCESS
-    var err = spinError.SPINNAKER_ERR_SUCCESS
+    var err       = spinError.SPINNAKER_ERR_SUCCESS
 
     //
     // Retrieve singleton reference to system object
@@ -196,7 +196,7 @@ object Enumeration_C {
     // in scope.
     //
     val hInterfaceList = new spinInterfaceList()
-    val numInterfaces = new SizeTPointer(1)
+    val numInterfaces  = new SizeTPointer(1)
 
     // Create empty interface list
     err = spinInterfaceListCreateEmpty(hInterfaceList)
