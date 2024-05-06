@@ -452,7 +452,7 @@ object SaveToAvi_C {
             hConvertedImage,
             spinPixelFormatEnums.PixelFormat_Mono8
           )
-          if (printOnError(err, "\"Unable to convert image. Non-fatal error."))
+          if (printOnError(err, "Unable to convert image. Non-fatal error."))
             hasFailed = true
 
           if (!hasFailed) {
