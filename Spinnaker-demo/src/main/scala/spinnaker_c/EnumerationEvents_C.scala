@@ -130,18 +130,18 @@ object EnumerationEvents_C {
     override def call(hCamera: spinCamera, pUserData: Pointer): Unit = doCall(hCamera, pUserData)
   }
 
-  private def systemData(data: Pointer): PointerPointer[Nothing] = eventData(EVENT_TYPE_SYSTEM, data)
+  private def systemData(data: Pointer): PointerPointer[?] = eventData(EVENT_TYPE_SYSTEM, data)
 
-  private def interfaceData(data: Pointer): PointerPointer[Nothing] = eventData(EVENT_TYPE_INTERFACE, data)
+  private def interfaceData(data: Pointer): PointerPointer[?] = eventData(EVENT_TYPE_INTERFACE, data)
 
   /**
    * Encode event type and event data into single PointerPointer.
    *
    * @param eventType event type
-   * @param data      dat a to be passed rto the event handler
+   * @param data      data to be passed to the event handler
    * @return
    */
-  private def eventData(eventType: Int, data: Pointer): PointerPointer[Nothing] = {
+  private def eventData(eventType: Int, data: Pointer): PointerPointer[?] = {
     val ip = new IntPointer(1L)
     ip.put(eventType)
 
@@ -159,12 +159,12 @@ object EnumerationEvents_C {
   def main(args: Array[String]): Unit = {
     var err: spinError = null
 
-    // Retrieve singleton reference to system object
+    // Retrieve singleton reference to the system object
     val hSystem = new spinSystem()
     err = spinSystemGetInstance(hSystem)
     exitOnError(err, "Unable to retrieve system instance.")
 
-    // Print out current library version
+    // Print out the current library version
     val hLibraryVersion: spinLibraryVersion = new spinLibraryVersion()
 
     spinSystemGetLibraryVersion(hSystem, hLibraryVersion)
@@ -176,7 +176,7 @@ object EnumerationEvents_C {
       hLibraryVersion.build()
     )
 
-    // Retrieve list of cameras from the system
+    // Retrieve the list of cameras from the system
     val hCameraList = new spinCameraList()
     err = spinCameraListCreateEmpty(hCameraList)
     exitOnError(err, "Unable to create camera list.")
@@ -244,7 +244,7 @@ object EnumerationEvents_C {
     println("Ready! Remove/Plug in cameras to test or press Enter to exit...")
     System.in.read()
 
-    // Unregister system event from system object
+    // Unregister system event from the system object
     // registered to the system.
     err = spinSystemUnregisterInterfaceEventHandler(hSystem, interfaceEventSystem)
     exitOnError(err, "Unable to unregister interface event from system.")
@@ -259,7 +259,7 @@ object EnumerationEvents_C {
     exitOnError(err, "Unable to destroy interface event.")
     println("System event handler destroyed...")
 
-    // Clear and destroy camera list before releasing system
+    // Clear and destroy camera list before releasing the system
     err = spinCameraListClear(hCameraList)
     exitOnError(err, "Unable to clear camera list.")
     err = spinCameraListDestroy(hCameraList)

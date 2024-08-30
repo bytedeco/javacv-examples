@@ -3,7 +3,7 @@ organization := "javacv.examples"
 
 val javacppVersion = "1.5.11-SNAPSHOT"
 version      := javacppVersion
-scalaVersion := "3.3.0"
+scalaVersion := "3.5.0"
 scalacOptions ++= Seq(
   "-unchecked",
   "-deprecation",
