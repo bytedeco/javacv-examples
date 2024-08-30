@@ -2,10 +2,11 @@ package spinnaker_c
 
 import org.bytedeco.javacpp.{BytePointer, SizeTPointer}
 import org.bytedeco.spinnaker.Spinnaker_C.{spinNodeHandle, spinNodeMapHandle}
+import org.bytedeco.spinnaker.global.Spinnaker_C
 import org.bytedeco.spinnaker.global.Spinnaker_C.*
 
-import scala.util.boundary
 import scala.util.boundary.break
+import scala.util.{Using, boundary}
 
 package object helpers {
 
@@ -61,17 +62,10 @@ package object helpers {
     err = spinNodeIsReadable(hNodeName, nodeIsReadable)
     check(err, s"Unable to check node readability ($nodeName).")
 
-    val pBuff    = new BytePointer(MAX_BUFF_LEN)
-    val pBuffLen = new SizeTPointer(1).put(MAX_BUFF_LEN)
-    if (nodeIsAvailable.getBool && nodeIsReadable.getBool) {
-      err = spinStringGetValue(hNodeName, pBuff, pBuffLen)
-      check(err, s"Unable to retrieve node value ($nodeName).")
-      // Buffer is larger than the string, so we take only up to string length (minus end of string character)
-      val value = pBuff.getString().take(pBuffLen.get().toInt - 1)
-      Option(value)
-    } else {
+    if (nodeIsAvailable.getBool && nodeIsReadable.getBool)
+      Option(helpStringGetValue(hNodeName, nodeName))
+    else
       None
-    }
   }
 
   /**
@@ -90,6 +84,28 @@ package object helpers {
           "\n  Spinnaker error description: " + errorMessage,
         expr
       )
+    }
+  }
+
+  def helpStringGetValue(
+    hNode: spinNodeHandle,
+    name: String
+  ): String = {
+    helpStringGetValue(hNode, spinStringGetValue, name)
+  }
+
+  def helpStringGetValue(
+    hNode: spinNodeHandle,
+    fun: (spinNodeHandle, BytePointer, SizeTPointer) => Spinnaker_C.spinError,
+    name: String
+  ): String = {
+    Using.resources(new BytePointer(MAX_BUFF_LEN), new SizeTPointer(1).put(MAX_BUFF_LEN)) {
+      (buf, bufLen) =>
+        check(
+          fun(hNode, buf, bufLen),
+          s"Unable to retrieve node value ($name)."
+        )
+        buf.getString().take(bufLen.get().toInt - 1)
     }
   }
 
@@ -168,6 +184,35 @@ package object helpers {
     printOnError(err, "Unable to retrieve node readability (" + nodeName + " node)")
     pbReadable.getBool
 
+  /**
+   * Check if 'err' is 'SPINNAKER_ERR_SUCCESS'.
+   * If it is do nothing otherwise print error information.
+   *
+   * @param err     error value.
+   * @param message additional message to print.
+   * @return 'false' if err is not SPINNAKER_ERR_SUCCESS, or 'true' for any other 'err' value.
+   */
+  def printOnError(err: spinError, message: String): Boolean = {
+    if (err.intern() != spinError.SPINNAKER_ERR_SUCCESS) {
+      printError(err, message)
+      true
+    } else {
+      false
+    }
+  }
+
+  def printError(err: spinError, message: String): Unit = {
+    println(message)
+    println(s"${err.value} ${findErrorNameByValue(err.value)}\n")
+  }
+
+  def findErrorNameByValue(value: Int): String = {
+    spinError.values
+      .find(_.value == value)
+      .map(_.name)
+      .getOrElse("???")
+  }
+
   def isAvailableAndReadable(hNode: spinNodeHandle, nodeName: String): Boolean = {
     val pbAvailable = new BytePointer(1)
     var err         = spinError.SPINNAKER_ERR_SUCCESS
@@ -192,28 +237,6 @@ package object helpers {
   }
 
   /**
-   * Check if 'err' is 'SPINNAKER_ERR_SUCCESS'.
-   * If it is do nothing otherwise print error information.
-   *
-   * @param err     error value.
-   * @param message additional message to print.
-   * @return 'false' if err is not SPINNAKER_ERR_SUCCESS, or 'true' for any other 'err' value.
-   */
-  def printOnError(err: spinError, message: String): Boolean = {
-    if (err.intern() != spinError.SPINNAKER_ERR_SUCCESS) {
-      printError(err, message)
-      true
-    } else {
-      false
-    }
-  }
-
-  def printError(err: spinError, message: String): Unit = {
-    println(message)
-    println(s"${err.value} ${findErrorNameByValue(err.value)}\n")
-  }
-
-  /**
    * This function handles the error prints when a node or entry is unavailable or
    * not readable/writable on the connected camera
    */
@@ -221,13 +244,6 @@ package object helpers {
     println("Unable to get " + node + " (" + name + " " + node + " retrieval failed).")
     println("The " + node + " may not be available on all camera models...")
     println("Please try a Blackfly S camera.\n")
-  }
-
-  def findErrorNameByValue(value: Int): String = {
-    spinError.values
-      .find(_.value == value)
-      .map(_.name)
-      .getOrElse("???")
   }
 
   def findImageStatusNameByValue(value: Int): String =
