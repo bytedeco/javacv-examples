@@ -10,7 +10,7 @@ scalacOptions ++= Seq(
   "-explain",
   "-explain-types",
   "-rewrite",
-  "-source:3.3-migration",
+  "-source:3.5-migration",
 //  "-Wvalue-discard",
   "-Wunused:all"
 )

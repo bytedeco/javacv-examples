@@ -47,15 +47,7 @@ object Enumeration_C {
     )
 
     // Print out current library version
-    val hLibraryVersion = new spinLibraryVersion()
-    spinSystemGetLibraryVersion(hSystem, hLibraryVersion)
-    printf(
-      "Spinnaker library version: %d.%d.%d.%d\n\n%n",
-      hLibraryVersion.major(),
-      hLibraryVersion.minor(),
-      hLibraryVersion.`type`(),
-      hLibraryVersion.build()
-    )
+    printLibraryVersion(hSystem)
 
     //
     // Retrieve list of interfaces from the system

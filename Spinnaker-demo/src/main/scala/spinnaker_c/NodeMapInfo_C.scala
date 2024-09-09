@@ -4,7 +4,7 @@ import org.bytedeco.javacpp.{BytePointer, DoublePointer, LongPointer, SizeTPoint
 import org.bytedeco.spinnaker.Spinnaker_C.*
 import org.bytedeco.spinnaker.global.Spinnaker_C.*
 import spinnaker_c.NodeMapInfo_C.ReadType.{INDIVIDUAL, VALUE}
-import spinnaker_c.helpers.{check, exitOnError, helpStringGetValue, isReadable}
+import spinnaker_c.helpers.*
 
 import scala.util.Using
 
@@ -49,16 +49,7 @@ object NodeMapInfo_C {
       )
 
       // Print out current library version
-      Using(new spinLibraryVersion()) { hLibraryVersion =>
-        spinSystemGetLibraryVersion(hSystem, hLibraryVersion)
-        printf(
-          "Spinnaker library version: %d.%d.%d.%d\n\n%n",
-          hLibraryVersion.major(),
-          hLibraryVersion.minor(),
-          hLibraryVersion.`type`(),
-          hLibraryVersion.build()
-        )
-      }
+      printLibraryVersion(hSystem)
 
       // Retrieve list of cameras from the system
       Using(new spinCameraList()) { hCameraList =>

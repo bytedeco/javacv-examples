@@ -23,16 +23,135 @@ import scala.util.boundary.break
  */
 object SaveToAvi_C {
 
+  val chosenFileType: FileType = FileType.Uncompressed
   // These macros helps with C-strings and number of frames in a video.
   private val NUM_IMAGES = 60
 
-  // Use the following "enum" and global constant to select the type of video
-  // file to be created and saved.
-  enum FileType:
-    case Uncompressed
-    case MJPG
-    case H264
-  val chosenFileType: FileType = FileType.Uncompressed
+  /**
+   * Example entry point; please see `Enumeration_C` example for more in-depth comments on preparing and cleaning
+   * up the system.
+   */
+  def main(args: Array[String]): Unit = {
+
+    var err = spinError.SPINNAKER_ERR_SUCCESS
+
+    // Retrieve singleton reference to system object
+    val hSystem = new spinSystem()
+    err = spinSystemGetInstance(hSystem)
+    exitOnError(err, "Unable to retrieve system instance.")
+
+    // Print out current library version
+    printLibraryVersion(hSystem)
+
+    // Retrieve list of cameras from the system
+    val hCameraList = new spinCameraList()
+    err = spinCameraListCreateEmpty(hCameraList)
+    exitOnError(err, "Unable to create camera list.")
+
+    err = spinSystemGetCameras(hSystem, hCameraList)
+    exitOnError(err, "Unable to retrieve camera list.")
+
+    // Retrieve number of cameras
+    val numCameras = new SizeTPointer(1)
+    err = spinCameraListGetSize(hCameraList, numCameras)
+    exitOnError(err, "Unable to retrieve number of cameras.")
+    println("Number of cameras detected: " + numCameras.get + "\n")
+
+    // Finish if there are no cameras
+    var errReturn = spinError.SPINNAKER_ERR_SUCCESS.value
+    if (numCameras.get > 0) {
+
+      // Run example on each camera
+      for (i <- 0 until numCameras.get.toInt) {
+        printf("\nRunning example for camera %d...\n", i)
+
+        // Select camera
+        val hCamera = new spinCamera()
+
+        err = spinCameraListGet(hCameraList, i, hCamera)
+        if (err.intern() != spinError.SPINNAKER_ERR_SUCCESS) {
+          printError(err, "Unable to retrieve camera from list. Aborting with error %d...\n")
+          errReturn = err.value
+        } else {
+          // Run example
+          err = runSingleCamera(hCamera)
+          if (err.intern() != spinError.SPINNAKER_ERR_SUCCESS) {
+            errReturn = err.value
+          }
+        }
+
+        // Release camera
+        err = spinCameraRelease(hCamera)
+        if (err.intern() != spinError.SPINNAKER_ERR_SUCCESS) {
+          errReturn = err.value
+        }
+
+        printf("Camera %d example complete...\n\n", i)
+      }
+    } else {
+      println("Not enough cameras!\n")
+      errReturn = -1
+    }
+
+    // Clear and destroy camera list before releasing system
+    err = spinCameraListClear(hCameraList)
+    exitOnError(err, "Unable to clear camera list.")
+
+    err = spinCameraListDestroy(hCameraList)
+    exitOnError(err, "Unable to destroy camera list.")
+
+    // Release system
+    err = spinSystemReleaseInstance(hSystem)
+    exitOnError(err, "Unable to release system instance.")
+
+    println("\nDone!\n")
+    System.exit(errReturn)
+  }
+
+  /**
+   * This function acts as the body of the example;
+   * please see `NodeMapInfo_C` example for more in-depth comments on setting up cameras.
+   */
+  def runSingleCamera(hCam: spinCamera): spinError = {
+    var err = spinError.SPINNAKER_ERR_SUCCESS
+
+    // Retrieve TL device nodemap and print device information
+    val hNodeMapTLDevice = new spinNodeMapHandle()
+
+    err = spinCameraGetTLDeviceNodeMap(hCam, hNodeMapTLDevice)
+    if (err.intern() != spinError.SPINNAKER_ERR_SUCCESS) {
+      printError(err, "Unable to retrieve TL device nodemap. Non-fatal error...\n")
+    } else {
+      err = printDeviceInfo(hNodeMapTLDevice)
+    }
+
+    // Initialize camera
+    err = spinCameraInit(hCam)
+    if (printOnError(err, "Unable to initialize camera."))
+      return err
+
+    // Retrieve GenICam nodemap
+    val hNodeMap = new spinNodeMapHandle
+    err = spinCameraGetNodeMap(hCam, hNodeMap)
+    if (printOnError(err, "Unable to retrieve GenICam nodemap."))
+      return err
+
+    // Acquire images
+    val hImages = new Array[spinImage](NUM_IMAGES)
+    err = acquireImages(hCam, hNodeMap, hNodeMapTLDevice, hImages)
+    if (printOnError(err, "acquireImages"))
+      return err
+
+    err = saveArrayToVideo(hNodeMap, hNodeMapTLDevice, hImages)
+    if (printOnError(err, "saveArrayToVideo"))
+      return err
+
+    // Deinitialize camera
+    err = spinCameraDeInit(hCam)
+    if (printOnError(err, "Unable to deinitialize camera.")) return err
+
+    err
+  }
 
   /** This function prepares, saves, and cleans up an video from a vector of images. */
   def saveArrayToVideo(
@@ -483,138 +602,11 @@ object SaveToAvi_C {
     err
   }
 
-  /**
-   * This function acts as the body of the example;
-   * please see `NodeMapInfo_C` example for more in-depth comments on setting up cameras.
-   */
-  def runSingleCamera(hCam: spinCamera): spinError = {
-    var err = spinError.SPINNAKER_ERR_SUCCESS
-
-    // Retrieve TL device nodemap and print device information
-    val hNodeMapTLDevice = new spinNodeMapHandle()
-
-    err = spinCameraGetTLDeviceNodeMap(hCam, hNodeMapTLDevice)
-    if (err.intern() != spinError.SPINNAKER_ERR_SUCCESS) {
-      printError(err, "Unable to retrieve TL device nodemap. Non-fatal error...\n")
-    } else {
-      err = printDeviceInfo(hNodeMapTLDevice)
-    }
-
-    // Initialize camera
-    err = spinCameraInit(hCam)
-    if (printOnError(err, "Unable to initialize camera."))
-      return err
-
-    // Retrieve GenICam nodemap
-    val hNodeMap = new spinNodeMapHandle
-    err = spinCameraGetNodeMap(hCam, hNodeMap)
-    if (printOnError(err, "Unable to retrieve GenICam nodemap."))
-      return err
-
-    // Acquire images
-    val hImages = new Array[spinImage](NUM_IMAGES)
-    err = acquireImages(hCam, hNodeMap, hNodeMapTLDevice, hImages)
-    if (printOnError(err, "acquireImages"))
-      return err
-
-    err = saveArrayToVideo(hNodeMap, hNodeMapTLDevice, hImages)
-    if (printOnError(err, "saveArrayToVideo"))
-      return err
-
-    // Deinitialize camera
-    err = spinCameraDeInit(hCam)
-    if (printOnError(err, "Unable to deinitialize camera.")) return err
-
-    err
-  }
-
-  /**
-   * Example entry point; please see `Enumeration_C` example for more in-depth comments on preparing and cleaning
-   * up the system.
-   */
-  def main(args: Array[String]): Unit = {
-
-    var err = spinError.SPINNAKER_ERR_SUCCESS
-
-    // Retrieve singleton reference to system object
-    val hSystem = new spinSystem()
-    err = spinSystemGetInstance(hSystem)
-    exitOnError(err, "Unable to retrieve system instance.")
-
-    // Print out current library version
-    val hLibraryVersion = new spinLibraryVersion()
-    spinSystemGetLibraryVersion(hSystem, hLibraryVersion)
-    printf(
-      "Spinnaker library version: %d.%d.%d.%d\n\n%n",
-      hLibraryVersion.major(),
-      hLibraryVersion.minor(),
-      hLibraryVersion.`type`(),
-      hLibraryVersion.build()
-    )
-
-    // Retrieve list of cameras from the system
-    val hCameraList = new spinCameraList()
-    err = spinCameraListCreateEmpty(hCameraList)
-    exitOnError(err, "Unable to create camera list.")
-
-    err = spinSystemGetCameras(hSystem, hCameraList)
-    exitOnError(err, "Unable to retrieve camera list.")
-
-    // Retrieve number of cameras
-    val numCameras = new SizeTPointer(1)
-    err = spinCameraListGetSize(hCameraList, numCameras)
-    exitOnError(err, "Unable to retrieve number of cameras.")
-    println("Number of cameras detected: " + numCameras.get + "\n")
-
-    // Finish if there are no cameras
-    var errReturn = spinError.SPINNAKER_ERR_SUCCESS.value
-    if (numCameras.get > 0) {
-
-      // Run example on each camera
-      for (i <- 0 until numCameras.get.toInt) {
-        printf("\nRunning example for camera %d...\n", i)
-
-        // Select camera
-        val hCamera = new spinCamera()
-
-        err = spinCameraListGet(hCameraList, i, hCamera)
-        if (err.intern() != spinError.SPINNAKER_ERR_SUCCESS) {
-          printError(err, "Unable to retrieve camera from list. Aborting with error %d...\n")
-          errReturn = err.value
-        } else {
-          // Run example
-          err = runSingleCamera(hCamera)
-          if (err.intern() != spinError.SPINNAKER_ERR_SUCCESS) {
-            errReturn = err.value
-          }
-        }
-
-        // Release camera
-        err = spinCameraRelease(hCamera)
-        if (err.intern() != spinError.SPINNAKER_ERR_SUCCESS) {
-          errReturn = err.value
-        }
-
-        printf("Camera %d example complete...\n\n", i)
-      }
-    } else {
-      println("Not enough cameras!\n")
-      errReturn = -1
-    }
-
-    // Clear and destroy camera list before releasing system
-    err = spinCameraListClear(hCameraList)
-    exitOnError(err, "Unable to clear camera list.")
-
-    err = spinCameraListDestroy(hCameraList)
-    exitOnError(err, "Unable to destroy camera list.")
-
-    // Release system
-    err = spinSystemReleaseInstance(hSystem)
-    exitOnError(err, "Unable to release system instance.")
-
-    println("\nDone!\n")
-    System.exit(errReturn)
-  }
+  // Use the following "enum" and global constant to select the type of video
+  // file to be created and saved.
+  enum FileType:
+    case Uncompressed
+    case MJPG
+    case H264
 
 }

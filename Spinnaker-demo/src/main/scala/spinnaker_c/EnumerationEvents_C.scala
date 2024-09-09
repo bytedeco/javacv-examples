@@ -3,7 +3,7 @@ package spinnaker_c
 import org.bytedeco.javacpp.*
 import org.bytedeco.spinnaker.Spinnaker_C.*
 import org.bytedeco.spinnaker.global.Spinnaker_C.*
-import spinnaker_c.helpers.{exitOnError, nodeGetStringValue, printOnError}
+import spinnaker_c.helpers.{exitOnError, nodeGetStringValue, printLibraryVersion, printOnError}
 
 /**
  * Code based on C version, EnumerationEvents_C, from Spinnaker SDK by FLIR.
@@ -29,129 +29,6 @@ object EnumerationEvents_C {
   private val EVENT_TYPE_SYSTEM    = 2
 
   /**
-   * Helper trait to implement event handler, avoid code duplication.
-   */
-  trait OnDeviceEvent {
-    def eventName: String
-
-    protected def onInterface(hCamera: spinCamera, interfaceNum: Int): Unit
-
-    private def onSystem(hCamera: spinCamera, hSystem: spinSystem): Unit = {
-      var err: spinError = null
-
-      // Retrieve count
-      val hCameraList = new spinCameraList
-      err = spinCameraListCreateEmpty(hCameraList)
-      if (printOnError(err, s"Unable to create camera list (System $eventName).")) return
-
-      err = spinSystemGetCameras(hSystem, hCameraList)
-      if (printOnError(err, s"Unable to retrieve cameras (System $eventName).")) return
-
-      val numCameras = new SizeTPointer(1)
-      err = spinCameraListGetSize(hCameraList, numCameras)
-      if (printOnError(err, s"Unable to retrieve camera list size (System $eventName).")) return
-
-      // Retrieve device serial number given the camera handle
-      val hNodeMapTLDevice = new spinNodeMapHandle()
-
-      err = spinCameraGetTLDeviceNodeMap(hCamera, hNodeMapTLDevice)
-      if (printOnError(err, "Unable to retrieve the TLDevice NodeMap. Non-fatal error.")) return
-
-      val deviceSerialNumber = nodeGetStringValue(hNodeMapTLDevice, "DeviceSerialNumber")
-
-      // Print count
-      println("System event handler:\n")
-      println(s"\tDevice $deviceSerialNumber System $eventName.\n")
-      println("\tThere " + (if (numCameras.get == 1) "is" else "are") + " "
-        + numCameras.get + " " + (if (numCameras.get == 1) "device" else "devices") + " on the system.\n")
-
-      // Clear and destroy camera list while still in scope
-      err = spinCameraListClear(hCameraList)
-      if (printOnError(err, "Unable to clear camera list.")) return
-
-      err = spinCameraListDestroy(hCameraList)
-      if (printOnError(err, "Unable to destroy camera list.")) return
-    }
-
-    protected def doCall(hCamera: spinCamera, pUserData: Pointer): Unit = {
-      println(s"doCall(hCamera=$hCamera, pUserData=$pUserData)")
-      // Decode event type and event data. Call handler method for each type.
-      val pp = new PointerPointer[Pointer](pUserData)
-      new IntPointer(pp.get(0)).get match {
-        case EVENT_TYPE_INTERFACE =>
-          onInterface(hCamera, new IntPointer(pp.get(1)).get())
-        case EVENT_TYPE_SYSTEM =>
-          onSystem(hCamera, new spinSystem(pp.get(1)))
-        case v =>
-          throw new IllegalArgumentException("Invalid EVENT_FUNCTION_TYPE: " + v)
-      }
-    }
-  }
-
-  class OnDeviceArrival extends spinArrivalEventFunction with OnDeviceEvent {
-    val eventName: String = "Arrival"
-
-    override def onInterface(hCamera: spinCamera, interfaceNum: Int): Unit = { // Cast user data to expected type
-      // Print arrival information
-
-      // Retrieve device serial number given the camera handle
-      val hNodeMapTLDevice = new spinNodeMapHandle()
-
-      val err = spinCameraGetTLDeviceNodeMap(hCamera, hNodeMapTLDevice)
-      if (printOnError(err, "Unable to retrieve the TLDevice NodeMap. Non-fatal error.")) return
-
-      val deviceSerialNumber = nodeGetStringValue(hNodeMapTLDevice, "DeviceSerialNumber")
-
-      println("Interface event handler:")
-      println("\tDevice " + deviceSerialNumber + " has arrived on interface " + interfaceNum + ".\n")
-    }
-
-    override def call(hCamera: spinCamera, pUserData: Pointer): Unit = doCall(hCamera, pUserData)
-  }
-
-  class OnDeviceRemoval extends spinRemovalEventFunction with OnDeviceEvent {
-    val eventName: String = "Removal"
-
-    override def onInterface(hCamera: spinCamera, interfaceNum: Int): Unit = {
-      // Print removal information
-
-      // Retrieve device serial number given the camera handle
-      val hNodeMapTLDevice = new spinNodeMapHandle()
-
-      val err = spinCameraGetTLDeviceNodeMap(hCamera, hNodeMapTLDevice)
-      if (printOnError(err, "Unable to retrieve the TLDevice NodeMap. Non-fatal error.")) return
-
-      val deviceSerialNumber = nodeGetStringValue(hNodeMapTLDevice, "DeviceSerialNumber")
-
-      println("Interface event handler:\n")
-      println("\tDevice " + deviceSerialNumber + " was removed from interface " + interfaceNum + ".\n")
-    }
-
-    override def call(hCamera: spinCamera, pUserData: Pointer): Unit = doCall(hCamera, pUserData)
-  }
-
-  private def systemData(data: Pointer): PointerPointer[?] = eventData(EVENT_TYPE_SYSTEM, data)
-
-  private def interfaceData(data: Pointer): PointerPointer[?] = eventData(EVENT_TYPE_INTERFACE, data)
-
-  /**
-   * Encode event type and event data into single PointerPointer.
-   *
-   * @param eventType event type
-   * @param data      data to be passed to the event handler
-   * @return
-   */
-  private def eventData(eventType: Int, data: Pointer): PointerPointer[?] = {
-    val ip = new IntPointer(1L)
-    ip.put(eventType)
-
-    val pp = new PointerPointer(2L)
-    pp.put(0, ip)
-    pp.put(1, data)
-    pp
-  }
-
-  /**
    * Example entry point; this function sets up the example to act appropriately
    * upon arrival and removal events; please see Enumeration example for more
    * in-depth comments on preparing and cleaning up the system.
@@ -165,16 +42,7 @@ object EnumerationEvents_C {
     exitOnError(err, "Unable to retrieve system instance.")
 
     // Print out the current library version
-    val hLibraryVersion: spinLibraryVersion = new spinLibraryVersion()
-
-    spinSystemGetLibraryVersion(hSystem, hLibraryVersion)
-    System.out.printf(
-      "Spinnaker library version: %d.%d.%d.%d\n\n%n",
-      hLibraryVersion.major(),
-      hLibraryVersion.minor(),
-      hLibraryVersion.`type`(),
-      hLibraryVersion.build()
-    )
+    printLibraryVersion(hSystem)
 
     // Retrieve the list of cameras from the system
     val hCameraList = new spinCameraList()
@@ -269,6 +137,129 @@ object EnumerationEvents_C {
     err = spinSystemReleaseInstance(hSystem)
     exitOnError(err, "Unable to release system instance.")
     println("Done!")
+  }
+
+  private def systemData(data: Pointer): PointerPointer[?] = eventData(EVENT_TYPE_SYSTEM, data)
+
+  private def interfaceData(data: Pointer): PointerPointer[?] = eventData(EVENT_TYPE_INTERFACE, data)
+
+  /**
+   * Encode event type and event data into single PointerPointer.
+   *
+   * @param eventType event type
+   * @param data      data to be passed to the event handler
+   * @return
+   */
+  private def eventData(eventType: Int, data: Pointer): PointerPointer[?] = {
+    val ip = new IntPointer(1L)
+    ip.put(eventType)
+
+    val pp = new PointerPointer(2L)
+    pp.put(0, ip)
+    pp.put(1, data)
+    pp
+  }
+
+  /**
+   * Helper trait to implement event handler, avoid code duplication.
+   */
+  trait OnDeviceEvent {
+    def eventName: String
+
+    protected def onInterface(hCamera: spinCamera, interfaceNum: Int): Unit
+
+    protected def doCall(hCamera: spinCamera, pUserData: Pointer): Unit = {
+      println(s"doCall(hCamera=$hCamera, pUserData=$pUserData)")
+      // Decode event type and event data. Call handler method for each type.
+      val pp = new PointerPointer[Pointer](pUserData)
+      new IntPointer(pp.get(0)).get match {
+        case EVENT_TYPE_INTERFACE =>
+          onInterface(hCamera, new IntPointer(pp.get(1)).get())
+        case EVENT_TYPE_SYSTEM =>
+          onSystem(hCamera, new spinSystem(pp.get(1)))
+        case v =>
+          throw new IllegalArgumentException("Invalid EVENT_FUNCTION_TYPE: " + v)
+      }
+    }
+
+    private def onSystem(hCamera: spinCamera, hSystem: spinSystem): Unit = {
+      var err: spinError = null
+
+      // Retrieve count
+      val hCameraList = new spinCameraList
+      err = spinCameraListCreateEmpty(hCameraList)
+      if (printOnError(err, s"Unable to create camera list (System $eventName).")) return
+
+      err = spinSystemGetCameras(hSystem, hCameraList)
+      if (printOnError(err, s"Unable to retrieve cameras (System $eventName).")) return
+
+      val numCameras = new SizeTPointer(1)
+      err = spinCameraListGetSize(hCameraList, numCameras)
+      if (printOnError(err, s"Unable to retrieve camera list size (System $eventName).")) return
+
+      // Retrieve device serial number given the camera handle
+      val hNodeMapTLDevice = new spinNodeMapHandle()
+
+      err = spinCameraGetTLDeviceNodeMap(hCamera, hNodeMapTLDevice)
+      if (printOnError(err, "Unable to retrieve the TLDevice NodeMap. Non-fatal error.")) return
+
+      val deviceSerialNumber = nodeGetStringValue(hNodeMapTLDevice, "DeviceSerialNumber")
+
+      // Print count
+      println("System event handler:\n")
+      println(s"\tDevice $deviceSerialNumber System $eventName.\n")
+      println("\tThere " + (if (numCameras.get == 1) "is" else "are") + " "
+        + numCameras.get + " " + (if (numCameras.get == 1) "device" else "devices") + " on the system.\n")
+
+      // Clear and destroy camera list while still in scope
+      err = spinCameraListClear(hCameraList)
+      if (printOnError(err, "Unable to clear camera list.")) return
+
+      err = spinCameraListDestroy(hCameraList)
+      if (printOnError(err, "Unable to destroy camera list.")) return
+    }
+  }
+
+  class OnDeviceArrival extends spinArrivalEventFunction with OnDeviceEvent {
+    val eventName: String = "Arrival"
+
+    override def onInterface(hCamera: spinCamera, interfaceNum: Int): Unit = { // Cast user data to expected type
+      // Print arrival information
+
+      // Retrieve device serial number given the camera handle
+      val hNodeMapTLDevice = new spinNodeMapHandle()
+
+      val err = spinCameraGetTLDeviceNodeMap(hCamera, hNodeMapTLDevice)
+      if (printOnError(err, "Unable to retrieve the TLDevice NodeMap. Non-fatal error.")) return
+
+      val deviceSerialNumber = nodeGetStringValue(hNodeMapTLDevice, "DeviceSerialNumber")
+
+      println("Interface event handler:")
+      println("\tDevice " + deviceSerialNumber + " has arrived on interface " + interfaceNum + ".\n")
+    }
+
+    override def call(hCamera: spinCamera, pUserData: Pointer): Unit = doCall(hCamera, pUserData)
+  }
+
+  class OnDeviceRemoval extends spinRemovalEventFunction with OnDeviceEvent {
+    val eventName: String = "Removal"
+
+    override def onInterface(hCamera: spinCamera, interfaceNum: Int): Unit = {
+      // Print removal information
+
+      // Retrieve device serial number given the camera handle
+      val hNodeMapTLDevice = new spinNodeMapHandle()
+
+      val err = spinCameraGetTLDeviceNodeMap(hCamera, hNodeMapTLDevice)
+      if (printOnError(err, "Unable to retrieve the TLDevice NodeMap. Non-fatal error.")) return
+
+      val deviceSerialNumber = nodeGetStringValue(hNodeMapTLDevice, "DeviceSerialNumber")
+
+      println("Interface event handler:\n")
+      println("\tDevice " + deviceSerialNumber + " was removed from interface " + interfaceNum + ".\n")
+    }
+
+    override def call(hCamera: spinCamera, pUserData: Pointer): Unit = doCall(hCamera, pUserData)
   }
 
 }

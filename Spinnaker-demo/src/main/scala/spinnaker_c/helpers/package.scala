@@ -1,7 +1,7 @@
 package spinnaker_c
 
 import org.bytedeco.javacpp.{BytePointer, SizeTPointer}
-import org.bytedeco.spinnaker.Spinnaker_C.{spinNodeHandle, spinNodeMapHandle}
+import org.bytedeco.spinnaker.Spinnaker_C.{spinLibraryVersion, spinNodeHandle, spinNodeMapHandle, spinSystem}
 import org.bytedeco.spinnaker.global.Spinnaker_C
 import org.bytedeco.spinnaker.global.Spinnaker_C.*
 
@@ -184,35 +184,6 @@ package object helpers {
     printOnError(err, "Unable to retrieve node readability (" + nodeName + " node)")
     pbReadable.getBool
 
-  /**
-   * Check if 'err' is 'SPINNAKER_ERR_SUCCESS'.
-   * If it is do nothing otherwise print error information.
-   *
-   * @param err     error value.
-   * @param message additional message to print.
-   * @return 'false' if err is not SPINNAKER_ERR_SUCCESS, or 'true' for any other 'err' value.
-   */
-  def printOnError(err: spinError, message: String): Boolean = {
-    if (err.intern() != spinError.SPINNAKER_ERR_SUCCESS) {
-      printError(err, message)
-      true
-    } else {
-      false
-    }
-  }
-
-  def printError(err: spinError, message: String): Unit = {
-    println(message)
-    println(s"${err.value} ${findErrorNameByValue(err.value)}\n")
-  }
-
-  def findErrorNameByValue(value: Int): String = {
-    spinError.values
-      .find(_.value == value)
-      .map(_.name)
-      .getOrElse("???")
-  }
-
   def isAvailableAndReadable(hNode: spinNodeHandle, nodeName: String): Boolean = {
     val pbAvailable = new BytePointer(1)
     var err         = spinError.SPINNAKER_ERR_SUCCESS
@@ -246,6 +217,19 @@ package object helpers {
     println("Please try a Blackfly S camera.\n")
   }
 
+  def printLibraryVersion(hSystem: spinSystem): Unit = {
+    Using.resource(new spinLibraryVersion()) { hLibraryVersion =>
+      spinSystemGetLibraryVersion(hSystem, hLibraryVersion)
+      printf(
+        "Spinnaker library version: %d.%d.%d.%d\n\n%n",
+        hLibraryVersion.major(),
+        hLibraryVersion.minor(),
+        hLibraryVersion.`type`(),
+        hLibraryVersion.build()
+      )
+    }
+  }
+
   def findImageStatusNameByValue(value: Int): String =
     boundary:
       for (v <- spinImageStatus.values) do if v.value == value then break(v.name)
@@ -263,5 +247,34 @@ package object helpers {
       System.out.println("Aborting.")
       System.exit(err.value)
     }
+  }
+
+  /**
+   * Check if 'err' is 'SPINNAKER_ERR_SUCCESS'.
+   * If it is do nothing otherwise print error information.
+   *
+   * @param err     error value.
+   * @param message additional message to print.
+   * @return 'false' if err is not SPINNAKER_ERR_SUCCESS, or 'true' for any other 'err' value.
+   */
+  def printOnError(err: spinError, message: String): Boolean = {
+    if (err.intern() != spinError.SPINNAKER_ERR_SUCCESS) {
+      printError(err, message)
+      true
+    } else {
+      false
+    }
+  }
+
+  def printError(err: spinError, message: String): Unit = {
+    println(message)
+    println(s"${err.value} ${findErrorNameByValue(err.value)}\n")
+  }
+
+  def findErrorNameByValue(value: Int): String = {
+    spinError.values
+      .find(_.value == value)
+      .map(_.name)
+      .getOrElse("???")
   }
 }
