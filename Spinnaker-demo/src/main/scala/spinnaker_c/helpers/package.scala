@@ -46,8 +46,7 @@ package object helpers {
     // attempt to read from or write to the node.
     //
 
-    val MAX_BUFF_LEN = 256
-    var err          = spinError.SPINNAKER_ERR_SUCCESS
+    var err = spinError.SPINNAKER_ERR_SUCCESS
 
     val hNodeName = new spinNodeHandle()
 
@@ -68,6 +67,25 @@ package object helpers {
       None
   }
 
+  def helpStringGetValue(
+    hNode: spinNodeHandle,
+    name: String
+  ): String =
+    helpStringGetValue(hNode, spinStringGetValue, name)
+
+  def helpStringGetValue(
+    hNode: spinNodeHandle,
+    fun: (spinNodeHandle, BytePointer, SizeTPointer) => Spinnaker_C.spinError,
+    name: String
+  ): String = Using.resources(new BytePointer(MAX_BUFF_LEN), new SizeTPointer(1).put(MAX_BUFF_LEN)) {
+    (buf, bufLen) =>
+      check(
+        fun(hNode, buf, bufLen),
+        s"Unable to retrieve node value ($name)."
+      )
+      buf.getString().take(bufLen.get().toInt - 1)
+  }
+
   /**
    * Checks if expression evaluated without error code (anything other than SPINNAKER_ERR_SUCCESS).
    * If there was an error an exception is thrown that contains error code and the provided contextual `errorMessage`.
@@ -84,28 +102,6 @@ package object helpers {
           "\n  Spinnaker error description: " + errorMessage,
         expr
       )
-    }
-  }
-
-  def helpStringGetValue(
-    hNode: spinNodeHandle,
-    name: String
-  ): String = {
-    helpStringGetValue(hNode, spinStringGetValue, name)
-  }
-
-  def helpStringGetValue(
-    hNode: spinNodeHandle,
-    fun: (spinNodeHandle, BytePointer, SizeTPointer) => Spinnaker_C.spinError,
-    name: String
-  ): String = {
-    Using.resources(new BytePointer(MAX_BUFF_LEN), new SizeTPointer(1).put(MAX_BUFF_LEN)) {
-      (buf, bufLen) =>
-        check(
-          fun(hNode, buf, bufLen),
-          s"Unable to retrieve node value ($name)."
-        )
-        buf.getString().take(bufLen.get().toInt - 1)
     }
   }
 
@@ -178,12 +174,6 @@ package object helpers {
     printOnError(err, "Unable to retrieve node availability (" + nodeName + " node)")
     pbAvailable.getBool
 
-  def isReadable(hNode: spinNodeHandle, nodeName: String): Boolean =
-    val pbReadable = new BytePointer(1)
-    val err        = spinNodeIsReadable(hNode, pbReadable)
-    printOnError(err, "Unable to retrieve node readability (" + nodeName + " node)")
-    pbReadable.getBool
-
   def isAvailableAndReadable(hNode: spinNodeHandle, nodeName: String): Boolean = {
     val pbAvailable = new BytePointer(1)
     var err         = spinError.SPINNAKER_ERR_SUCCESS
@@ -208,6 +198,48 @@ package object helpers {
   }
 
   /**
+   * Check if 'err' is 'SPINNAKER_ERR_SUCCESS'.
+   * If it is do nothing otherwise print error information.
+   *
+   * @param err     error value.
+   * @param message additional message to print.
+   * @return 'false' if err is not SPINNAKER_ERR_SUCCESS, or 'true' for any other 'err' value.
+   */
+  def printOnError(err: spinError, message: String): Boolean = {
+    if (err.intern() != spinError.SPINNAKER_ERR_SUCCESS) {
+      printError(err, message)
+      true
+    } else {
+      false
+    }
+  }
+
+  def printError(err: spinError, message: String): Unit = {
+    println(message)
+    println(s"${err.value} ${findErrorNameByValue(err.value)}\n")
+  }
+
+  def findErrorNameByValue(value: Int): String = {
+    spinError.values
+      .find(_.value == value)
+      .map(_.name)
+      .getOrElse("???")
+  }
+
+  @throws[SpinnakerSDKException]
+  def checkIsReadable(hNode: spinNodeHandle, nodeName: String): Unit = {
+    if !isReadable(hNode, nodeName) then
+      printRetrieveNodeFailure("node", nodeName)
+      throw new SpinnakerSDKException(s"Node '$nodeName' is not readable", spinError.SPINNAKER_ERR_ACCESS_DENIED)
+  }
+
+  def isReadable(hNode: spinNodeHandle, nodeName: String): Boolean =
+    val pbReadable = new BytePointer(1)
+    val err        = spinNodeIsReadable(hNode, pbReadable)
+    printOnError(err, "Unable to retrieve node readability (" + nodeName + " node)")
+    pbReadable.getBool
+
+  /**
    * This function handles the error prints when a node or entry is unavailable or
    * not readable/writable on the connected camera
    */
@@ -215,6 +247,13 @@ package object helpers {
     println("Unable to get " + node + " (" + name + " " + node + " retrieval failed).")
     println("The " + node + " may not be available on all camera models...")
     println("Please try a Blackfly S camera.\n")
+  }
+
+  @throws[SpinnakerSDKException]
+  def checkIsWritable(hNode: spinNodeHandle, nodeName: String): Unit = {
+    if !isReadable(hNode, nodeName) then
+      printRetrieveNodeFailure("node", nodeName)
+      throw new SpinnakerSDKException(s"Node '$nodeName' is not writable", spinError.SPINNAKER_ERR_ACCESS_DENIED)
   }
 
   def printLibraryVersion(hSystem: spinSystem): Unit = {
@@ -247,34 +286,5 @@ package object helpers {
       System.out.println("Aborting.")
       System.exit(err.value)
     }
-  }
-
-  /**
-   * Check if 'err' is 'SPINNAKER_ERR_SUCCESS'.
-   * If it is do nothing otherwise print error information.
-   *
-   * @param err     error value.
-   * @param message additional message to print.
-   * @return 'false' if err is not SPINNAKER_ERR_SUCCESS, or 'true' for any other 'err' value.
-   */
-  def printOnError(err: spinError, message: String): Boolean = {
-    if (err.intern() != spinError.SPINNAKER_ERR_SUCCESS) {
-      printError(err, message)
-      true
-    } else {
-      false
-    }
-  }
-
-  def printError(err: spinError, message: String): Unit = {
-    println(message)
-    println(s"${err.value} ${findErrorNameByValue(err.value)}\n")
-  }
-
-  def findErrorNameByValue(value: Int): String = {
-    spinError.values
-      .find(_.value == value)
-      .map(_.name)
-      .getOrElse("???")
   }
 }

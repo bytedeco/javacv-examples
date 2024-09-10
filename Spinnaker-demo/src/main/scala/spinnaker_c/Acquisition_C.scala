@@ -137,48 +137,33 @@ object Acquisition_C {
       // Retrieve entry node from enumeration node
       val hAcquisitionModeContinuous = use(new spinNodeHandle()) // Empty handle, equivalent to NULL in C
 
-      if isReadable(hAcquisitionMode, "AcquisitionMode") then {
-        check(
-          spinEnumerationGetEntryByName(
-            hAcquisitionMode,
-            use(new BytePointer("Continuous")),
-            hAcquisitionModeContinuous
-          ),
-          "Unable to set acquisition mode to continuous (entry 'continuous' retrieval)."
-        )
-      } else {
-        printRetrieveNodeFailure("entry", "AcquisitionMode")
-        throw new SpinnakerSDKException("Node 'AcquisitionMode' is not readable", spinError.SPINNAKER_ERR_ACCESS_DENIED)
-      }
+      checkIsReadable(hAcquisitionMode, "AcquisitionMode")
+
+      check(
+        spinEnumerationGetEntryByName(
+          hAcquisitionMode,
+          use(new BytePointer("Continuous")),
+          hAcquisitionModeContinuous
+        ),
+        "Unable to set acquisition mode to continuous (entry 'continuous' retrieval)."
+      )
 
       // Retrieve integer from entry node
       val acquisitionModeContinuous = use(new LongPointer(1))
-      if isReadable(hAcquisitionModeContinuous, "AcquisitionModeContinuous") then {
-        check(
-          spinEnumerationEntryGetIntValue(hAcquisitionModeContinuous, acquisitionModeContinuous),
-          "Unable to set acquisition mode to continuous (entry int value retrieval)."
-        )
-      } else {
-        printRetrieveNodeFailure("entry", "AcquisitionMode 'Continuous'")
-        throw new SpinnakerSDKException(
-          "Node 'AcquisitionModeContinuous' is not readable",
-          spinError.SPINNAKER_ERR_ACCESS_DENIED
-        )
-      }
+      checkIsReadable(hAcquisitionModeContinuous, "AcquisitionModeContinuous")
+
+      check(
+        spinEnumerationEntryGetIntValue(hAcquisitionModeContinuous, acquisitionModeContinuous),
+        "Unable to set acquisition mode to continuous (entry int value retrieval)."
+      )
 
       // Set integer as new value of enumeration node
-      if isWritable(hAcquisitionMode, "AcquisitionMode") then {
-        check(
-          spinEnumerationSetIntValue(hAcquisitionMode, acquisitionModeContinuous.get),
-          "Unable to set acquisition mode to continuous (entry int value setting)."
-        )
-      } else {
-        printRetrieveNodeFailure("entry", "AcquisitionMode 'Continuous'")
-        throw new SpinnakerSDKException(
-          "Node 'AcquisitionMode' is not writable",
-          spinError.SPINNAKER_ERR_ACCESS_DENIED
-        )
-      }
+      checkIsWritable(hAcquisitionMode, "AcquisitionMode")
+
+      check(
+        spinEnumerationSetIntValue(hAcquisitionMode, acquisitionModeContinuous.get),
+        "Unable to set acquisition mode to continuous (entry int value setting)."
+      )
 
       println("Acquisition mode set to continuous...")
 
