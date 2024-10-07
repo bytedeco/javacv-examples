@@ -30,6 +30,7 @@ object Trigger_C {
   private val MAX_BUFF_LEN  = 256
 
   def main(args: Array[String]): Unit = {
+
     // Since this application saves images in the current folder,
     // we must ensure that we have permission to write to this folder.
     // If we do not have permission, fail right away.
@@ -84,7 +85,6 @@ object Trigger_C {
         // Release system
         exitOnError(spinSystemReleaseInstance(hSystem), "Unable to release system instance.")
     }
-
   }
 
   @throws[spinnaker_c.helpers.SpinnakerSDKException]
@@ -115,7 +115,6 @@ object Trigger_C {
     finally
       // Deinitialize camera
       check(spinCameraDeInit(hCam), "Unable to deinitialize camera.")
-
   }
 
   /**
@@ -351,7 +350,7 @@ object Trigger_C {
   @throws[spinnaker_c.helpers.SpinnakerSDKException]
   def acquireImages(hCam: spinCamera, hNodeMap: spinNodeMapHandle, hNodeMapTLDevice: spinNodeMapHandle): Unit =
     Using.Manager { use =>
-      printf("\n*** IMAGE ACQUISITION ***\n\n");
+      println("\n*** IMAGE ACQUISITION ***\n")
 
       // Set acquisition mode to continuous
       val hAcquisitionMode = use(new spinNodeHandle()) // Empty handle, equivalent to NULL in C

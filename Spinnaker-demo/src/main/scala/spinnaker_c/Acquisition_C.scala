@@ -9,7 +9,7 @@ import spinnaker_c.helpers.*
 
 import java.io.File
 import scala.util.Using
-import scala.util.control.Breaks.*
+import scala.util.control.Breaks.{break, breakable}
 
 object Acquisition_C {
   private val MAX_BUFF_LEN = 256
@@ -27,43 +27,48 @@ object Acquisition_C {
     Using.Manager { use =>
       val hSystem = use(new spinSystem())
       exitOnError(spinSystemGetInstance(hSystem), "Unable to retrieve system instance.")
+      try {
 
-      // Print out current library version
-      printLibraryVersion(hSystem)
+        // Print out current library version
+        printLibraryVersion(hSystem)
 
-      // Retrieve list of cameras from the system
-      val hCameraList = use(new spinCameraList())
-      exitOnError(spinCameraListCreateEmpty(hCameraList), "Unable to create camera list.")
+        // Retrieve list of cameras from the system
+        val hCameraList = use(new spinCameraList())
+        exitOnError(spinCameraListCreateEmpty(hCameraList), "Unable to create camera list.")
 
-      exitOnError(spinSystemGetCameras(hSystem, hCameraList), "Unable to retrieve camera list.")
+        try {
 
-      // Retrieve number of cameras
-      val numCameras = use(new SizeTPointer(1))
-      exitOnError(spinCameraListGetSize(hCameraList, numCameras), "Unable to retrieve number of cameras.")
-      println("Number of cameras detected: " + numCameras.get + "\n")
+          exitOnError(spinSystemGetCameras(hSystem, hCameraList), "Unable to retrieve camera list.")
 
-      // Run example on each camera
-      for i <- 0 until numCameras.get.toInt do {
-        println(s"Running example for camera $i...")
+          // Retrieve number of cameras
+          val numCameras = use(new SizeTPointer(1))
+          exitOnError(spinCameraListGetSize(hCameraList, numCameras), "Unable to retrieve number of cameras.")
+          println("Number of cameras detected: " + numCameras.get + "\n")
 
-        // Select camera
-        val hCamera = use(new spinCamera)
-        exitOnError(spinCameraListGet(hCameraList, i, hCamera), s"Unable to retrieve camera $i from list.")
+          // Run example on each camera
+          for i <- 0 until numCameras.get.toInt do {
+            println(s"Running example for camera $i...")
 
-        runSingleCamera(hCamera)
+            // Select camera
+            val hCamera = use(new spinCamera)
+            exitOnError(spinCameraListGet(hCameraList, i, hCamera), s"Unable to retrieve camera $i from list.")
 
-        // Release camera
-        printOnError(spinCameraRelease(hCamera), "Error releasing camera.")
-        println(s"Camera $i + example complete...\n")
-      }
+            try
+              runSingleCamera(hCamera)
+            finally
+              // Release camera
+              printOnError(spinCameraRelease(hCamera), "Error releasing camera.")
+              println(s"Camera $i example complete...\n")
+          }
 
-      // Clear and destroy camera list before releasing system
-      exitOnError(spinCameraListClear(hCameraList), "Unable to clear camera list.")
+        } finally
+          // Clear and destroy camera list before releasing system
+          exitOnError(spinCameraListClear(hCameraList), "Unable to clear camera list.")
+          exitOnError(spinCameraListDestroy(hCameraList), "Unable to destroy camera list.")
 
-      exitOnError(spinCameraListDestroy(hCameraList), "Unable to destroy camera list.")
-
-      // Release system
-      exitOnError(spinSystemReleaseInstance(hSystem), "Unable to release system instance.")
+      } finally
+        // Release system
+        exitOnError(spinSystemReleaseInstance(hSystem), "Unable to release system instance.")
     }
   }
 
@@ -71,7 +76,7 @@ object Acquisition_C {
   def runSingleCamera(hCam: spinCamera): Unit = Using.Manager { use =>
 
     // Retrieve TL device nodemap and print device information
-    val hNodeMapTLDevice = use(new spinNodeMapHandle)
+    val hNodeMapTLDevice = use(new spinNodeMapHandle())
     check(spinCameraGetTLDeviceNodeMap(hCam, hNodeMapTLDevice), "Unable to retrieve TL device nodemap .")
 
     check(printDeviceInfo(hNodeMapTLDevice), "")
@@ -79,18 +84,16 @@ object Acquisition_C {
     // Initialize camera
     check(spinCameraInit(hCam), "Unable to initialize camera.")
 
-    try {
+    try
       // Retrieve GenICam nodemap
       val hNodeMap = use(new spinNodeMapHandle)
       check(spinCameraGetNodeMap(hCam, hNodeMap), "Unable to retrieve GenICam nodemap.")
 
-      // Acquire images// Acquire images
+      // Acquire images
       acquireImages(hCam, hNodeMap, hNodeMapTLDevice)
-    } finally {
-
+    finally
       // Deinitialize camera
       check(spinCameraDeInit(hCam), "Unable to deinitialize camera.")
-    }
   }
 
   @throws[spinnaker_c.helpers.SpinnakerSDKException]
@@ -236,7 +239,7 @@ object Acquisition_C {
 
       // Retrieve, convert, and save images// Retrieve, convert, and save images
       val k_numImages = 10
-      for (imageCnt <- 0 until k_numImages) do {
+      for (imageCnt <- 0 until k_numImages) do
         breakable {
           //
           // Retrieve next received image
@@ -386,7 +389,6 @@ object Acquisition_C {
           //
           printOnError(spinImageRelease(hResultImage), "Unable to release image. Non-fatal error.")
         }
-      }
 
       //
       // Destroy Image Processor context
