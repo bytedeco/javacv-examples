@@ -27,8 +27,8 @@ object Acquisition_C {
     Using.Manager { use =>
       val hSystem = use(new spinSystem())
       exitOnError(spinSystemGetInstance(hSystem), "Unable to retrieve system instance.")
-      try {
 
+      try {
         // Print out current library version
         printLibraryVersion(hSystem)
 
@@ -201,7 +201,7 @@ object Acquisition_C {
       val deviceSerialNumber    = use(new BytePointer(MAX_BUFF_LEN))
       val lenDeviceSerialNumber = use(new SizeTPointer(1))
       lenDeviceSerialNumber.put(MAX_BUFF_LEN)
-      val err1 = spinNodeMapGetNode(hNodeMapTLDevice, new BytePointer("DeviceSerialNumber"), hDeviceSerialNumber)
+      val err1 = spinNodeMapGetNode(hNodeMapTLDevice, use(new BytePointer("DeviceSerialNumber")), hDeviceSerialNumber)
       if printOnError(err1, "") then {
         deviceSerialNumber.putString("")
         lenDeviceSerialNumber.put(0)
@@ -254,7 +254,7 @@ object Acquisition_C {
           // Once an image from the buffer is saved and/or no longer needed, the
           // image must be released in orer to keep the buffer from filling up.
           //
-          val hResultImage = new spinImage // NULL;
+          val hResultImage = use(new spinImage()) // NULL;
 
           val err1 = spinCameraGetNextImageEx(hCam, 1000, hResultImage)
           if printOnError(err1, "Unable to get next image. Non-fatal error.") then
@@ -337,7 +337,7 @@ object Acquisition_C {
           // The converted image was created, so it must be destroyed to avoid
           // memory leaks.
           //
-          val hConvertedImage = new spinImage // NULL;
+          val hConvertedImage = use(new spinImage()) // NULL;
 
           val err7 = spinImageCreateEmpty(hConvertedImage)
           if printOnError(err7, "Unable to create image. Non-fatal error.") then
@@ -348,7 +348,7 @@ object Acquisition_C {
             hConvertedImage,
             spinPixelFormatEnums.PixelFormat_Mono8
           )
-          printOnError(err8, "\"Unable to convert image. Non-fatal error.")
+          printOnError(err8, "Unable to convert image. Non-fatal error.")
           if !hasFailed then {
             // Create a unique filename
             val filename =
@@ -366,7 +366,7 @@ object Acquisition_C {
             //
             val err9 = spinImageSave(
               hConvertedImage,
-              new BytePointer(filename),
+              use(new BytePointer(filename)),
               spinImageFileFormat.SPINNAKER_IMAGE_FILE_FORMAT_JPEG
             )
             if !printOnError(err9, "Unable to save image. Non-fatal error.") then
