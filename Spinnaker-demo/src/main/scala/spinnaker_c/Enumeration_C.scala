@@ -5,6 +5,8 @@ import org.bytedeco.spinnaker.Spinnaker_C.*
 import org.bytedeco.spinnaker.global.Spinnaker_C.*
 import spinnaker_c.helpers.*
 
+import scala.util.Using
+
 /**
  *  Enumeration_C.c shows how to enumerate interfaces and cameras.
  *  Knowing this is mandatory for doing anything with the Spinnaker SDK, and
@@ -28,171 +30,138 @@ object Enumeration_C {
    */
   def main(args: Array[String]): Unit = {
 
-    //
-    // Retrieve singleton reference to system object
-    //
-    // *** NOTES ***
-    // Everything originates with the system object. It is important to notice
-    // that it has a singleton implementation, so it is impossible to have
-    // multiple system objects at the same time.
-    //
-    // *** LATER ***
-    // The system object should be cleared prior to program completion.  If not
-    // released explicitly, it will be released automatically.
-    //
-    val hSystem = new spinSystem()
-    exitOnError(
-      spinSystemGetInstance(hSystem),
-      "Unable to retrieve system instance."
-    )
+    Using.Manager { use =>
+      //
+      // Retrieve singleton reference to system object
+      //
+      // *** NOTES ***
+      // Everything originates with the system object. It is important to notice
+      // that it has a singleton implementation, so it is impossible to have
+      // multiple system objects at the same time.
+      //
+      // *** LATER ***
+      // The system object should be cleared prior to program completion.  If not
+      // released explicitly, it will be released automatically.
+      //
+      val hSystem = use(new spinSystem())
+      exitOnError(spinSystemGetInstance(hSystem), "Unable to retrieve system instance.")
+      try {
 
-    // Print out current library version
-    printLibraryVersion(hSystem)
+        // Print out current library version
+        printLibraryVersion(hSystem)
 
-    //
-    // Retrieve list of interfaces from the system
-    //
-    // *** NOTES ***
-    // Interface lists are retrieved from the system object.
-    //
-    // *** LATER ***
-    // Interface lists must be cleared and destroyed manually. This must be
-    // done prior to releasing the system and while the interface list is still
-    // in scope.
-    //
-    val hInterfaceList = new spinInterfaceList()
-    val numInterfaces  = new SizeTPointer(1)
+        //
+        // Retrieve list of interfaces from the system
+        //
+        // *** NOTES ***
+        // Interface lists are retrieved from the system object.
+        //
+        // *** LATER ***
+        // Interface lists must be cleared and destroyed manually. This must be
+        // done prior to releasing the system and while the interface list is still
+        // in scope.
+        //
 
-    // Create empty interface list
-    exitOnError(
-      spinInterfaceListCreateEmpty(hInterfaceList),
-      "Unable to create empty interface list"
-    )
+        // Create empty interface list
+        val hInterfaceList = use(new spinInterfaceList())
+        exitOnError(spinInterfaceListCreateEmpty(hInterfaceList), "Unable to create empty interface list")
 
-    // Retrieve interfaces from system
-    exitOnError(
-      spinSystemGetInterfaces(hSystem, hInterfaceList),
-      "Unable to retrieve interface list."
-    )
+        // Retrieve interfaces from system
+        val numInterfaces = use(new SizeTPointer(1))
+        exitOnError(spinSystemGetInterfaces(hSystem, hInterfaceList), "Unable to retrieve interface list.")
 
-    // Retrieve number of interfaces
-    exitOnError(
-      spinInterfaceListGetSize(hInterfaceList, numInterfaces),
-      "Unable to retrieve number of interfaces."
-    )
+        // Retrieve number of interfaces
+        exitOnError(spinInterfaceListGetSize(hInterfaceList, numInterfaces), "Unable to retrieve number of interfaces.")
 
-    println("Number of interfaces detected: " + numInterfaces.get + "\n")
+        println("Number of interfaces detected: " + numInterfaces.get + "\n")
 
-    //
-    // Retrieve list of cameras from the system
-    //
-    // *** NOTES ***
-    // Camera lists can be retrieved from an interface or the system object.
-    // Camera lists retrieved from the system, such as this one, return all
-    // cameras available on the system.
-    //
-    // *** LATER ***
-    // Camera lists must be cleared and destroyed manually. This must be done
-    // prior to releasing the system and while the camera list is still in
-    // scope.
-    //
-    val hCameraList = new spinCameraList()
-    exitOnError(
-      spinCameraListCreateEmpty(hCameraList),
-      "Unable to create camera list."
-    )
+        //
+        // Retrieve list of cameras from the system
+        //
+        // *** NOTES ***
+        // Camera lists can be retrieved from an interface or the system object.
+        // Camera lists retrieved from the system, such as this one, return all
+        // cameras available on the system.
+        //
+        // *** LATER ***
+        // Camera lists must be cleared and destroyed manually. This must be done
+        // prior to releasing the system and while the camera list is still in
+        // scope.
+        //
+        val hCameraList = use(new spinCameraList())
+        exitOnError(spinCameraListCreateEmpty(hCameraList), "Unable to create camera list.")
 
-    exitOnError(
-      spinSystemGetCameras(hSystem, hCameraList),
-      "Unable to retrieve camera list."
-    )
+        try {
+          exitOnError(spinSystemGetCameras(hSystem, hCameraList), "Unable to retrieve camera list.")
 
-    // Retrieve number of cameras
-    val numCameras = new SizeTPointer(1)
-    exitOnError(
-      spinCameraListGetSize(hCameraList, numCameras),
-      "Unable to retrieve number of cameras."
-    )
-    println("Number of cameras detected: " + numCameras.get + "\n")
+          // Retrieve number of cameras
+          val numCameras = use(new SizeTPointer(1))
+          exitOnError(spinCameraListGetSize(hCameraList, numCameras), "Unable to retrieve number of cameras.")
+          println("Number of cameras detected: " + numCameras.get + "\n")
 
-    if (numCameras.get > 0 && numInterfaces.get > 0) {
-      System.out.println("\n*** QUERYING INTERFACES ***\n")
+          if (numCameras.get > 0 && numInterfaces.get > 0) {
+            System.out.println("\n*** QUERYING INTERFACES ***\n")
 
-      // Run example on each interface
-      // In order to run all interfaces in a loop, each interface needs to
-      // retrieved using its index.
-      for (i <- 0 until numInterfaces.get().toInt) {
-        // Select interface
-        val hInterface = new spinInterface
+            // Run example on each interface
+            // In order to run all interfaces in a loop, each interface needs to
+            // retrieved using its index.
+            for (i <- 0 until numInterfaces.get.toInt) do
+              // Select interface
+              val hInterface = use(new spinInterface())
 
-        val error = printOnError(
-          spinInterfaceListGet(hInterfaceList, i, hInterface),
-          "Unable to retrieve interface from list."
-        )
-        if !error then
-          try
-            // Run example
-            queryInterface(hInterface)
-          catch
-            case ex: SpinnakerSDKException => println(ex.getMessage)
+              val error = printOnError(
+                spinInterfaceListGet(hInterfaceList, i, hInterface),
+                "Unable to retrieve interface from list."
+              )
+              if !error then
+                try
+                  // Run example
+                  queryInterface(hInterface)
+                catch
+                  case ex: SpinnakerSDKException => println(ex.getMessage)
 
-          // Release interface, no error check
-          spinInterfaceRelease(hInterface)
-      }
-    } else {
-      println("Not enough cameras/interfaces!")
+                // Release interface, no error check
+                spinInterfaceRelease(hInterface)
+          } else {
+            println("Not enough cameras/interfaces!")
+          }
+
+        } finally
+          //
+          // Clear and destroy camera list before releasing system
+          //
+          // *** NOTES ***
+          // Camera lists are not shared pointers and do not automatically clean
+          // themselves up and break their own references. Therefore, this must be
+          // done manually. The same is true of interface lists.
+          //
+          exitOnError(spinCameraListClear(hCameraList), "Unable to clear camera list.")
+          exitOnError(spinCameraListDestroy(hCameraList), "Unable to destroy camera list.")
+
+        //
+        // Clear and destroy interface list before releasing system
+        //
+        // *** NOTES ***
+        // Interface lists are not shared pointers and do not automatically clean
+        // themselves up and break their own references. Therefore, this must be
+        // done manually. The same is true of camera lists.
+        //
+        // Clear and destroy interface list before releasing system
+        exitOnError(spinInterfaceListClear(hInterfaceList), "Unable to clear interface list.")
+        exitOnError(spinInterfaceListDestroy(hInterfaceList), "Unable to destroy interface list.")
+
+      } finally
+        //
+        // Release system
+        //
+        // *** NOTES ***
+        // The system should be released, but if it is not, it will do so itself.
+        // It is often at the release of the system (whether manual or automatic)
+        // that unbroken references and still registered events will throw an
+        // exception.
+        //
+        exitOnError(spinSystemReleaseInstance(hSystem), "Unable to release system instance.")
     }
-
-    //
-    // Clear and destroy camera list before releasing system
-    //
-    // *** NOTES ***
-    // Camera lists are not shared pointers and do not automatically clean
-    // themselves up and break their own references. Therefore, this must be
-    // done manually. The same is true of interface lists.
-    //
-    exitOnError(
-      spinCameraListClear(hCameraList),
-      "Unable to clear camera list."
-    )
-
-    exitOnError(
-      spinCameraListDestroy(hCameraList),
-      "Unable to destroy camera list."
-    )
-
-    //
-    // Clear and destroy interface list before releasing system
-    //
-    // *** NOTES ***
-    // Interface lists are not shared pointers and do not automatically clean
-    // themselves up and break their own references. Therefore, this must be
-    // done manually. The same is true of camera lists.
-    //
-    // Clear and destroy interface list before releasing system
-    exitOnError(
-      spinInterfaceListClear(hInterfaceList),
-      "Unable to clear interface list."
-    )
-
-    exitOnError(
-      spinInterfaceListDestroy(hInterfaceList),
-      "Unable to destroy interface list."
-    )
-
-    //
-    // Release system
-    //
-    // *** NOTES ***
-    // The system should be released, but if it is not, it will do so itself.
-    // It is often at the release of the system (whether manual or automatic)
-    // that unbroken references and still registered events will throw an
-    // exception.
-    //
-    exitOnError(
-      spinSystemReleaseInstance(hSystem),
-      "Unable to release system instance."
-    )
 
     println("\nDone!\n")
   }

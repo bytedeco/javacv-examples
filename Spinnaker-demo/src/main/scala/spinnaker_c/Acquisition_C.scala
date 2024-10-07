@@ -70,6 +70,8 @@ object Acquisition_C {
         // Release system
         exitOnError(spinSystemReleaseInstance(hSystem), "Unable to release system instance.")
     }
+
+    println("\nDone!\n")
   }
 
   @throws[spinnaker_c.helpers.SpinnakerSDKException]
