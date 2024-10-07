@@ -1,7 +1,7 @@
 package spinnaker_c
 
 import org.bytedeco.javacpp.{BytePointer, SizeTPointer}
-import org.bytedeco.spinnaker.Spinnaker_C.{spinLibraryVersion, spinNodeHandle, spinNodeMapHandle, spinSystem}
+import org.bytedeco.spinnaker.Spinnaker_C.*
 import org.bytedeco.spinnaker.global.Spinnaker_C
 import org.bytedeco.spinnaker.global.Spinnaker_C.*
 
@@ -104,6 +104,13 @@ package object helpers {
       )
     }
   }
+  def printDeviceInfo(hCam: spinCamera): spinError = Using.Manager { use =>
+    // Retrieve nodemap
+    val hNodeMapTLDevice = use(new spinNodeMapHandle())
+    check(spinCameraGetTLDeviceNodeMap(hCam, hNodeMapTLDevice), "Unable to retrieve TL device nodemap .")
+
+    printDeviceInfo(hNodeMapTLDevice)
+  }.get
 
   /**
    * This function prints the device information of the camera from the transport
@@ -281,7 +288,7 @@ package object helpers {
    * @param err     error value.
    * @param message additional message to print.
    */
-  private[spinnaker_c] def exitOnError(err: spinError, message: String): Unit = {
+  def exitOnError(err: spinError, message: String): Unit = {
     if (printOnError(err, message)) {
       System.out.println("Aborting.")
       System.exit(err.value)
