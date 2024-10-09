@@ -1,4 +1,4 @@
-package spinnaker_c_quickspin
+package spinnaker_c
 
 import org.bytedeco.javacpp.{BytePointer, IntPointer, LongPointer, SizeTPointer}
 import org.bytedeco.spinnaker.Spinnaker_C.*
