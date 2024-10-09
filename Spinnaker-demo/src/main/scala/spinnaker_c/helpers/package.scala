@@ -62,18 +62,27 @@ package object helpers {
     check(err, s"Unable to check node readability ($nodeName).")
 
     if (nodeIsAvailable.getBool && nodeIsReadable.getBool)
-      Option(helpStringGetValue(hNodeName, nodeName))
+      Option(nodeGetValueAsString(hNodeName))
     else
       None
   }
 
-  def helpStringGetValue(
-    hNode: spinNodeHandle,
-    name: String
-  ): String =
-    helpStringGetValue(hNode, spinStringGetValue, name)
+  def nodeGetValueAsString(hNode: spinNodeHandle): String =
+    applyGetStringFunction(hNode, spinStringGetValue, "Value")
 
-  def helpStringGetValue(
+  def nodeName(hNode: spinNodeHandle): String =
+    applyGetStringFunction(hNode, spinNodeGetName, "Name")
+
+  /**
+   * Apply a "Get*" method to retrieve a String property of a node.
+   *
+   * @param hNode node handle to which the function will be applied
+   * @param fun function to use to read node property
+   * @param name Name of the property read by `fun`, used for error messages only
+   * @return String value of the read property
+   */
+  @throws[spinnaker_c.helpers.SpinnakerSDKException]("if error code is not `SPINNAKER_ERR_SUCCESS`")
+  def applyGetStringFunction(
     hNode: spinNodeHandle,
     fun: (spinNodeHandle, BytePointer, SizeTPointer) => Spinnaker_C.spinError,
     name: String
@@ -81,7 +90,7 @@ package object helpers {
     (buf, bufLen) =>
       check(
         fun(hNode, buf, bufLen),
-        s"Unable to retrieve node value ($name)."
+        s"Unable to retrieve node value (${nodeName(hNode)} - $name)."
       )
       buf.getString().take(bufLen.get().toInt - 1)
   }
@@ -104,6 +113,7 @@ package object helpers {
       )
     }
   }
+
   def printDeviceInfo(hCam: spinCamera): spinError = Using.Manager { use =>
     // Retrieve nodemap
     val hNodeMapTLDevice = use(new spinNodeMapHandle())
@@ -204,6 +214,26 @@ package object helpers {
     pbWritable.getBool
   }
 
+  @throws[SpinnakerSDKException]
+  def checkIsReadable(hNode: spinNodeHandle, nodeName: String): Unit = {
+    if !isReadable(hNode, nodeName) then
+      printRetrieveNodeFailure("node", nodeName)
+      throw new SpinnakerSDKException(s"Node '$nodeName' is not readable", spinError.SPINNAKER_ERR_ACCESS_DENIED)
+  }
+
+  @throws[SpinnakerSDKException]
+  def checkIsWritable(hNode: spinNodeHandle, nodeName: String): Unit = {
+    if !isReadable(hNode, nodeName) then
+      printRetrieveNodeFailure("node", nodeName)
+      throw new SpinnakerSDKException(s"Node '$nodeName' is not writable", spinError.SPINNAKER_ERR_ACCESS_DENIED)
+  }
+
+  def isReadable(hNode: spinNodeHandle, nodeName: String): Boolean =
+    val pbReadable = new BytePointer(1)
+    val err        = spinNodeIsReadable(hNode, pbReadable)
+    printOnError(err, "Unable to retrieve node readability (" + nodeName + " node)")
+    pbReadable.getBool
+
   /**
    * Check if 'err' is 'SPINNAKER_ERR_SUCCESS'.
    * If it is do nothing otherwise print error information.
@@ -233,19 +263,6 @@ package object helpers {
       .getOrElse("???")
   }
 
-  @throws[SpinnakerSDKException]
-  def checkIsReadable(hNode: spinNodeHandle, nodeName: String): Unit = {
-    if !isReadable(hNode, nodeName) then
-      printRetrieveNodeFailure("node", nodeName)
-      throw new SpinnakerSDKException(s"Node '$nodeName' is not readable", spinError.SPINNAKER_ERR_ACCESS_DENIED)
-  }
-
-  def isReadable(hNode: spinNodeHandle, nodeName: String): Boolean =
-    val pbReadable = new BytePointer(1)
-    val err        = spinNodeIsReadable(hNode, pbReadable)
-    printOnError(err, "Unable to retrieve node readability (" + nodeName + " node)")
-    pbReadable.getBool
-
   /**
    * This function handles the error prints when a node or entry is unavailable or
    * not readable/writable on the connected camera
@@ -254,13 +271,6 @@ package object helpers {
     println("Unable to get " + node + " (" + name + " " + node + " retrieval failed).")
     println("The " + node + " may not be available on all camera models...")
     println("Please try a Blackfly S camera.\n")
-  }
-
-  @throws[SpinnakerSDKException]
-  def checkIsWritable(hNode: spinNodeHandle, nodeName: String): Unit = {
-    if !isReadable(hNode, nodeName) then
-      printRetrieveNodeFailure("node", nodeName)
-      throw new SpinnakerSDKException(s"Node '$nodeName' is not writable", spinError.SPINNAKER_ERR_ACCESS_DENIED)
   }
 
   def printLibraryVersion(hSystem: spinSystem): Unit = {

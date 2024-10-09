@@ -252,7 +252,7 @@ object NodeMapInfo_C {
   private def printCategoryNodeAndAllFeatures(hCategoryNode: spinNodeHandle, level: Int): Unit = {
 
     // Retrieve display name
-    val displayName = helpStringGetValue(hCategoryNode, spinNodeGetDisplayName, "DisplayName")
+    val displayName = applyGetStringFunction(hCategoryNode, spinNodeGetDisplayName, "DisplayName")
 
     indent(level)
     println(displayName)
@@ -348,7 +348,7 @@ object NodeMapInfo_C {
    * and its current entry (which is actually housed in another node unto itself)
    */
   private def printEnumerationNodeAndCurrentEntry(hEnumerationNode: spinNodeHandle, level: Int): Unit = {
-    val displayName = helpStringGetValue(hEnumerationNode, spinNodeGetDisplayName, "DisplayName")
+    val displayName = applyGetStringFunction(hEnumerationNode, spinNodeGetDisplayName, "DisplayName")
 
     //
     // Retrieve current entry node
@@ -395,7 +395,7 @@ object NodeMapInfo_C {
    * value.
    */
   private def printCommandNode(hNode: spinNodeHandle, level: Int): Unit = {
-    val displayName = helpStringGetValue(hNode, spinNodeGetDisplayName, "DisplayName")
+    val displayName = applyGetStringFunction(hNode, spinNodeGetDisplayName, "DisplayName")
 
     //
     // Retrieve float node value
@@ -431,7 +431,7 @@ object NodeMapInfo_C {
    * integer value ('1' and '0', respectively).
    */
   private def printBooleanNode(hNode: spinNodeHandle, level: Int): Unit = {
-    val displayName = helpStringGetValue(hNode, spinNodeGetDisplayName, "DisplayName")
+    val displayName = applyGetStringFunction(hNode, spinNodeGetDisplayName, "DisplayName")
 
     Using(new BytePointer()) { ptr =>
       check(
@@ -449,7 +449,7 @@ object NodeMapInfo_C {
    * Retrieves and prints the display name and value of an float node.
    */
   private def printFloatNode(hNode: spinNodeHandle, level: Int): Unit = {
-    val displayName = helpStringGetValue(hNode, spinNodeGetDisplayName, "DisplayName")
+    val displayName = applyGetStringFunction(hNode, spinNodeGetDisplayName, "DisplayName")
 
     //
     // Retrieve float node value
@@ -476,7 +476,7 @@ object NodeMapInfo_C {
    * Retrieves and prints the display name and value of an integer node.
    */
   private def printIntegerNode(hNode: spinNodeHandle, level: Int): Unit = {
-    val displayName = helpStringGetValue(hNode, spinNodeGetDisplayName, "DisplayName")
+    val displayName = applyGetStringFunction(hNode, spinNodeGetDisplayName, "DisplayName")
 
     //
     // Retrieve integer node value
@@ -507,7 +507,7 @@ object NodeMapInfo_C {
    * by MAX_CHARS.
    */
   private def printStringNode(hNode: spinNodeHandle, level: Int): Unit = {
-    val displayName = helpStringGetValue(hNode, spinNodeGetDisplayName, "DisplayName")
+    val displayName = applyGetStringFunction(hNode, spinNodeGetDisplayName, "DisplayName")
 
     //
     // Retrieve string node value
@@ -565,7 +565,7 @@ object NodeMapInfo_C {
     // serial number is 'DeviceSerialNumber' while its display name is
     // 'Device Serial Number'.
     //
-    val displayName = helpStringGetValue(hNode, spinNodeGetDisplayName, "DisplayName")
+    val displayName = applyGetStringFunction(hNode, spinNodeGetDisplayName, "DisplayName")
 
     //
     // Retrieve value of any node type as string
