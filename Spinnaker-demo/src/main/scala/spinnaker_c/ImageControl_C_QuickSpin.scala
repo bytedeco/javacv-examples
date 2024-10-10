@@ -82,7 +82,7 @@ object ImageControl_C_QuickSpin {
       } finally
         // Release system
         exitOnError(spinSystemReleaseInstance(hSystem), "Unable to release system instance.")
-    }
+    }.get
   }
 
   /**
@@ -119,7 +119,7 @@ object ImageControl_C_QuickSpin {
     finally
       // Deinitialize camera
       check(spinCameraDeInit(hCam), "Unable to deinitialize camera.")
-  }
+  }.get
 
   /**
    * This function configures a number of settings on the camera including
@@ -170,17 +170,7 @@ object ImageControl_C_QuickSpin {
     // node handles, knowing the node type is important to interacting with
     // a node in any meaningful way.
     //
-
-    //    int64_t offsetXMin = 0;
-    //
-    //    err = spinIntegerGetMin(qs.OffsetX, &offsetXMin);
-    //    if (err != SPINNAKER_ERR_SUCCESS)
-    //    {
-    //        printf("Unable to set offset x. Aborting with error %d...\n\n", err);
-    //        return err;
-    //    }
-
-    val offsetXMin = use(new LongPointer(1))
+    val offsetXMin = use(new LongPointer(1)).put(0)
     check(spinIntegerGetMin(qs.OffsetX, offsetXMin), "Unable to get offset x.")
     check(spinIntegerSetValue(qs.OffsetX, offsetXMin.get), "Unable to set offset x.")
     println(s"Offset X set to ${offsetXMin.get()}...")
@@ -237,7 +227,7 @@ object ImageControl_C_QuickSpin {
     check(spinIntegerGetMax(qs.Height, heightToSet), "Unable to get offset height.")
     check(spinIntegerSetValue(qs.Height, heightToSet.get), "Unable to set offset height.")
     println(s"Height set to ${heightToSet.get}...")
-  }
+  }.get
 
   @throws[spinnaker_c.helpers.SpinnakerSDKException]
   def acquireImages(hCam: spinCamera, qs: quickSpin, qsD: quickSpinTLDevice): Unit =
@@ -410,6 +400,6 @@ object ImageControl_C_QuickSpin {
 
       // End acquisition
       check(spinCameraEndAcquisition(hCam), "Unable to end acquisition.")
-    }
+    }.get
 
 }

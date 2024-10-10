@@ -96,7 +96,7 @@ object Acquisition_C {
     finally
       // Deinitialize camera
       check(spinCameraDeInit(hCam), "Unable to deinitialize camera.")
-  }
+  }.get
 
   @throws[spinnaker_c.helpers.SpinnakerSDKException]
   def acquireImages(hCam: spinCamera, hNodeMap: spinNodeMapHandle, hNodeMapTLDevice: spinNodeMapHandle): Unit =

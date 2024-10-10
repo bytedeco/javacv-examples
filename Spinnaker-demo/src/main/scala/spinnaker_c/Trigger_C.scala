@@ -84,7 +84,7 @@ object Trigger_C {
       } finally
         // Release system
         exitOnError(spinSystemReleaseInstance(hSystem), "Unable to release system instance.")
-    }
+    }.get
 
     println("\nDone!\n")
   }
@@ -117,7 +117,7 @@ object Trigger_C {
     finally
       // Deinitialize camera
       check(spinCameraDeInit(hCam), "Unable to deinitialize camera.")
-  }
+  }.get
 
   /**
    * Configures the camera to use a trigger.
@@ -302,7 +302,7 @@ object Trigger_C {
       check(spinEnumerationSetIntValue(hTriggerMode, triggerModeOn.get), "Unable to enable trigger mode.")
 
       println("Trigger mode enabled...\n");
-    }
+    }.get
   }
 
   /**
@@ -343,7 +343,7 @@ object Trigger_C {
 
     check(spinEnumerationSetIntValue(hTriggerMode, triggerModeOff.get), "Unable to disable trigger mode.")
     println("Trigger mode disabled...\n");
-  }
+  }.get
 
   /**
    * Acquires and saves 10 images from a device;
@@ -551,7 +551,7 @@ object Trigger_C {
 
       // End acquisition
       check(spinCameraEndAcquisition(hCam), "Unable to end acquisition.")
-    }
+    }.get
 
   /**
    * Retrieves a single image using the trigger.
@@ -596,7 +596,7 @@ object Trigger_C {
       case Hardware =>
         // Execute hardware trigger
         println("Use the hardware to trigger image acquisition.");
-  }
+  }.get
 
   enum TriggerType:
     case Software, Hardware

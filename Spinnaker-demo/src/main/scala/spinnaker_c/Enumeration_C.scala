@@ -161,7 +161,7 @@ object Enumeration_C {
         // exception.
         //
         exitOnError(spinSystemReleaseInstance(hSystem), "Unable to release system instance.")
-    }
+    }.get
 
     println("\nDone!\n")
   }
@@ -171,7 +171,7 @@ object Enumeration_C {
    * device information.
    */
   @throws[spinnaker_c.helpers.SpinnakerSDKException]("When a Spinnaker SDK operation fails.")
-  def queryInterface(hInterface: spinInterface): Unit = {
+  def queryInterface(hInterface: spinInterface): Unit = Using.Manager { use =>
 
     //
     // Retrieve TL nodemap from interface
@@ -181,11 +181,8 @@ object Enumeration_C {
     // information about the interface itself, any devices connected, or
     // addressing information if applicable.
     //
-    val hNodeMapInterface = new spinNodeMapHandle() // NULL
-    check(
-      spinInterfaceGetTLNodeMap(hInterface, hNodeMapInterface),
-      "Unable to retrieve interface nodemap."
-    )
+    val hNodeMapInterface = use(new spinNodeMapHandle()) // NULL
+    check(spinInterfaceGetTLNodeMap(hInterface, hNodeMapInterface), "Unable to retrieve interface nodemap.")
 
     //
     // Print interface display name, use `nodeGetStringValue` helper to get the node value
@@ -207,26 +204,17 @@ object Enumeration_C {
     // Camera lists must be cleared manually. This must be done prior to
     // releasing the system and while the camera list is still in scope.
     //
-    val hCameraList = new spinCameraList()
+    val hCameraList = use(new spinCameraList())
 
     // Create empty camera list
-    check(
-      spinCameraListCreateEmpty(hCameraList),
-      "Unable to create camera list."
-    )
+    check(spinCameraListCreateEmpty(hCameraList), "Unable to create camera list.")
 
     // Retrieve cameras
-    check(
-      spinInterfaceGetCameras(hInterface, hCameraList),
-      "Unable to retrieve camera list."
-    )
+    check(spinInterfaceGetCameras(hInterface, hCameraList), "Unable to retrieve camera list.")
 
     // Retrieve number of cameras
-    val numCameras = new SizeTPointer(1)
-    check(
-      spinCameraListGetSize(hCameraList, numCameras),
-      "Unable to retrieve number of cameras."
-    )
+    val numCameras = use(new SizeTPointer(1))
+    check(spinCameraListGetSize(hCameraList, numCameras), "Unable to retrieve number of cameras.")
 
     //
     // Print info about detected cameras
@@ -244,15 +232,9 @@ object Enumeration_C {
     // Camera lists do not automatically clean themselves up. This must be done
     // manually. The same is true of interface lists.
     //
-    check(
-      spinCameraListClear(hCameraList),
-      "Unable to clear camera list."
-    )
-    check(
-      spinCameraListDestroy(hCameraList),
-      "Unable to destroy camera list."
-    )
-  }
+    check(spinCameraListClear(hCameraList), "Unable to clear camera list.")
+    check(spinCameraListDestroy(hCameraList), "Unable to destroy camera list.")
+  }.get
 
   /**
    * Print information about cameras on the list
@@ -260,13 +242,11 @@ object Enumeration_C {
    * @param hCameraList list of cameras that was already allocated and retrieved
    */
   @throws[spinnaker_c.helpers.SpinnakerSDKException]("When a Spinnaker SDK operation fails.")
-  def printDeviceVendorAndModel(hCameraList: spinCameraList): Unit = {
-    var err = spinError.SPINNAKER_ERR_SUCCESS
+  def printDeviceVendorAndModel(hCameraList: spinCameraList): Unit = Using.Manager { use =>
 
     // Retrieve number of cameras
-    val numCameras = new SizeTPointer(1)
-    err = spinCameraListGetSize(hCameraList, numCameras)
-    check(err, "Unable to retrieve number of cameras.")
+    val numCameras = use(new SizeTPointer(1))
+    check(spinCameraListGetSize(hCameraList, numCameras), "Unable to retrieve number of cameras.")
 
     // Print device vendor and model name for each camera on the interface
     for (i <- 0 until numCameras.get.toInt) {
@@ -281,17 +261,13 @@ object Enumeration_C {
       // Each camera handle needs to be released before losing scope or the
       // system is released.
       //
-      val hCam = new spinCamera()
-
-      err = spinCameraListGet(hCameraList, i, hCam)
-      check(err, "Unable to retrieve camera.")
+      val hCam = use(new spinCamera())
+      check(spinCameraListGet(hCameraList, i, hCam), "Unable to retrieve camera.")
 
       // Retrieve TL device nodemap; please see NodeMapInfo_C example for
       // additional comments on transport layer nodemaps.
-      val hNodeMapTLDevice = new spinNodeMapHandle()
-
-      err = spinCameraGetTLDeviceNodeMap(hCam, hNodeMapTLDevice)
-      check(err, "Unable to retrieve TL device nodemap.")
+      val hNodeMapTLDevice = use(new spinNodeMapHandle())
+      check(spinCameraGetTLDeviceNodeMap(hCam, hNodeMapTLDevice), "Unable to retrieve TL device nodemap.")
 
       //
       // Retrieve device vendor name
@@ -307,7 +283,7 @@ object Enumeration_C {
       val deviceVendorName = nodeGetStringValue(hNodeMapTLDevice, "DeviceVendorName")
       val deviceModelName  = nodeGetStringValue(hNodeMapTLDevice, "DeviceModelName")
 
-      println(s"\tDevice $i / $deviceVendorName / $deviceModelName \n\n")
+      println(s"\tDevice $i / $deviceVendorName / $deviceModelName \n")
 
       //
       // Release camera before losing scope
@@ -316,8 +292,7 @@ object Enumeration_C {
       // Every handle that is created for a camera must be released before
       // the system is released or an exception will be thrown.
       //
-      err = spinCameraRelease(hCam)
-      check(err, "\"Unable to release camera.")
+      check(spinCameraRelease(hCam), "Unable to release camera.")
     }
-  }
+  }.get
 }
