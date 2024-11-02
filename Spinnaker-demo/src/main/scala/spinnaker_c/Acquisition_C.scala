@@ -14,6 +14,21 @@ import scala.util.control.Breaks.{break, breakable}
 object Acquisition_C {
   private val MAX_BUFF_LEN = 256
 
+  // Use the following enum to select the stream mode
+  enum StreamMode(val name: String) {
+
+    /** Teledyne Gige Vision stream mode is the default stream mode for spinview which is supported on Windows */
+    case STREAM_MODE_TELEDYNE_GIGE_VISION extends StreamMode("TeledyneGigeVision")
+
+    /** Light Weight Filter driver is our legacy driver which is supported on Windows */
+    case STREAM_MODE_PGRLWF extends StreamMode("LWF")
+
+    /** Socket is supported for MacOS and Linux, and uses native OS network sockets instead of a filter driver */
+    case STREAM_MODE_SOCKET extends StreamMode("Socket")
+  }
+
+  private val chosenStreamMode = StreamMode.STREAM_MODE_TELEDYNE_GIGE_VISION
+
   def main(args: Array[String]): Unit = {
 
     // Since this application saves images in the current folder,
@@ -50,7 +65,7 @@ object Acquisition_C {
             println(s"Running example for camera $i...")
 
             // Select camera
-            val hCamera = use(new spinCamera)
+            val hCamera = use(new spinCamera())
             exitOnError(spinCameraListGet(hCameraList, i, hCamera), s"Unable to retrieve camera $i from list.")
 
             try
@@ -91,11 +106,94 @@ object Acquisition_C {
       val hNodeMap = use(new spinNodeMapHandle)
       check(spinCameraGetNodeMap(hCam, hNodeMap), "Unable to retrieve GenICam nodemap.")
 
+      // Set stream mode
+      setStreamMode(hCam)
+
       // Acquire images
       acquireImages(hCam, hNodeMap, hNodeMapTLDevice)
     finally
       // Deinitialize camera
       check(spinCameraDeInit(hCam), "Unable to deinitialize camera.")
+  }.get
+
+  private def setStreamMode(hCam: spinCamera): Unit = Using.Manager { use =>
+    breakable {
+      // *** NOTES ***
+      // Enumeration nodes are slightly more complicated to set than other
+      // nodes. This is because setting an enumeration node requires working
+      // with two nodes instead of the usual one.
+      //
+      // As such, there are a number of steps to setting an enumeration node:
+      // retrieve the enumeration node from the nodemap, retrieve the desired
+      // entry node from the enumeration node, retrieve the integer value
+      // from the entry node, and set the new value of the enumeration node
+      // with the integer value from the entry node.
+      //
+      // It is important to note that there are two sets of functions that might
+      // produce erroneous results if they were to be mixed up. The first two
+      // functions, spinEnumerationSetIntValue() and
+      // spinEnumerationEntryGetIntValue(), use the integer values stored on each
+      // individual cameras. The second two, spinEnumerationSetEnumValue() and
+      // spinEnumerationEntryGetEnumValue(), use enum values defined in the
+      // Spinnaker library. The int and enum values will most likely be
+      // different from another.
+      //
+
+      //    spinError err = SPINNAKER_ERR_SUCCESS;
+      //    char lastErrorMessage[MAX_BUFF_LEN];
+      //    size_t lenLastErrorMessage = MAX_BUFF_LEN;
+      //    size_t displayNameLength = MAX_BUFF_LEN;
+      //
+      val hNodeMapStreamDevice = use(new spinNodeMapHandle())
+      check(spinCameraGetTLStreamNodeMap(hCam, hNodeMapStreamDevice), "spinCameraGetTLStreamNodeMap failed")
+
+      // The node "StreamMode" is only available for GEV cameras.
+      val hStreamMode = use(new spinNodeHandle())
+      val err         = spinNodeMapGetNode(hNodeMapStreamDevice, use(new BytePointer("StreamMode")), hStreamMode)
+      if err != spinError.SPINNAKER_ERR_SUCCESS then
+        println("Cannot get 'StreamMode' node, ignoring")
+        break
+
+      // Skip setting stream mode if the node is inaccessible.
+      if hStreamMode == null || isReadable(hStreamMode, "StreamMode") || isWritable(hStreamMode, "StreamMode") then
+        println("Cannot access 'StreamMode' node, ignoring")
+        break
+
+      // Retrieve the desired entry node value from the entry node
+      val streamModeCustom = enumerationEntryGetIntValue(hStreamMode, chosenStreamMode.name)
+
+      // Set integer as new value for enumeration node
+      check(spinEnumerationSetIntValue(hStreamMode, streamModeCustom), "spinEnumerationSetIntValue failed")
+
+      // Print our result
+      val hCurrentEntryNode = use(new spinNodeHandle())
+      check(spinEnumerationGetCurrentEntry(hStreamMode, hCurrentEntryNode), "spinEnumerationGetCurrentEntry failed")
+
+      val currentEntrySymbolic       = use(new BytePointer(MAX_BUFF_LEN))
+      val currentEntrySymbolicLength = use(new SizeTPointer(1)).put(MAX_BUFF_LEN)
+      check(
+        spinEnumerationEntryGetSymbolic(hCurrentEntryNode, currentEntrySymbolic, currentEntrySymbolicLength),
+        "spinEnumerationEntryGetSymbolic failed"
+      )
+
+      println(s"Stream Mode set to ${currentEntrySymbolic.getString}")
+    }
+  }.get
+
+  def enumerationEntryGetIntValue(hEnumNode: spinNodeHandle, enumEntryName: String): Long = Using.Manager { use =>
+    val hEnumEntry = use(new spinNodeHandle())
+    check(
+      spinEnumerationGetEntryByName(hEnumNode, use(new BytePointer(enumEntryName)), hEnumEntry),
+      "spinEnumerationGetEntryByName failed"
+    )
+
+    // Retrieve the desired entry node value from the entry node
+    val streamModeCustom = use(new LongPointer(1)).put(0)
+    check(
+      spinEnumerationEntryGetIntValue(hEnumEntry, streamModeCustom),
+      "spinEnumerationEntryGetIntValue failed"
+    )
+    streamModeCustom.get()
   }.get
 
   @throws[spinnaker_c.helpers.SpinnakerSDKException]
@@ -133,7 +231,6 @@ object Acquisition_C {
 
       // Retrieve enumeration node from nodemap
       val hAcquisitionMode = use(new spinNodeHandle()) // Empty handle, equivalent to NULL in C
-
       check(
         spinNodeMapGetNode(hNodeMap, use(new BytePointer("AcquisitionMode")), hAcquisitionMode),
         "Unable to set acquisition mode to continuous (node retrieval)."
@@ -143,7 +240,6 @@ object Acquisition_C {
       val hAcquisitionModeContinuous = use(new spinNodeHandle()) // Empty handle, equivalent to NULL in C
 
       checkIsReadable(hAcquisitionMode, "AcquisitionMode")
-
       check(
         spinEnumerationGetEntryByName(
           hAcquisitionMode,
