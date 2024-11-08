@@ -1,6 +1,6 @@
 package spinnaker_c
 
-import org.bytedeco.javacpp.{BytePointer, SizeTPointer}
+import org.bytedeco.javacpp.{BytePointer, DoublePointer, LongPointer, SizeTPointer}
 import org.bytedeco.spinnaker.Spinnaker_C.*
 import org.bytedeco.spinnaker.global.Spinnaker_C
 import org.bytedeco.spinnaker.global.Spinnaker_C.*
@@ -14,6 +14,41 @@ package object helpers {
   private val MAX_BUFF_LEN = 256
 
   def toBytePointer(str: String): BytePointer = new BytePointer(str.length + 2).putString(str)
+
+  /**
+   * Retrieves the currently selected entry node from an enum node
+   * @param hEnumNode The enum node from which the current entry node is retrieved
+   */
+  def enumerationGetCurrentEntry(hEnumNode: spinNodeHandle): spinNodeHandle = {
+    val phEntry = new spinNodeHandle()
+    check(spinEnumerationGetCurrentEntry(hEnumNode, phEntry), "Call to 'spinEnumerationGetCurrentEntry' failed.")
+    phEntry
+  }
+
+  def enumerationGetEntryByName(node: spinNodeHandle, name: String): spinNodeHandle = {
+    val nEntry = new spinNodeHandle()
+    Using.Manager { use =>
+      check(
+        spinEnumerationGetEntryByName(node, use(new BytePointer(name)), nEntry),
+        "Could not find requested enumeration entry (" + name + ")"
+      )
+
+      if nEntry.isNull then
+        nEntry.close()
+        throw new SpinnakerSDKException(s"Unrecognised enum entry name '$name'", spinError.SPINNAKER_ERR_NOT_AVAILABLE)
+
+      nEntry
+    }.get
+  }
+
+  def enumerationEntryGetIntValue(enumEntry: spinNodeHandle): Long = Using.Manager { use =>
+    val enumEntryIntValue = use(new LongPointer(1)).put(0)
+    check(
+      spinEnumerationEntryGetIntValue(enumEntry, enumEntryIntValue),
+      "Failed to retrieve enumeration entry int value"
+    )
+    enumEntryIntValue.get
+  }.get
 
   /**
    * Read node value assuming it is a string
@@ -53,16 +88,10 @@ package object helpers {
       s"Unable to retrieve node handle ('$nodeName')."
     )
 
-    val nodeIsAvailable = use(new BytePointer(1)).putBool(false)
-    check(spinNodeIsAvailable(hNode, nodeIsAvailable), s"Unable to check node availability ('$nodeName').")
-
     val nodeIsReadable = use(new BytePointer(1)).putBool(false)
     check(spinNodeIsReadable(hNode, nodeIsReadable), s"Unable to check node readability ($nodeName).")
 
-    if (nodeIsAvailable.getBool && nodeIsReadable.getBool)
-      Option(nodeGetValueAsString(hNode))
-    else
-      None
+    if nodeIsReadable.getBool then Option(nodeGetValueAsString(hNode)) else None
   }.get
 
   def nodeGetValueAsString(hNode: spinNodeHandle): String =
@@ -86,6 +115,43 @@ package object helpers {
       check(fun(hNode, buf, bufLen), s"Unable to retrieve property $name.")
       buf.getString().take(bufLen.get().toInt - 1)
 
+  def nodeGetMaxLong(hNodeMap: spinNodeMapHandle, nodeName: String): Long = Using.Manager { use =>
+    val hNode = use(nodeMapGetNode(hNodeMap, nodeName))
+    checkIsReadable(hNode, nodeName)
+    val hMax = use(new LongPointer(1)).put(0)
+    check(spinIntegerGetMax(hNode, hMax), s"Unable to get max '$nodeName' (max retrieval)")
+    hMax.get
+  }.get
+
+  def nodeGetMinLong(hNodeMap: spinNodeMapHandle, nodeName: String): Long = Using.Manager { use =>
+    val hNode = use(nodeMapGetNode(hNodeMap, nodeName))
+    checkIsReadable(hNode, nodeName)
+    val hMin = use(new LongPointer(1)).put(0)
+    check(spinIntegerGetMax(hNode, hMin), s"Unable to get min '$nodeName' (min retrieval)")
+    hMin.get
+  }.get
+
+  /**
+   * Retrieves a node from the NodeMap by name
+   *
+   * @param hNodeMap The node map where the node is
+   * @param nodeName The name of the node
+   * @return The node handle pointer, caller is responsible for closing the handle after use
+   */
+  def nodeMapGetNode(hNodeMap: spinNodeMapHandle, nodeName: String): spinNodeHandle = Using.Manager { use =>
+    val hNode: spinNodeHandle = new spinNodeHandle()
+    try
+      check(
+        spinNodeMapGetNode(hNodeMap, use(new BytePointer(nodeName)), hNode),
+        s"Failed to retrieve node '$nodeName' from the nodeMap'"
+      )
+      hNode
+    catch
+      case ex: Throwable =>
+        hNode.close()
+        throw ex
+  }.get
+
   /**
    * Checks if expression evaluated without error code (anything other than SPINNAKER_ERR_SUCCESS).
    * If there was an error, an exception is thrown that contains error code and the provided contextual `errorMessage`.
@@ -102,6 +168,94 @@ package object helpers {
           "\n  Spinnaker error description: " + errorMessage,
         expr
       )
+
+  @throws[SpinnakerSDKException]
+  def checkIsReadable(hNode: spinNodeHandle, nodeName: String): Unit =
+    if !isReadable(hNode, nodeName) then
+      printRetrieveNodeFailure("node", nodeName)
+      throw new SpinnakerSDKException(s"Node '$nodeName' is not readable", spinError.SPINNAKER_ERR_ACCESS_DENIED)
+
+  def isReadable(hNode: spinNodeHandle, nodeName: String): Boolean =
+    resource(new BytePointer(1)): pbReadable =>
+      val err = spinNodeIsReadable(hNode, pbReadable)
+      printOnError(err, "Unable to retrieve node readability (" + nodeName + " node)")
+      pbReadable.getBool
+
+  /**
+   * Check if 'err' is 'SPINNAKER_ERR_SUCCESS'.
+   * If it is do nothing otherwise print error information.
+   *
+   * @param err     error value.
+   * @param message additional message to print.
+   * @return 'false' if err is not SPINNAKER_ERR_SUCCESS, or 'true' for any other 'err' value.
+   */
+  def printOnError(err: spinError, message: String): Boolean =
+    if (err.intern() != spinError.SPINNAKER_ERR_SUCCESS)
+      printError(err, message)
+      true
+    else
+      false
+
+  def printError(err: spinError, message: String): Unit =
+    println(message)
+    println(s"${err.value} ${findErrorNameByValue(err.value)}\n")
+
+  def findErrorNameByValue(value: Int): String =
+    spinError.values
+      .find(_.value == value)
+      .map(_.name)
+      .getOrElse("???")
+
+  /**
+   * This function handles the error prints when a node or entry is unavailable or
+   * not readable/writable on the connected camera
+   */
+  def printRetrieveNodeFailure(node: String, name: String): Unit =
+    println("Unable to get " + node + " (" + name + " " + node + " retrieval failed).")
+    println("The " + node + " may not be available on all camera models...")
+    println("Please try a Blackfly S camera.\n")
+
+  def nodeGetIncLong(hNodeMap: spinNodeMapHandle, nodeName: String): Long = Using.Manager { use =>
+    val hNode = use(nodeMapGetNode(hNodeMap, nodeName))
+    checkIsReadable(hNode, nodeName)
+    val hInc = use(new LongPointer(1)).put(0)
+    check(spinIntegerGetInc(hNode, hInc), s"Unable to get inc '$nodeName' (inc retrieval)")
+    hInc.get
+  }.get
+
+  def nodeGetMaxDouble(hNodeMap: spinNodeMapHandle, nodeName: String): Double = Using.Manager { use =>
+    val hNode = use(nodeMapGetNode(hNodeMap, nodeName))
+    checkIsReadable(hNode, nodeName)
+    val hMax = use(new DoublePointer(1)).put(0)
+    check(spinFloatGetMax(hNode, hMax), s"Unable to get max '$nodeName' (max retrieval)")
+    hMax.get
+  }.get
+
+  def nodeGetMinDouble(hNodeMap: spinNodeMapHandle, nodeName: String): Double = Using.Manager { use =>
+    val hNode = use(nodeMapGetNode(hNodeMap, nodeName))
+    checkIsReadable(hNode, nodeName)
+    val hMin = use(new DoublePointer(1)).put(0)
+    check(spinFloatGetMin(hNode, hMin), s"Unable to get min '$nodeName' (min retrieval)")
+    hMin.get
+  }.get
+
+  def integerSetValue(hNodeMap: spinNodeMapHandle, nodeName: String, value: Long): Unit = Using.Manager { use =>
+    val hNode = use(nodeMapGetNode(hNodeMap, nodeName))
+    checkIsWritable(hNode, nodeName)
+    check(spinIntegerSetValue(hNode, value), s"Failed to set value of node '$nodeName' to $value")
+  }.get
+
+  def floatSetValue(hNodeMap: spinNodeMapHandle, nodeName: String, value: Double): Unit = Using.Manager { use =>
+    val hNode = use(nodeMapGetNode(hNodeMap, nodeName))
+    checkIsWritable(hNode, nodeName)
+    check(spinFloatSetValue(hNode, value), s"Failed to set value of node '$nodeName' to $value")
+  }.get
+
+  @throws[SpinnakerSDKException]
+  def checkIsWritable(hNode: spinNodeHandle, nodeName: String): Unit =
+    if !isReadable(hNode, nodeName) then
+      printRetrieveNodeFailure("node", nodeName)
+      throw new SpinnakerSDKException(s"Node '$nodeName' is not writable", spinError.SPINNAKER_ERR_ACCESS_DENIED)
 
   def nodeName(hNode: spinNodeHandle): String =
     applyGetStringFunction(hNode, spinNodeGetName, "Name")
@@ -205,33 +359,6 @@ package object helpers {
 
       pbWritable.getBool
 
-  @throws[SpinnakerSDKException]
-  def checkIsReadable(hNode: spinNodeHandle, nodeName: String): Unit =
-    if !isReadable(hNode, nodeName) then
-      printRetrieveNodeFailure("node", nodeName)
-      throw new SpinnakerSDKException(s"Node '$nodeName' is not readable", spinError.SPINNAKER_ERR_ACCESS_DENIED)
-
-  def isReadable(hNode: spinNodeHandle, nodeName: String): Boolean =
-    resource(new BytePointer(1)): pbReadable =>
-      val err = spinNodeIsReadable(hNode, pbReadable)
-      printOnError(err, "Unable to retrieve node readability (" + nodeName + " node)")
-      pbReadable.getBool
-
-  /**
-   * This function handles the error prints when a node or entry is unavailable or
-   * not readable/writable on the connected camera
-   */
-  def printRetrieveNodeFailure(node: String, name: String): Unit =
-    println("Unable to get " + node + " (" + name + " " + node + " retrieval failed).")
-    println("The " + node + " may not be available on all camera models...")
-    println("Please try a Blackfly S camera.\n")
-
-  @throws[SpinnakerSDKException]
-  def checkIsWritable(hNode: spinNodeHandle, nodeName: String): Unit =
-    if !isReadable(hNode, nodeName) then
-      printRetrieveNodeFailure("node", nodeName)
-      throw new SpinnakerSDKException(s"Node '$nodeName' is not writable", spinError.SPINNAKER_ERR_ACCESS_DENIED)
-
   def printLibraryVersion(hSystem: spinSystem): Unit =
     resource(new spinLibraryVersion()): hLibraryVersion =>
       spinSystemGetLibraryVersion(hSystem, hLibraryVersion)
@@ -249,8 +376,8 @@ package object helpers {
       "???"
 
   /**
-   * Check if 'err' is 'SPINNAKER_ERR_SUCCESS'.
-   * If it is do nothing otherwise print error description and exit.
+   * Check if 'err' is equal to 'SPINNAKER_ERR_SUCCESS'.
+   * If it is, do nothing otherwise print error description and exit.
    *
    * @param err     error value.
    * @param message additional message to print.
@@ -260,28 +387,37 @@ package object helpers {
       System.out.println("Aborting.")
       System.exit(err.value)
 
-  /**
-   * Check if 'err' is 'SPINNAKER_ERR_SUCCESS'.
-   * If it is do nothing otherwise print error information.
-   *
-   * @param err     error value.
-   * @param message additional message to print.
-   * @return 'false' if err is not SPINNAKER_ERR_SUCCESS, or 'true' for any other 'err' value.
-   */
-  def printOnError(err: spinError, message: String): Boolean =
-    if (err.intern() != spinError.SPINNAKER_ERR_SUCCESS)
-      printError(err, message)
-      true
-    else
-      false
+  def setEnumerationNodeValue(hNodeMap: spinNodeMapHandle, enumNodeName: String, enumEntryName: String): Unit =
+    Using.Manager { use =>
+      val hNode = use(new spinNodeHandle())
+      check(
+        spinNodeMapGetNode(hNodeMap, use(new BytePointer(enumNodeName)), hNode),
+        s"Unable to get node from $hNodeMap ('$enumNodeName' node retrieval failed)."
+      )
+      if (!isReadable(hNode, enumNodeName))
+        throw new Exception(s"Node '$enumNodeName' is not readable'")
 
-  def printError(err: spinError, message: String): Unit =
-    println(message)
-    println(s"${err.value} ${findErrorNameByValue(err.value)}\n")
+      val hNodeEntry = use(new spinNodeHandle())
+      check(
+        spinEnumerationGetEntryByName(hNode, use(new BytePointer(enumEntryName)), hNodeEntry),
+        s"'spinEnumerationGetEntryByName(..., '$enumEntryName')' failed."
+      )
+      if (!isReadable(hNodeEntry, enumEntryName))
+        throw new Exception(s"Node's '$enumNodeName' entry '$enumEntryName' is not readable'")
 
-  def findErrorNameByValue(value: Int): String =
-    spinError.values
-      .find(_.value == value)
-      .map(_.name)
-      .getOrElse("???")
+      val enumEntryNameID = use(new LongPointer(1)).put(0)
+      check(
+        spinEnumerationEntryGetIntValue(hNodeEntry, enumEntryNameID),
+        s"'spinEnumerationEntryGetIntValue' failed for node's '$enumNodeName' entry '$enumEntryName'"
+      )
+
+      if (!isWritable(hNode, enumNodeName))
+        throw new Exception(s"Node '$enumNodeName' is not writable'")
+
+      check(
+        spinEnumerationSetIntValue(hNode, enumEntryNameID.get),
+        s"spinEnumerationEntryGetIntValue' failed for node '$enumNodeName'"
+      )
+    }.get
+
 }
