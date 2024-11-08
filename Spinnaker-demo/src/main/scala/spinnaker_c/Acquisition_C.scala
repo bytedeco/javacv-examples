@@ -11,6 +11,24 @@ import java.io.File
 import scala.util.Using
 import scala.util.control.Breaks.{break, breakable}
 
+
+/**
+  * Acquisition_C.c shows how to acquire images. It relies on
+  * information provided in the Enumeration_C example. Following this, check
+  * out the NodeMapInfo_C example if you haven't already. It explores
+  * retrieving information from various node types.
+  *
+  * This example touches on the preparation and cleanup of a camera just
+  * before and just after the acquisition of images. Image retrieval and
+  * conversion, grabbing image data, and saving images are all covered.
+  *
+  * Once comfortable with Acquisition_C and NodeMapInfo_C, we suggest checking
+  * out AcquisitionMultipleCamera_C, NodeMapCallback_C, or SaveToAvi_C.
+  * AcquisitionMultipleCamera_C demonstrates simultaneously acquiring images
+  * from a number of cameras, NodeMapCallback_C acts as a good introduction to
+  * programming with callbacks and events, and SaveToAvi_C exhibits video
+  * creation.
+  */
 object Acquisition_C {
   private val MAX_BUFF_LEN = 256
 
