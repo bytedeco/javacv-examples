@@ -24,6 +24,7 @@ To reduce verbosity of the original C examples some repeating code was moved to 
 ### C API examples in Scala
 
 * `Acquisition_C` - shows how to acquire images.
+* `ChunkData_C` - shows how to get chunk data on an image, either from the nodemap or from the image itself.
 * `Enumeration_C` - how to enumerate interfaces and cameras.
 * `Enumeration_C_QuickSpin` - shows how to enumerate- interfaces and cameras using the QuickSpin API.
 * `EnumerationEvents_C` - handling system and interface events, like camera disconnect.
