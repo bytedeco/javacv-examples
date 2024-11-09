@@ -1,6 +1,6 @@
 package spinnaker_c
 
-import org.bytedeco.javacpp.{BytePointer, DoublePointer, LongPointer, SizeTPointer}
+import org.bytedeco.javacpp.*
 import org.bytedeco.spinnaker.Spinnaker_C.*
 import org.bytedeco.spinnaker.global.Spinnaker_C
 import org.bytedeco.spinnaker.global.Spinnaker_C.*
@@ -11,7 +11,7 @@ import scala.util.{Using, boundary}
 
 package object helpers {
 
-  private val MAX_BUFF_LEN = 256
+  val MAX_BUFF_LEN = 256
 
   def toBytePointer(str: String): BytePointer = new BytePointer(str.length + 2).putString(str)
 
@@ -36,6 +36,25 @@ package object helpers {
       if nEntry.isNull then
         nEntry.close()
         throw new SpinnakerSDKException(s"Unrecognised enum entry name '$name'", spinError.SPINNAKER_ERR_NOT_AVAILABLE)
+
+      nEntry
+    }.get
+  }
+
+  def enumerationGetEntryByIndex(node: spinNodeHandle, index: Long): spinNodeHandle = {
+    val nEntry = new spinNodeHandle()
+    Using.Manager { use =>
+      check(
+        spinEnumerationGetEntryByIndex(node, index, nEntry),
+        s"Could not find requested enumeration entry ($index)"
+      )
+
+      if nEntry.isNull then
+        nEntry.close()
+        throw new SpinnakerSDKException(
+          s"Unrecognised enum entry index '$index'",
+          spinError.SPINNAKER_ERR_NOT_AVAILABLE
+        )
 
       nEntry
     }.get
@@ -162,12 +181,24 @@ package object helpers {
    */
   @throws[spinnaker_c.helpers.SpinnakerSDKException]("if error code is not `SPINNAKER_ERR_SUCCESS`")
   def check(expr: spinError, errorMessage: String): Unit =
-    if (expr.intern() != spinError.SPINNAKER_ERR_SUCCESS)
+    if isError(expr) then
       throw new SpinnakerSDKException(
         "Spinnaker error type : " + expr.toString +
           "\n  Spinnaker error description: " + errorMessage,
         expr
       )
+
+  /**
+   * Return true is error code means is not an error
+   * @param err error code to test
+   */
+  def isSuccess(err: spinError): Boolean = err.intern() == spinError.SPINNAKER_ERR_SUCCESS
+
+  /**
+   * Return true is error code means some error
+   * @param err error code to test
+   */
+  def isError(err: spinError): Boolean = !isSuccess(err)
 
   @throws[SpinnakerSDKException]
   def checkIsReadable(hNode: spinNodeHandle, nodeName: String): Unit =
@@ -237,6 +268,13 @@ package object helpers {
     val hMin = use(new DoublePointer(1)).put(0)
     check(spinFloatGetMin(hNode, hMin), s"Unable to get min '$nodeName' (min retrieval)")
     hMin.get
+  }.get
+
+  def booleanSetValue(hNodeMap: spinNodeMapHandle, nodeName: String, value: Boolean): Unit = Using.Manager { use =>
+    val hNode = use(nodeMapGetNode(hNodeMap, nodeName))
+    checkIsWritable(hNode, nodeName)
+    val bValue = (if value then 1 else 0).toByte
+    check(spinBooleanSetValue(hNode, bValue), s"Failed to set value of node '$nodeName' to $value")
   }.get
 
   def integerSetValue(hNodeMap: spinNodeMapHandle, nodeName: String, value: Long): Unit = Using.Manager { use =>
@@ -416,8 +454,26 @@ package object helpers {
 
       check(
         spinEnumerationSetIntValue(hNode, enumEntryNameID.get),
-        s"spinEnumerationEntryGetIntValue' failed for node '$enumNodeName'"
+        s"spinEnumerationSetIntValue' failed for node '$enumNodeName'"
       )
     }.get
+
+  def imageChunkDataGetFloatValue(hImage: spinImage, name: String): Double = Using.Manager { use =>
+    val pValue = use(new DoublePointer(1)).put(0)
+    check(
+      spinImageChunkDataGetFloatValue(hImage, use(new BytePointer(name)), pValue),
+      "Failed to get ImageChunkDataGetFloatValue"
+    )
+    pValue.get()
+  }.get
+
+  def imageChunkDataGetIntValue(hImage: spinImage, name: String): Long = Using.Manager { use =>
+    val pValue = use(new LongPointer(1)).put(0)
+    check(
+      spinImageChunkDataGetIntValue(hImage, use(new BytePointer(name)), pValue),
+      "Failed to get spinImageChunkDataGetIntValue"
+    )
+    pValue.get()
+  }.get
 
 }

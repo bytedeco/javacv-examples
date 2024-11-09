@@ -3,7 +3,6 @@ package spinnaker_c
 import org.bytedeco.javacpp.{BytePointer, IntPointer, LongPointer, SizeTPointer}
 import org.bytedeco.spinnaker.Spinnaker_C.*
 import org.bytedeco.spinnaker.global.Spinnaker_C.*
-import org.bytedeco.spinnaker.global.Spinnaker_C.spinColorProcessingAlgorithm.SPINNAKER_COLOR_PROCESSING_ALGORITHM_HQ_LINEAR
 import org.bytedeco.spinnaker.global.Spinnaker_C.spinImageStatus.SPINNAKER_IMAGE_STATUS_NO_ERROR
 import spinnaker_c.helpers.*
 
@@ -11,24 +10,23 @@ import java.io.File
 import scala.util.Using
 import scala.util.control.Breaks.{break, breakable}
 
-
 /**
-  * Acquisition_C.c shows how to acquire images. It relies on
-  * information provided in the Enumeration_C example. Following this, check
-  * out the NodeMapInfo_C example if you haven't already. It explores
-  * retrieving information from various node types.
-  *
-  * This example touches on the preparation and cleanup of a camera just
-  * before and just after the acquisition of images. Image retrieval and
-  * conversion, grabbing image data, and saving images are all covered.
-  *
-  * Once comfortable with Acquisition_C and NodeMapInfo_C, we suggest checking
-  * out AcquisitionMultipleCamera_C, NodeMapCallback_C, or SaveToAvi_C.
-  * AcquisitionMultipleCamera_C demonstrates simultaneously acquiring images
-  * from a number of cameras, NodeMapCallback_C acts as a good introduction to
-  * programming with callbacks and events, and SaveToAvi_C exhibits video
-  * creation.
-  */
+ * Acquisition_C.c shows how to acquire images. It relies on
+ * information provided in the Enumeration_C example. Following this, check
+ * out the NodeMapInfo_C example if you haven't already. It explores
+ * retrieving information from various node types.
+ *
+ * This example touches on the preparation and cleanup of a camera just
+ * before and just after the acquisition of images. Image retrieval and
+ * conversion, grabbing image data, and saving images are all covered.
+ *
+ * Once comfortable with Acquisition_C and NodeMapInfo_C, we suggest checking
+ * out AcquisitionMultipleCamera_C, NodeMapCallback_C, or SaveToAvi_C.
+ * AcquisitionMultipleCamera_C demonstrates simultaneously acquiring images
+ * from a number of cameras, NodeMapCallback_C acts as a good introduction to
+ * programming with callbacks and events, and SaveToAvi_C exhibits video
+ * creation.
+ */
 object Acquisition_C {
   private val MAX_BUFF_LEN = 256
 
@@ -98,7 +96,9 @@ object Acquisition_C {
           // Clear and destroy camera list before releasing system
           exitOnError(spinCameraListClear(hCameraList), "Unable to clear camera list.")
           exitOnError(spinCameraListDestroy(hCameraList), "Unable to destroy camera list.")
-
+      } catch {
+        case ex: Throwable =>
+          ex.printStackTrace()
       } finally
         // Release system
         exitOnError(spinSystemReleaseInstance(hSystem), "Unable to release system instance.")
@@ -248,42 +248,7 @@ object Acquisition_C {
       //
 
       // Retrieve enumeration node from nodemap
-      val hAcquisitionMode = use(new spinNodeHandle()) // Empty handle, equivalent to NULL in C
-      check(
-        spinNodeMapGetNode(hNodeMap, use(new BytePointer("AcquisitionMode")), hAcquisitionMode),
-        "Unable to set acquisition mode to continuous (node retrieval)."
-      )
-
-      // Retrieve entry node from enumeration node
-      val hAcquisitionModeContinuous = use(new spinNodeHandle()) // Empty handle, equivalent to NULL in C
-
-      checkIsReadable(hAcquisitionMode, "AcquisitionMode")
-      check(
-        spinEnumerationGetEntryByName(
-          hAcquisitionMode,
-          use(new BytePointer("Continuous")),
-          hAcquisitionModeContinuous
-        ),
-        "Unable to set acquisition mode to continuous (entry 'continuous' retrieval)."
-      )
-
-      // Retrieve integer from entry node
-      val acquisitionModeContinuous = use(new LongPointer(1))
-      checkIsReadable(hAcquisitionModeContinuous, "AcquisitionModeContinuous")
-
-      check(
-        spinEnumerationEntryGetIntValue(hAcquisitionModeContinuous, acquisitionModeContinuous),
-        "Unable to set acquisition mode to continuous (entry int value retrieval)."
-      )
-
-      // Set integer as new value of enumeration node
-      checkIsWritable(hAcquisitionMode, "AcquisitionMode")
-
-      check(
-        spinEnumerationSetIntValue(hAcquisitionMode, acquisitionModeContinuous.get),
-        "Unable to set acquisition mode to continuous (entry int value setting)."
-      )
-
+      setEnumerationNodeValue(hNodeMap, "AcquisitionMode", "Continuous")
       println("Acquisition mode set to continuous...")
 
       //
@@ -300,7 +265,6 @@ object Acquisition_C {
       // Image acquisition must be ended when no more images are needed.
       //
       check(spinCameraBeginAcquisition(hCam), "Unable to begin image acquisition.")
-
       System.out.println("Acquiring images...")
 
       //
@@ -310,36 +274,15 @@ object Acquisition_C {
       // The device serial number is retrieved in order to keep cameras from
       // overwriting one another. Grabbing image IDs could also accomplish this.
       //
-      val hDeviceSerialNumber = use(new spinNodeHandle()) // NULL;
-
-      val deviceSerialNumber    = use(new BytePointer(MAX_BUFF_LEN))
-      val lenDeviceSerialNumber = use(new SizeTPointer(1))
-      lenDeviceSerialNumber.put(MAX_BUFF_LEN)
-      val err1 = spinNodeMapGetNode(hNodeMapTLDevice, use(new BytePointer("DeviceSerialNumber")), hDeviceSerialNumber)
-      if printOnError(err1, "") then {
-        deviceSerialNumber.putString("")
-        lenDeviceSerialNumber.put(0)
-      } else {
-        if isReadable(hDeviceSerialNumber, "DeviceSerialNumber") then {
-          val err2 = spinStringGetValue(hDeviceSerialNumber, deviceSerialNumber, lenDeviceSerialNumber)
-          if printOnError(err2, "") then {
-            deviceSerialNumber.putString("")
-            lenDeviceSerialNumber.put(0)
-          }
-        } else {
-          deviceSerialNumber.putString("")
-          lenDeviceSerialNumber.put(0)
-          printRetrieveNodeFailure("node", "DeviceSerialNumber")
-        }
-        println("Device serial number retrieved as " + deviceSerialNumber.getString.trim + "...")
-      }
-      println()
+      val deviceSerialNumber = nodeGetStringValueOpt(hNodeMapTLDevice, "DeviceSerialNumber").getOrElse("")
+      printf("Device serial number retrieved as %s...\n", deviceSerialNumber);
+      printf("\n");
 
       //
       // Create Image Processor context for post-processing images
       //
       val hImageProcessor = use(new spinImageProcessor())
-      check(spinImageProcessorCreate(hImageProcessor), "Unable to create image processor. Non-fatal error.")
+      printOnError(spinImageProcessorCreate(hImageProcessor), "Unable to create image processor. Non-fatal error.")
 
       //
       // Set default image processor color processing method
@@ -348,14 +291,17 @@ object Acquisition_C {
       // By default, if no specific color processing algorithm is set, the image
       // processor will default to NEAREST_NEIGHBOR method.
       //
-      check(
-        spinImageProcessorSetColorProcessing(hImageProcessor, SPINNAKER_COLOR_PROCESSING_ALGORITHM_HQ_LINEAR),
+      printOnError(
+        spinImageProcessorSetColorProcessing(
+          hImageProcessor,
+          spinColorProcessingAlgorithm.SPINNAKER_COLOR_PROCESSING_ALGORITHM_HQ_LINEAR
+        ),
         "Unable to set image processor color processing method. Non-fatal error."
       )
 
       // Retrieve, convert, and save images// Retrieve, convert, and save images
       val k_numImages = 10
-      for (imageCnt <- 0 until k_numImages) do
+      for (imageCnt <- 0 until k_numImages) do {
         breakable {
           //
           // Retrieve next received image
@@ -401,6 +347,7 @@ object Acquisition_C {
               println("Image incomplete with image status " + findImageStatusNameByValue(imageStatus.get) + "...")
             hasFailed = true
           }
+
           // Release incomplete or failed image
           if hasFailed then {
             val err4 = spinImageRelease(hResultImage)
@@ -466,10 +413,10 @@ object Acquisition_C {
           if !hasFailed then {
             // Create a unique filename
             val filename =
-              if lenDeviceSerialNumber.get == 0 then
+              if deviceSerialNumber.isEmpty then
                 "Acquisition-C-" + imageCnt + ".jpg"
               else
-                "Acquisition-C-" + deviceSerialNumber.getString.trim + "-" + imageCnt + ".jpg"
+                "Acquisition-C-" + deviceSerialNumber + "-" + imageCnt + ".jpg"
             //
             // Save image
             //
@@ -505,6 +452,7 @@ object Acquisition_C {
           //
           printOnError(spinImageRelease(hResultImage), "Unable to release image. Non-fatal error.")
         }
+      }
 
       //
       // Destroy Image Processor context
