@@ -155,7 +155,7 @@ object ImageControl_C_QuickSpin {
       "Unable to set pixel format."
     )
 
-    println("Pixel format set to 'mono8'...");
+    println("Pixel format set to 'mono8'...")
 
     //
     // Apply minimum to offset X
@@ -281,7 +281,7 @@ object ImageControl_C_QuickSpin {
         breakable {
 
           // Retrieve next received image
-          val hResultImage = use(new spinImage()) // NULL;
+          val hResultImage = use(new spinImage()) // NULL
 
           val err1 = spinCameraGetNextImageEx(hCam, 1000, hResultImage)
           if printOnError(err1, "Unable to get next image. Non-fatal error.") then
@@ -350,7 +350,7 @@ object ImageControl_C_QuickSpin {
           // The converted image was created, so it must be destroyed to avoid
           // memory leaks.
           //
-          val hConvertedImage = use(new spinImage()) // NULL;
+          val hConvertedImage = use(new spinImage()) // NULL
 
           val err7 = spinImageCreateEmpty(hConvertedImage)
           if printOnError(err7, "Unable to create image. Non-fatal error.") then

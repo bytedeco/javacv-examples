@@ -157,10 +157,10 @@ object Acquisition_C {
       // different from another.
       //
 
-      //    spinError err = SPINNAKER_ERR_SUCCESS;
-      //    char lastErrorMessage[MAX_BUFF_LEN];
-      //    size_t lenLastErrorMessage = MAX_BUFF_LEN;
-      //    size_t displayNameLength = MAX_BUFF_LEN;
+      //    spinError err = SPINNAKER_ERR_SUCCESS
+      //    char lastErrorMessage[MAX_BUFF_LEN]
+      //    size_t lenLastErrorMessage = MAX_BUFF_LEN
+      //    size_t displayNameLength = MAX_BUFF_LEN
       //
       val hNodeMapStreamDevice = use(new spinNodeMapHandle())
       check(spinCameraGetTLStreamNodeMap(hCam, hNodeMapStreamDevice), "spinCameraGetTLStreamNodeMap failed")
@@ -275,8 +275,8 @@ object Acquisition_C {
       // overwriting one another. Grabbing image IDs could also accomplish this.
       //
       val deviceSerialNumber = nodeGetStringValueOpt(hNodeMapTLDevice, "DeviceSerialNumber").getOrElse("")
-      printf("Device serial number retrieved as %s...\n", deviceSerialNumber);
-      printf("\n");
+      printf("Device serial number retrieved as %s...\n", deviceSerialNumber)
+      printf("\n")
 
       //
       // Create Image Processor context for post-processing images
@@ -314,7 +314,7 @@ object Acquisition_C {
           // Once an image from the buffer is saved and/or no longer needed, the
           // image must be released in orer to keep the buffer from filling up.
           //
-          val hResultImage = use(new spinImage()) // NULL;
+          val hResultImage = use(new spinImage()) // NULL
 
           val err1 = spinCameraGetNextImageEx(hCam, 1000, hResultImage)
           if printOnError(err1, "Unable to get next image. Non-fatal error.") then
@@ -398,7 +398,7 @@ object Acquisition_C {
           // The converted image was created, so it must be destroyed to avoid
           // memory leaks.
           //
-          val hConvertedImage = use(new spinImage()) // NULL;
+          val hConvertedImage = use(new spinImage()) // NULL
 
           val err7 = spinImageCreateEmpty(hConvertedImage)
           if printOnError(err7, "Unable to create image. Non-fatal error.") then

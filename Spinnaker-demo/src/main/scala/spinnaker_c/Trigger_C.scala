@@ -128,7 +128,7 @@ object Trigger_C {
   @throws[spinnaker_c.helpers.SpinnakerSDKException]
   private def configureTrigger(hNodeMap: spinNodeMapHandle): Unit = {
 
-    println("\n\n*** TRIGGER CONFIGURATION ***\n");
+    println("\n\n*** TRIGGER CONFIGURATION ***\n")
 
     println("Note that if the application / user software triggers faster than frame time, " +
       "the trigger may be dropped skipped by the camera.")
@@ -179,7 +179,7 @@ object Trigger_C {
 
       check(spinEnumerationSetIntValue(hTriggerMode, triggerModeOff.get), "Unable to disable trigger mode")
 
-      println("Trigger mode disabled...");
+      println("Trigger mode disabled...")
 
       //
       // Set TriggerSelector to FrameStart
@@ -210,7 +210,7 @@ object Trigger_C {
       checkIsReadable(hTriggerSelectorChoice, "TriggerSelectorChoice")
 
       // Retrieve integer value from entry node
-      val triggerSelectorChoice = use(new LongPointer(1));
+      val triggerSelectorChoice = use(new LongPointer(1))
       check(
         spinEnumerationEntryGetIntValue(hTriggerSelectorChoice, triggerSelectorChoice),
         "Unable to choose trigger selector"
@@ -273,7 +273,7 @@ object Trigger_C {
 
       check(spinEnumerationSetIntValue(hTriggerSource, triggerSourceChoice.get), "Unable to choose trigger source.")
 
-      println(s"Trigger source set to $chosenTrigger...\n");
+      println(s"Trigger source set to $chosenTrigger...\n")
 
       //
       // Turn trigger mode on
@@ -301,7 +301,7 @@ object Trigger_C {
 
       check(spinEnumerationSetIntValue(hTriggerMode, triggerModeOn.get), "Unable to enable trigger mode.")
 
-      println("Trigger mode enabled...\n");
+      println("Trigger mode enabled...\n")
     }.get
   }
 
@@ -342,7 +342,7 @@ object Trigger_C {
     checkIsWritable(hTriggerMode, "TriggerMode")
 
     check(spinEnumerationSetIntValue(hTriggerMode, triggerModeOff.get), "Unable to disable trigger mode.")
-    println("Trigger mode disabled...\n");
+    println("Trigger mode disabled...\n")
   }.get
 
   /**
@@ -401,7 +401,7 @@ object Trigger_C {
       System.out.println("Acquiring images...")
 
       // Retrieve device serial number for filename
-      val hDeviceSerialNumber = use(new spinNodeHandle()) // NULL;
+      val hDeviceSerialNumber = use(new spinNodeHandle()) // NULL
 
       val deviceSerialNumber    = use(new BytePointer(MAX_BUFF_LEN))
       val lenDeviceSerialNumber = use(new SizeTPointer(1))
@@ -453,7 +453,7 @@ object Trigger_C {
           grabNextImageByTrigger(hNodeMap)
 
           // Retrieve next received image
-          val hResultImage = new spinImage // NULL;
+          val hResultImage = new spinImage // NULL
 
           val err1 = spinCameraGetNextImageEx(hCam, 1000, hResultImage)
           if printOnError(err1, "Unable to get next image. Non-fatal error.") then
@@ -503,7 +503,7 @@ object Trigger_C {
             println("height = " + height.get)
 
           // Convert image to mono 8
-          val hConvertedImage = new spinImage // NULL;
+          val hConvertedImage = new spinImage // NULL
 
           val err7 = spinImageCreateEmpty(hConvertedImage)
           if printOnError(err7, "Unable to create image. Non-fatal error.") then
@@ -579,7 +579,7 @@ object Trigger_C {
     chosenTrigger match
       case Software =>
         // Get user input
-        println("Press the Enter key to initiate software trigger...");
+        println("Press the Enter key to initiate software trigger...")
         System.in.read()
 
         // Execute software trigger
@@ -595,7 +595,7 @@ object Trigger_C {
       // NOTE: Blackfly and Flea3 GEV cameras need 2 second delay after software trigger
       case Hardware =>
         // Execute hardware trigger
-        println("Use the hardware to trigger image acquisition.");
+        println("Use the hardware to trigger image acquisition.")
   }.get
 
   enum TriggerType:

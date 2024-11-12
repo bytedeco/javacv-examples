@@ -604,7 +604,7 @@ object NodeMapInfo_C {
 
   // This helper function deals with output indentation, of which there is a lot.
   private def indent(level: Int): Unit = {
-    for (_ <- 0 until level) do print("   ");
+    for (_ <- 0 until level) do print("   ")
   }
 
   enum ReadType:

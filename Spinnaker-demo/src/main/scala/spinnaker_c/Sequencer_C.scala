@@ -322,7 +322,7 @@ object Sequencer_C {
       integerSetValue(hNodeMap, "Width", widthToSet1)
       printf("\tWidth set to %d...\n", widthToSet1.toInt)
     } else
-      printf("\tUnable to get or set width; width for sequencer not readable/writable on all camera models...\n")
+      printf("\tUnable to get or set width width for sequencer not readable/writable on all camera models...\n")
 
     // Set height; height recorded in pixels
     val hHeight = use(nodeMapGetNode(hNodeMap, "Height"))
@@ -337,7 +337,7 @@ object Sequencer_C {
       integerSetValue(hNodeMap, "Height", heightToSet1)
       printf("\tHeight set to %d...\n", heightToSet1.toInt)
     } else
-      printf("\tUnable to get or set height; height for sequencer not readable/writable on all camera models...\n")
+      printf("\tUnable to get or set height height for sequencer not readable/writable on all camera models...\n")
 
     // Set exposure time; exposure time recorded in microseconds
     floatSetValue(hNodeMap, "ExposureTime", exposureTimeToSet)
