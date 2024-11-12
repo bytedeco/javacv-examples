@@ -194,7 +194,7 @@ object ChunkData_C {
             if isSuccess(err) then
               pEntryName.getString.trim
             else
-              printf("\t%d: unable to retrieve chunk entry display name (error %d)...\n", i, err.value);
+              printf("\t%d: unable to retrieve chunk entry display name (error %d)...\n", i, err.value)
               "???"
           } else
             break
@@ -218,7 +218,6 @@ object ChunkData_C {
             break
         } else
           printf("\t%s: unable to write to chunk entry value...\n", entryName)
-        ;
 
         // Retrieve corresponding chunk enable node
         val hChunkEnable = use(new spinNodeHandle())
@@ -255,167 +254,7 @@ object ChunkData_C {
   }.get
 
   /**
-   * This function displays a select amount of chunk data from the image. Unlike
-   * accessing chunk data via the nodemap, there is no way to loop through all
-   * available data.
-   */
-  private def displayChunkDataFromImage(hImage: spinImage): Unit = {
-    printf("Print chunk data from image...\n")
-
-    //
-    // Retrieve exposure time; exposure time recorded in microseconds
-    //
-    // *** NOTES ***
-    // Floating point numbers are returned as a double
-    //
-    val exposureTime = imageChunkDataGetFloatValue(hImage, "ChunkExposureTime")
-    printf("\tExposure time: %f\n", exposureTime)
-
-    //
-    // Retrieve compression ratio
-    //
-    // *** NOTES ***
-    // Floating point numbers are returned as a double
-    //
-    val compressionRatio = imageChunkDataGetFloatValue(hImage, "ChunkCompressionRatio")
-    printf("\tCompression ratio: %f\n", compressionRatio)
-
-    //
-    // Retrieve frame ID
-    //
-    // *** NOTES ***
-    // Integers are returned as an int64_t.
-    //
-    val frameID = imageChunkDataGetIntValue(hImage, "ChunkFrameID")
-    printf("\tFrame ID: %d\n", frameID)
-
-    // Retrieve gain; gain recorded in decibels
-    val gain = imageChunkDataGetFloatValue(hImage, "ChunkGain")
-    printf("\tGain: %f\n", gain)
-
-    // Retrieve height; height recorded in pixels
-    val height = imageChunkDataGetIntValue(hImage, "ChunkHeight")
-    printf("\tHeight: %d\n", height)
-
-    // Retrieve offset X; offset X recorded in pixels
-    val offsetX = imageChunkDataGetIntValue(hImage, "ChunkOffsetX")
-    printf("\tOffset X: %d\n", offsetX)
-
-    // Retrieve offset Y; offset Y recorded in pixels
-    val offsetY = imageChunkDataGetIntValue(hImage, "ChunkOffsetY")
-    printf("\tOffset Y: %d\n", offsetY)
-
-    // Retrieve width; width recorded in pixels
-    val width = imageChunkDataGetIntValue(hImage, "ChunkWidth")
-    printf("\tWidth: %d\n", width)
-
-    // Retrieve black level; black level recorded as a percentage
-    val blackLevel = imageChunkDataGetFloatValue(hImage, "ChunkBlackLevel")
-    printf("\tBlack level: %f\n", blackLevel)
-  }
-
-  /**
-   * This function displays all available chunk data by looping through the chunk
-   * data category node on the nodemap.
-   */
-  private def displayChunkDataFromNodeMap(hNodeMap: spinNodeMapHandle): Unit = Using.Manager { use =>
-
-    //
-    // Retrieve chunk data information nodes
-    //
-    // *** NOTES ***
-    // As well as being written into the payload of the image, chunk data is
-    // accessible on the GenICam nodemap. Insofar as chunk data is
-    // enabled, it is available from both sources.
-    //
-    val hChunkDataControl = use(nodeMapGetNode(hNodeMap, "ChunkDataControl"))
-    checkIsReadable(hChunkDataControl, "ChunkDataControl")
-
-    val numFeatures = {
-      val pNumFeatures = use(new SizeTPointer(1))
-      check(spinCategoryGetNumFeatures(hChunkDataControl, pNumFeatures), "Unable to retrieve number of nodes")
-      pNumFeatures.get
-    }
-    printf("Printing chunk data from nodemap...\n")
-
-    for i <- 0 until numFeatures.toInt do
-      breakable {
-        val hFeatureNode = use(new spinNodeHandle())
-
-        // Retrieve node
-        if isReadable(hChunkDataControl, "ChunkDataControl") then {
-          val err = spinCategoryGetFeatureByIndex(hChunkDataControl, i, hFeatureNode)
-          if isError(err) then {
-            printf("Unable to retrieve node (error %d)...\n\n", err.value)
-            break
-          }
-        } else
-          printf("Unable to retrieve node...\n\n")
-          break
-
-        // Retrieve node name
-        val featureName = {
-          val pFeatureName = use(BytePointer(MAX_BUFF_LEN))
-          val lenFeatureName = use(new SizeTPointer(1)).put(MAX_BUFF_LEN)
-          val err = spinNodeGetName(hFeatureNode, pFeatureName, lenFeatureName)
-          if isError(err) then "Unknown name" else pFeatureName.getString.trim
-        }
-
-        val featureType = use(new IntPointer(1L))
-        if isReadable(hFeatureNode, featureName) then {
-          val err = spinNodeGetType(hFeatureNode, featureType)
-          if isError(err) then {
-            printf("Unable to retrieve node type. Non-fatal error %d...\n\n", err.value)
-            break
-          }
-        } else
-          printf("Unable to retrieve node type. Non-fatal error...\n\n")
-          break
-
-        featureType.get match
-          case spinNodeType.IntegerNode.value =>
-            // Print integer node type value
-            val featureValue = use(new LongPointer(1)).put(0)
-            spinIntegerGetValue(hFeatureNode, featureValue)
-            printf("\t%s: %d\n", featureName, featureValue.get().toInt)
-
-          case spinNodeType.FloatNode.value =>
-            // Print float node type value
-            val featureValue = use(new DoublePointer(1)).put(0)
-            spinFloatGetValue(hFeatureNode, featureValue)
-            printf("\t%s: %f\n", featureName, featureValue.get())
-
-          case spinNodeType.BooleanNode.value =>
-            //
-            // Print boolean node type value
-            //
-            // *** NOTES ***
-            // Boolean information is manipulated to output the more-easily
-            // identifiable 'true' and 'false' as opposed to '1' and '0'.
-            //
-            val featureValue = use(new BytePointer(1L)).put(False)
-            spinBooleanGetValue(hFeatureNode, featureValue)
-            if featureValue.getBool then
-              printf("\t%s: true\n", featureName)
-            else
-              printf("\t%s: false\n", featureName)
-
-          case spinNodeType.EnumerationNode.value =>
-            val value = enumerationEntryGetSymbolic(hFeatureNode)
-            printf("\t%s: %s\n", featureName, value)
-
-          case spinNodeType.StringNode.value =>
-            val value = nodeGetStringValue(hNodeMap, nodeName = featureName)
-            printf("\t%s: %s\n", featureName, value)
-
-          case x =>
-            println(s"Unsupported future type: $x [$featureName]")
-      }
-  }.get
-
-
-  /**
-   * This function acquires and saves 10 images from a device; please see
+   * This function acquires and saves 10 images from a device please see
    *  Acquisition_C example for more in-depth comments on the acquisition of
    *  images.
    */
@@ -465,7 +304,7 @@ object ChunkData_C {
       for (imageCnt <- 0 until k_numImages) do {
         breakable {
           // Retrieve next received image
-          val hResultImage = use(new spinImage()) // NULL;
+          val hResultImage = use(new spinImage()) // NULL
 
           val err1 = spinCameraGetNextImageEx(hCam, 1000, hResultImage)
           if printOnError(err1, "Unable to get next image. Non-fatal error.") then
@@ -509,7 +348,7 @@ object ChunkData_C {
           printf("Grabbed image %d, width = %d, height = %d\n", imageCnt, width.get(), height.get())
 
           // Convert image to mono 8
-          val hConvertedImage = use(new spinImage()) // NULL;
+          val hConvertedImage = use(new spinImage()) // NULL
 
           val err7 = spinImageCreateEmpty(hConvertedImage)
           if printOnError(err7, "Unable to create image. Non-fatal error.") then
@@ -575,6 +414,165 @@ object ChunkData_C {
       // End Acquisition
       check(spinCameraEndAcquisition(hCam), "Unable to end acquisition.")
     }.get
+
+  /**
+   * This function displays a select amount of chunk data from the image. Unlike
+   * accessing chunk data via the nodemap, there is no way to loop through all
+   * available data.
+   */
+  private def displayChunkDataFromImage(hImage: spinImage): Unit = {
+    printf("Print chunk data from image...\n")
+
+    //
+    // Retrieve exposure time exposure time recorded in microseconds
+    //
+    // *** NOTES ***
+    // Floating point numbers are returned as a double
+    //
+    val exposureTime = imageChunkDataGetFloatValue(hImage, "ChunkExposureTime")
+    printf("\tExposure time: %f\n", exposureTime)
+
+    //
+    // Retrieve compression ratio
+    //
+    // *** NOTES ***
+    // Floating point numbers are returned as a double
+    //
+    val compressionRatio = imageChunkDataGetFloatValue(hImage, "ChunkCompressionRatio")
+    printf("\tCompression ratio: %f\n", compressionRatio)
+
+    //
+    // Retrieve frame ID
+    //
+    // *** NOTES ***
+    // Integers are returned as an int64_t.
+    //
+    val frameID = imageChunkDataGetIntValue(hImage, "ChunkFrameID")
+    printf("\tFrame ID: %d\n", frameID)
+
+    // Retrieve gain gain recorded in decibels
+    val gain = imageChunkDataGetFloatValue(hImage, "ChunkGain")
+    printf("\tGain: %f\n", gain)
+
+    // Retrieve height height recorded in pixels
+    val height = imageChunkDataGetIntValue(hImage, "ChunkHeight")
+    printf("\tHeight: %d\n", height)
+
+    // Retrieve offset X offset X recorded in pixels
+    val offsetX = imageChunkDataGetIntValue(hImage, "ChunkOffsetX")
+    printf("\tOffset X: %d\n", offsetX)
+
+    // Retrieve offset Y offset Y recorded in pixels
+    val offsetY = imageChunkDataGetIntValue(hImage, "ChunkOffsetY")
+    printf("\tOffset Y: %d\n", offsetY)
+
+    // Retrieve width width recorded in pixels
+    val width = imageChunkDataGetIntValue(hImage, "ChunkWidth")
+    printf("\tWidth: %d\n", width)
+
+    // Retrieve black level black level recorded as a percentage
+    val blackLevel = imageChunkDataGetFloatValue(hImage, "ChunkBlackLevel")
+    printf("\tBlack level: %f\n", blackLevel)
+  }
+
+  /**
+   * This function displays all available chunk data by looping through the chunk
+   * data category node on the nodemap.
+   */
+  private def displayChunkDataFromNodeMap(hNodeMap: spinNodeMapHandle): Unit = Using.Manager { use =>
+
+    //
+    // Retrieve chunk data information nodes
+    //
+    // *** NOTES ***
+    // As well as being written into the payload of the image, chunk data is
+    // accessible on the GenICam nodemap. Insofar as chunk data is
+    // enabled, it is available from both sources.
+    //
+    val hChunkDataControl = use(nodeMapGetNode(hNodeMap, "ChunkDataControl"))
+    checkIsReadable(hChunkDataControl, "ChunkDataControl")
+
+    val numFeatures = {
+      val pNumFeatures = use(new SizeTPointer(1))
+      check(spinCategoryGetNumFeatures(hChunkDataControl, pNumFeatures), "Unable to retrieve number of nodes")
+      pNumFeatures.get
+    }
+    printf("Printing chunk data from nodemap...\n")
+
+    for i <- 0 until numFeatures.toInt do
+      breakable {
+        val hFeatureNode = use(new spinNodeHandle())
+
+        // Retrieve node
+        if isReadable(hChunkDataControl, "ChunkDataControl") then {
+          val err = spinCategoryGetFeatureByIndex(hChunkDataControl, i, hFeatureNode)
+          if isError(err) then {
+            printf("Unable to retrieve node (error %d)...\n\n", err.value)
+            break
+          }
+        } else
+          printf("Unable to retrieve node...\n\n")
+          break
+
+        // Retrieve node name
+        val featureName = {
+          val pFeatureName   = use(BytePointer(MAX_BUFF_LEN))
+          val lenFeatureName = use(new SizeTPointer(1)).put(MAX_BUFF_LEN)
+          val err            = spinNodeGetName(hFeatureNode, pFeatureName, lenFeatureName)
+          if isError(err) then "Unknown name" else pFeatureName.getString.trim
+        }
+
+        val featureType = use(new IntPointer(1L))
+        if isReadable(hFeatureNode, featureName) then {
+          val err = spinNodeGetType(hFeatureNode, featureType)
+          if isError(err) then {
+            printf("Unable to retrieve node type. Non-fatal error %d...\n\n", err.value)
+            break
+          }
+        } else
+          printf("Unable to retrieve node type. Non-fatal error...\n\n")
+          break
+
+        featureType.get match
+          case spinNodeType.IntegerNode.value =>
+            // Print integer node type value
+            val featureValue = use(new LongPointer(1)).put(0)
+            spinIntegerGetValue(hFeatureNode, featureValue)
+            printf("\t%s: %d\n", featureName, featureValue.get().toInt)
+
+          case spinNodeType.FloatNode.value =>
+            // Print float node type value
+            val featureValue = use(new DoublePointer(1)).put(0)
+            spinFloatGetValue(hFeatureNode, featureValue)
+            printf("\t%s: %f\n", featureName, featureValue.get())
+
+          case spinNodeType.BooleanNode.value =>
+            //
+            // Print boolean node type value
+            //
+            // *** NOTES ***
+            // Boolean information is manipulated to output the more-easily
+            // identifiable 'true' and 'false' as opposed to '1' and '0'.
+            //
+            val featureValue = use(new BytePointer(1L)).put(False)
+            spinBooleanGetValue(hFeatureNode, featureValue)
+            if featureValue.getBool then
+              printf("\t%s: true\n", featureName)
+            else
+              printf("\t%s: false\n", featureName)
+
+          case spinNodeType.EnumerationNode.value =>
+            val value = enumerationEntryGetSymbolic(hFeatureNode)
+            printf("\t%s: %s\n", featureName, value)
+
+          case spinNodeType.StringNode.value =>
+            val value = nodeGetStringValue(hNodeMap, nodeName = featureName)
+            printf("\t%s: %s\n", featureName, value)
+
+          case x =>
+            println(s"Unsupported future type: $x [$featureName]")
+      }
+  }.get
 
   /** This function disables each type of chunk data before disabling chunk data mode. */
   private def disableChunkData(hNodeMap: spinNodeMapHandle): Unit = Using.Manager { use =>
@@ -662,7 +660,7 @@ object ChunkData_C {
             }
           }
 
-          printf("\t%s: disabled\n", entryName);
+          printf("\t%s: disabled\n", entryName)
       }
     }
 
@@ -670,7 +668,7 @@ object ChunkData_C {
 
     // Disabling ChunkModeActive
     booleanSetValue(hNodeMap, "ChunkModeActive", false)
-    printf("Chunk mode deactivated...\n");
+    printf("Chunk mode deactivated...\n")
   }.get
 
   private enum ChunkDataType:
