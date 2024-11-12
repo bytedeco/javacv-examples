@@ -69,6 +69,14 @@ package object helpers {
     enumEntryIntValue.get
   }.get
 
+  def enumerationEntryGetSymbolic(node: spinNodeHandle): String = Using.Manager { use =>
+    val currentNodeEntry = use(enumerationGetCurrentEntry(node))
+    val pStr             = use(BytePointer(MAX_BUFF_LEN))
+    val lenStr           = use(new SizeTPointer(1)).put(MAX_BUFF_LEN)
+    spinEnumerationEntryGetSymbolic(currentNodeEntry, pStr, lenStr)
+    pStr.getString.take(lenStr.get().toInt - 1)
+  }.get
+
   /**
    * Read node value assuming it is a string
    *

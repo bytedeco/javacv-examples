@@ -31,10 +31,7 @@ import scala.util.control.Breaks.{break, breakable}
  */
 object ChunkData_C {
 
-  private enum ChunkDataType:
-    case Image, NodeMap
-
-  private val chosenChunkData = ChunkDataType.Image
+  private val chosenChunkData = ChunkDataType.NodeMap
 
   def main(args: Array[String]): Unit = {
 
@@ -124,6 +121,12 @@ object ChunkData_C {
 
       // Disable chunck data
       disableChunkData(hNodeMap)
+
+    catch
+      case ex: Throwable =>
+        ex.printStackTrace()
+        throw ex
+
     finally
       // Deinitialize camera
       check(spinCameraDeInit(hCam), "Unable to deinitialize camera.")
@@ -352,9 +355,9 @@ object ChunkData_C {
 
         // Retrieve node name
         val featureName = {
-          val pFeatureName   = use(BytePointer(MAX_BUFF_LEN))
-          val lenFeatureName = use(new SizeTPointer()).put(MAX_BUFF_LEN)
-          val err            = spinNodeGetName(hFeatureNode, pFeatureName, lenFeatureName)
+          val pFeatureName = use(BytePointer(MAX_BUFF_LEN))
+          val lenFeatureName = use(new SizeTPointer(1)).put(MAX_BUFF_LEN)
+          val err = spinNodeGetName(hFeatureNode, pFeatureName, lenFeatureName)
           if isError(err) then "Unknown name" else pFeatureName.getString.trim
         }
 
@@ -396,8 +399,20 @@ object ChunkData_C {
               printf("\t%s: true\n", featureName)
             else
               printf("\t%s: false\n", featureName)
+
+          case spinNodeType.EnumerationNode.value =>
+            val value = enumerationEntryGetSymbolic(hFeatureNode)
+            printf("\t%s: %s\n", featureName, value)
+
+          case spinNodeType.StringNode.value =>
+            val value = nodeGetStringValue(hNodeMap, nodeName = featureName)
+            printf("\t%s: %s\n", featureName, value)
+
+          case x =>
+            println(s"Unsupported future type: $x [$featureName]")
       }
   }.get
+
 
   /**
    * This function acquires and saves 10 images from a device; please see
@@ -535,9 +550,9 @@ object ChunkData_C {
           // Display chunk data
           chosenChunkData match
             case ChunkDataType.Image =>
-              displayChunkDataFromImage(hResultImage);
+              displayChunkDataFromImage(hResultImage)
             case ChunkDataType.NodeMap =>
-              displayChunkDataFromNodeMap(hNodeMap);
+              displayChunkDataFromNodeMap(hNodeMap)
           printf("\n")
 
           // Destroy converted image
@@ -657,5 +672,8 @@ object ChunkData_C {
     booleanSetValue(hNodeMap, "ChunkModeActive", false)
     printf("Chunk mode deactivated...\n");
   }.get
+
+  private enum ChunkDataType:
+    case Image, NodeMap
 
 }
