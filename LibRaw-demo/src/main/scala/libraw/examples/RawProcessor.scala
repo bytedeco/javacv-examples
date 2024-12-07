@@ -1,7 +1,6 @@
 package libraw.examples
 
 import libraw.examples.RawProcessor.Params
-import org.bytedeco.javacpp.BytePointer
 import org.bytedeco.libraw.global.LibRaw.{LibRaw_errors, libraw_strerror}
 import org.bytedeco.libraw.{LibRaw, libraw_output_params_t}
 

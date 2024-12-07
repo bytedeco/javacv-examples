@@ -2,7 +2,7 @@
 name := "LibRaw-demo"
 
 // Project version
-version := "1.5.9"
+version := "1.5.11"
 
 // Version of Scala used by the project
 scalaVersion := "3.3.4"
@@ -21,13 +21,13 @@ scalacOptions ++= Seq(
 // Some dependencies like `javacpp` are packaged with maven-plugin packaging
 classpathTypes += "maven-plugin"
 
-libraryDependencies += "net.imagej" % "ij" % "1.54e"
+libraryDependencies += "net.imagej" % "ij" % "1.54m"
 
 // Platform classifier for native library dependencies
 lazy val platform = org.bytedeco.javacpp.Loader.Detector.getPlatform
 libraryDependencies ++= Seq(
-  "org.bytedeco" % "libraw" % "0.21.1-1.5.9" withSources () withJavadoc (),
-  "org.bytedeco" % "libraw" % "0.21.1-1.5.9" classifier platform
+  "org.bytedeco" % "libraw" % "0.21.2-1.5.11" withSources () withJavadoc (),
+  "org.bytedeco" % "libraw" % "0.21.2-1.5.11" classifier platform
 )
 
 // Used for testing local builds and snapshots of JavaCPP/JavaCV

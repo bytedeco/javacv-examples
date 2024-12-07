@@ -2,9 +2,8 @@ package libraw.examples
 
 import ij.IJ
 import org.bytedeco.javacpp.{BytePointer, IntPointer, Pointer}
-import org.bytedeco.libraw.global.LibRaw.LibRaw_openbayer_patterns.LIBRAW_OPENBAYER_RGGB
 import org.bytedeco.libraw.global.LibRaw.{LibRaw_errors, LibRaw_openbayer_patterns, LibRaw_progress, libraw_strerror, libraw_strprogress}
-import org.bytedeco.libraw.{LibRaw, libraw_output_params_t, progress_callback}
+import org.bytedeco.libraw.{LibRaw, progress_callback}
 
 import scala.util.Using
 

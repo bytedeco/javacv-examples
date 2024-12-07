@@ -1,7 +1,5 @@
 package libraw.examples
 
-import libraw.examples.RawProcessor
-
 import scala.util.Using
 
 object LibRawDemo {
