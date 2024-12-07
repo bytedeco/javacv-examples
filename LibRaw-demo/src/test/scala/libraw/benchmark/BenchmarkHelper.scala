@@ -26,7 +26,7 @@ import scala.collection.mutable.ListBuffer
 import scala.collection.{immutable, mutable}
 
 class BenchmarkHelper(val testIter: Int) {
-  private val _results = mutable.ListMap.empty[String, ListBuffer[Double]]
+  private val _results = mutable.LinkedHashMap.empty[String, ListBuffer[Double]]
 
   def results: immutable.Map[String, List[Double]] = {
     _results.map { case (k, v) => (k, v.toList) }.toMap
