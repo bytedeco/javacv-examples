@@ -3,7 +3,7 @@ import sbt.Keys._
 name := "FlyCapture2-demo"
 
 ThisBuild / version      := "1.5.9"
-ThisBuild / scalaVersion := "2.13.11"
+ThisBuild / scalaVersion := "2.13.15"
 
 // Platform classifier for native library dependencies
 lazy val platform = org.bytedeco.javacpp.Loader.Detector.getPlatform
@@ -17,7 +17,7 @@ val commonSettings = Seq(
     "org.bytedeco"            % "flycapture"               % "2.13.3.31-1.5.9" classifier platform,
     "log4j"                   % "log4j"                    % "1.2.17",
     "org.scala-lang"          % "scala-reflect"            % scalaVersion.value,
-    "org.scala-lang.modules" %% "scala-parser-combinators" % "2.3.0"
+    "org.scala-lang.modules" %% "scala-parser-combinators" % "2.4.0"
   ),
   resolvers ++= Seq(
     // Resolver.sonatypeRepo("snapshots"),
