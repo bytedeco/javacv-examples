@@ -27,8 +27,8 @@ libraryDependencies ++= Seq(
   "org.bytedeco"            % "javacpp"         % javacppVersion classifier platform,
   "org.bytedeco"            % "javacv"          % javacppVersion,
   "org.scala-lang.modules" %% "scala-swing"     % "3.0.0",
-  "org.scalafx"            %% "scalafx"         % "23.0.1-R34",
-  "org.scalafx"            %% "scalafx-extras"  % "0.10.1",
+  "org.scalafx"            %% "scalafx"         % "24.0.0-R35",
+  "org.scalafx"            %% "scalafx-extras"  % "0.11.0",
   "junit"                   % "junit"           % "4.13.2" % "test",
   "com.novocode"            % "junit-interface" % "0.11"   % "test"
 ) ++ presetLibs

@@ -12,7 +12,7 @@ import org.bytedeco.opencv.global.opencv_imgcodecs.imread
 import org.bytedeco.opencv.global.opencv_imgproc.{COLOR_BGR2RGB, cvtColor}
 import org.bytedeco.opencv.opencv_core.Mat
 import org.scalafx.extras.image.ImageDisplay
-import scalafx.Includes._
+import scalafx.Includes.*
 import scalafx.application.JFXApp3
 import scalafx.beans.property.ObjectProperty
 import scalafx.scene.Scene
@@ -73,7 +73,7 @@ object Ex2MyFirstGUIFXApp extends JFXApp3 {
   def onOpenImage(): Unit = {
     openImage().foreach { mat =>
       imageMat.value = Option(mat)
-      imageDisplay.image.value = toFXImage(mat)
+      imageDisplay.image.value = Option(toFXImage(mat))
     }
   }
 
@@ -81,7 +81,7 @@ object Ex2MyFirstGUIFXApp extends JFXApp3 {
     imageMat.value match {
       case Some(mat) =>
         processImage(mat)
-        imageDisplay.image.value = toFXImage(mat)
+        imageDisplay.image.value = Option(toFXImage(mat))
       case None =>
         new Alert(AlertType.Error) {
           initOwner(stage)
@@ -97,7 +97,7 @@ object Ex2MyFirstGUIFXApp extends JFXApp3 {
     val file = fileChooser.showOpenDialog(stage)
     Option(file).flatMap { f =>
       // Load the image
-      val path     = file.getCanonicalPath
+      val path     = f.getCanonicalPath
       val newImage = imread(path)
       if (!newImage.empty()) {
         Option(newImage)
