@@ -3,9 +3,9 @@ organization := "javacv.examples"
 
 val javacppVersion = "1.5.11"
 version      := javacppVersion
-scalaVersion := "2.13.15"
+scalaVersion := "3.3.6"
 
-scalacOptions ++= Seq("-unchecked", "-deprecation", "-Xlint")
+scalacOptions ++= Seq("-unchecked", "-deprecation", "-Xlint", "-source:3.3-migration")
 
 // Platform classifier for native library dependencies
 val platform = org.bytedeco.javacpp.Loader.Detector.getPlatform
