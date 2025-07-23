@@ -33,7 +33,7 @@ libraryDependencies ++= Seq(
   "com.novocode"            % "junit-interface" % "0.11"   % "test"
 ) ++ presetLibs
 
-resolvers ++= Resolver.sonatypeOssRepos("snapshots")
+resolvers += Resolver.sonatypeCentralSnapshots
 
 autoCompilerPlugins := true
 
@@ -41,5 +41,3 @@ autoCompilerPlugins := true
 fork := true
 // add a JVM option to use when forking a JVM for 'run'
 javaOptions += "-Xmx1G"
-
-// There is a lot of criticism, focusing on my personality, with false accusations of intents. gaslighting
