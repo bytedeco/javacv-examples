@@ -2,7 +2,6 @@ package spinnaker_c
 
 import org.bytedeco.javacpp.*
 import org.bytedeco.spinnaker.Spinnaker_C.*
-import org.bytedeco.spinnaker.global.Spinnaker_C
 import org.bytedeco.spinnaker.global.Spinnaker_C.*
 import org.bytedeco.spinnaker.global.Spinnaker_C.spinColorProcessingAlgorithm.SPINNAKER_COLOR_PROCESSING_ALGORITHM_HQ_LINEAR
 import org.bytedeco.spinnaker.global.Spinnaker_C.spinImageFileFormat.SPINNAKER_IMAGE_FILE_FORMAT_JPEG
