@@ -98,7 +98,6 @@ object ChunkData_C {
 
   @throws[spinnaker_c.helpers.SpinnakerSDKException]
   def runSingleCamera(hCam: spinCamera): Unit = Using.Manager { use =>
-
     // Retrieve TL device nodemap and print device information
     val hNodeMapTLDevice = use(new spinNodeMapHandle())
     check(spinCameraGetTLDeviceNodeMap(hCam, hNodeMapTLDevice), "Unable to retrieve TL device nodemap .")
@@ -260,7 +259,6 @@ object ChunkData_C {
    */
   def acquireImages(hCam: spinCamera, hNodeMap: spinNodeMapHandle, hNodeMapTLDevice: spinNodeMapHandle): Unit =
     Using.Manager { use =>
-
       printf("\n*** IMAGE ACQUISITION ***\n\n")
 
       // Set acquisition mode to continuous
@@ -480,7 +478,6 @@ object ChunkData_C {
    * data category node on the nodemap.
    */
   private def displayChunkDataFromNodeMap(hNodeMap: spinNodeMapHandle): Unit = Using.Manager { use =>
-
     //
     // Retrieve chunk data information nodes
     //
@@ -538,13 +535,13 @@ object ChunkData_C {
             // Print integer node type value
             val featureValue = use(new LongPointer(1)).put(0)
             spinIntegerGetValue(hFeatureNode, featureValue)
-            printf("\t%s: %d\n", featureName, featureValue.get().toInt)
+            printf("\t%s: %d [Long Integer]\n", featureName, featureValue.get())
 
           case spinNodeType.FloatNode.value =>
             // Print float node type value
             val featureValue = use(new DoublePointer(1)).put(0)
             spinFloatGetValue(hFeatureNode, featureValue)
-            printf("\t%s: %f\n", featureName, featureValue.get())
+            printf("\t%s: %f [Double]\n", featureName, featureValue.get())
 
           case spinNodeType.BooleanNode.value =>
             //
@@ -563,11 +560,11 @@ object ChunkData_C {
 
           case spinNodeType.EnumerationNode.value =>
             val value = enumerationEntryGetSymbolic(hFeatureNode)
-            printf("\t%s: %s\n", featureName, value)
+            printf("\t%s: %s [Enumeration]\n", featureName, value)
 
           case spinNodeType.StringNode.value =>
             val value = nodeGetStringValue(hNodeMap, nodeName = featureName)
-            printf("\t%s: %s\n", featureName, value)
+            printf("\t%s: %s [String]\n", featureName, value)
 
           case x =>
             println(s"Unsupported future type: $x [$featureName]")
@@ -576,7 +573,6 @@ object ChunkData_C {
 
   /** This function disables each type of chunk data before disabling chunk data mode. */
   private def disableChunkData(hNodeMap: spinNodeMapHandle): Unit = Using.Manager { use =>
-
     val hChunkSelector = nodeMapGetNode(hNodeMap, "ChunkSelector")
     checkIsReadable(hChunkSelector, "ChunkSelector")
 
